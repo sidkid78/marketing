@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 
 interface ShareButtonsProps {
   textToShare: string;
+  anchorId?: string;
 }
 
 const TwitterIcon = () => (
@@ -30,26 +30,27 @@ const CheckIcon = () => (
 );
 
 
-export const ShareButtons: React.FC<ShareButtonsProps> = ({ textToShare }) => {
+export const ShareButtons: React.FC<ShareButtonsProps> = ({ textToShare, anchorId }) => {
   const [copied, setCopied] = useState(false);
 
-  const appUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const baseUrl = typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}` : '';
+  const shareUrl = anchorId ? `${baseUrl}#${anchorId}` : baseUrl;
   const encodedText = encodeURIComponent(textToShare);
-  const encodedAppUrl = encodeURIComponent(appUrl);
+  const encodedShareUrl = encodeURIComponent(shareUrl);
 
   const shareOnTwitter = () => {
-    const url = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedAppUrl}`;
+    const url = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedShareUrl}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const shareOnLinkedIn = () => {
-    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedAppUrl}`;
+    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedShareUrl}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const copyLink = () => {
     if (navigator.clipboard) {
-        navigator.clipboard.writeText(appUrl).then(() => {
+        navigator.clipboard.writeText(shareUrl).then(() => {
             setCopied(true);
             setTimeout(() => setCopied(false), 2500);
         });

@@ -18,28 +18,10 @@ const strategySchema = {
       strategy_title: { type: Type.STRING },
       summary: { type: Type.STRING },
       recommendations: { type: Type.ARRAY, items: { type: Type.STRING } },
-      targeting_suggestions: { type: Type.ARRAY, items: { type: Type.STRING } },
-      creative_asset_ideas: { type: Type.ARRAY, items: { type: Type.STRING } },
-      budget_allocation: {
-        type: Type.ARRAY,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            category: { type: Type.STRING },
-            percentage: { type: Type.NUMBER },
-            rationale: { type: Type.STRING },
-          },
-          required: ['category', 'percentage', 'rationale'],
-        },
-      },
       rationale: { type: Type.STRING },
       kpis: { type: Type.ARRAY, items: { type: Type.STRING } },
     },
-    required: [
-      'goal', 'platform', 'strategy_title', 'summary', 'recommendations', 
-      'targeting_suggestions', 'creative_asset_ideas', 'budget_allocation', 
-      'rationale', 'kpis'
-    ],
+    required: ['goal', 'platform', 'strategy_title', 'summary', 'recommendations', 'rationale', 'kpis'],
   },
 };
 
@@ -105,27 +87,18 @@ function buildPrompt(userInput: UserInput, task: 'strategy' | 'content' | 'analy
       - **Target Platforms:** ${platforms.join(', ')}
       - **Target Audience:** Age ${demographics.age_range}, Gender: ${demographics.gender}, Location: ${demographics.location}
       - **Brand/Offer:** "${brand_offer_details}"
-      - **Audience Interests:** ${audience_interests || 'Not specified'}
-      - **Campaign Budget:** ${campaign_budget ? `$${campaign_budget}` : 'Not specified'}
+      - **Audience Interests:** ${audience_interests || 'Not specified'}${campaign_budget ? `\n      - **Campaign Budget:** Approximately ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(campaign_budget)}` : ''}
     `;
 
     switch (task) {
         case 'strategy':
-             return `${corePrompt}
-            Based on the details above, generate a list of actionable marketing strategies for each goal-platform combination.
-            ${campaign_budget ? `The strategies should be realistic and mindful of the specified budget of $${campaign_budget}.` : ''}
+            return `${corePrompt}
+            Based on the details above, generate a list of actionable marketing strategies for each goal-platform combination. Consider the budget if provided.
             The output must be a JSON array of strategy objects.
-            For each strategy, provide:
-            - A clear title and summary.
-            - A bulleted list of general recommendations (creative, messaging, etc.).
-            - A bulleted list of specific targeting suggestions (demographics, interests, lookalike audiences).
-            - A bulleted list of creative asset ideas (e.g., video formats, image styles, ad copy angles).
-            - A breakdown of budget allocation as a percentage for different categories (e.g., ad spend, content creation).
-            - A rationale for the overall approach.
-            - A list of key KPIs to monitor.`;
+            For each strategy, provide a clear title, a summary, a bulleted list of recommendations (creative, targeting, etc.), a rationale for the approach, and a list of key KPIs to monitor.`;
         case 'content':
             return `${corePrompt}
-            Based on the details above, generate a list of 2-3 creative and platform-specific content ideas for each goal-platform combination.
+            Based on the details above, generate a list of 2-3 creative and platform-specific content ideas for each goal-platform combination. Consider the budget if provided for ad creatives.
             The output must be a JSON array of content idea objects.
             For each idea, provide a catchy headline, a direction for the visual aspect, a suggested caption, a call-to-action (CTA), and a few relevant hashtags.`;
         case 'analysis':

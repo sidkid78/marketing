@@ -1,7 +1,7 @@
-
 import React from 'react';
 import type { PerformanceAnalysis } from '../../types';
 import { Card } from '../ui/Card';
+import { ClipboardCopyButton } from '../ui/ClipboardCopyButton';
 
 interface PerformanceAnalysisDashboardProps {
   data: PerformanceAnalysis;
@@ -16,10 +16,17 @@ const statusClasses = {
 export const PerformanceAnalysisDashboard: React.FC<PerformanceAnalysisDashboardProps> = ({ data }) => {
   const summaryFlag = data.summary.includes('⚠️') ? 'warning' : data.summary.includes('✅') ? 'good' : 'on_target';
 
+  const formatRecommendationsForClipboard = (recommendations: string[]): string => {
+    return `Adjustment Recommendations:\n${recommendations.map(r => `- ${r}`).join('\n')}`;
+  };
+
   return (
     <Card className="!p-0 overflow-hidden">
       <div className={`p-6 border-l-4 ${statusClasses[summaryFlag]}`}>
-        <h3 className="text-lg font-bold">Campaign Summary</h3>
+        <div className="flex justify-between items-center">
+            <h3 className="text-lg font-bold">Campaign Summary</h3>
+            <ClipboardCopyButton textToCopy={`Campaign Summary:\n${data.summary}`} />
+        </div>
         <p className="mt-1">{data.summary}</p>
       </div>
       
@@ -39,7 +46,10 @@ export const PerformanceAnalysisDashboard: React.FC<PerformanceAnalysisDashboard
       </div>
       
       <div className="p-6 bg-gray-50">
-        <h4 className="text-md font-bold text-neutral-dark mb-3">Adjustment Recommendations</h4>
+        <div className="flex justify-between items-center mb-3">
+            <h4 className="text-md font-bold text-neutral-dark">Adjustment Recommendations</h4>
+            <ClipboardCopyButton textToCopy={formatRecommendationsForClipboard(data.adjustment_recommendations)} />
+        </div>
         <ul className="list-disc list-inside space-y-2 text-neutral">
           {data.adjustment_recommendations.map((rec, i) => (
             <li key={i}>{rec}</li>
