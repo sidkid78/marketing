@@ -1,103 +1,162 @@
-import Image from "next/image";
+"use client";
+
+import React, { Suspense, useEffect, useState } from "react";
+
+const MarketingAgent = React.lazy(() => import("../ai-marketing-agent/App"));
+const ContentStudio = React.lazy(() => import("../content-generation-studio/App"));
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [activeTab, setActiveTab] = useState<"agent" | "studio">("agent");
+  const [apiKey, setApiKey] = useState("");
+  const [draftKey, setDraftKey] = useState("");
+  const [isDark, setIsDark] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("GEMINI_API_KEY") || "";
+      setApiKey(saved);
+      setDraftKey(saved);
+      
+      // Check for saved theme or system preference
+      const savedTheme = window.localStorage.getItem("theme");
+      if (savedTheme === "dark") {
+        setIsDark(true);
+        document.documentElement.classList.add("dark");
+      } else if (savedTheme === "light") {
+        setIsDark(false);
+        document.documentElement.classList.remove("dark");
+      } else {
+        // Use system preference
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        setIsDark(prefersDark);
+        if (prefersDark) {
+          document.documentElement.classList.add("dark");
+        }
+      }
+    } catch {}
+  }, []);
+
+  function handleSave() {
+    try {
+      window.localStorage.setItem("GEMINI_API_KEY", draftKey.trim());
+    } catch {}
+    setApiKey(draftKey.trim());
+  }
+
+  function handleClear() {
+    try {
+      window.localStorage.removeItem("GEMINI_API_KEY");
+    } catch {}
+    setApiKey("");
+    setDraftKey("");
+  }
+
+  function toggleDarkMode() {
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+    
+    if (newIsDark) {
+      document.documentElement.classList.add("dark");
+      window.localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      window.localStorage.setItem("theme", "light");
+    }
+  }
+
+  return (
+    <div className="min-h-screen w-full px-6 py-8 sm:px-10">
+      <header className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">AI Tools</h1>
+          <p className="text-sm text-muted-foreground">Switch between apps using the tabs below.</p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          onClick={toggleDarkMode}
+          className="p-2 rounded-md border border-border bg-card hover:bg-accent transition-colors"
+          aria-label="Toggle dark mode"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {isDark ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+            </svg>
+          )}
+        </button>
+      </header>
+
+      <section className="mb-6 border border-border rounded-md p-4 bg-card">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-3">
+          <div className="flex-1">
+            <label htmlFor="apiKey" className="block text-sm font-medium mb-1">Gemini API Key</label>
+            <input
+              id="apiKey"
+              type="password"
+              className="w-full px-3 py-2 border border-input rounded-md bg-background"
+              placeholder="Enter your Gemini API key"
+              value={draftKey}
+              onChange={(e) => setDraftKey(e.target.value)}
+              autoComplete="off"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">Stored locally in your browser (localStorage). Not shared with the server.</p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleSave}
+              className="px-4 py-2 rounded-md border border-border bg-primary text-primary-foreground"
+            >
+              Save Key
+            </button>
+            <button
+              onClick={handleClear}
+              className="px-4 py-2 rounded-md border border-border bg-muted text-foreground"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+        {apiKey && (
+          <p className="mt-2 text-xs text-green-600">Key saved{draftKey ? " (updated)" : ""}. Using key ending with {apiKey.slice(-4)}.</p>
+        )}
+      </section>
+
+      <div className="w-full border-b border-border mb-4">
+        <nav className="flex gap-2">
+          <button
+            className={`px-4 py-2 rounded-t-md border border-b-0 ${
+              activeTab === "agent"
+                ? "bg-background text-foreground border-border"
+                : "bg-muted text-muted-foreground border-transparent hover:text-foreground"
+            }`}
+            onClick={() => setActiveTab("agent")}
+          >
+            AI Marketing Agent
+          </button>
+          <button
+            className={`px-4 py-2 rounded-t-md border border-b-0 ${
+              activeTab === "studio"
+                ? "bg-background text-foreground border-border"
+                : "bg-muted text-muted-foreground border-transparent hover:text-foreground"
+            }`}
+            onClick={() => setActiveTab("studio")}
+          >
+            Content Generation Studio
+          </button>
+        </nav>
+      </div>
+
+      <div className="rounded-b-md rounded-tr-md border border-border bg-background" role="tabpanel">
+        <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading…</div>}>
+          {activeTab === "agent" ? (
+            <MarketingAgent apiKey={apiKey} />
+          ) : (
+            <ContentStudio apiKey={apiKey} />
+          )}
+        </Suspense>
+      </div>
     </div>
   );
 }

@@ -1,26 +1,125 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Winter is Coming Theme - Deep blues, icy accents, stark whites */
+:root {
+  --radius: 0.625rem;
+  /* Light mode - Icy winter day */
+  --background: oklch(0.98 0.01 240); /* Pale icy white-blue */
+  --foreground: oklch(0.2 0.04 240); /* Deep winter blue-black */
+  --card: oklch(0.99 0.005 240); /* Bright snow white */
+  --card-foreground: oklch(0.2 0.04 240);
+  --popover: oklch(0.99 0.005 240);
+  --popover-foreground: oklch(0.2 0.04 240);
+  --primary: oklch(0.45 0.15 240); /* Deep frost blue */
+  --primary-foreground: oklch(0.98 0.01 240); /* Icy white */
+  --secondary: oklch(0.85 0.05 240); /* Light winter sky */
+  --secondary-foreground: oklch(0.25 0.05 240);
+  --muted: oklch(0.92 0.02 240); /* Muted ice blue */
+  --muted-foreground: oklch(0.45 0.05 240);
+  --accent: oklch(0.65 0.18 220); /* Cold azure accent */
+  --accent-foreground: oklch(0.98 0.01 240);
+  --destructive: oklch(0.55 0.22 20); /* Cold red */
+  --border: oklch(0.88 0.03 240); /* Soft frost border */
+  --input: oklch(0.88 0.03 240);
+  --ring: oklch(0.6 0.15 240); /* Ice blue ring */
+  --chart-1: oklch(0.55 0.18 240); /* Deep winter blue */
+  --chart-2: oklch(0.65 0.15 200); /* Glacier cyan */
+  --chart-3: oklch(0.7 0.12 260); /* Twilight blue */
+  --chart-4: oklch(0.5 0.2 220); /* Frozen azure */
+  --chart-5: oklch(0.6 0.16 280); /* Arctic purple */
+  --sidebar: oklch(0.96 0.01 240);
+  --sidebar-foreground: oklch(0.25 0.04 240);
+  --sidebar-primary: oklch(0.45 0.15 240);
+  --sidebar-primary-foreground: oklch(0.98 0.01 240);
+  --sidebar-accent: oklch(0.85 0.05 240);
+  --sidebar-accent-foreground: oklch(0.25 0.05 240);
+  --sidebar-border: oklch(0.88 0.03 240);
+  --sidebar-ring: oklch(0.6 0.15 240);
+}
+
+.dark {
+  /* Dark mode - Long winter night */
+  --background: oklch(0.12 0.03 240); /* Deep midnight blue-black */
+  --foreground: oklch(0.95 0.01 220); /* Stark white with blue tint */
+  --card: oklch(0.16 0.04 240); /* Dark frozen steel */
+  --card-foreground: oklch(0.95 0.01 220);
+  --popover: oklch(0.16 0.04 240);
+  --popover-foreground: oklch(0.95 0.01 220);
+  --primary: oklch(0.6 0.2 220); /* Bright ice blue */
+  --primary-foreground: oklch(0.12 0.03 240); /* Dark background */
+  --secondary: oklch(0.25 0.06 240); /* Deep winter night */
+  --secondary-foreground: oklch(0.9 0.02 220);
+  --muted: oklch(0.22 0.05 240); /* Dark muted blue */
+  --muted-foreground: oklch(0.65 0.08 230); /* Muted ice */
+  --accent: oklch(0.55 0.22 200); /* Glowing cyan accent */
+  --accent-foreground: oklch(0.95 0.01 220);
+  --destructive: oklch(0.6 0.24 25); /* Winter fire red */
+  --border: oklch(0.25 0.05 240); /* Subtle frozen border */
+  --input: oklch(0.28 0.06 240); /* Input field frost */
+  --ring: oklch(0.55 0.18 220); /* Ice blue focus ring */
+  --chart-1: oklch(0.6 0.2 220); /* Bright glacier blue */
+  --chart-2: oklch(0.65 0.18 200); /* Cyan ice */
+  --chart-3: oklch(0.5 0.15 260); /* Deep purple frost */
+  --chart-4: oklch(0.55 0.22 240); /* Azure glow */
+  --chart-5: oklch(0.58 0.2 280); /* Northern lights purple */
+  --sidebar: oklch(0.14 0.04 240);
+  --sidebar-foreground: oklch(0.92 0.02 220);
+  --sidebar-primary: oklch(0.6 0.2 220);
+  --sidebar-primary-foreground: oklch(0.12 0.03 240);
+  --sidebar-accent: oklch(0.25 0.06 240);
+  --sidebar-accent-foreground: oklch(0.9 0.02 220);
+  --sidebar-border: oklch(0.25 0.05 240);
+  --sidebar-ring: oklch(0.55 0.18 220);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground;
+  }
 }

@@ -1,0 +1,5 @@
+{
+  "name": "AI Marketing Agent",
+  "description": "An intelligent web application that generates marketing strategies, provides content ideas, and analyzes campaign performance using AI. Users can input their goals and metrics to receive tailored, actionable insights.",
+  "requestFramePermissions": []
+}
