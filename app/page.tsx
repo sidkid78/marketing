@@ -5,15 +5,21 @@ import React, { Suspense, useEffect, useState } from "react";
 const MarketingAgent = React.lazy(() => import("../ai-marketing-agent/App"));
 const ContentStudio = React.lazy(() => import("../content-generation-studio/App"));
 
+// Get environment variable API key if available (for Vercel deployments)
+const ENV_API_KEY = typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_GEMINI_API_KEY || '';
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"agent" | "studio">("agent");
   const [apiKey, setApiKey] = useState("");
   const [draftKey, setDraftKey] = useState("");
   const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     try {
-      const saved = window.localStorage.getItem("GEMINI_API_KEY") || "";
+      // Priority: localStorage > environment variable
+      const saved = window.localStorage.getItem("GEMINI_API_KEY") || ENV_API_KEY || "";
       setApiKey(saved);
       setDraftKey(saved);
       
@@ -101,25 +107,31 @@ export default function Home() {
               onChange={(e) => setDraftKey(e.target.value)}
               autoComplete="off"
             />
-            <p className="mt-1 text-xs text-muted-foreground">Stored locally in your browser (localStorage). Not shared with the server.</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Stored locally in your browser (localStorage). Not shared with the server.
+              {ENV_API_KEY && <span className="block mt-1 text-chart-2">✓ Environment variable detected</span>}
+            </p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={handleSave}
-              className="px-4 py-2 rounded-md border border-border bg-primary text-primary-foreground"
+              className="px-4 py-2 rounded-md border border-border bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
             >
               Save Key
             </button>
             <button
               onClick={handleClear}
-              className="px-4 py-2 rounded-md border border-border bg-muted text-foreground"
+              className="px-4 py-2 rounded-md border border-border bg-muted text-foreground hover:opacity-90 transition-opacity"
             >
               Clear
             </button>
           </div>
         </div>
-        {apiKey && (
-          <p className="mt-2 text-xs text-green-600">Key saved{draftKey ? " (updated)" : ""}. Using key ending with {apiKey.slice(-4)}.</p>
+        {mounted && apiKey && (
+          <p className="mt-2 text-xs text-chart-2">✓ API key configured (ending with ...{apiKey.slice(-4)})</p>
+        )}
+        {mounted && !apiKey && (
+          <p className="mt-2 text-xs text-destructive">⚠ No API key found. Please enter your Gemini API key above.</p>
         )}
       </section>
 
@@ -149,13 +161,17 @@ export default function Home() {
       </div>
 
       <div className="rounded-b-md rounded-tr-md border border-border bg-background" role="tabpanel">
-        <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading…</div>}>
-          {activeTab === "agent" ? (
-            <MarketingAgent apiKey={apiKey} />
-          ) : (
-            <ContentStudio apiKey={apiKey} />
-          )}
-        </Suspense>
+        {mounted ? (
+          <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading…</div>}>
+            {activeTab === "agent" ? (
+              <MarketingAgent apiKey={apiKey} />
+            ) : (
+              <ContentStudio apiKey={apiKey} />
+            )}
+          </Suspense>
+        ) : (
+          <div className="p-6 text-sm text-muted-foreground">Initializing...</div>
+        )}
       </div>
     </div>
   );

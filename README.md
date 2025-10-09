@@ -55,6 +55,47 @@ When you first open the application:
 - Choose from various format preferences
 - Download generated content as Markdown
 
+## Deployment to Vercel
+
+### Option 1: Using Environment Variables (Recommended for Production)
+
+1. Go to your Vercel project settings
+2. Navigate to "Environment Variables"
+3. Add a new variable:
+   - **Name**: `NEXT_PUBLIC_GEMINI_API_KEY`
+   - **Value**: Your Gemini API key
+   - **Environment**: Production, Preview, Development (select as needed)
+4. Redeploy your application
+
+**Note**: Environment variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. For production use, consider implementing a backend API route to keep your API key secure.
+
+### Option 2: Client-Side localStorage (Current Default)
+
+Users can enter their own API key in the browser, which is stored in localStorage. This is ideal for:
+- Demo applications
+- Personal use
+- When you want users to provide their own API keys
+
+### Security Best Practices
+
+For production applications handling sensitive data:
+
+1. **Create an API Route** (Recommended):
+   ```typescript
+   // app/api/gemini/route.ts
+   import { NextResponse } from 'next/server';
+   
+   export async function POST(request: Request) {
+     const apiKey = process.env.GEMINI_API_KEY; // Not NEXT_PUBLIC_
+     // Forward request to Gemini API
+     // Return response
+   }
+   ```
+
+2. **Use Vercel Environment Variables** without the `NEXT_PUBLIC_` prefix to keep keys server-side only
+
+3. **Implement rate limiting** to prevent API abuse
+
 ## Project Structure
 
 ```
