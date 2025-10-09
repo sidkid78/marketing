@@ -36,7 +36,7 @@ export function createContentStudioService(apiKey: string) {
         model: 'gemini-2.5-flash',
         contents: prompt,
       });
-      return response.text;
+      return response.text || 'No content generated';
     } catch (error) {
       console.error("Error generating content:", error);
       if (error instanceof Error) {
@@ -57,7 +57,7 @@ export function createContentStudioService(apiKey: string) {
       },
     });
 
-    const base64ImageBytes = response.generatedImages[0].image.imageBytes;
+    const base64ImageBytes = response.generatedImages?.[0]?.image?.imageBytes || '';
     return `data:image/jpeg;base64,${base64ImageBytes}`;
   };
 
@@ -82,7 +82,7 @@ export function createContentStudioService(apiKey: string) {
           },
       });
 
-      return JSON.parse(response.text);
+      return JSON.parse(response.text || '{"question":"","options":[],"answer":""}');
   };
 
   return { generateContent, generateImagePreview, generateQuizPreview };

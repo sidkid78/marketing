@@ -64,9 +64,9 @@ export const PerformanceInput: React.FC<PerformanceInputProps> = ({ onSubmit, go
 
   return (
     <Card>
-      <div className="flex border-b border-gray-200 mb-6">
-        <button className={`px-4 py-2 font-semibold ${mode === 'manual' ? 'border-b-2 border-primary text-primary' : 'text-gray-500'}`} onClick={() => setMode('manual')}>Manual Entry</button>
-        <button className={`px-4 py-2 font-semibold ${mode === 'csv' ? 'border-b-2 border-primary text-primary' : 'text-gray-500'}`} onClick={() => setMode('csv')}>Upload CSV</button>
+      <div className="flex border-b border-border mb-6">
+        <button className={`px-4 py-2 font-semibold ${mode === 'manual' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`} onClick={() => setMode('manual')}>Manual Entry</button>
+        <button className={`px-4 py-2 font-semibold ${mode === 'csv' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`} onClick={() => setMode('csv')}>Upload CSV</button>
       </div>
       
       {mode === 'manual' ? (
@@ -87,13 +87,13 @@ export const PerformanceInput: React.FC<PerformanceInputProps> = ({ onSubmit, go
         </div>
       ) : (
         <div>
-          <p className="mb-2 text-sm text-neutral">Upload a CSV file with a header row and one data row. Headers should match metric IDs (e.g., `leads`, `cvr`, `cpl`).</p>
-          <input type="file" accept=".csv" onChange={handleCsvUpload} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-primary hover:file:bg-blue-100"/>
-           {Object.keys(metrics).length > 0 && <p className="text-green-600 text-sm mt-2">CSV data loaded successfully.</p>}
+          <p className="mb-2 text-sm text-muted-foreground">Upload a CSV file with a header row and one data row. Headers should match metric IDs (e.g., `leads`, `cvr`, `cpl`).</p>
+          <input type="file" accept=".csv" title="Upload CSV" onChange={handleCsvUpload} className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"/>
+           {Object.keys(metrics).length > 0 && <p className="text-chart-2 text-sm mt-2">CSV data loaded successfully.</p>}
         </div>
       )}
 
-      {error && <p className="text-red-500 mt-4">{error}</p>}
+      {error && <p className="text-destructive mt-4">{error}</p>}
       
       <div className="mt-8 text-right">
         <Button onClick={handleSubmit}>Analyze Performance</Button>

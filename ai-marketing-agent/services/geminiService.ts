@@ -2,11 +2,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { UserInput, Strategy, ContentIdea, PerformanceData, PerformanceAnalysis } from '../types';
 
-if (!process.env.API_KEY) {
-  throw new Error("API_KEY environment variable not set");
+// Create AI client with provided API key
+function createAIClient(apiKey: string) {
+  if (!apiKey) {
+    throw new Error("API key is required");
+  }
+  return new GoogleGenAI({ apiKey });
 }
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const strategySchema = {
   type: Type.ARRAY,
@@ -116,7 +118,8 @@ function buildPrompt(userInput: UserInput, task: 'strategy' | 'content' | 'analy
     }
 }
 
-export async function generateStrategy(userInput: UserInput): Promise<Strategy[]> {
+export async function generateStrategy(userInput: UserInput, apiKey: string): Promise<Strategy[]> {
+  const ai = createAIClient(apiKey);
   const prompt = buildPrompt(userInput, 'strategy');
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash',
@@ -126,11 +129,12 @@ export async function generateStrategy(userInput: UserInput): Promise<Strategy[]
       responseSchema: strategySchema,
     },
   });
-  const jsonText = response.text.trim();
+  const jsonText = response.text?.trim() || '[]';
   return JSON.parse(jsonText);
 }
 
-export async function generateContentIdeas(userInput: UserInput): Promise<ContentIdea[]> {
+export async function generateContentIdeas(userInput: UserInput, apiKey: string): Promise<ContentIdea[]> {
+  const ai = createAIClient(apiKey);
   const prompt = buildPrompt(userInput, 'content');
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash',
@@ -140,11 +144,12 @@ export async function generateContentIdeas(userInput: UserInput): Promise<Conten
       responseSchema: contentIdeaSchema,
     },
   });
-  const jsonText = response.text.trim();
+  const jsonText = response.text?.trim() || '[]';
   return JSON.parse(jsonText);
 }
 
-export async function analyzePerformance(performanceData: PerformanceData, goal: string): Promise<PerformanceAnalysis> {
+export async function analyzePerformance(performanceData: PerformanceData, goal: string, apiKey: string): Promise<PerformanceAnalysis> {
+    const ai = createAIClient(apiKey);
     const mockUserInput: UserInput = {
         goals: [goal as any],
         platforms: ['facebook'], // Assume a default platform for analysis context
@@ -160,6 +165,6 @@ export async function analyzePerformance(performanceData: PerformanceData, goal:
       responseSchema: performanceAnalysisSchema,
     },
   });
-  const jsonText = response.text.trim();
+  const jsonText = response.text?.trim() || '{}';
   return JSON.parse(jsonText);
 }

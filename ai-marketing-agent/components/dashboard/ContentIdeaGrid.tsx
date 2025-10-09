@@ -54,14 +54,14 @@ Hashtags: ${hashtags}
             {ci.ideas.map((idea, j) => (
               <div key={j} id={`content-idea-${i}-${j}`} className="border-t border-gray-200 pt-4 flex-grow flex flex-col">
                 <div className="flex-grow">
-                  <h4 className="font-bold text-neutral-dark mb-1">"{idea.headline}"</h4>
-                  <p className="text-sm text-neutral mb-2"><strong className="text-neutral-dark">Visual:</strong> {idea.visual_direction}</p>
-                  <p className="text-sm italic bg-gray-50 p-3 rounded-md text-neutral mb-3">"{idea.caption}"</p>
+                  <h4 className="font-bold text-foreground mb-1">"{idea.headline}"</h4>
+                  <p className="text-sm text-muted-foreground mb-2"><strong className="text-foreground">Visual:</strong> {idea.visual_direction}</p>
+                  <p className="text-sm italic bg-muted p-3 rounded-md text-foreground mb-3">"{idea.caption}"</p>
                   <div className="flex justify-between items-center">
-                      <span className="text-white bg-accent font-bold text-xs px-3 py-1 rounded-full">{idea.cta}</span>
+                      <span className="text-accent-foreground bg-accent font-bold text-xs px-3 py-1 rounded-full">{idea.cta}</span>
                       <div className="flex flex-wrap gap-1">
                           {idea.hashtag_suggestions.map(tag => (
-                              <span key={tag} className="text-xs text-blue-600">#{tag}</span>
+                              <span key={tag} className="text-xs text-primary">#{tag}</span>
                           ))}
                       </div>
                   </div>

@@ -8,9 +8,9 @@ interface PerformanceAnalysisDashboardProps {
 }
 
 const statusClasses = {
-  good: 'bg-green-100 text-green-800 border-green-300',
-  on_target: 'bg-blue-100 text-blue-800 border-blue-300',
-  warning: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+  good: 'bg-chart-2/10 text-chart-2 border-chart-2/30',
+  on_target: 'bg-chart-1/10 text-chart-1 border-chart-1/30',
+  warning: 'bg-destructive/10 text-destructive border-destructive/30',
 };
 
 export const PerformanceAnalysisDashboard: React.FC<PerformanceAnalysisDashboardProps> = ({ data }) => {
@@ -45,9 +45,9 @@ export const PerformanceAnalysisDashboard: React.FC<PerformanceAnalysisDashboard
         </div>
       </div>
       
-      <div className="p-6 bg-gray-50">
+      <div className="p-6 bg-muted">
         <div className="flex justify-between items-center mb-3">
-            <h4 className="text-md font-bold text-neutral-dark">Adjustment Recommendations</h4>
+            <h4 className="text-md font-bold text-foreground">Adjustment Recommendations</h4>
             <ClipboardCopyButton textToCopy={formatRecommendationsForClipboard(data.adjustment_recommendations)} />
         </div>
         <ul className="list-disc list-inside space-y-2 text-neutral">

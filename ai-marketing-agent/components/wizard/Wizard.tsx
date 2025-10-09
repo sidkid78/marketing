@@ -139,7 +139,7 @@ export const Wizard: React.FC<WizardProps> = ({ onSubmit }) => {
                           <label className="block font-semibold text-foreground text-sm" htmlFor="age">Age Range *</label>
                           <Tooltip text="Select the primary age group of your target audience." />
                       </div>
-                      <select id="age" className="w-full p-3 border border-gray-300 rounded-lg" value={formData.demographics?.age_range} onChange={(e) => setFormData({...formData, demographics: {...formData.demographics, age_range: e.target.value}})}>
+                      <select id="age" className="w-full p-3 border border-gray-300 rounded-lg" value={formData.demographics?.age_range} onChange={(e) => setFormData({...formData, demographics: { age_range: e.target.value, gender: formData.demographics?.gender || 'Any', location: formData.demographics?.location || '' }})}>
                           <option>18-24</option>
                           <option>25-34</option>
                           <option>35-44</option>
@@ -152,7 +152,7 @@ export const Wizard: React.FC<WizardProps> = ({ onSubmit }) => {
                           <label className="block font-semibold text-foreground" htmlFor="gender">Gender *</label>
                           <Tooltip text="Select the gender of your target audience. Choose 'Any' for a broader reach." />
                       </div>
-                      <select id="gender" className="w-full p-3 border border-gray-300 rounded-lg" value={formData.demographics?.gender} onChange={(e) => setFormData({...formData, demographics: {...formData.demographics, gender: e.target.value}})}>
+                      <select id="gender" className="w-full p-3 border border-gray-300 rounded-lg" value={formData.demographics?.gender} onChange={(e) => setFormData({...formData, demographics: { age_range: formData.demographics?.age_range || '25-34', gender: e.target.value, location: formData.demographics?.location || '' }})}>
                           <option>Any</option>
                           <option>Female</option>
                           <option>Male</option>
@@ -164,7 +164,7 @@ export const Wizard: React.FC<WizardProps> = ({ onSubmit }) => {
                           <label className="block font-semibold text-foreground" htmlFor="location">Location *</label>
                           <Tooltip text="Specify the primary country, region, or city you are targeting." />
                       </div>
-                      <input type="text" id="location" className="w-full p-3 border border-gray-300 rounded-lg" placeholder="e.g., United States" value={formData.demographics?.location} onChange={(e) => setFormData({...formData, demographics: {...formData.demographics, location: e.target.value}})} />
+                      <input type="text" id="location" className="w-full p-3 border border-gray-300 rounded-lg" placeholder="e.g., United States" value={formData.demographics?.location} onChange={(e) => setFormData({...formData, demographics: { age_range: formData.demographics?.age_range || '25-34', gender: formData.demographics?.gender || 'Any', location: e.target.value }})} />
                   </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

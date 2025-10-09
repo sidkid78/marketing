@@ -1,24 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Marketing Tools
+
+This is a [Next.js](https://nextjs.org) application that combines two powerful AI-powered tools:
+- **AI Marketing Agent**: Generate marketing strategies, content ideas, and performance analysis
+- **Content Generation Studio**: Create educational content with AI assistance
+
+## Prerequisites
+
+- Node.js 18+ installed
+- A Gemini API key (get one at [Google AI Studio](https://aistudio.google.com/app/apikey))
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Get Your Gemini API Key
+
+1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Sign in with your Google account
+3. Create a new API key
+4. Copy the API key (you'll need it in the next step)
+
+### 3. Run the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Enter Your API Key
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+When you first open the application:
+1. You'll see an "API Key" input field at the top
+2. Paste your Gemini API key
+3. Click "Save Key"
+
+**Note**: Your API key is stored securely in your browser's localStorage and is never sent to any server except Google's Gemini API.
+
+## Features
+
+### AI Marketing Agent
+- Generate comprehensive marketing strategies
+- Create platform-specific content ideas
+- Analyze campaign performance with AI-powered insights
+- Get actionable recommendations
+
+### Content Generation Studio
+- Create educational content (courses, tutorials, guides)
+- Customize for different target audiences
+- Choose from various format preferences
+- Download generated content as Markdown
+
+## Project Structure
+
+```
+frontend/
+├── app/                          # Next.js app directory
+│   ├── page.tsx                 # Main page with tab navigation
+│   ├── layout.tsx               # Root layout
+│   └── globals.css              # Global styles
+├── ai-marketing-agent/          # Marketing agent application
+│   ├── components/              # React components
+│   ├── services/                # API services
+│   └── types.ts                 # TypeScript types
+├── content-generation-studio/   # Content studio application
+│   ├── components/              # React components
+│   ├── services/                # API services
+│   └── types.ts                 # TypeScript types
+└── components/                  # Shared UI components
+```
 
 ## Learn More
 

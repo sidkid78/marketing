@@ -64,7 +64,7 @@ ${kpisText}
               <p className="text-sm font-semibold">KPIs to watch:</p>
               <div className="flex flex-wrap gap-2 justify-end mt-1">
                 {s.kpis.map((kpi) => (
-                  <span key={kpi} className="text-xs bg-gray-200 text-neutral-dark font-medium px-2 py-1 rounded-full">{kpi.toUpperCase()}</span>
+                  <span key={kpi} className="text-xs bg-secondary text-secondary-foreground font-medium px-2 py-1 rounded-full">{kpi.toUpperCase()}</span>
                 ))}
               </div>
             </div>
@@ -81,8 +81,8 @@ ${kpisText}
             </ul>
           </div>
           <div className="mb-4">
-            <h4 className="font-semibold text-neutral-dark">Rationale:</h4>
-            <p className="text-sm text-neutral-dark bg-gray-50 p-3 rounded-lg mt-2">{s.rationale}</p>
+            <h4 className="font-semibold text-foreground">Rationale:</h4>
+            <p className="text-sm text-foreground bg-muted p-3 rounded-lg mt-2">{s.rationale}</p>
           </div>
           <div className="border-t pt-4 mt-4 flex justify-end items-center gap-4">
             <ClipboardCopyButton textToCopy={formatStrategyForClipboard(s)} />
