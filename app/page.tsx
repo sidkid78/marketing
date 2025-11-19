@@ -5,8 +5,9 @@ import React, { Suspense, useEffect, useState } from "react";
 const MarketingAgent = React.lazy(() => import("../ai-marketing-agent/App"));
 const ContentStudio = React.lazy(() => import("../content-generation-studio/App"));
 
-// Get environment variable API key if available (for Vercel deployments)
-const ENV_API_KEY = typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_GEMINI_API_KEY || '';
+// Get environment variable API key if available (for Vercel deployments).
+// Use Next.js compile-time injection so server and client always see the same value.
+const ENV_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY ?? '';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"agent" | "studio">("agent");
