@@ -4,13 +4,14 @@ import React, { Suspense, useEffect, useState } from "react";
 
 const MarketingAgent = React.lazy(() => import("../ai-marketing-agent/App"));
 const ContentStudio = React.lazy(() => import("../content-generation-studio/App"));
+const ImageStudio = React.lazy(() => import("../image-studio/App"));
 
 // Get environment variable API key if available (for Vercel deployments).
 // Use Next.js compile-time injection so server and client always see the same value.
 const ENV_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY ?? '';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"agent" | "studio">("agent");
+  const [activeTab, setActiveTab] = useState<"agent" | "studio" | "image">("agent");
   const [apiKey, setApiKey] = useState("");
   const [draftKey, setDraftKey] = useState("");
   const [isDark, setIsDark] = useState(false);
@@ -158,17 +159,25 @@ export default function Home() {
           >
             Content Generation Studio
           </button>
+          <button
+            className={`px-4 py-2 rounded-t-md border border-b-0 ${
+              activeTab === "image"
+                ? "bg-background text-foreground border-border"
+                : "bg-muted text-muted-foreground border-transparent hover:text-foreground"
+            }`}
+            onClick={() => setActiveTab("image")}
+          >
+            Agentic Image Studio
+          </button>
         </nav>
       </div>
 
       <div className="rounded-b-md rounded-tr-md border border-border bg-background" role="tabpanel">
         {mounted ? (
           <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading…</div>}>
-            {activeTab === "agent" ? (
-              <MarketingAgent apiKey={apiKey} />
-            ) : (
-              <ContentStudio apiKey={apiKey} />
-            )}
+            {activeTab === "agent" && <MarketingAgent apiKey={apiKey} />}
+            {activeTab === "studio" && <ContentStudio apiKey={apiKey} />}
+            {activeTab === "image" && <ImageStudio apiKey={apiKey} />}
           </Suspense>
         ) : (
           <div className="p-6 text-sm text-muted-foreground">Initializing...</div>

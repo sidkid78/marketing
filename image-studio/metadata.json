@@ -1,0 +1,4 @@
+{
+    "name": "Agentic Image Studio",
+    "description": "A two-step agentic workflow that uses Gemini to craft the perfect prompt before generating high-quality visuals with Imagen."
+  }
