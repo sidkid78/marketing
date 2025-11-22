@@ -168,3 +168,35 @@ export async function analyzePerformance(performanceData: PerformanceData, goal:
   const jsonText = response.text?.trim() || '{}';
   return JSON.parse(jsonText);
 }
+
+export async function generateAdImage(visualDescription: string, apiKey: string): Promise<string | null> {
+  try {
+    const ai = createAIClient(apiKey);
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash-image",
+      contents: {
+        parts: [
+          { text: "Generate a high-quality, photorealistic image suitable for a marketing campaign based on this description:" },
+          { text: visualDescription }
+        ],
+      },
+      config: {
+        imageConfig: {
+          aspectRatio: "1:1"
+        }
+      }      
+    });
+
+    if (response.candidates && response.candidates[0]?.content?.parts) {
+      for (const part of response.candidates[0].content.parts) {
+        if (part.inlineData) {
+          return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+        }
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error("Error generating ad image:", error);
+    return null;
+  }
+}
