@@ -118,7 +118,7 @@ export default function App({ apiKey }: AppProps) {
 
             <section id="content-ideas" className="mb-12">
               <h2 className="text-2xl font-bold text-foreground mb-4 border-b-2 border-secondary pb-2">Content Ideas</h2>
-              <ContentIdeaGrid contentIdeas={contentIdeas} />
+              <ContentIdeaGrid contentIdeas={contentIdeas} apiKey={apiKey || ''} />
             </section>
 
             {step === 'dashboard' && (
