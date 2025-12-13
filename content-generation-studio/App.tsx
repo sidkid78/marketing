@@ -120,6 +120,7 @@ const App: React.FC<AppProps> = ({ apiKey }) => {
                 error={error}
                 generateImagePreview={service?.generateImagePreview}
                 generateQuizPreview={service?.generateQuizPreview}
+                generateVideoPreview={service?.generateVideoPreview}
               />
               {!apiKey && (
                 <p className="mt-4 text-sm text-red-600">No Gemini API key provided. Please enter your API key above.</p>

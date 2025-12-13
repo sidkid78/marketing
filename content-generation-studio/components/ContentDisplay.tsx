@@ -1,14 +1,24 @@
 "use client";
 
-import React, { useMemo, useState } from 'react';
-import { BookOpenIcon, SparklesIcon, ImageIcon, VideoIcon, QuestionIcon, LoaderIcon } from './icons';
+import React, { useMemo, useState } from "react";
+import {
+  BookOpenIcon,
+  SparklesIcon,
+  ImageIcon,
+  VideoIcon,
+  QuestionIcon,
+  LoaderIcon,
+} from "./icons";
 
 interface ContentDisplayProps {
   content: string;
   isLoading: boolean;
   error: string | null;
   generateImagePreview?: (prompt: string) => Promise<string>;
-  generateQuizPreview?: (topic: string) => Promise<{ question: string; options: string[]; answer: string; }>;
+  generateQuizPreview?: (
+    topic: string,
+  ) => Promise<{ question: string; options: string[]; answer: string }>;
+  generateVideoPreview?: (prompt: string) => Promise<string>;
 }
 
 const processInlineFormatting = (text: string): React.ReactNode => {
@@ -32,114 +42,190 @@ const processInlineFormatting = (text: string): React.ReactNode => {
     );
 };
 
-type PlaceholderType = 'image' | 'video' | 'quiz';
+type PlaceholderType = "image" | "video" | "quiz";
 
 interface QuizContent {
-    question: string;
-    options: string[];
-    answer: string;
+  question: string;
+  options: string[];
+  answer: string;
 }
 
-const InteractiveMediaPlaceholder: React.FC<{ type: PlaceholderType; description: string; generateImagePreview?: (prompt: string) => Promise<string>; generateQuizPreview?: (topic: string) => Promise<{ question: string; options: string[]; answer: string; }>; }> = ({ type, description, generateImagePreview, generateQuizPreview }) => {
-    const [isPreviewing, setIsPreviewing] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [previewContent, setPreviewContent] = useState<string | QuizContent | null>(null);
+type PreviewContent =
+  | { kind: "image"; url: string }
+  | { kind: "video"; url: string }
+  | { kind: "quiz"; data: QuizContent };
+
+const InteractiveMediaPlaceholder: React.FC<{
+  type: PlaceholderType;
+  description: string;
+  generateImagePreview?: (prompt: string) => Promise<string>;
+  generateQuizPreview?: (
+    topic: string,
+  ) => Promise<{ question: string; options: string[]; answer: string }>;
+  generateVideoPreview?: (prompt: string) => Promise<string>;
+}> = ({
+  type,
+  description,
+  generateImagePreview,
+  generateQuizPreview,
+  generateVideoPreview,
+}) => {
+  const [isPreviewing, setIsPreviewing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [previewContent, setPreviewContent] = useState<PreviewContent | null>(
+    null,
+  );
     
-    const handlePreview = async () => {
-        setIsPreviewing(true);
-        setError(null);
-        try {
-            if (type === 'image') {
-                if (!generateImagePreview) throw new Error('Missing API key for image preview');
-                const imageUrl = await generateImagePreview(description);
-                setPreviewContent(imageUrl);
-            } else if (type === 'video') {
-                // For videos, we'll generate a representative image/thumbnail instead of a full video.
-                const prompt = `A cinematic still frame representing a video about: ${description}`;
-                if (!generateImagePreview) throw new Error('Missing API key for video preview');
-                const imageUrl = await generateImagePreview(prompt);
-                setPreviewContent(imageUrl);
-            } else if (type === 'quiz') {
-                if (!generateQuizPreview) throw new Error('Missing API key for quiz preview');
-                const quizData = await generateQuizPreview(description);
-                setPreviewContent(quizData);
-            }
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to generate preview.');
-        } finally {
-            setIsPreviewing(false);
+  const handlePreview = async () => {
+    setIsPreviewing(true);
+    setError(null);
+    try {
+      if (type === "image") {
+        if (!generateImagePreview) {
+          throw new Error("Missing API key for image preview");
         }
-    };
+        const imageUrl = await generateImagePreview(description);
+        setPreviewContent({ kind: "image", url: imageUrl });
+      } else if (type === "video") {
+        if (generateVideoPreview) {
+          const videoUrl = await generateVideoPreview(description);
+          setPreviewContent({ kind: "video", url: videoUrl });
+        } else {
+          // Fallback: generate a cinematic thumbnail using the image generator.
+          const prompt = `A cinematic still frame representing a video about: ${description}`;
+          if (!generateImagePreview) {
+            throw new Error("Missing API key for video preview");
+          }
+          const imageUrl = await generateImagePreview(prompt);
+          setPreviewContent({ kind: "image", url: imageUrl });
+        }
+      } else if (type === "quiz") {
+        if (!generateQuizPreview) {
+          throw new Error("Missing API key for quiz preview");
+        }
+        const quizData = await generateQuizPreview(description);
+        setPreviewContent({ kind: "quiz", data: quizData });
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to generate preview.",
+      );
+    } finally {
+      setIsPreviewing(false);
+    }
+  };
 
-    const ICONS: Record<PlaceholderType, { icon: React.ReactNode; color: string; title: string; }> = {
-        image: { icon: <ImageIcon className="w-6 h-6 flex-shrink-0" />, color: 'text-sky-500', title: 'Image Suggestion' },
-        video: { icon: <VideoIcon className="w-6 h-6 flex-shrink-0" />, color: 'text-rose-500', title: 'Video Suggestion' },
-        quiz: { icon: <QuestionIcon className="w-6 h-6 flex-shrink-0" />, color: 'text-amber-500', title: 'Quiz Suggestion' },
-    };
+  const ICONS: Record<
+    PlaceholderType,
+    { icon: React.ReactNode; color: string; title: string }
+  > = {
+    image: {
+      icon: <ImageIcon className="w-6 h-6 flex-shrink-0" />,
+      color: "text-sky-500",
+      title: "Image Suggestion",
+    },
+    video: {
+      icon: <VideoIcon className="w-6 h-6 flex-shrink-0" />,
+      color: "text-rose-500",
+      title: "Video Suggestion",
+    },
+    quiz: {
+      icon: <QuestionIcon className="w-6 h-6 flex-shrink-0" />,
+      color: "text-amber-500",
+      title: "Quiz Suggestion",
+    },
+  };
 
-    const { icon, color, title } = ICONS[type];
+  const { icon, color, title } = ICONS[type];
+  const actionLabel =
+    type === "image" ? "Generate Image" :
+    type === "video" ? "Generate Video" :
+    "Generate Quiz";
 
-    return (
-        <div className="my-4 p-4 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-100/50 dark:bg-slate-800/50">
-            <div className="flex items-start space-x-4">
-                <div className={color}>{icon}</div>
-                <div className="flex-1">
-                    <h4 className="font-semibold">{title}</h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 italic">"{description}"</p>
-                    {!previewContent && !isPreviewing && (
-                        <button 
-                            onClick={handlePreview} 
-                            className="mt-3 inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
-                        >
-                           <SparklesIcon className="w-4 h-4 mr-2"/>
-                           Generate Preview
-                        </button>
-                    )}
-                </div>
-            </div>
-            
-            {isPreviewing && (
-                <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center text-sm text-slate-500 dark:text-slate-400">
-                        <LoaderIcon className="w-4 h-4 animate-spin mr-2"/>
-                        Generating preview...
-                    </div>
-                    <div className="animate-pulse mt-3">
-                        {(type === 'image' || type === 'video') && (
-                            <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-lg aspect-[16/9]"></div>
-                        )}
-                        {type === 'quiz' && (
-                             <div className="space-y-3">
-                                <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
-                                <div className="space-y-2 pt-2">
-                                    <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
-                                    <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
-                                    <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {error && <p className="mt-3 text-sm text-red-600 dark:text-red-400">Error: {error}</p>}
-            
-            {!isPreviewing && previewContent && (
-                <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                   {typeof previewContent === 'string' && <img src={previewContent} alt={description} className="rounded-lg max-w-full h-auto" />}
-                   {typeof previewContent === 'object' && 'question' in previewContent && (
-                       <div>
-                           <p className="font-semibold">{previewContent.question}</p>
-                           <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-                               {previewContent.options.map((opt, i) => <li key={i}>{opt}</li>)}
-                           </ul>
-                           <p className="text-xs mt-2 text-slate-500">(Correct Answer: {previewContent.answer})</p>
-                       </div>
-                   )}
-                </div>
-            )}
+  return (
+    <div className="my-4 p-4 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-100/50 dark:bg-slate-800/50">
+      <div className="flex items-start space-x-4">
+        <div className={color}>{icon}</div>
+        <div className="flex-1">
+          <h4 className="font-semibold">{title}</h4>
+          <p className="text-sm text-slate-600 dark:text-slate-400 italic">
+            "{description}"
+          </p>
+          {!previewContent && !isPreviewing && (
+            <button
+              onClick={handlePreview}
+              className="mt-3 inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+            >
+              <SparklesIcon className="w-4 h-4 mr-2" />
+              {actionLabel}
+            </button>
+          )}
         </div>
-    );
+      </div>
+
+      {isPreviewing && (
+        <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+          <div className="flex items-center text-sm text-slate-500 dark:text-slate-400">
+            <LoaderIcon className="w-4 h-4 animate-spin mr-2" />
+            Generating preview...
+          </div>
+          <div className="animate-pulse mt-3">
+            {(type === "image" || type === "video") && (
+              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-lg aspect-[16/9]" />
+            )}
+            {type === "quiz" && (
+              <div className="space-y-3">
+                <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4" />
+                <div className="space-y-2 pt-2">
+                  <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
+                  <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
+                  <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <p className="mt-3 text-sm text-red-600 dark:text-red-400">
+          Error: {error}
+        </p>
+      )}
+
+      {!isPreviewing && previewContent && (
+        <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+          {previewContent.kind === "image" && (
+            <img
+              src={previewContent.url}
+              alt={description}
+              className="rounded-lg max-w-full h-auto"
+            />
+          )}
+          {previewContent.kind === "video" && (
+            <video
+              src={previewContent.url}
+              controls
+              className="rounded-lg w-full h-auto"
+            />
+          )}
+          {previewContent.kind === "quiz" && (
+            <div>
+              <p className="font-semibold">{previewContent.data.question}</p>
+              <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
+                {previewContent.data.options.map((opt, i) => (
+                  <li key={i}>{opt}</li>
+                ))}
+              </ul>
+              <p className="text-xs mt-2 text-slate-500">
+                (Correct Answer: {previewContent.data.answer})
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };
 
 type ListItemData = {
@@ -256,7 +342,46 @@ const parseMarkdown = (text: string) => {
             return;
         }
 
+        // Handle list items that are actually media/quiz placeholders like:
+        // - [Image: ...], - [Video: ...], - [Quiz: ...]
         if (isListItem(line)) {
+            const content = getContent(line);
+            let match;
+            if (match = content.match(/^\[Image:\s*(.*?)\]$/)) {
+                flushList();
+                elements.push(
+                    <InteractiveMediaPlaceholder
+                        key={index}
+                        type="image"
+                        description={match[1]}
+                    />,
+                );
+                return;
+            }
+            if (match = content.match(/^\[Video:\s*(.*?)\]$/)) {
+                flushList();
+                elements.push(
+                    <InteractiveMediaPlaceholder
+                        key={index}
+                        type="video"
+                        description={match[1]}
+                    />,
+                );
+                return;
+            }
+            if (match = content.match(/^\[Quiz:\s*(.*?)\]$/)) {
+                flushList();
+                elements.push(
+                    <InteractiveMediaPlaceholder
+                        key={index}
+                        type="quiz"
+                        description={match[1]}
+                    />,
+                );
+                return;
+            }
+
+            // Regular list item
             listItems.push({ line, key: index });
             return;
         }
@@ -320,7 +445,14 @@ const Loader: React.FC = () => (
 );
 
 
-const ContentDisplay: React.FC<ContentDisplayProps> = ({ content, isLoading, error, generateImagePreview, generateQuizPreview }) => {
+const ContentDisplay: React.FC<ContentDisplayProps> = ({
+  content,
+  isLoading,
+  error,
+  generateImagePreview,
+  generateQuizPreview,
+  generateVideoPreview,
+}) => {
   if (isLoading) {
     return <Loader />;
   }
@@ -346,15 +478,32 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({ content, isLoading, err
     );
   }
 
-  return useMemo(() => (
-    <div className="prose prose-slate dark:prose-invert max-w-none">{parseMarkdownWithGenerators(content, generateImagePreview, generateQuizPreview)}</div>
-  ), [content, generateImagePreview, generateQuizPreview]);
+  return useMemo(
+    () => (
+      <div className="prose prose-slate dark:prose-invert max-w-none">
+        {parseMarkdownWithGenerators(
+          content,
+          generateImagePreview,
+          generateQuizPreview,
+          generateVideoPreview,
+        )}
+      </div>
+    ),
+    [content, generateImagePreview, generateQuizPreview, generateVideoPreview],
+  );
 };
 
 export default ContentDisplay;
 
 // Helper: clone of parseMarkdown that forwards preview generators to placeholders
-function parseMarkdownWithGenerators(text: string, generateImagePreview?: (prompt: string) => Promise<string>, generateQuizPreview?: (topic: string) => Promise<{ question: string; options: string[]; answer: string; }>) {
+function parseMarkdownWithGenerators(
+  text: string,
+  generateImagePreview?: (prompt: string) => Promise<string>,
+  generateQuizPreview?: (
+    topic: string,
+  ) => Promise<{ question: string; options: string[]; answer: string }>,
+  generateVideoPreview?: (prompt: string) => Promise<string>,
+) {
     const lines = text.split('\n');
     const elements: React.ReactNode[] = [];
     let listItems: ListItemData[] = [];
@@ -400,7 +549,53 @@ function parseMarkdownWithGenerators(text: string, generateImagePreview?: (promp
             return;
         }
 
+        // Handle list items that are actually media/quiz placeholders like:
+        // - [Image: ...], - [Video: ...], - [Quiz: ...]
         if (isListItem(line)) {
+            const content = getContent(line);
+            let match;
+            if (match = content.match(/^\[Image:\s*(.*?)\]$/)) {
+                flushList();
+                elements.push(
+                  <InteractiveMediaPlaceholder
+                    key={index}
+                    type="image"
+                    description={match[1]}
+                    generateImagePreview={generateImagePreview}
+                    generateVideoPreview={generateVideoPreview}
+                  />,
+                );
+                return;
+            }
+            if (match = content.match(/^\[Video:\s*(.*?)\]$/)) {
+                flushList();
+                elements.push(
+                  <InteractiveMediaPlaceholder
+                    key={index}
+                    type="video"
+                    description={match[1]}
+                    generateImagePreview={generateImagePreview}
+                    generateQuizPreview={generateQuizPreview}
+                    generateVideoPreview={generateVideoPreview}
+                  />,
+                );
+                return;
+            }
+            if (match = content.match(/^\[Quiz:\s*(.*?)\]$/)) {
+                flushList();
+                elements.push(
+                  <InteractiveMediaPlaceholder
+                    key={index}
+                    type="quiz"
+                    description={match[1]}
+                    generateQuizPreview={generateQuizPreview}
+                    generateVideoPreview={generateVideoPreview}
+                  />,
+                );
+                return;
+            }
+
+            // Regular list item
             listItems.push({ line, key: index });
             return;
         }
@@ -409,11 +604,36 @@ function parseMarkdownWithGenerators(text: string, generateImagePreview?: (promp
 
         let match;
         if (match = line.match(/\[Image:\s*(.*?)\]/)) {
-            elements.push(<InteractiveMediaPlaceholder key={index} type="image" description={match[1]} generateImagePreview={generateImagePreview} />);
+            elements.push(
+              <InteractiveMediaPlaceholder
+                key={index}
+                type="image"
+                description={match[1]}
+                generateImagePreview={generateImagePreview}
+                generateVideoPreview={generateVideoPreview}
+              />,
+            );
         } else if (match = line.match(/\[Video:\s*(.*?)\]/)) {
-            elements.push(<InteractiveMediaPlaceholder key={index} type="video" description={match[1]} generateImagePreview={generateImagePreview} />);
+            elements.push(
+              <InteractiveMediaPlaceholder
+                key={index}
+                type="video"
+                description={match[1]}
+                generateImagePreview={generateImagePreview}
+                generateQuizPreview={generateQuizPreview}
+                generateVideoPreview={generateVideoPreview}
+              />,
+            );
         } else if (match = line.match(/\[Quiz:\s*(.*?)\]/)) {
-            elements.push(<InteractiveMediaPlaceholder key={index} type="quiz" description={match[1]} generateQuizPreview={generateQuizPreview} />);
+            elements.push(
+              <InteractiveMediaPlaceholder
+                key={index}
+                type="quiz"
+                description={match[1]}
+                generateQuizPreview={generateQuizPreview}
+                generateVideoPreview={generateVideoPreview}
+              />,
+            );
         } else if (line.startsWith('> ')) {
             elements.push(
                 <blockquote key={index} className="my-4 pl-4 border-l-4 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 italic">

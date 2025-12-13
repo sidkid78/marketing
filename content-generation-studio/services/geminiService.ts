@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import type { GeneratorFormState } from '../types';
+import type { GeneratorFormState } from "../types";
 
 export function createContentStudioService(apiKey: string) {
   if (!apiKey) {
@@ -10,7 +10,7 @@ export function createContentStudioService(apiKey: string) {
   const generateContent = async (formData: GeneratorFormState): Promise<string> => {
     const { contentType, targetAudience, topic, formatPreference } = formData;
 
-  const prompt = `
+    const prompt = `
     You are an expert instructional designer and content creator. Your task is to generate high-quality educational content based on the following specifications. The output must be well-structured, comprehensive, engaging, and formatted using Markdown.
 
     **Content Specifications:**
@@ -33,10 +33,10 @@ export function createContentStudioService(apiKey: string) {
 
     try {
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: "gemini-2.5-flash",
         contents: prompt,
       });
-      return response.text || 'No content generated';
+      return response.text || "No content generated";
     } catch (error) {
       console.error("Error generating content:", error);
       if (error instanceof Error) {
@@ -48,42 +48,103 @@ export function createContentStudioService(apiKey: string) {
 
   const generateImagePreview = async (prompt: string): Promise<string> => {
     const response = await ai.models.generateImages({
-      model: 'imagen-4.0-generate-001',
-      prompt: prompt,
+      model: "imagen-4.0-generate-001",
+      prompt,
       config: {
         numberOfImages: 1,
-        outputMimeType: 'image/jpeg',
-        aspectRatio: '16:9',
+        outputMimeType: "image/jpeg",
+        aspectRatio: "16:9",
       },
     });
 
-    const base64ImageBytes = response.generatedImages?.[0]?.image?.imageBytes || '';
+    const base64ImageBytes = response.generatedImages?.[0]?.image?.imageBytes || "";
     return `data:image/jpeg;base64,${base64ImageBytes}`;
   };
 
-  const generateQuizPreview = async (topic: string): Promise<{ question: string; options: string[]; answer: string; }> => {
-      const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
-          contents: `Generate a single, clear multiple-choice question about "${topic}". Provide one correct answer and three plausible incorrect distractors.`,
-          config: {
-              responseMimeType: "application/json",
-              responseSchema: {
-                  type: Type.OBJECT,
-                  properties: {
-                      question: { type: Type.STRING },
-                      options: {
-                          type: Type.ARRAY,
-                          items: { type: Type.STRING }
-                      },
-                      answer: { type: Type.STRING, description: "The correct option from the options array." }
-                  },
-                  required: ["question", "options", "answer"]
-              },
+  const generateQuizPreview = async (
+    topic: string,
+  ): Promise<{ question: string; options: string[]; answer: string }> => {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: `Generate a single, clear multiple-choice question about "${topic}". Provide one correct answer and three plausible incorrect distractors.`,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            question: { type: Type.STRING },
+            options: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING },
+            },
+            answer: {
+              type: Type.STRING,
+              description: "The correct option from the options array.",
+            },
           },
-      });
+          required: ["question", "options", "answer"],
+        },
+      },
+    });
 
-      return JSON.parse(response.text || '{"question":"","options":[],"answer":""}');
+    return JSON.parse(response.text || '{"question":"","options":[],"answer":""}');
   };
 
-  return { generateContent, generateImagePreview, generateQuizPreview };
+  /**
+   * Generate a short video using Veo 3.1 and return a Blob URL that can be used
+   * as the source for a <video> element in the browser.
+   *
+   * Note: Video generation can be slow and may incur additional costs. Check
+   * pricing and quotas before heavy use.
+   */
+  const generateVideoPreview = async (prompt: string): Promise<string> => {
+    try {
+      let operation = await ai.models.generateVideos({
+        model: "veo-3.1-generate-preview",
+        prompt,
+      });
+
+      // Poll until the operation is complete.
+      while (!operation.done) {
+        // Wait ~10 seconds between polls to avoid spamming the API.
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+        // eslint-disable-next-line no-await-in-loop
+        operation = await ai.operations.getVideosOperation({ operation });
+      }
+
+      const generatedVideo = operation.response?.generatedVideos?.[0];
+      const uri = (generatedVideo as any)?.video?.uri as string | undefined;
+      if (!uri) {
+        throw new Error("No downloadable video URI returned.");
+      }
+
+      // In the browser, fetch the video bytes directly using the API key header,
+      // then wrap them in a Blob and expose them as an object URL for <video>.
+      const response = await fetch(uri, {
+        headers: {
+          "x-goog-api-key": apiKey,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Video download failed with status ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      return URL.createObjectURL(blob);
+    } catch (error) {
+      console.error("Error generating video:", error);
+      throw error instanceof Error
+        ? error
+        : new Error("An unknown error occurred while generating the video.");
+    }
+  };
+
+  return {
+    generateContent,
+    generateImagePreview,
+    generateQuizPreview,
+    generateVideoPreview,
+  };
 }

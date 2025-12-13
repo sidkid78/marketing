@@ -80,8 +80,8 @@ const performanceAnalysisSchema = {
 };
 
 function buildPrompt(userInput: UserInput, task: 'strategy' | 'content' | 'analysis', performanceData?: PerformanceData): string {
-    const { goals, platforms, demographics, brand_offer_details, audience_interests, campaign_budget } = userInput;
-    const corePrompt = `
+  const { goals, platforms, demographics, brand_offer_details, audience_interests, campaign_budget } = userInput;
+  const corePrompt = `
       You are an expert marketing agent. I need your help with a campaign.
       
       **Campaign Details:**
@@ -92,19 +92,19 @@ function buildPrompt(userInput: UserInput, task: 'strategy' | 'content' | 'analy
       - **Audience Interests:** ${audience_interests || 'Not specified'}${campaign_budget ? `\n      - **Campaign Budget:** Approximately ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(campaign_budget)}` : ''}
     `;
 
-    switch (task) {
-        case 'strategy':
-            return `${corePrompt}
+  switch (task) {
+    case 'strategy':
+      return `${corePrompt}
             Based on the details above, generate a list of actionable marketing strategies for each goal-platform combination. Consider the budget if provided.
             The output must be a JSON array of strategy objects.
             For each strategy, provide a clear title, a summary, a bulleted list of recommendations (creative, targeting, etc.), a rationale for the approach, and a list of key KPIs to monitor.`;
-        case 'content':
-            return `${corePrompt}
+    case 'content':
+      return `${corePrompt}
             Based on the details above, generate a list of 2-3 creative and platform-specific content ideas for each goal-platform combination. Consider the budget if provided for ad creatives.
             The output must be a JSON array of content idea objects.
             For each idea, provide a catchy headline, a direction for the visual aspect, a suggested caption, a call-to-action (CTA), and a few relevant hashtags.`;
-        case 'analysis':
-             return `
+    case 'analysis':
+      return `
               You are an expert marketing data analyst. I need you to analyze campaign performance.
               
               **Campaign Goal:** ${goals.join(', ')}
@@ -115,7 +115,7 @@ function buildPrompt(userInput: UserInput, task: 'strategy' | 'content' | 'analy
               The output must be a single JSON object.
               Provide a brief summary of the campaign's health, a list of metric-by-metric analyses (including status and a flag for UI), and a bulleted list of concrete adjustment recommendations.
             `;
-    }
+  }
 }
 
 export async function generateStrategy(userInput: UserInput, apiKey: string): Promise<Strategy[]> {
@@ -149,13 +149,13 @@ export async function generateContentIdeas(userInput: UserInput, apiKey: string)
 }
 
 export async function analyzePerformance(performanceData: PerformanceData, goal: string, apiKey: string): Promise<PerformanceAnalysis> {
-    const ai = createAIClient(apiKey);
-    const mockUserInput: UserInput = {
-        goals: [goal as any],
-        platforms: ['facebook'], // Assume a default platform for analysis context
-        demographics: { age_range: '25-34', gender: 'any', location: 'global' },
-        brand_offer_details: 'general campaign'
-    };
+  const ai = createAIClient(apiKey);
+  const mockUserInput: UserInput = {
+    goals: [goal as any],
+    platforms: ['facebook'], // Assume a default platform for analysis context
+    demographics: { age_range: '25-34', gender: 'any', location: 'global' },
+    brand_offer_details: 'general campaign'
+  };
   const prompt = buildPrompt(mockUserInput, 'analysis', performanceData);
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash',
@@ -184,7 +184,7 @@ export async function generateAdImage(visualDescription: string, apiKey: string)
         imageConfig: {
           aspectRatio: "1:1"
         }
-      }      
+      }
     });
 
     if (response.candidates && response.candidates[0]?.content?.parts) {
@@ -197,6 +197,54 @@ export async function generateAdImage(visualDescription: string, apiKey: string)
     return null;
   } catch (error) {
     console.error("Error generating ad image:", error);
+    return null;
+  }
+}
+
+/**
+ * Generate a short video using Veo 3.1 and return a Blob URL that can be used
+ * as the source for a <video> element in the browser.
+ *
+ * Note: Video generation can be slow (may take 1-2 minutes) and may incur additional costs.
+ */
+export async function generateAdVideo(visualDescription: string, apiKey: string): Promise<string | null> {
+  try {
+    const ai = createAIClient(apiKey);
+
+    let operation = await ai.models.generateVideos({
+      model: "veo-3.1-generate-preview",
+      prompt: `Create a short, high-quality video suitable for a marketing campaign or advertisement based on this description: ${visualDescription}`,
+    });
+
+    // Poll until the operation is complete.
+    while (!operation.done) {
+      // Wait ~10 seconds between polls to avoid spamming the API.
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+      operation = await ai.operations.getVideosOperation({ operation });
+    }
+
+    const generatedVideo = operation.response?.generatedVideos?.[0];
+    const uri = (generatedVideo as any)?.video?.uri as string | undefined;
+    if (!uri) {
+      throw new Error("No downloadable video URI returned.");
+    }
+
+    // In the browser, fetch the video bytes directly using the API key header,
+    // then wrap them in a Blob and expose them as an object URL for <video>.
+    const response = await fetch(uri, {
+      headers: {
+        "x-goog-api-key": apiKey,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Video download failed with status ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  } catch (error) {
+    console.error("Error generating ad video:", error);
     return null;
   }
 }
