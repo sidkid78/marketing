@@ -1,0 +1,5 @@
+{
+  "name": "Sentinel Code Review",
+  "description": "A multi-agent AI code review pipeline visualizing Security, Performance, and Quality analysis in real-time.",
+  "requestFramePermissions": []
+}

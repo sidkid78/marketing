@@ -41,78 +41,91 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Cyberpunk custom colors */
+  --color-cyber-primary: var(--cyber-primary);
+  --color-cyber-accent: var(--cyber-accent);
+  --color-cyber-neon: var(--cyber-neon);
+  --color-cyber-surface: var(--cyber-surface);
 }
 
-/* Winter is Coming Theme - Deep blues, icy accents, stark whites */
+/* Cyberpunk Theme - Neon lights, dark streets, digital dreams */
 :root {
   --radius: 0.625rem;
-  /* Light mode - Icy winter day */
-  --background: oklch(0.98 0.01 240); /* Pale icy white-blue */
-  --foreground: oklch(0.2 0.04 240); /* Deep winter blue-black */
-  --card: oklch(0.99 0.005 240); /* Bright snow white */
-  --card-foreground: oklch(0.2 0.04 240);
-  --popover: oklch(0.99 0.005 240);
-  --popover-foreground: oklch(0.2 0.04 240);
-  --primary: oklch(0.45 0.15 240); /* Deep frost blue */
-  --primary-foreground: oklch(0.98 0.01 240); /* Icy white */
-  --secondary: oklch(0.85 0.05 240); /* Light winter sky */
-  --secondary-foreground: oklch(0.25 0.05 240);
-  --muted: oklch(0.92 0.02 240); /* Muted ice blue */
-  --muted-foreground: oklch(0.45 0.05 240);
-  --accent: oklch(0.65 0.18 220); /* Cold azure accent */
-  --accent-foreground: oklch(0.98 0.01 240);
-  --destructive: oklch(0.55 0.22 20); /* Cold red */
-  --border: oklch(0.88 0.03 240); /* Soft frost border */
-  --input: oklch(0.88 0.03 240);
-  --ring: oklch(0.6 0.15 240); /* Ice blue ring */
-  --chart-1: oklch(0.55 0.18 240); /* Deep winter blue */
-  --chart-2: oklch(0.65 0.15 200); /* Glacier cyan */
-  --chart-3: oklch(0.7 0.12 260); /* Twilight blue */
-  --chart-4: oklch(0.5 0.2 220); /* Frozen azure */
-  --chart-5: oklch(0.6 0.16 280); /* Arctic purple */
-  --sidebar: oklch(0.96 0.01 240);
-  --sidebar-foreground: oklch(0.25 0.04 240);
-  --sidebar-primary: oklch(0.45 0.15 240);
-  --sidebar-primary-foreground: oklch(0.98 0.01 240);
-  --sidebar-accent: oklch(0.85 0.05 240);
-  --sidebar-accent-foreground: oklch(0.25 0.05 240);
-  --sidebar-border: oklch(0.88 0.03 240);
-  --sidebar-ring: oklch(0.6 0.15 240);
+  
+  /* Cyberpunk colors */
+  --cyber-primary: #00f0ff;
+  --cyber-accent: #ff00ff;
+  --cyber-neon: #39ff14;
+  --cyber-surface: rgba(15, 23, 42, 0.8);
+  
+  /* Light mode (still cyberpunk-ish but less harsh) */
+  --background: oklch(0.15 0.02 260);
+  --foreground: oklch(0.95 0.01 200);
+  --card: oklch(0.18 0.03 260);
+  --card-foreground: oklch(0.95 0.01 200);
+  --popover: oklch(0.18 0.03 260);
+  --popover-foreground: oklch(0.95 0.01 200);
+  --primary: oklch(0.75 0.2 195); /* Cyan neon */
+  --primary-foreground: oklch(0.1 0.02 260);
+  --secondary: oklch(0.25 0.04 260);
+  --secondary-foreground: oklch(0.9 0.02 200);
+  --muted: oklch(0.22 0.03 260);
+  --muted-foreground: oklch(0.65 0.05 200);
+  --accent: oklch(0.7 0.25 320); /* Magenta neon */
+  --accent-foreground: oklch(0.1 0.02 260);
+  --destructive: oklch(0.6 0.25 25);
+  --border: oklch(0.3 0.06 260);
+  --input: oklch(0.25 0.05 260);
+  --ring: oklch(0.75 0.2 195);
+  --chart-1: oklch(0.75 0.2 195); /* Cyan */
+  --chart-2: oklch(0.7 0.25 320); /* Magenta */
+  --chart-3: oklch(0.75 0.22 145); /* Neon green */
+  --chart-4: oklch(0.65 0.2 280); /* Purple */
+  --chart-5: oklch(0.7 0.2 60); /* Orange */
+  --sidebar: oklch(0.12 0.02 260);
+  --sidebar-foreground: oklch(0.9 0.02 200);
+  --sidebar-primary: oklch(0.75 0.2 195);
+  --sidebar-primary-foreground: oklch(0.1 0.02 260);
+  --sidebar-accent: oklch(0.25 0.04 260);
+  --sidebar-accent-foreground: oklch(0.9 0.02 200);
+  --sidebar-border: oklch(0.3 0.06 260);
+  --sidebar-ring: oklch(0.75 0.2 195);
 }
 
 .dark {
-  /* Dark mode - Long winter night */
-  --background: oklch(0.12 0.03 240); /* Deep midnight blue-black */
-  --foreground: oklch(0.95 0.01 220); /* Stark white with blue tint */
-  --card: oklch(0.16 0.04 240); /* Dark frozen steel */
-  --card-foreground: oklch(0.95 0.01 220);
-  --popover: oklch(0.16 0.04 240);
-  --popover-foreground: oklch(0.95 0.01 220);
-  --primary: oklch(0.6 0.2 220); /* Bright ice blue */
-  --primary-foreground: oklch(0.12 0.03 240); /* Dark background */
-  --secondary: oklch(0.25 0.06 240); /* Deep winter night */
-  --secondary-foreground: oklch(0.9 0.02 220);
-  --muted: oklch(0.22 0.05 240); /* Dark muted blue */
-  --muted-foreground: oklch(0.65 0.08 230); /* Muted ice */
-  --accent: oklch(0.55 0.22 200); /* Glowing cyan accent */
-  --accent-foreground: oklch(0.95 0.01 220);
-  --destructive: oklch(0.6 0.24 25); /* Winter fire red */
-  --border: oklch(0.25 0.05 240); /* Subtle frozen border */
-  --input: oklch(0.28 0.06 240); /* Input field frost */
-  --ring: oklch(0.55 0.18 220); /* Ice blue focus ring */
-  --chart-1: oklch(0.6 0.2 220); /* Bright glacier blue */
-  --chart-2: oklch(0.65 0.18 200); /* Cyan ice */
-  --chart-3: oklch(0.5 0.15 260); /* Deep purple frost */
-  --chart-4: oklch(0.55 0.22 240); /* Azure glow */
-  --chart-5: oklch(0.58 0.2 280); /* Northern lights purple */
-  --sidebar: oklch(0.14 0.04 240);
-  --sidebar-foreground: oklch(0.92 0.02 220);
-  --sidebar-primary: oklch(0.6 0.2 220);
-  --sidebar-primary-foreground: oklch(0.12 0.03 240);
-  --sidebar-accent: oklch(0.25 0.06 240);
-  --sidebar-accent-foreground: oklch(0.9 0.02 220);
-  --sidebar-border: oklch(0.25 0.05 240);
-  --sidebar-ring: oklch(0.55 0.18 220);
+  /* Dark mode - Full cyberpunk night */
+  --background: oklch(0.08 0.02 260);
+  --foreground: oklch(0.95 0.01 200);
+  --card: oklch(0.12 0.03 260);
+  --card-foreground: oklch(0.95 0.01 200);
+  --popover: oklch(0.12 0.03 260);
+  --popover-foreground: oklch(0.95 0.01 200);
+  --primary: oklch(0.75 0.22 195); /* Bright cyan neon */
+  --primary-foreground: oklch(0.08 0.02 260);
+  --secondary: oklch(0.2 0.04 260);
+  --secondary-foreground: oklch(0.92 0.02 200);
+  --muted: oklch(0.18 0.03 260);
+  --muted-foreground: oklch(0.6 0.05 200);
+  --accent: oklch(0.72 0.28 320); /* Hot magenta */
+  --accent-foreground: oklch(0.08 0.02 260);
+  --destructive: oklch(0.65 0.28 25);
+  --border: oklch(0.25 0.08 280);
+  --input: oklch(0.2 0.05 260);
+  --ring: oklch(0.75 0.22 195);
+  --chart-1: oklch(0.75 0.22 195);
+  --chart-2: oklch(0.72 0.28 320);
+  --chart-3: oklch(0.78 0.25 145);
+  --chart-4: oklch(0.68 0.22 280);
+  --chart-5: oklch(0.72 0.22 60);
+  --sidebar: oklch(0.1 0.02 260);
+  --sidebar-foreground: oklch(0.92 0.02 200);
+  --sidebar-primary: oklch(0.75 0.22 195);
+  --sidebar-primary-foreground: oklch(0.08 0.02 260);
+  --sidebar-accent: oklch(0.2 0.04 260);
+  --sidebar-accent-foreground: oklch(0.92 0.02 200);
+  --sidebar-border: oklch(0.25 0.08 280);
+  --sidebar-ring: oklch(0.75 0.22 195);
 }
 
 @layer base {
@@ -122,4 +135,114 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Cyberpunk grid background */
+.cyber-grid {
+  background-image: 
+    linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Neon glow effects */
+.neon-glow {
+  box-shadow: 
+    0 0 5px var(--cyber-primary),
+    0 0 10px var(--cyber-primary),
+    0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+.neon-glow-magenta {
+  box-shadow: 
+    0 0 5px var(--cyber-accent),
+    0 0 10px var(--cyber-accent),
+    0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.neon-text {
+  text-shadow: 
+    0 0 5px var(--cyber-primary),
+    0 0 10px var(--cyber-primary),
+    0 0 20px rgba(0, 240, 255, 0.5);
+}
+
+.neon-text-magenta {
+  text-shadow: 
+    0 0 5px var(--cyber-accent),
+    0 0 10px var(--cyber-accent),
+    0 0 20px rgba(255, 0, 255, 0.5);
+}
+
+/* Glitch animation */
+@keyframes glitch {
+  0%, 90%, 100% {
+    transform: translate(0);
+  }
+  92% {
+    transform: translate(-2px, 1px);
+  }
+  94% {
+    transform: translate(2px, -1px);
+  }
+  96% {
+    transform: translate(-1px, 2px);
+  }
+  98% {
+    transform: translate(1px, -2px);
+  }
+}
+
+.glitch-hover:hover {
+  animation: glitch 0.3s ease-in-out;
+}
+
+/* Scanline effect */
+.scanlines::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Cyberpunk scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: oklch(0.12 0.02 260);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00f0ff, #ff00ff);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00f0ff, #ff00ff);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+/* Pulsing border animation */
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: rgba(0, 240, 255, 0.3);
+  }
+  50% {
+    border-color: rgba(0, 240, 255, 0.8);
+  }
+}
+
+.pulse-border {
+  animation: pulse-border 2s ease-in-out infinite;
 }

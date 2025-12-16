@@ -1,0 +1,5 @@
+{
+  "name": "AutoContent Architect",
+  "description": "A multi-stage AI content pipeline that orchestrates specialized agents to Research, Draft, Edit, and Publish high-quality content.",
+  "requestFramePermissions": []
+}

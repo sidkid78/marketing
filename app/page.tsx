@@ -1,20 +1,34 @@
 "use client";
 
 import React, { Suspense, useEffect, useState } from "react";
+import { Cpu, Zap, Terminal } from "lucide-react";
 
 const MarketingAgent = React.lazy(() => import("../ai-marketing-agent/App"));
 const ContentStudio = React.lazy(() => import("../content-generation-studio/App"));
 const ImageStudio = React.lazy(() => import("../image-studio/App"));
+const MultiAgentOrch = React.lazy(() => import("../multi-agent-orch/App"));
+const ContentArchitect = React.lazy(() => import("../content_architect/App"));
+const SentinelCode = React.lazy(() => import("../sentinel-code/App"));
 
 // Get environment variable API key if available (for Vercel deployments).
 // Use Next.js compile-time injection so server and client always see the same value.
 const ENV_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY ?? '';
 
+const tabs = [
+  { id: "agent", label: "AI Marketing", icon: "🎯" },
+  { id: "studio", label: "Content Studio", icon: "✍️" },
+  { id: "image", label: "Image Studio", icon: "🎨" },
+  { id: "orchestrator", label: "Orchestrator", icon: "🧠" },
+  { id: "architect", label: "Architect", icon: "🏗️" },
+  { id: "sentinel", label: "Sentinel", icon: "🛡️" },
+] as const;
+
+type TabId = typeof tabs[number]["id"];
+
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"agent" | "studio" | "image">("agent");
+  const [activeTab, setActiveTab] = useState<TabId>("agent");
   const [apiKey, setApiKey] = useState("");
   const [draftKey, setDraftKey] = useState("");
-  const [isDark, setIsDark] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -24,164 +38,208 @@ export default function Home() {
       const saved = window.localStorage.getItem("GEMINI_API_KEY") || ENV_API_KEY || "";
       setApiKey(saved);
       setDraftKey(saved);
-      
-      // Check for saved theme or system preference
-      const savedTheme = window.localStorage.getItem("theme");
-      if (savedTheme === "dark") {
-        setIsDark(true);
-        document.documentElement.classList.add("dark");
-      } else if (savedTheme === "light") {
-        setIsDark(false);
-        document.documentElement.classList.remove("dark");
-      } else {
-        // Use system preference
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        setIsDark(prefersDark);
-        if (prefersDark) {
-          document.documentElement.classList.add("dark");
-        }
-      }
-    } catch {}
+
+      // Always use dark theme for cyberpunk
+      document.documentElement.classList.add("dark");
+      window.localStorage.setItem("theme", "dark");
+    } catch { }
   }, []);
 
   function handleSave() {
     try {
       window.localStorage.setItem("GEMINI_API_KEY", draftKey.trim());
-    } catch {}
+    } catch { }
     setApiKey(draftKey.trim());
   }
 
   function handleClear() {
     try {
       window.localStorage.removeItem("GEMINI_API_KEY");
-    } catch {}
+    } catch { }
     setApiKey("");
     setDraftKey("");
   }
 
-  function toggleDarkMode() {
-    const newIsDark = !isDark;
-    setIsDark(newIsDark);
-    
-    if (newIsDark) {
-      document.documentElement.classList.add("dark");
-      window.localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      window.localStorage.setItem("theme", "light");
-    }
-  }
-
   return (
-    <div className="min-h-screen w-full px-6 py-8 sm:px-10">
-      <header className="mb-6 flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">AI Tools</h1>
-          <p className="text-sm text-muted-foreground">Switch between apps using the tabs below.</p>
-        </div>
-        <button
-          onClick={toggleDarkMode}
-          className="p-2 rounded-md border border-border bg-card hover:bg-accent transition-colors"
-          aria-label="Toggle dark mode"
-        >
-          {isDark ? (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
-            </svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-            </svg>
+    <div className="min-h-screen w-full relative overflow-hidden">
+      {/* Cyberpunk Grid Background */}
+      <div className="fixed inset-0 cyber-grid z-0"></div>
+
+      {/* Gradient Overlay */}
+      <div className="fixed inset-0 bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#1a0a2a] z-0"></div>
+
+      {/* Animated Corner Accents */}
+      <div className="fixed top-0 left-0 w-32 h-32 border-l-2 border-t-2 border-[#00f0ff]/30 z-10"></div>
+      <div className="fixed top-0 right-0 w-32 h-32 border-r-2 border-t-2 border-[#ff00ff]/30 z-10"></div>
+      <div className="fixed bottom-0 left-0 w-32 h-32 border-l-2 border-b-2 border-[#ff00ff]/30 z-10"></div>
+      <div className="fixed bottom-0 right-0 w-32 h-32 border-r-2 border-b-2 border-[#00f0ff]/30 z-10"></div>
+
+      {/* Main Content */}
+      <div className="relative z-20 px-6 py-8 sm:px-10">
+        {/* Header */}
+        <header className="mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="absolute inset-0 bg-[#00f0ff] blur-xl opacity-30 animate-pulse"></div>
+              <div className="relative bg-black/50 p-3 rounded-xl border border-[#00f0ff]/50 backdrop-blur-sm">
+                <Cpu size={28} className="text-[#00f0ff]" />
+              </div>
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight font-mono">
+                <span className="text-[#00f0ff] neon-text">NEURAL</span>
+                <span className="text-white">_</span>
+                <span className="text-[#ff00ff] neon-text-magenta">CORE</span>
+                <span className="text-[#00f0ff] animate-pulse">_</span>
+              </h1>
+              <p className="text-sm text-gray-400 font-mono tracking-widest">
+                AI SYSTEMS INTERFACE v3.0
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-black/40 px-4 py-2 rounded-lg border border-[#00f0ff]/20 backdrop-blur-sm">
+              <div className="w-2 h-2 rounded-full bg-[#39ff14] animate-pulse shadow-[0_0_10px_#39ff14]"></div>
+              <span className="text-xs font-mono text-gray-400">SYSTEMS ONLINE</span>
+            </div>
+            <div className="flex items-center gap-2 bg-black/40 px-4 py-2 rounded-lg border border-[#ff00ff]/20 backdrop-blur-sm">
+              <Terminal size={14} className="text-[#ff00ff]" />
+              <span className="text-xs font-mono text-gray-400">v3.0.0</span>
+            </div>
+          </div>
+        </header>
+
+        {/* API Key Section */}
+        <section className="mb-8 bg-black/40 backdrop-blur-sm rounded-xl border border-[#00f0ff]/20 p-6 relative overflow-hidden">
+          {/* Decorative corner */}
+          <div className="absolute top-0 right-0 w-20 h-20 border-r border-t border-[#00f0ff]/30"></div>
+          <div className="absolute bottom-0 left-0 w-20 h-20 border-l border-b border-[#ff00ff]/30"></div>
+
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+            <div className="flex-1">
+              <label htmlFor="apiKey" className="flex items-center gap-2 text-sm font-mono font-medium mb-2 text-[#00f0ff]">
+                <Zap size={14} />
+                GEMINI API KEY
+              </label>
+              <input
+                id="apiKey"
+                type="password"
+                className="w-full px-4 py-3 border border-[#00f0ff]/30 rounded-lg bg-black/50 text-white font-mono placeholder:text-gray-600 focus:border-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] focus:outline-none transition-all"
+                placeholder="Enter your Gemini API key..."
+                value={draftKey}
+                onChange={(e) => setDraftKey(e.target.value)}
+                autoComplete="off"
+              />
+              <p className="mt-2 text-xs font-mono text-gray-500">
+                ◈ Stored locally in browser memory. Not transmitted to external servers.
+                {ENV_API_KEY && <span className="block mt-1 text-[#39ff14]">◈ Environment variable detected</span>}
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={handleSave}
+                className="px-6 py-3 rounded-lg font-mono text-sm font-medium bg-gradient-to-r from-[#00f0ff] to-[#00a0ff] text-black hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all duration-300 glitch-hover"
+              >
+                SAVE KEY
+              </button>
+              <button
+                onClick={handleClear}
+                className="px-6 py-3 rounded-lg font-mono text-sm font-medium border border-[#ff00ff]/50 text-[#ff00ff] hover:bg-[#ff00ff]/10 hover:shadow-[0_0_20px_rgba(255,0,255,0.3)] transition-all duration-300"
+              >
+                CLEAR
+              </button>
+            </div>
+          </div>
+
+          {mounted && apiKey && (
+            <div className="mt-4 flex items-center gap-2 text-xs font-mono text-[#39ff14]">
+              <div className="w-2 h-2 rounded-full bg-[#39ff14] shadow-[0_0_10px_#39ff14]"></div>
+              API KEY CONFIGURED (ending with ...{apiKey.slice(-4)})
+            </div>
           )}
-        </button>
-      </header>
+          {mounted && !apiKey && (
+            <div className="mt-4 flex items-center gap-2 text-xs font-mono text-[#ff6b6b]">
+              <div className="w-2 h-2 rounded-full bg-[#ff6b6b] animate-pulse"></div>
+              WARNING: No API key detected. Enter your Gemini API key above.
+            </div>
+          )}
+        </section>
 
-      <section className="mb-6 border border-border rounded-md p-4 bg-card">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-3">
-          <div className="flex-1">
-            <label htmlFor="apiKey" className="block text-sm font-medium mb-1">Gemini API Key</label>
-            <input
-              id="apiKey"
-              type="password"
-              className="w-full px-3 py-2 border border-input rounded-md bg-background"
-              placeholder="Enter your Gemini API key"
-              value={draftKey}
-              onChange={(e) => setDraftKey(e.target.value)}
-              autoComplete="off"
-            />
-            <p className="mt-1 text-xs text-muted-foreground">
-              Stored locally in your browser (localStorage). Not shared with the server.
-              {ENV_API_KEY && <span className="block mt-1 text-chart-2">✓ Environment variable detected</span>}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={handleSave}
-              className="px-4 py-2 rounded-md border border-border bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
-            >
-              Save Key
-            </button>
-            <button
-              onClick={handleClear}
-              className="px-4 py-2 rounded-md border border-border bg-muted text-foreground hover:opacity-90 transition-opacity"
-            >
-              Clear
-            </button>
-          </div>
+        {/* Tab Navigation */}
+        <div className="mb-6">
+          <nav className="flex flex-wrap gap-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                className={`group relative px-5 py-3 rounded-lg font-mono text-sm transition-all duration-300 ${activeTab === tab.id
+                    ? "bg-gradient-to-r from-[#00f0ff]/20 to-[#ff00ff]/20 text-white border border-[#00f0ff]/50 shadow-[0_0_15px_rgba(0,240,255,0.2)]"
+                    : "bg-black/30 text-gray-400 border border-gray-800 hover:border-[#00f0ff]/30 hover:text-white hover:bg-black/50"
+                  }`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {/* Active indicator line */}
+                {activeTab === tab.id && (
+                  <div className="absolute -top-px left-4 right-4 h-[2px] bg-gradient-to-r from-[#00f0ff] via-[#ff00ff] to-[#00f0ff]"></div>
+                )}
+                <span className="mr-2">{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </nav>
         </div>
-        {mounted && apiKey && (
-          <p className="mt-2 text-xs text-chart-2">✓ API key configured (ending with ...{apiKey.slice(-4)})</p>
-        )}
-        {mounted && !apiKey && (
-          <p className="mt-2 text-xs text-destructive">⚠ No API key found. Please enter your Gemini API key above.</p>
-        )}
-      </section>
 
-      <div className="w-full border-b border-border mb-4">
-        <nav className="flex gap-2">
-          <button
-            className={`px-4 py-2 rounded-t-md border border-b-0 ${
-              activeTab === "agent"
-                ? "bg-background text-foreground border-border"
-                : "bg-muted text-muted-foreground border-transparent hover:text-foreground"
-            }`}
-            onClick={() => setActiveTab("agent")}
-          >
-            AI Marketing Agent
-          </button>
-          <button
-            className={`px-4 py-2 rounded-t-md border border-b-0 ${
-              activeTab === "studio"
-                ? "bg-background text-foreground border-border"
-                : "bg-muted text-muted-foreground border-transparent hover:text-foreground"
-            }`}
-            onClick={() => setActiveTab("studio")}
-          >
-            Content Generation Studio
-          </button>
-          <button
-            className={`px-4 py-2 rounded-t-md border border-b-0 ${
-              activeTab === "image"
-                ? "bg-background text-foreground border-border"
-                : "bg-muted text-muted-foreground border-transparent hover:text-foreground"
-            }`}
-            onClick={() => setActiveTab("image")}
-          >
-            Agentic Image Studio
-          </button>
-        </nav>
-      </div>
+        {/* Tab Content Panel */}
+        <div className="relative bg-black/40 backdrop-blur-sm rounded-xl border border-[#00f0ff]/20 overflow-hidden" role="tabpanel">
+          {/* Top decoration line */}
+          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#00f0ff]/50 to-transparent"></div>
 
-      <div className="rounded-b-md rounded-tr-md border border-border bg-background" role="tabpanel">
-        {mounted ? (
-          <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading…</div>}>
-            {activeTab === "agent" && <MarketingAgent apiKey={apiKey} />}
-            {activeTab === "studio" && <ContentStudio apiKey={apiKey} />}
-            {activeTab === "image" && <ImageStudio apiKey={apiKey} />}
-          </Suspense>
-        ) : (
-          <div className="p-6 text-sm text-muted-foreground">Initializing...</div>
-        )}
+          {/* Corner decorations */}
+          <div className="absolute top-0 left-0 w-6 h-6 border-l-2 border-t-2 border-[#00f0ff]/50"></div>
+          <div className="absolute top-0 right-0 w-6 h-6 border-r-2 border-t-2 border-[#ff00ff]/50"></div>
+          <div className="absolute bottom-0 left-0 w-6 h-6 border-l-2 border-b-2 border-[#ff00ff]/50"></div>
+          <div className="absolute bottom-0 right-0 w-6 h-6 border-r-2 border-b-2 border-[#00f0ff]/50"></div>
+
+          {mounted ? (
+            <Suspense
+              fallback={
+                <div className="p-12 text-center">
+                  <div className="inline-block relative">
+                    <div className="w-12 h-12 border-2 border-[#00f0ff]/30 rounded-full"></div>
+                    <div className="absolute inset-0 w-12 h-12 border-2 border-[#00f0ff] border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                  <p className="mt-4 text-sm font-mono text-gray-400 animate-pulse">LOADING MODULE...</p>
+                </div>
+              }
+            >
+              {activeTab === "agent" && <MarketingAgent apiKey={apiKey} />}
+              {activeTab === "studio" && <ContentStudio apiKey={apiKey} />}
+              {activeTab === "image" && <ImageStudio apiKey={apiKey} />}
+              {activeTab === "orchestrator" && <MultiAgentOrch />}
+              {activeTab === "architect" && <ContentArchitect />}
+              {activeTab === "sentinel" && <SentinelCode />}
+            </Suspense>
+          ) : (
+            <div className="p-12 text-center">
+              <div className="inline-block relative">
+                <div className="w-12 h-12 border-2 border-[#00f0ff]/30 rounded-full"></div>
+                <div className="absolute inset-0 w-12 h-12 border-2 border-[#00f0ff] border-t-transparent rounded-full animate-spin"></div>
+              </div>
+              <p className="mt-4 text-sm font-mono text-gray-400">INITIALIZING NEURAL CORE...</p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <footer className="mt-8 text-center">
+          <div className="inline-flex items-center gap-4 text-xs font-mono text-gray-600">
+            <span>◈ NEURAL_CORE SYSTEMS</span>
+            <span className="w-1 h-1 rounded-full bg-[#00f0ff]/50"></span>
+            <span>QUANTUM PROCESSING ENABLED</span>
+            <span className="w-1 h-1 rounded-full bg-[#ff00ff]/50"></span>
+            <span>© 2077 MEGACORP</span>
+          </div>
+        </footer>
       </div>
     </div>
   );

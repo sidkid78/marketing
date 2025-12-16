@@ -1,0 +1,5 @@
+{
+  "name": "Gemini Multi-Agent Orchestrator",
+  "description": "A React-based UI for a multi-agent AI system that decomposes complex goals into subtasks, executes them in parallel using Gemini, and synthesizes the results.",
+  "requestFramePermissions": []
+}
