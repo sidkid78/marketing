@@ -14,7 +14,7 @@ interface ResultViewerProps {
 
 const CodeBlock: React.FC<{ language: string, code: string }> = ({ language, code }) => {
     const [copied, setCopied] = useState(false);
-    
+
     const handleCopy = () => {
         navigator.clipboard.writeText(code);
         setCopied(true);
@@ -22,27 +22,27 @@ const CodeBlock: React.FC<{ language: string, code: string }> = ({ language, cod
     };
 
     return (
-        <div className="my-8 rounded border border-cyber-primary/20 bg-cyber-black/50 group relative font-mono text-sm not-prose shadow-lg shadow-black/40">
+        <div className="my-8 rounded border border-[#00f0ff]/20 bg-black/50 group relative font-mono text-sm not-prose shadow-lg shadow-black/40">
             {/* Header with technical look */}
             <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/5">
                 <div className="flex items-center gap-2">
-                    <Terminal size={14} className="text-cyber-primary" />
-                    <span className="text-[10px] font-bold text-cyber-primary uppercase tracking-wider">
+                    <Terminal size={14} className="text-[#00f0ff]" />
+                    <span className="text-[10px] font-bold text-[#00f0ff] uppercase tracking-wider">
                         {language || 'TEXT'}
                     </span>
                 </div>
-                <button 
+                <button
                     onClick={handleCopy}
                     className={`flex items-center gap-1.5 px-2 py-1 rounded transition-all duration-200 border border-transparent
-                        ${copied 
-                            ? 'text-green-400' 
-                            : 'text-cyber-text hover:text-white'
+                        ${copied
+                            ? 'text-[#39ff14]'
+                            : 'text-gray-400 hover:text-white'
                         }`}
                 >
                     {copied ? <Check size={14} strokeWidth={3} /> : <Copy size={14} />}
                 </button>
             </div>
-            
+
             {/* Code Content */}
             <div className="p-5 overflow-x-auto custom-scrollbar">
                 <pre className="text-slate-300 font-mono leading-relaxed text-[13px]">
@@ -61,7 +61,7 @@ const formatInline = (text: string) => {
             return <strong key={index} className="font-bold text-white">{part.slice(2, -2)}</strong>;
         }
         if (part.startsWith('`') && part.endsWith('`')) {
-            return <code key={index} className="bg-white/10 text-cyber-accent font-mono text-[0.9em] px-1.5 py-0.5 rounded border border-white/10 mx-0.5">{part.slice(1, -1)}</code>;
+            return <code key={index} className="bg-white/10 text-[#ff00ff] font-mono text-[0.9em] px-1.5 py-0.5 rounded border border-white/10 mx-0.5">{part.slice(1, -1)}</code>;
         }
         return part;
     });
@@ -70,7 +70,7 @@ const formatInline = (text: string) => {
 const MarkdownRenderer = ({ content }: { content: string }) => {
     // Regex splits content by code blocks: ```lang ... ```
     const parts = content.split(/(```(?:[\w-]*)\s*[\s\S]*?```)/g);
-    
+
     return (
         <div className="text-slate-300 leading-relaxed space-y-4">
             {parts.map((part, i) => {
@@ -79,7 +79,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
                 if (codeMatch) {
                     return <CodeBlock key={i} language={codeMatch[1]} code={codeMatch[2]} />;
                 }
-                
+
                 if (!part.trim()) return null;
 
                 // Render text parts
@@ -94,7 +94,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
                                 return <h1 key={bIdx} className="text-3xl font-bold text-white mt-10 mb-6 pb-2 border-b border-white/10 tracking-tight">{formatInline(trimmed.replace('# ', ''))}</h1>;
                             }
                             if (trimmed.startsWith('## ')) {
-                                return <h2 key={bIdx} className="text-2xl font-bold text-white mt-8 mb-4 flex items-center gap-2"><span className="text-cyber-primary text-sm">##</span> {formatInline(trimmed.replace('## ', ''))}</h2>;
+                                return <h2 key={bIdx} className="text-2xl font-bold text-white mt-8 mb-4 flex items-center gap-2"><span className="text-[#00f0ff] text-sm">##</span> {formatInline(trimmed.replace('## ', ''))}</h2>;
                             }
                             if (trimmed.startsWith('### ')) {
                                 return <h3 key={bIdx} className="text-xl font-bold text-slate-100 mt-6 mb-3">{formatInline(trimmed.replace('### ', ''))}</h3>;
@@ -103,16 +103,16 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
                             // Blockquotes
                             if (trimmed.startsWith('> ')) {
                                 return (
-                                    <blockquote key={bIdx} className="border-l-4 border-cyber-primary pl-4 py-2 my-6 text-slate-400 italic bg-white/5 rounded-r shadow-sm">
+                                    <blockquote key={bIdx} className="border-l-4 border-[#00f0ff] pl-4 py-2 my-6 text-slate-400 italic bg-white/5 rounded-r shadow-sm">
                                         {formatInline(trimmed.replace(/^> /gm, ''))}
                                     </blockquote>
                                 );
                             }
-                            
+
                             // Unordered List (- or *)
                             if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
                                 return (
-                                    <ul key={bIdx} className="list-disc pl-5 mb-4 space-y-2 marker:text-cyber-primary">
+                                    <ul key={bIdx} className="list-disc pl-5 mb-4 space-y-2 marker:text-[#00f0ff]">
                                         {trimmed.split('\n').map((line, lIdx) => (
                                             <li key={lIdx} className="pl-1 text-slate-300">{formatInline(line.replace(/^[-*] /, ''))}</li>
                                         ))}
@@ -123,14 +123,14 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
                             // Numbered List
                             if (/^\d+\./.test(trimmed)) {
                                 return (
-                                    <ol key={bIdx} className="list-decimal pl-5 mb-4 space-y-2 marker:text-cyber-primary text-slate-300">
-                                         {trimmed.split('\n').map((line, lIdx) => (
+                                    <ol key={bIdx} className="list-decimal pl-5 mb-4 space-y-2 marker:text-[#00f0ff] text-slate-300">
+                                        {trimmed.split('\n').map((line, lIdx) => (
                                             <li key={lIdx} className="pl-1">{formatInline(line.replace(/^\d+\.\s*/, ''))}</li>
                                         ))}
                                     </ol>
                                 );
                             }
-                            
+
                             // Standard Paragraph
                             return <div key={bIdx} className="mb-4 whitespace-pre-wrap">{formatInline(trimmed)}</div>;
                         })}
@@ -159,10 +159,10 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
 
     if (!research) {
         return (
-            <div className="h-full flex items-center justify-center text-cyber-text/30 bg-cyber-panel/40 rounded-xl border border-white/5 min-h-[400px]">
+            <div className="h-full flex items-center justify-center text-gray-500 bg-black/40 rounded-xl border border-white/5 min-h-[400px]">
                 <div className="text-center">
-                    <Cpu className="w-16 h-16 mx-auto mb-4 opacity-20 animate-pulse" />
-                    <p className="font-mono text-sm tracking-widest uppercase">System Standby</p>
+                    <Cpu className="w-16 h-16 mx-auto mb-4 opacity-20 animate-pulse text-[#00f0ff]" />
+                    <p className="font-mono text-sm tracking-widest uppercase text-[#00f0ff]">System Standby</p>
                     <p className="text-xs mt-2 opacity-50">Initiate pipeline to generate output</p>
                 </div>
             </div>
@@ -178,9 +178,9 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
     ];
 
     return (
-        <div className="bg-cyber-panel/40 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden flex flex-col h-full min-h-[600px] shadow-2xl relative">
-             {/* Decorative Top Border */}
-             <div className="h-px w-full bg-gradient-to-r from-transparent via-cyber-primary/50 to-transparent"></div>
+        <div className="bg-black/40 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden flex flex-col h-full min-h-[600px] shadow-2xl relative">
+            {/* Decorative Top Border */}
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#00f0ff]/50 to-transparent"></div>
 
             {/* Header / Tabs */}
             <div className="flex border-b border-white/10 bg-black/20 overflow-x-auto">
@@ -192,11 +192,11 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                             onClick={() => !tab.disabled && setActiveTab(tab.id as any)}
                             disabled={tab.disabled}
                             className={`flex items-center gap-2 px-6 py-4 text-xs font-bold font-mono transition-all whitespace-nowrap tracking-wider
-                                ${activeTab === tab.id 
-                                    ? 'bg-cyber-primary/10 text-cyber-primary border-b-2 border-cyber-primary' 
-                                    : tab.disabled 
-                                        ? 'text-cyber-text/20 cursor-not-allowed' 
-                                        : 'text-cyber-text hover:text-white hover:bg-white/5'
+                                ${activeTab === tab.id
+                                    ? 'bg-[#00f0ff]/10 text-[#00f0ff] border-b-2 border-[#00f0ff]'
+                                    : tab.disabled
+                                        ? 'text-gray-700 cursor-not-allowed'
+                                        : 'text-gray-400 hover:text-white hover:bg-white/5'
                                 }`}
                         >
                             <Icon size={14} />
@@ -210,36 +210,36 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
             <div className="p-8 overflow-y-auto flex-1 bg-transparent">
                 {activeTab === 'research' && research && (
                     <div className="space-y-6 animate-in fade-in duration-500">
-                        <div className="bg-cyber-primary/10 p-6 rounded border border-cyber-primary/20 shadow-[0_0_20px_rgba(6,182,212,0.1)]">
-                            <h3 className="text-xs font-bold text-cyber-primary uppercase tracking-widest mb-3 flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-cyber-primary animate-pulse"></span>
+                        <div className="bg-[#00f0ff]/10 p-6 rounded border border-[#00f0ff]/20 shadow-[0_0_20px_rgba(0,240,255,0.1)]">
+                            <h3 className="text-xs font-bold text-[#00f0ff] uppercase tracking-widest mb-3 flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-[#00f0ff] animate-pulse"></span>
                                 Target Audience Analysis
                             </h3>
                             <p className="text-cyan-100 leading-relaxed font-mono text-sm">{research.target_audience_analysis}</p>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="bg-cyber-black/50 p-6 rounded border border-white/5">
+                            <div className="bg-black/50 p-6 rounded border border-white/5">
                                 <h3 className="font-bold text-white mb-4 flex items-center gap-2 font-mono text-sm tracking-wide">
                                     KEY_POINTS
                                 </h3>
                                 <ul className="space-y-3">
                                     {research.key_points.map((pt, i) => (
                                         <li key={i} className="text-slate-300 flex gap-3 text-sm leading-relaxed">
-                                            <span className="text-cyber-accent font-bold">›</span>
+                                            <span className="text-[#ff00ff] font-bold">›</span>
                                             {pt}
                                         </li>
                                     ))}
                                 </ul>
                             </div>
                             <div className="space-y-6">
-                                <div className="bg-cyber-success/5 p-6 rounded border border-cyber-success/20">
-                                    <h3 className="font-bold text-cyber-success mb-4 flex items-center gap-2 font-mono text-sm tracking-wide">
+                                <div className="bg-[#39ff14]/5 p-6 rounded border border-[#39ff14]/20">
+                                    <h3 className="font-bold text-[#39ff14] mb-4 flex items-center gap-2 font-mono text-sm tracking-wide">
                                         SEO_STRATEGY
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
                                         {research.seo_keywords.map((kw, i) => (
-                                            <span key={i} className="px-2 py-1 bg-cyber-success/10 text-cyber-success rounded text-[10px] font-mono border border-cyber-success/20">
+                                            <span key={i} className="px-2 py-1 bg-[#39ff14]/10 text-[#39ff14] rounded text-[10px] font-mono border border-[#39ff14]/20">
                                                 #{kw}
                                             </span>
                                         ))}
@@ -247,7 +247,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                                 </div>
                                 <div className="bg-white/5 p-6 rounded border border-white/10">
                                     <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Recommended Angle</h3>
-                                    <p className="text-sm text-slate-300 italic leading-relaxed border-l-2 border-cyber-accent pl-3">"{research.recommended_angle}"</p>
+                                    <p className="text-sm text-slate-300 italic leading-relaxed border-l-2 border-[#ff00ff] pl-3">"{research.recommended_angle}"</p>
                                 </div>
                             </div>
                         </div>
@@ -258,20 +258,20 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-500">
                         <div className="text-center pb-8 border-b border-white/10">
                             <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{draft.title}</h1>
-                            {draft.subtitle && <p className="text-xl text-cyber-primary font-light">{draft.subtitle}</p>}
+                            {draft.subtitle && <p className="text-xl text-[#00f0ff] font-light">{draft.subtitle}</p>}
                             <div className="mt-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-slate-400 text-xs font-medium uppercase tracking-wide border border-white/10">
                                 <span>{draft.estimated_reading_time} min read</span>
                             </div>
                         </div>
 
-                        <div className="text-lg leading-loose text-slate-300 font-light border-l-4 border-cyber-primary pl-6 my-8 italic opacity-90">
+                        <div className="text-lg leading-loose text-slate-300 font-light border-l-4 border-[#00f0ff] pl-6 my-8 italic opacity-90">
                             {draft.introduction}
                         </div>
-                        
+
                         {draft.main_sections.map((section, idx) => (
                             <div key={idx} className="mt-10">
                                 <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
-                                    <span className="text-cyber-text/30 text-base font-mono">0{idx + 1}.</span> 
+                                    <span className="text-gray-600 text-base font-mono">0{idx + 1}.</span>
                                     {section.heading}
                                 </h2>
                                 <MarkdownRenderer content={section.content} />
@@ -279,7 +279,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                         ))}
 
                         <div className="mt-16 p-8 bg-white/5 rounded border border-white/10">
-                            <h3 className="text-lg font-bold text-white mb-3 uppercase tracking-wide text-xs opacity-50">Conclusion</h3>
+                            <h3 className="text-sm font-bold text-white mb-3 uppercase tracking-wider opacity-80 font-mono">Conclusion</h3>
                             <p className="text-slate-300 leading-relaxed">{draft.conclusion}</p>
                         </div>
                     </div>
@@ -287,7 +287,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
 
                 {activeTab === 'edits' && edits && (
                     <div className="space-y-8 animate-in fade-in duration-500">
-                        <div className="flex flex-col md:flex-row items-center justify-between bg-cyber-black/50 p-8 rounded border border-white/10 shadow-lg gap-6">
+                        <div className="flex flex-col md:flex-row items-center justify-between bg-black/50 p-8 rounded border border-white/10 shadow-lg gap-6">
                             <div>
                                 <h3 className="text-xl font-bold text-white font-mono uppercase tracking-wider">Quality Score</h3>
                                 <p className="text-slate-500 mt-1 text-sm">Automated heuristic analysis.</p>
@@ -295,12 +295,12 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                             <div className="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
                                 <svg className="w-full h-full transform -rotate-90">
                                     <circle cx="48" cy="48" r="40" fill="transparent" stroke="#1e293b" strokeWidth="8" />
-                                    <circle 
-                                        cx="48" cy="48" r="40" 
-                                        fill="transparent" 
-                                        stroke={edits.overall_score > 80 ? '#10b981' : edits.overall_score > 60 ? '#eab308' : '#ef4444'} 
-                                        strokeWidth="8" 
-                                        strokeDasharray={`${2 * Math.PI * 40}`} 
+                                    <circle
+                                        cx="48" cy="48" r="40"
+                                        fill="transparent"
+                                        stroke={edits.overall_score > 80 ? '#39ff14' : edits.overall_score > 60 ? '#eab308' : '#ef4444'}
+                                        strokeWidth="8"
+                                        strokeDasharray={`${2 * Math.PI * 40}`}
                                         strokeDashoffset={`${2 * Math.PI * 40 * (1 - edits.overall_score / 100)}`}
                                         strokeLinecap="round"
                                         className="transition-all duration-1000 ease-out shadow-[0_0_15px_currentColor]"
@@ -317,7 +317,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                                     DETECTED_ISSUES
                                 </h3>
                                 {edits.clarity_issues.length === 0 ? (
-                                    <div className="p-6 bg-cyber-success/10 rounded border border-cyber-success/20 text-cyber-success flex items-center gap-3">
+                                    <div className="p-6 bg-[#39ff14]/10 rounded border border-[#39ff14]/20 text-[#39ff14] flex items-center gap-3">
                                         <CheckCircle size={20} />
                                         <p className="font-medium font-mono text-sm">OPTIMAL CLARITY ACHIEVED</p>
                                     </div>
@@ -332,14 +332,14 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                                                 <p className="text-slate-400 text-xs italic font-mono bg-black/20 p-2 rounded">"{issue.relevant_text_snippet}"</p>
                                             </div>
                                             <div className="flex gap-2 items-start pt-2 border-t border-white/5">
-                                                <Sparkles size={14} className="text-cyber-primary mt-0.5" />
-                                                <p className="text-slate-300 text-sm"><span className="font-medium text-cyber-primary">Fix:</span> {issue.suggestion}</p>
+                                                <Sparkles size={14} className="text-[#00f0ff] mt-0.5" />
+                                                <p className="text-slate-300 text-sm"><span className="font-medium text-[#00f0ff]">Fix:</span> {issue.suggestion}</p>
                                             </div>
                                         </div>
                                     ))
                                 )}
                             </div>
-                            
+
                             <div className="space-y-6">
                                 <div className="bg-white/5 p-6 rounded border border-white/10">
                                     <h4 className="font-bold text-white mb-3 font-mono text-sm tracking-wider">STRUCTURE_ANALYSIS</h4>
@@ -348,7 +348,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                                 <div className="bg-white/5 p-6 rounded border border-white/10">
                                     <h4 className="font-bold text-white mb-3 font-mono text-sm tracking-wider">TONE_VERIFICATION</h4>
                                     <div className="flex items-start gap-3">
-                                        <div className="p-2 bg-cyber-primary/10 text-cyber-primary rounded border border-cyber-primary/20">
+                                        <div className="p-2 bg-[#00f0ff]/10 text-[#00f0ff] rounded border border-[#00f0ff]/20">
                                             <Search size={16} />
                                         </div>
                                         <p className="text-slate-400 text-sm leading-relaxed">{edits.tone_consistency_check}</p>
@@ -361,19 +361,19 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
 
                 {activeTab === 'final' && final && (
                     <div className="max-w-4xl mx-auto animate-in fade-in duration-500">
-                        <div className="bg-gradient-to-r from-cyber-dark to-cyber-panel border border-white/10 rounded-xl p-8 mb-10 shadow-2xl relative overflow-hidden">
-                             <div className="absolute top-0 right-0 p-4 opacity-10">
-                                 <Sparkles size={100} className="text-white" />
-                             </div>
+                        <div className="bg-gradient-to-r from-black to-[#00f0ff]/20 border border-white/10 rounded-xl p-8 mb-10 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-4 opacity-10">
+                                <Sparkles size={100} className="text-white" />
+                            </div>
                             <div className="relative z-10">
                                 <div className="flex gap-4 mb-6">
                                     <div className="flex-1">
-                                        <span className="text-[10px] font-bold text-cyber-primary uppercase tracking-widest mb-2 block font-mono">Published Title</span>
+                                        <span className="text-[10px] font-bold text-[#00f0ff] uppercase tracking-widest mb-2 block font-mono">Published Title</span>
                                         <p className="text-2xl font-bold text-white tracking-tight">{final.title}</p>
                                     </div>
                                 </div>
                                 <div className="mb-6">
-                                    <span className="text-[10px] font-bold text-cyber-primary uppercase tracking-widest mb-2 block font-mono">Meta Description</span>
+                                    <span className="text-[10px] font-bold text-[#00f0ff] uppercase tracking-widest mb-2 block font-mono">Meta Description</span>
                                     <p className="text-slate-300 text-sm leading-relaxed border-l-2 border-white/20 pl-3">{final.meta_description}</p>
                                 </div>
                                 <div className="flex gap-2 flex-wrap">
@@ -385,7 +385,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="mt-8 space-y-6">
                             <MarkdownRenderer content={final.full_markdown} />
                         </div>
@@ -395,18 +395,18 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                 {activeTab === 'gallery' && images.length > 0 && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-500">
                         {images.map((img, idx) => (
-                            <div key={idx} className="group relative rounded-xl overflow-hidden border border-white/10 bg-cyber-black/50 hover:border-cyber-primary/50 transition-all duration-300 shadow-lg">
-                                <div className="aspect-video w-full overflow-hidden bg-cyber-dark relative">
-                                    <img 
-                                        src={img.url} 
-                                        alt={`Generated visual ${idx + 1}`} 
+                            <div key={idx} className="group relative rounded-xl overflow-hidden border border-white/10 bg-black/50 hover:border-[#00f0ff]/50 transition-all duration-300 shadow-lg">
+                                <div className="aspect-video w-full overflow-hidden bg-black relative">
+                                    <img
+                                        src={img.url}
+                                        alt={`Generated visual ${idx + 1}`}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-cyber-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                                        <a 
-                                            href={img.url} 
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                                        <a
+                                            href={img.url}
                                             download={`visual-${idx + 1}.png`}
-                                            className="bg-cyber-primary text-cyber-black font-bold px-4 py-2 rounded flex items-center gap-2 hover:bg-white transition-colors"
+                                            className="bg-[#00f0ff] text-black font-bold px-4 py-2 rounded flex items-center gap-2 hover:bg-white transition-colors"
                                         >
                                             <Download size={16} />
                                             Download
@@ -415,7 +415,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                                 </div>
                                 <div className="p-4 border-t border-white/5">
                                     <div className="flex items-start gap-3">
-                                        <span className="text-cyber-primary font-mono text-xs font-bold pt-1">0{idx + 1}</span>
+                                        <span className="text-[#00f0ff] font-mono text-xs font-bold pt-1">0{idx + 1}</span>
                                         <p className="text-slate-400 text-xs leading-relaxed font-mono">{img.prompt}</p>
                                     </div>
                                 </div>

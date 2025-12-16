@@ -34,15 +34,14 @@ export const ClipboardCopyButton: React.FC<ClipboardCopyButtonProps> = ({ textTo
       onClick={handleCopy}
       title={copied ? "Copied!" : "Copy to Clipboard"}
       aria-label={copied ? "Copied!" : "Copy to Clipboard"}
-      className={`inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold rounded-full border transition-colors ${
-        copied
-          ? 'bg-green-100 text-green-700 border-green-300'
-          : 'bg-gray-100 hover:bg-gray-200 text-neutral border-gray-300'
-      } ${className}`}
+      className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded font-mono uppercase tracking-wider transition-all border ${copied
+          ? 'bg-[#39ff14]/20 text-[#39ff14] border-[#39ff14] shadow-[0_0_10px_rgba(57,255,20,0.3)]'
+          : 'bg-black/50 hover:bg-[#00f0ff]/10 text-gray-400 hover:text-[#00f0ff] border-[#00f0ff]/30 hover:border-[#00f0ff]'
+        } ${className}`}
       disabled={typeof navigator === 'undefined' || !navigator.clipboard}
     >
       {copied ? <CheckIcon /> : <CopyIcon />}
-      {copied ? 'Copied' : 'Copy'}
+      {copied ? 'COPIED' : 'COPY'}
     </button>
   );
 };

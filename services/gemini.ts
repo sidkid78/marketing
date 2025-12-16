@@ -1,9 +1,9 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
-import { 
-    ContentConfig, 
-    ResearchBrief, 
-    ContentDraft, 
-    EditSuggestions, 
+import {
+    ContentConfig,
+    ResearchBrief,
+    ContentDraft,
+    EditSuggestions,
     FinalContent,
     GeneratedImage
 } from "../types";
@@ -99,8 +99,8 @@ const publishSchema: Schema = {
         meta_description: { type: Type.STRING, description: "SEO meta description (150-160 chars)" },
         tags: { type: Type.ARRAY, items: { type: Type.STRING } },
         full_markdown: { type: Type.STRING, description: "The complete, polished content in Markdown format." },
-        image_prompts: { 
-            type: Type.ARRAY, 
+        image_prompts: {
+            type: Type.ARRAY,
             items: { type: Type.STRING },
             description: "4 distinct, detailed image generation prompts relevant to the article sections. First prompt must be a Hero Image."
         }
@@ -131,7 +131,9 @@ export const agentResearch = async (config: ContentConfig): Promise<ResearchBrie
         }
     });
 
-    return JSON.parse(response.text);
+    const text = response.text;
+    if (!text) throw new Error("No text returned from Gemini");
+    return JSON.parse(text);
 };
 
 export const agentDraft = async (config: ContentConfig, brief: ResearchBrief): Promise<ContentDraft> => {
@@ -162,7 +164,9 @@ export const agentDraft = async (config: ContentConfig, brief: ResearchBrief): P
         }
     });
 
-    return JSON.parse(response.text);
+    const text = response.text;
+    if (!text) throw new Error("No text returned from Gemini");
+    return JSON.parse(text);
 };
 
 export const agentEdit = async (config: ContentConfig, draft: ContentDraft): Promise<EditSuggestions> => {
@@ -191,7 +195,9 @@ export const agentEdit = async (config: ContentConfig, draft: ContentDraft): Pro
         }
     });
 
-    return JSON.parse(response.text);
+    const text = response.text;
+    if (!text) throw new Error("No text returned from Gemini");
+    return JSON.parse(text);
 };
 
 export const agentPublish = async (config: ContentConfig, draft: ContentDraft, edits: EditSuggestions): Promise<FinalContent> => {
@@ -223,7 +229,9 @@ export const agentPublish = async (config: ContentConfig, draft: ContentDraft, e
         }
     });
 
-    return JSON.parse(response.text);
+    const text = response.text;
+    if (!text) throw new Error("No text returned from Gemini");
+    return JSON.parse(text);
 };
 
 export const agentGenerateImages = async (prompts: string[]): Promise<GeneratedImage[]> => {
@@ -262,6 +270,6 @@ export const agentGenerateImages = async (prompts: string[]): Promise<GeneratedI
             // Continue to next image even if one fails
         }
     }
-    
+
     return images;
 };

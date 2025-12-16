@@ -14,7 +14,7 @@ interface ResultViewerProps {
 
 const CodeBlock: React.FC<{ language: string, code: string }> = ({ language, code }) => {
     const [copied, setCopied] = useState(false);
-    
+
     const handleCopy = () => {
         navigator.clipboard.writeText(code);
         setCopied(true);
@@ -31,18 +31,18 @@ const CodeBlock: React.FC<{ language: string, code: string }> = ({ language, cod
                         {language || 'TEXT'}
                     </span>
                 </div>
-                <button 
+                <button
                     onClick={handleCopy}
                     className={`flex items-center gap-1.5 px-2 py-1 rounded transition-all duration-200 border border-transparent
-                        ${copied 
-                            ? 'text-green-400' 
+                        ${copied
+                            ? 'text-green-400'
                             : 'text-cyber-text hover:text-white'
                         }`}
                 >
                     {copied ? <Check size={14} strokeWidth={3} /> : <Copy size={14} />}
                 </button>
             </div>
-            
+
             {/* Code Content */}
             <div className="p-5 overflow-x-auto custom-scrollbar">
                 <pre className="text-slate-300 font-mono leading-relaxed text-[13px]">
@@ -70,7 +70,7 @@ const formatInline = (text: string) => {
 const MarkdownRenderer = ({ content }: { content: string }) => {
     // Regex splits content by code blocks: ```lang ... ```
     const parts = content.split(/(```(?:[\w-]*)\s*[\s\S]*?```)/g);
-    
+
     return (
         <div className="text-slate-300 leading-relaxed space-y-4">
             {parts.map((part, i) => {
@@ -79,7 +79,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
                 if (codeMatch) {
                     return <CodeBlock key={i} language={codeMatch[1]} code={codeMatch[2]} />;
                 }
-                
+
                 if (!part.trim()) return null;
 
                 // Render text parts
@@ -108,7 +108,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
                                     </blockquote>
                                 );
                             }
-                            
+
                             // Unordered List (- or *)
                             if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
                                 return (
@@ -124,13 +124,13 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
                             if (/^\d+\./.test(trimmed)) {
                                 return (
                                     <ol key={bIdx} className="list-decimal pl-5 mb-4 space-y-2 marker:text-cyber-primary text-slate-300">
-                                         {trimmed.split('\n').map((line, lIdx) => (
+                                        {trimmed.split('\n').map((line, lIdx) => (
                                             <li key={lIdx} className="pl-1">{formatInline(line.replace(/^\d+\.\s*/, ''))}</li>
                                         ))}
                                     </ol>
                                 );
                             }
-                            
+
                             // Standard Paragraph
                             return <div key={bIdx} className="mb-4 whitespace-pre-wrap">{formatInline(trimmed)}</div>;
                         })}
@@ -179,8 +179,8 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
 
     return (
         <div className="bg-cyber-panel/40 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden flex flex-col h-full min-h-[600px] shadow-2xl relative">
-             {/* Decorative Top Border */}
-             <div className="h-px w-full bg-gradient-to-r from-transparent via-cyber-primary/50 to-transparent"></div>
+            {/* Decorative Top Border */}
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-cyber-primary/50 to-transparent"></div>
 
             {/* Header / Tabs */}
             <div className="flex border-b border-white/10 bg-black/20 overflow-x-auto">
@@ -192,10 +192,10 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                             onClick={() => !tab.disabled && setActiveTab(tab.id as any)}
                             disabled={tab.disabled}
                             className={`flex items-center gap-2 px-6 py-4 text-xs font-bold font-mono transition-all whitespace-nowrap tracking-wider
-                                ${activeTab === tab.id 
-                                    ? 'bg-cyber-primary/10 text-cyber-primary border-b-2 border-cyber-primary' 
-                                    : tab.disabled 
-                                        ? 'text-cyber-text/20 cursor-not-allowed' 
+                                ${activeTab === tab.id
+                                    ? 'bg-cyber-primary/10 text-cyber-primary border-b-2 border-cyber-primary'
+                                    : tab.disabled
+                                        ? 'text-cyber-text/20 cursor-not-allowed'
                                         : 'text-cyber-text hover:text-white hover:bg-white/5'
                                 }`}
                         >
@@ -217,7 +217,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                             </h3>
                             <p className="text-cyan-100 leading-relaxed font-mono text-sm">{research.target_audience_analysis}</p>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="bg-cyber-black/50 p-6 rounded border border-white/5">
                                 <h3 className="font-bold text-white mb-4 flex items-center gap-2 font-mono text-sm tracking-wide">
@@ -267,11 +267,11 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                         <div className="text-lg leading-loose text-slate-300 font-light border-l-4 border-cyber-primary pl-6 my-8 italic opacity-90">
                             {draft.introduction}
                         </div>
-                        
+
                         {draft.main_sections.map((section, idx) => (
                             <div key={idx} className="mt-10">
                                 <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
-                                    <span className="text-cyber-text/30 text-base font-mono">0{idx + 1}.</span> 
+                                    <span className="text-cyber-text/30 text-base font-mono">0{idx + 1}.</span>
                                     {section.heading}
                                 </h2>
                                 <MarkdownRenderer content={section.content} />
@@ -279,7 +279,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                         ))}
 
                         <div className="mt-16 p-8 bg-white/5 rounded border border-white/10">
-                            <h3 className="text-lg font-bold text-white mb-3 uppercase tracking-wide text-xs opacity-50">Conclusion</h3>
+                            <h3 className="text-sm font-bold text-white mb-3 uppercase tracking-wider opacity-80 font-mono">Conclusion</h3>
                             <p className="text-slate-300 leading-relaxed">{draft.conclusion}</p>
                         </div>
                     </div>
@@ -295,12 +295,12 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                             <div className="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
                                 <svg className="w-full h-full transform -rotate-90">
                                     <circle cx="48" cy="48" r="40" fill="transparent" stroke="#1e293b" strokeWidth="8" />
-                                    <circle 
-                                        cx="48" cy="48" r="40" 
-                                        fill="transparent" 
-                                        stroke={edits.overall_score > 80 ? '#10b981' : edits.overall_score > 60 ? '#eab308' : '#ef4444'} 
-                                        strokeWidth="8" 
-                                        strokeDasharray={`${2 * Math.PI * 40}`} 
+                                    <circle
+                                        cx="48" cy="48" r="40"
+                                        fill="transparent"
+                                        stroke={edits.overall_score > 80 ? '#10b981' : edits.overall_score > 60 ? '#eab308' : '#ef4444'}
+                                        strokeWidth="8"
+                                        strokeDasharray={`${2 * Math.PI * 40}`}
                                         strokeDashoffset={`${2 * Math.PI * 40 * (1 - edits.overall_score / 100)}`}
                                         strokeLinecap="round"
                                         className="transition-all duration-1000 ease-out shadow-[0_0_15px_currentColor]"
@@ -339,7 +339,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                                     ))
                                 )}
                             </div>
-                            
+
                             <div className="space-y-6">
                                 <div className="bg-white/5 p-6 rounded border border-white/10">
                                     <h4 className="font-bold text-white mb-3 font-mono text-sm tracking-wider">STRUCTURE_ANALYSIS</h4>
@@ -362,9 +362,9 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                 {activeTab === 'final' && final && (
                     <div className="max-w-4xl mx-auto animate-in fade-in duration-500">
                         <div className="bg-gradient-to-r from-cyber-dark to-cyber-panel border border-white/10 rounded-xl p-8 mb-10 shadow-2xl relative overflow-hidden">
-                             <div className="absolute top-0 right-0 p-4 opacity-10">
-                                 <Sparkles size={100} className="text-white" />
-                             </div>
+                            <div className="absolute top-0 right-0 p-4 opacity-10">
+                                <Sparkles size={100} className="text-white" />
+                            </div>
                             <div className="relative z-10">
                                 <div className="flex gap-4 mb-6">
                                     <div className="flex-1">
@@ -385,7 +385,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="mt-8 space-y-6">
                             <MarkdownRenderer content={final.full_markdown} />
                         </div>
@@ -397,14 +397,14 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                         {images.map((img, idx) => (
                             <div key={idx} className="group relative rounded-xl overflow-hidden border border-white/10 bg-cyber-black/50 hover:border-cyber-primary/50 transition-all duration-300 shadow-lg">
                                 <div className="aspect-video w-full overflow-hidden bg-cyber-dark relative">
-                                    <img 
-                                        src={img.url} 
-                                        alt={`Generated visual ${idx + 1}`} 
+                                    <img
+                                        src={img.url}
+                                        alt={`Generated visual ${idx + 1}`}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-cyber-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                                        <a 
-                                            href={img.url} 
+                                        <a
+                                            href={img.url}
                                             download={`visual-${idx + 1}.png`}
                                             className="bg-cyber-primary text-cyber-black font-bold px-4 py-2 rounded flex items-center gap-2 hover:bg-white transition-colors"
                                         >

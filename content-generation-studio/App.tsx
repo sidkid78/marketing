@@ -48,7 +48,7 @@ const App: React.FC<AppProps> = ({ apiKey }) => {
       setIsLoading(false);
     }
   }, [formData]);
-  
+
   const handleDownload = () => {
     if (!generatedContent) return;
 
@@ -68,28 +68,42 @@ const App: React.FC<AppProps> = ({ apiKey }) => {
 
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 font-sans">
-      <header className="bg-white dark:bg-slate-800/50 shadow-sm sticky top-0 z-10 backdrop-blur-md">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center space-x-3">
-            <BookOpenIcon className="w-8 h-8 text-indigo-600" />
-            <div>
-              <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Content Generation Studio</h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400">AI-powered educational content creation</p>
+    <div className="min-h-screen bg-transparent font-sans text-white">
+      {/* Header */}
+      <header className="border-b border-[#00f0ff]/20 bg-black/40 backdrop-blur-sm">
+        <div className="px-6 py-4 flex items-center gap-3">
+          <div className="relative">
+            <div className="absolute inset-0 bg-[#ff00ff] blur-lg opacity-30"></div>
+            <div className="relative bg-black/50 p-2 rounded-lg border border-[#ff00ff]/50">
+              <BookOpenIcon className="w-5 h-5 text-[#ff00ff]" />
             </div>
+          </div>
+          <div>
+            <h1 className="font-bold text-lg font-mono">
+              <span className="text-[#ff00ff]">CONTENT</span>
+              <span className="text-white">_</span>
+              <span className="text-[#00f0ff]">STUDIO</span>
+              <span className="text-[#ff00ff] animate-pulse">_</span>
+            </h1>
+            <p className="text-xs text-gray-500 font-mono">AI-POWERED CONTENT GENERATION</p>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Sidebar Form */}
           <aside className="lg:col-span-4 xl:col-span-3">
             <div className="sticky top-24">
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-                 <div className="flex items-center space-x-3 mb-6">
-                    <SparklesIcon className="w-6 h-6 text-indigo-500"/>
-                    <h2 className="text-lg font-semibold">Create Your Content</h2>
-                 </div>
+              <div className="bg-black/40 backdrop-blur-sm p-6 rounded-xl border border-[#00f0ff]/20 relative overflow-hidden">
+                {/* Corner accents */}
+                <div className="absolute top-0 right-0 w-8 h-8 border-r border-t border-[#00f0ff]/30"></div>
+                <div className="absolute bottom-0 left-0 w-8 h-8 border-l border-b border-[#ff00ff]/30"></div>
+
+                <div className="flex items-center gap-3 mb-6">
+                  <SparklesIcon className="w-5 h-5 text-[#00f0ff]" />
+                  <h2 className="text-sm font-mono font-bold text-[#00f0ff]">CREATE CONTENT</h2>
+                </div>
                 <GeneratorForm
                   formData={formData}
                   setFormData={setFormData}
@@ -100,17 +114,22 @@ const App: React.FC<AppProps> = ({ apiKey }) => {
             </div>
           </aside>
 
+          {/* Content Display */}
           <section className="lg:col-span-8 xl:col-span-9">
-            <div className="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 min-h-[600px]">
+            <div className="bg-black/40 backdrop-blur-sm p-6 rounded-xl border border-[#ff00ff]/20 min-h-[600px] relative overflow-hidden">
+              {/* Corner accents */}
+              <div className="absolute top-0 left-0 w-8 h-8 border-l border-t border-[#ff00ff]/30"></div>
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-r border-b border-[#00f0ff]/30"></div>
+
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">Generated Output</h2>
+                <h2 className="text-sm font-mono font-bold text-[#ff00ff]">◈ GENERATED OUTPUT</h2>
                 {generatedContent && !isLoading && !error && (
                   <button
                     onClick={handleDownload}
-                    className="inline-flex items-center px-3 py-1.5 border border-slate-300 dark:border-slate-600 text-xs font-medium rounded-md shadow-sm text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                    className="inline-flex items-center px-4 py-2 border border-[#00f0ff]/50 text-xs font-mono rounded-lg text-[#00f0ff] bg-black/30 hover:bg-[#00f0ff]/10 hover:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-all"
                   >
                     <DownloadIcon className="w-4 h-4 mr-2" />
-                    Download
+                    DOWNLOAD
                   </button>
                 )}
               </div>
@@ -123,15 +142,15 @@ const App: React.FC<AppProps> = ({ apiKey }) => {
                 generateVideoPreview={service?.generateVideoPreview}
               />
               {!apiKey && (
-                <p className="mt-4 text-sm text-red-600">No Gemini API key provided. Please enter your API key above.</p>
+                <p className="mt-4 text-sm text-red-400 font-mono">◈ WARNING: No API key detected. Enter your Gemini API key above.</p>
               )}
             </div>
           </section>
         </div>
       </main>
-      
-      <footer className="text-center py-6 text-sm text-slate-500 dark:text-slate-400">
-        <p>Powered by Gemini API</p>
+
+      <footer className="text-center py-6 text-xs font-mono text-gray-600">
+        ◈ CONTENT_STUDIO v2.0 ◈ POWERED BY GEMINI API ◈
       </footer>
     </div>
   );

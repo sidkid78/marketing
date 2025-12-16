@@ -8,9 +8,9 @@ interface PerformanceAnalysisDashboardProps {
 }
 
 const statusClasses = {
-  good: 'bg-chart-2/10 text-chart-2 border-chart-2/30',
-  on_target: 'bg-chart-1/10 text-chart-1 border-chart-1/30',
-  warning: 'bg-destructive/10 text-destructive border-destructive/30',
+  good: 'bg-[#39ff14]/10 text-[#39ff14] border-[#39ff14]/30',
+  on_target: 'bg-[#00f0ff]/10 text-[#00f0ff] border-[#00f0ff]/30',
+  warning: 'bg-[#ff00ff]/10 text-[#ff00ff] border-[#ff00ff]/30',
 };
 
 export const PerformanceAnalysisDashboard: React.FC<PerformanceAnalysisDashboardProps> = ({ data }) => {
@@ -21,38 +21,38 @@ export const PerformanceAnalysisDashboard: React.FC<PerformanceAnalysisDashboard
   };
 
   return (
-    <Card className="!p-0 overflow-hidden">
+    <Card className="!p-0 overflow-hidden bg-black/40 border-[#00f0ff]/20">
       <div className={`p-6 border-l-4 ${statusClasses[summaryFlag]}`}>
         <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold">Campaign Summary</h3>
-            <ClipboardCopyButton textToCopy={`Campaign Summary:\n${data.summary}`} />
+          <h3 className="text-lg font-bold font-mono tracking-wider">CAMPAIGN SUMMARY</h3>
+          <ClipboardCopyButton textToCopy={`Campaign Summary:\n${data.summary}`} />
         </div>
-        <p className="mt-1">{data.summary}</p>
+        <p className="mt-1 font-mono text-sm">{data.summary}</p>
       </div>
-      
+
       <div className="p-6">
-        <h4 className="text-md font-bold text-neutral-dark mb-4">Metric Breakdown</h4>
+        <h4 className="text-md font-bold text-white mb-4 font-mono tracking-wider">METRIC BREAKDOWN</h4>
         <div className="space-y-4">
           {data.analysis.map((item, i) => (
-            <div key={i} className={`p-4 border rounded-lg ${statusClasses[item.flag]}`}>
+            <div key={i} className={`p-4 border rounded-lg ${statusClasses[item.flag]} backdrop-blur-sm`}>
               <div className="flex justify-between items-center">
-                <p className="font-bold">{item.label}: <span className="font-mono text-lg">{item.value}</span></p>
-                <span className="text-xs font-bold px-2 py-1 rounded-full border bg-white">{item.status}</span>
+                <p className="font-bold font-mono">{item.label}: <span className="text-lg text-white ml-2">{item.value}</span></p>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded border border-current bg-black/40 uppercase tracking-widest`}>{item.status}</span>
               </div>
-              <p className="text-sm mt-1">{item.message}</p>
+              <p className="text-xs mt-1 opacity-80">{item.message}</p>
             </div>
           ))}
         </div>
       </div>
-      
-      <div className="p-6 bg-muted">
+
+      <div className="p-6 bg-[#00f0ff]/5 border-t border-[#00f0ff]/10">
         <div className="flex justify-between items-center mb-3">
-            <h4 className="text-md font-bold text-foreground">Adjustment Recommendations</h4>
-            <ClipboardCopyButton textToCopy={formatRecommendationsForClipboard(data.adjustment_recommendations)} />
+          <h4 className="text-md font-bold text-[#00f0ff] font-mono tracking-wider">ADJUSTMENT RECOMMENDATIONS</h4>
+          <ClipboardCopyButton textToCopy={formatRecommendationsForClipboard(data.adjustment_recommendations)} />
         </div>
-        <ul className="list-disc list-inside space-y-2 text-neutral">
+        <ul className="list-disc list-inside space-y-2 text-gray-300 font-mono text-sm">
           {data.adjustment_recommendations.map((rec, i) => (
-            <li key={i}>{rec}</li>
+            <li key={i} className="marker:text-[#ff00ff]">{rec}</li>
           ))}
         </ul>
       </div>
