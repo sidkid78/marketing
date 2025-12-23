@@ -29,7 +29,7 @@ const IdeaValidator: React.FC<IdeaValidatorProps> = ({ apiKey }) => {
     try {
       if (!gemini) throw new Error('API Key not configured');
       const result = await gemini.auditBrandStory(newIdea.description);
-      setAnalysis(result);
+      setAnalysis(result ?? "No analysis returned.");
     } catch (e) {
       setAnalysis("Audit failed. Check API key.");
     } finally {
@@ -144,8 +144,8 @@ const IdeaValidator: React.FC<IdeaValidatorProps> = ({ apiKey }) => {
                   <div className="flex-1 mr-4">
                     <div className="flex gap-2 mb-2">
                       <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md inline-block ${idea.category === 'Pain' ? 'bg-red-500/20 text-red-400' :
-                          idea.category === 'Profession' ? 'bg-blue-500/20 text-blue-400' :
-                            'bg-purple-500/20 text-purple-400'
+                        idea.category === 'Profession' ? 'bg-blue-500/20 text-blue-400' :
+                          'bg-purple-500/20 text-purple-400'
                         }`}>
                         {idea.category}
                       </span>

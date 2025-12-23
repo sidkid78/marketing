@@ -48,8 +48,9 @@ export const generateSceneImages = async (apiKey: string, scenes: StoryScene[]):
         prompt: scene.imagePrompt,
         config: { numberOfImages: 1, outputMimeType: 'image/jpeg', aspectRatio: '16:9' },
       });
-      if (response.generatedImages?.[0]) {
-        return { ...scene, imageUrl: `data:image/jpeg;base64,${response.generatedImages[0].image.imageBytes}` };
+      const generatedImage = response.generatedImages?.[0];
+      if (generatedImage?.image?.imageBytes) {
+        return { ...scene, imageUrl: `data:image/jpeg;base64,${generatedImage.image.imageBytes}` };
       }
       return scene;
     } catch (error) {
