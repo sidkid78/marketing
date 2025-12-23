@@ -1,0 +1,5 @@
+{
+  "name": "Agentic Storyboard Studio",
+  "description": "Transform your stories into visual storyboards. Uses Gemini to analyze narrative segments and Imagen to generate accompanying visuals.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Architect Pro // SYSTEM_OVERRIDE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff00ff;
+            --neon-green: #bfff00;
+            --dark-bg: #050505;
+        }
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--dark-bg);
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        /* Scanline Overlay */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 100;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+        .cyber-panel {
+            background: rgba(15, 15, 25, 0.8);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        .cyber-panel::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px;
+            width: 10px; height: 10px;
+            border-top: 2px solid var(--neon-cyan);
+            border-left: 2px solid var(--neon-cyan);
+        }
+        .cyber-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: -1px;
+            width: 10px; height: 10px;
+            border-bottom: 2px solid var(--neon-cyan);
+            border-right: 2px solid var(--neon-cyan);
+        }
+        .neon-text-cyan { text-shadow: 0 0 5px var(--neon-cyan); color: var(--neon-cyan); }
+        .neon-text-pink { text-shadow: 0 0 5px var(--neon-pink); color: var(--neon-pink); }
+        .neon-text-green { text-shadow: 0 0 5px var(--neon-green); color: var(--neon-green); }
+        
+        .cyber-button {
+            position: relative;
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .cyber-button:hover {
+            background: var(--neon-cyan);
+            color: black;
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+        .cyber-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            color: var(--neon-cyan);
+        }
+        .cyber-input:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+            outline: none;
+        }
+        /* Markdown overrides for Cyberpunk */
+        .markdown-container pre { background: rgba(0,0,0,0.5) !important; border: 1px solid #333; }
+        .markdown-container code { color: var(--neon-green) !important; background: transparent !important; }
+        .markdown-container a { color: var(--neon-cyan) !important; text-decoration: underline; }
+        .markdown-container blockquote { border-left: 2px solid var(--neon-pink); color: #94a3b8; }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .animate-pulse-fast { animation: pulse 1s infinite; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
+    "react-markdown": "https://esm.sh/react-markdown@^9.0.1",
+    "remark-gfm": "https://esm.sh/remark-gfm@^4.0.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

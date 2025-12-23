@@ -9,6 +9,9 @@ const ImageStudio = React.lazy(() => import("../image-studio/App"));
 const MultiAgentOrch = React.lazy(() => import("../multi-agent-orch/App"));
 const ContentArchitect = React.lazy(() => import("../content_architect/App"));
 const SentinelCode = React.lazy(() => import("../sentinel-code/App"));
+const AgenticStoryboard = React.lazy(() => import("../agentic-storyboard/App"));
+const PromptArch = React.lazy(() => import("../prompt-arch/App"));
+const Hormozi = React.lazy(() => import("../hormozi/App"));
 
 // Get environment variable API key if available (for Vercel deployments).
 // Use Next.js compile-time injection so server and client always see the same value.
@@ -21,6 +24,9 @@ const tabs = [
   { id: "orchestrator", label: "Orchestrator", icon: "🧠" },
   { id: "architect", label: "Architect", icon: "🏗️" },
   { id: "sentinel", label: "Sentinel", icon: "🛡️" },
+  { id: "storyboard", label: "Storyboard", icon: "🎬" },
+  { id: "promptarch", label: "Prompt Arch", icon: "✨" },
+  { id: "hormozi", label: "Hormozi", icon: "💰" },
 ] as const;
 
 type TabId = typeof tabs[number]["id"];
@@ -173,8 +179,8 @@ export default function Home() {
               <button
                 key={tab.id}
                 className={`group relative px-5 py-3 rounded-lg font-mono text-sm transition-all duration-300 ${activeTab === tab.id
-                    ? "bg-gradient-to-r from-[#00f0ff]/20 to-[#ff00ff]/20 text-white border border-[#00f0ff]/50 shadow-[0_0_15px_rgba(0,240,255,0.2)]"
-                    : "bg-black/30 text-gray-400 border border-gray-800 hover:border-[#00f0ff]/30 hover:text-white hover:bg-black/50"
+                  ? "bg-gradient-to-r from-[#00f0ff]/20 to-[#ff00ff]/20 text-white border border-[#00f0ff]/50 shadow-[0_0_15px_rgba(0,240,255,0.2)]"
+                  : "bg-black/30 text-gray-400 border border-gray-800 hover:border-[#00f0ff]/30 hover:text-white hover:bg-black/50"
                   }`}
                 onClick={() => setActiveTab(tab.id)}
               >
@@ -218,6 +224,9 @@ export default function Home() {
               {activeTab === "orchestrator" && <MultiAgentOrch />}
               {activeTab === "architect" && <ContentArchitect />}
               {activeTab === "sentinel" && <SentinelCode />}
+              {activeTab === "storyboard" && <AgenticStoryboard apiKey={apiKey} />}
+              {activeTab === "promptarch" && <PromptArch apiKey={apiKey} />}
+              {activeTab === "hormozi" && <Hormozi apiKey={apiKey} />}
             </Suspense>
           ) : (
             <div className="p-12 text-center">

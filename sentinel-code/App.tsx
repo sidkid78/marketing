@@ -89,8 +89,8 @@ export default function App() {
   };
 
   const handleReview = useCallback(async () => {
-    if (!process.env.API_KEY) {
-      alert("Please set the GEMINI_API_KEY environment variable to run this application.");
+    if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+      alert("Please set the NEXT_PUBLIC_GEMINI_API_KEY environment variable to run this application.");
       return;
     }
 

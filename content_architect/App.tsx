@@ -37,8 +37,8 @@ const App: React.FC = () => {
     }, []);
 
     const runPipeline = async (config: ContentConfig) => {
-        if (!process.env.API_KEY) {
-            alert("Missing API_KEY in environment variables.");
+        if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+            alert("Missing NEXT_PUBLIC_GEMINI_API_KEY in environment variables. Please check your .env.local file.");
             return;
         }
 
