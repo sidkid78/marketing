@@ -13,6 +13,7 @@ const SentinelCode = React.lazy(() => import("../sentinel-code/App"));
 const AgenticStoryboard = React.lazy(() => import("../agentic-storyboard/App"));
 const PromptArch = React.lazy(() => import("../prompt-arch/App"));
 const Hormozi = React.lazy(() => import("../hormozi/App"));
+const Poetry = React.lazy(() => import("../poetry/App"));
 
 // Get environment variable API key if available (for Vercel deployments).
 // Use Next.js compile-time injection so server and client always see the same value.
@@ -28,6 +29,7 @@ const tabs = [
   { id: "storyboard", label: "Storyboard", icon: "🎬" },
   { id: "promptarch", label: "Prompt Arch", icon: "✨" },
   { id: "hormozi", label: "Hormozi", icon: "💰" },
+  { id: "poetry", label: "Kinetic Poet", icon: "✍️" },
 ] as const;
 
 type TabId = typeof tabs[number]["id"];
@@ -229,6 +231,7 @@ export default function Home() {
               {activeTab === "storyboard" && <AgenticStoryboard apiKey={apiKey} />}
               {activeTab === "promptarch" && <PromptArch apiKey={apiKey} />}
               {activeTab === "hormozi" && <Hormozi apiKey={apiKey} />}
+              {activeTab === "poetry" && <Poetry apiKey={apiKey} />}
             </Suspense>
           ) : (
             <div className="p-12 text-center">
