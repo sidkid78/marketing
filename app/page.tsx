@@ -237,7 +237,7 @@ export default function Home() {
               {activeTab === "hormozi" && <Hormozi apiKey={apiKey} />}
               {activeTab === "poetry" && <Poetry apiKey={apiKey} />}
               {activeTab === "3ps" && <ThreePs />}
-              {activeTab === "artifact" && <ArtifactToLife />}
+              {activeTab === "artifact" && <ArtifactToLife apiKey={apiKey} />}
             </Suspense>
           ) : (
             <div className="p-12 text-center">

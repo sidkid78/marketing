@@ -41,24 +41,25 @@ Return ONLY the raw HTML code. Do not wrap it in markdown code blocks (\`\`\`htm
 `;
 
 export const generateArtifact = async (
-  prompt: string, 
-  imageBase64?: string, 
-  mimeType?: string
+  prompt: string,
+  imageBase64?: string,
+  mimeType?: string,
+  apiKey?: string
 ): Promise<string> => {
   try {
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-      throw new Error("API Key not found in environment variables.");
+    const key = apiKey || process.env.API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    if (!key) {
+      throw new Error("API Key not found. Please enter your Gemini API key in the settings.");
     }
 
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: key });
 
     // We use gemini-2.5-flash for a good balance of vision reasoning and code generation speed.
     // Ideally gemini-3-pro-preview is better for complex vision, but 2.5 is very capable.
     const modelId = "gemini-2.5-flash";
 
     const parts: any[] = [];
-    
+
     // Add image if present
     if (imageBase64 && mimeType) {
       parts.push({
@@ -70,10 +71,10 @@ export const generateArtifact = async (
     }
 
     // Add user prompt
-    const finalUserPrompt = prompt || (imageBase64 
-      ? "Analyze this image. Detect functionality. Build a fully interactive web app based on it. Remember: NO external image URLs. Use CSS/SVG/Emojis." 
+    const finalUserPrompt = prompt || (imageBase64
+      ? "Analyze this image. Detect functionality. Build a fully interactive web app based on it. Remember: NO external image URLs. Use CSS/SVG/Emojis."
       : "Create a demo app that shows off your capabilities.");
-      
+
     parts.push({ text: finalUserPrompt });
 
     const response = await ai.models.generateContent({

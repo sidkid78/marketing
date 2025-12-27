@@ -89,8 +89,8 @@ const WelcomeView: React.FC<WelcomeViewProps> = ({
       {/* Upload Area */}
       <div
         className={`relative border-2 border-dashed rounded-sm p-8 transition-all duration-300 group ${fileData
-            ? 'border-cyan-500 bg-cyan-900/10 shadow-[0_0_20px_rgba(6,182,212,0.2)]'
-            : 'border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900/80 hover:shadow-[0_0_15px_rgba(6,182,212,0.1)]'
+          ? 'border-cyan-500 bg-cyan-900/10 shadow-[0_0_20px_rgba(6,182,212,0.2)]'
+          : 'border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900/80 hover:shadow-[0_0_15px_rgba(6,182,212,0.1)]'
           }`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -133,6 +133,7 @@ const WelcomeView: React.FC<WelcomeViewProps> = ({
           </div>
         )}
         <input
+          title="Upload Image"
           type="file"
           ref={fileInputRef}
           className="hidden"
@@ -237,7 +238,11 @@ const GeneratedAppView: React.FC<GeneratedAppViewProps> = ({ status, generatedCo
 
 // --- Main Logic ---
 
-const AppContent: React.FC = () => {
+interface AppContentProps {
+  apiKey: string;
+}
+
+const AppContent: React.FC<AppContentProps> = ({ apiKey }) => {
   const [status, setStatus] = useState<AppStatus>(AppStatus.IDLE);
   const [prompt, setPrompt] = useState('');
   const [fileData, setFileData] = useState<FileData | null>(null);
@@ -317,7 +322,8 @@ const AppContent: React.FC = () => {
       const code = await generateArtifact(
         prompt,
         fileData?.base64,
-        fileData?.mimeType
+        fileData?.mimeType,
+        apiKey
       );
 
       setGeneratedCode(code);
@@ -417,10 +423,17 @@ const AppContent: React.FC = () => {
   );
 };
 
-const App: React.FC = () => {
+interface AppProps {
+  apiKey?: string;
+}
+
+const App: React.FC<AppProps> = ({ apiKey }) => {
+  // Get API key from props, or try localStorage as fallback for standalone mode
+  const effectiveApiKey = apiKey || (typeof window !== 'undefined' ? localStorage.getItem('GEMINI_API_KEY') || '' : '');
+
   return (
     <HashRouter>
-      <AppContent />
+      <AppContent apiKey={effectiveApiKey} />
     </HashRouter>
   );
 };
