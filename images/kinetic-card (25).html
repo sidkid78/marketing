@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Artisan's Armor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+        :root {
+            --c-oil: #0a0a0a;
+            --c-dust: #8a8a8a;
+            --c-polish: #e5e7eb;
+            --c-accent: #3b82f6;
+            --c-rust: #7f1d1d;
+        }
+
+        body {
+            background-color: var(--c-oil);
+            color: var(--c-polish);
+            font-family: 'Oswald', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .noise-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.08;
+            filter: url(#noiseFilter);
+        }
+
+        .scroll-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            perspective: 1000px;
+        }
+
+        .sticky-container {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 1s ease-out, opacity 0.5s ease;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .text-layer {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            text-align: center;
+            mix-blend-mode: hard-light;
+        }
+
+        .heavy-text {
+            font-size: clamp(3rem, 8vw, 8rem);
+            line-height: 0.9;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: riseUp 1s forwards;
+        }
+
+        .sub-text {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            margin-top: 2rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .kinetic-word {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .glitch {
+            position: relative;
+            color: var(--c-polish);
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--c-oil);
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -1px 0 red;
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -1px 0 blue;
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes riseUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glitch-anim-1 {
+            0% {
+                clip: rect(20px, 9999px, 15px, 0);
+            }
+
+            100% {
+                clip: rect(95px, 9999px, 100px, 0);
+            }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% {
+                clip: rect(120px, 9999px, 50px, 0);
+            }
+
+            100% {
+                clip: rect(15px, 9999px, 85px, 0);
+            }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            border-radius: 1px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .highlight {
+            color: var(--c-accent);
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .img-overlay-grad {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.2), rgba(10, 10, 10, 0.9));
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body><svg style="display:none;">
+        <defs>
+            <filter id="noiseFilter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" stitchTiles="stitch" />
+            </filter>
+            <filter id="distortion">
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+    <div class="noise-bg"></div><!-- SECTION 1: The Weight -->
+    <section class="scroll-section">
+        <div class="sticky-container"><!-- Placeholder for [Storyboard Image 1] - Gritty Workshop -->
+            <div class="bg-image"
+                style="background-image:url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1%20(15).jpg'); filter: grayscale(100%) contrast(120%);">
+            </div>
+            <div class="img-overlay-grad"></div>
+            <div class="text-layer">
+                <h1 class="heavy-text">I remember the<br>silence of a<br><span class="text-stone-500"
+                        style="filter:url(#distortion)">dead shop</span>.</h1>
+                <p class="sub-text text-gray-400 mt-8 max-w-lg mx-auto">It's a heavy, suffocating sound. I spent fifteen
+                    years with my back aching and my lungs full of polish dust, building a reputation as a <span
+                        class="text-white border-b border-gray-500">master of paint correction</span>.</p>
+            </div>
+        </div>
+    </section><!-- SECTION 2: The Struggle -->
+    <section class="scroll-section">
+        <div class="sticky-container">
+            <div class="bg-image" style="transform:scale(1.1);"></div>
+            <div class="img-overlay-grad" style="background:rgba(0,0,0,0.9);"></div>
+            <div class="text-layer">
+                <h2 class="text-4xl md:text-6xl font-light uppercase tracking-widest mb-6">Chasing Perfection</h2>
+                <p class="sub-text font-serif italic text-2xl">But while I was chasing perfection on a Porsche, the
+                    business was <span class="text-red-800 font-bold">dying</span>.</p>
+                <p class="sub-text mt-12">I was drowning in a sea of 'tire-kickers'—people who wanted a $500 miracle for
+                    $50.</p>
+            </div>
+        </div>
+    </section><!-- SECTION 3: The Failure -->
+    <section class="scroll-section">
+        <div class="sticky-container"><!-- Placeholder for [Storyboard Image 2] - Keys Handover -->
+            <div class="bg-image"
+                style="background-image:url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2%20(13).jpg'); opacity:0.6;">
+            </div>
+            <div class="img-overlay-grad"></div>
+            <div class="text-layer text-left max-w-4xl mx-auto px-6">
+                <p class="text-xl md:text-3xl font-light mb-8">I watched the best detailers I knew—true artisans who
+                    could make a 20-year-old wreck look like a showroom dream—<br><span
+                        class="text-white font-bold">hand over their keys</span> to the landlord.</p>
+                <div class="border-l-4 border-red-900 pl-6 mt-12">
+                    <p class="text-2xl font-mono text-gray-400">They didn't fail because they were bad at their
+                        craft.<br><span class="glitch heavy-text text-4xl mt-4 block" data-text="THE ALGORITHM">THE
+                            ALGORITHM</span><br>didn't care about their soul.</p>
+                </div>
+            </div>
+        </div>
+    </section><!-- SECTION 4: The Solution -->
+    <section class="scroll-section">
+        <div class="sticky-container"><!-- Placeholder for [Storyboard Image 3] - Tablet Interface -->
+            <div class="bg-image"
+                style="background-image:url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-3%20(13).jpg'); opacity:0.8;">
+            </div>
+            <div class="img-overlay-grad" style="background:rgba(10,20,40,0.85);"></div>
+            <div class="glass-panel text-layer transform transition hover:scale-105 duration-700">
+                <h3 class="text-3xl md:text-5xl font-bold mb-6">I didn't build this software to sell you 'leads.'</h3>
+                <p class="text-xl font-light">I built this to be a <span
+                        class="highlight text-5xl block my-4 font-black italic">SUIT OF ARMOR</span> for the artisan.
+                </p>
+            </div>
+        </div>
+    </section><!-- SECTION 5: The Mission -->
+    <section class="scroll-section bg-gray-900">
+        <div class="sticky-container">
+            <div class="text-layer max-w-5xl">
+                <h2 class="heavy-text text-white leading-tight">Ending the Era<br><span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-gray-500 to-gray-800">of the starving
+                        artist.</span></h2>
+                <p class="mt-10 text-xl md:text-2xl text-gray-300 font-mono">I built it so that the masters of this
+                    craft never have to beg for work again, and so that 'quality' is no longer a luxury you can't afford
+                    to keep.</p>
+            </div>
+        </div>
+    </section><!-- SECTION 6: The Return -->
+    <section class="scroll-section">
+        <div class="sticky-container"><!-- Placeholder for [Storyboard Image 4] - Modern Garage -->
+            <div class="bg-image"
+                style="background-image:url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-4%20(13).jpg'); opacity:1; mix-blend-mode: normal;">
+            </div>
+            <div class="img-overlay-grad" style="background: linear-gradient(to top, #000 0%, transparent 100%);"></div>
+            <div class="text-layer">
+                <h1 class="heavy-text text-white drop-shadow-2xl" style="text-shadow: 0 0 50px rgba(255,255,255,0.5);">
+                    It's time to get<br>back to the bay.</h1>
+                <p class="mt-8 text-2xl font-bold bg-white text-black inline-block px-6 py-2 transform skew-x-12">Where
+                    the real work happens</p>
+            </div>
+        </div>
+    </section>
+    <script>const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 }; const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.querySelectorAll('.heavy-text').forEach(el => { el.style.animation = 'none'; el.offsetHeight; el.style.animation = 'riseUp 1s forwards'; }); entry.target.querySelector('.bg-image').style.transform = 'scale(1.0)'; entry.target.querySelector('.bg-image').style.opacity = '0.6'; } else { entry.target.querySelector('.bg-image').style.transform = 'scale(1.1)'; entry.target.querySelector('.bg-image').style.opacity = '0.3'; } }); }, observerOptions); document.querySelectorAll('.scroll-section').forEach(section => { observer.observe(section); });</script>
+</body>
+
+</html>

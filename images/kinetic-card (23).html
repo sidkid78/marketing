@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase AI | Business Intelligence</title>
+    <style>
+        :root {
+            --c-navy: #0a192f;
+            --c-blue: #112240;
+            --c-slate: #8892b0;
+            --c-white: #e6f1ff;
+            --c-gold: #ffd700;
+            --c-cyan: #64ffda;
+            --c-orange: #f2994a;
+            --f-mono: 'Courier New', Courier, monospace;
+            --f-sans: system-ui, -apple-system, sans-serif;
+            --gap: 2rem
+        }
+
+        .filter-def {
+            position: absolute;
+            width: 0;
+            height: 0
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--c-navy);
+            color: var(--c-slate);
+            font-family: var(--f-sans);
+            line-height: 1.6;
+            overflow-x: hidden
+        }
+
+        main {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: var(--c-white);
+            font-weight: 700;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            line-height: 1.2
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            color: var(--c-cyan);
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            border-bottom: 2px solid var(--c-cyan);
+            padding-bottom: 1rem
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            display: flex;
+            align-items: center;
+            gap: 1rem
+        }
+
+        h2::before {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background: var(--c-orange);
+            box-shadow: 0 0 10px var(--c-orange)
+        }
+
+        h3 {
+            color: var(--c-white);
+            font-family: var(--f-mono);
+            font-size: 1.2rem;
+            border-left: 4px solid var(--c-cyan);
+            padding-left: 1rem
+        }
+
+        strong {
+            color: var(--c-white)
+        }
+
+        .bg-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.05;
+            pointer-events: none;
+            filter: url(#noise)
+        }
+
+        .section-card {
+            background: rgba(17, 34, 64, 0.7);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px -10px rgba(2, 12, 27, 0.7)
+        }
+
+        .highlight-box {
+            border: 1px solid var(--c-gold);
+            background: rgba(255, 215, 0, 0.05);
+            position: relative;
+            overflow: hidden
+        }
+
+        .highlight-box::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--c-gold)
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0
+        }
+
+        .stat-card {
+            background: var(--c-blue);
+            padding: 1.5rem;
+            border-radius: 4px;
+            border-left: 2px solid var(--c-cyan);
+            transition: transform 0.3s ease
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px)
+        }
+
+        .stat-val {
+            font-size: 1.5rem;
+            color: var(--c-white);
+            font-weight: bold;
+            font-family: var(--f-mono);
+            display: block;
+            margin-bottom: 0.5rem
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--c-slate)
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(136, 146, 176, 0.2)
+        }
+
+        .data-table th {
+            color: var(--c-cyan);
+            font-family: var(--f-mono);
+            font-size: 0.9rem;
+            text-transform: uppercase
+        }
+
+        .img-frame {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid var(--c-slate);
+            filter: sepia(20%) hue-rotate(180deg) saturate(80%);
+            mix-blend-mode: luminosity;
+            transition: all 0.5s ease;
+            margin: 2rem 0;
+            display: block
+        }
+
+        .img-frame:hover {
+            filter: none;
+            mix-blend-mode: normal
+        }
+
+        .phase-timeline {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 2px solid var(--c-slate);
+            margin-left: 1rem
+        }
+
+        .phase-item {
+            margin-bottom: 3rem;
+            position: relative
+        }
+
+        .phase-item::before {
+            content: '';
+            position: absolute;
+            left: -2.6rem;
+            top: 0;
+            width: 1rem;
+            height: 1rem;
+            background: var(--c-navy);
+            border: 2px solid var(--c-cyan);
+            border-radius: 50%
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-family: var(--f-mono);
+            font-size: 0.9rem
+        }
+
+        .btn-cta {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: var(--c-cyan);
+            color: var(--c-navy);
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 4px;
+            text-transform: uppercase;
+            transition: all 0.3s
+        }
+
+        .golden-text {
+            color: var(--c-gold)
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem
+            }
+
+            main {
+                padding: 1rem
+            }
+        }
+    </style><svg class="filter-def">
+        <defs>
+            <filter id="noise">
+                <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.5 0" />
+            </filter>
+        </defs>
+    </svg>
+</head>
+
+<body>
+    <div class="bg-texture"></div>
+    <main>
+        <header>
+            <h1>HOMEase AI | Business Intelligence &amp; Go-To-Market Strategy</h1>
+        </header>
+        <section class="section-card">
+            <h2>Executive Summary</h2>
+            <p><strong>Platform:</strong> AI-powered lead generation connecting homeowners with aging-in-place
+                contractors<br><strong>Business Model:</strong> Pay-per-lead (free assessments for homeowners,
+                contractors pay $50-200/lead)<br><strong>Analysis Date:</strong> December 25, 2024<br><strong>Data
+                    Sources:</strong> USASpending.gov (2,549 federal programs), ACL, HUD, Market Research</p><img
+                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNDAwIiBzdHlsZT0iYmFja2dyb3VuZDojMTEyMjQwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiM2NGZmZGEiIHN0cm9rZS13aWR0aD0iMiI+PHBhdGggZD0iTTAgNDAwIEw4MDAgNDAwIEw0MDAgMjAwIHoiIG9wYWNpdHk9IjAuMSIvPjxyZWN0IHg9IjIwMCIgeT0iMTUwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgLz48bGluZSB4MT0iNDAwIiB5MT0iMTUwIiB4Mj0iNDAwIiB5Mj0iMzUwIiAvPjx0ZXh0IHg9IjQwMCIgeT0iMTMwIiBmaWxsPSIjNjRmZmRhIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIj5BSSBHT0wgLyBNT09EIFZJU1VBTDwvdGV4dD48L2c+PC9zdmc+"
+                alt="AI Mood Image: Blueprint House" class="img-frame" style="opacity:0.6">
+        </section>
+        <hr style="border-color:var(--c-slate); opacity:0.3; margin: 3rem 0;">
+        <section>
+            <h2>📊 Market Intelligence</h2><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (14).jpg"
+                alt="Image 1: Elderly Couple" class="img-frame">
+            <h3>Total Addressable Market (TAM)</h3>
+            <div class="data-grid">
+                <div class="stat-card"><span class="stat-val">$1.6T → $3T</span>Aged Care Services (Global 2024-2033)
+                </div>
+                <div class="stat-card"><span class="stat-val">+$130.9B</span>Senior Living Market Growth by 2029</div>
+                <div class="stat-card"><span class="stat-val">$32.5B</span>Elder-Care Technology by 2026</div>
+                <div class="stat-card"><span class="stat-val">$120.6B</span>Smart Aging Market (2035)</div>
+            </div>
+            <h3>Serviceable Addressable Market (SAM)</h3>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                            <th>Source</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>US Adults 60+</td>
+                            <td>76.5M (33% increase)</td>
+                            <td>Forbes</td>
+                        </tr>
+                        <tr>
+                            <td>Prefer to Age in Place</td>
+                            <td>77% of adults 50+</td>
+                            <td>AARP</td>
+                        </tr>
+                        <tr>
+                            <td>"Aging Ready" Homes</td>
+                            <td>Only 10%</td>
+                            <td>CDC</td>
+                        </tr>
+                        <tr>
+                            <td>Annual Fall Costs</td>
+                            <td>$38B+</td>
+                            <td>HUD</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3>Key Market Statistics</h3>
+            <ul style="list-style:none; padding:0">
+                <li>🔹 <strong>8 in 10</strong> older adults currently live independently</li>
+                <li>🔹 <strong>90%</strong> of homes lack proper modifications for safe aging</li>
+                <li>🔹 <strong>76%</strong> of remodelers report increased aging-in-place requests</li>
+                <li>🔹 <strong>93%</strong> of remodelers added grab bars in 2023</li>
+                <li>🔹 <strong>68%</strong> of elderly consumers prefer home-based care</li>
+            </ul>
+        </section>
+        <section class="section-card highlight-box">
+            <h2>🏛️ Federal Funding Intelligence</h2>
+            <p><strong>Total Programs Analyzed:</strong> 2,549 | <strong>Key Agencies:</strong> HHS, HUD, VA, ED</p>
+            <h3>🎯 GOLDEN OPPORTUNITY: Program 14.921</h3>
+            <h4 class="golden-text">Older Adults Home Modification Grant Program</h4>
+            <div class="grid-table"
+                style="display:grid; grid-template-columns:1fr 2fr; gap:1rem; margin-bottom:1rem; border:1px solid var(--c-slate); padding:1rem;">
+                <div><strong>Agency</strong></div>
+                <div>HUD Office of Lead Hazard Control</div>
+                <div><strong>FY2024 Funding</strong></div>
+                <div>$30 million</div>
+                <div><strong>Awards</strong></div>
+                <div>Up to $2 million each</div>
+                <div><strong>Per-Household Cap</strong></div>
+                <div>$5,000 for modifications</div>
+            </div>
+            <p style="color:var(--c-cyan)"><strong>Why This Matters for HOMEase:</strong> Program requires involvement
+                of OT/CAPS professionals. Grantees need standardized assessment tools.</p><img
+                src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (12).jpg" alt="Image 3: Construction Site / HUD"
+                class="img-frame">
+        </section>
+        <section>
+            <h3>Tier 1: Direct Home Modification Programs</h3>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Program #</th>
+                            <th>Name</th>
+                            <th>Agency</th>
+                            <th>Annual Funding</th>
+                            <th>HOMEase Fit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>14.921</td>
+                            <td>Older Adults Home Mod</td>
+                            <td>HUD</td>
+                            <td>$30M</td>
+                            <td>⭐⭐⭐⭐⭐</td>
+                        </tr>
+                        <tr>
+                            <td>93.464</td>
+                            <td>ACL Assistive Tech</td>
+                            <td>HHS/ACL</td>
+                            <td>~$2M/award</td>
+                            <td>⭐⭐⭐⭐</td>
+                        </tr>
+                        <tr>
+                            <td>93.469</td>
+                            <td>AT Alternative Financing</td>
+                            <td>HHS/ACL</td>
+                            <td>~$2M/year</td>
+                            <td>⭐⭐⭐⭐</td>
+                        </tr>
+                        <tr>
+                            <td>64.051</td>
+                            <td>VA Specially Adapted</td>
+                            <td>VA</td>
+                            <td>Varies</td>
+                            <td>⭐⭐⭐⭐</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size:0.9rem; opacity:0.8">* Tiers 2 (Aging Infrastructure) and 3 (CDBG) also provide
+                significant strategic value through AAAs and city repair programs.</p>
+        </section>
+        <section class="section-card">
+            <h2>🎯 Go-To-Market Strategy</h2>
+            <div class="phase-timeline">
+                <div class="phase-item">
+                    <h3>Phase 1: B2G Partnership (Months 1-6)</h3>
+                    <p><strong>Target:</strong> Area Agencies on Aging (AAAs) - 622 nationwide.</p>
+                    <div
+                        style="border-left:2px solid var(--c-cyan); padding-left:1rem; margin:1rem 0; font-style:italic; color:var(--c-cyan)">
+                        "HOMEase provides AI-powered home safety assessments that help AAAs efficiently evaluate client
+                        homes..."</div>
+                </div>
+                <div class="phase-item">
+                    <h3>Phase 2: Centers for Independent Living (Months 3-9)</h3><img
+                        src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (12).jpg"
+                        alt="Image 2: Tablet AR Interface" class="img-frame">
+                    <p>Targeting 400+ CILs. AR-based remote assessment serves as a force multiplier for understaffed
+                        organizations.</p>
+                </div>
+                <div class="phase-item">
+                    <h3>Phase 3: CDBG Home Repair (Months 6-12)</h3>
+                    <p>Focus on Texas Priority Markets:</p><img
+                        src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (12).jpg" alt="Image 4: Texas Map Data"
+                        class="img-frame">
+                    <div class="data-grid">
+                        <div class="stat-card">Houston: $45M+ CDBG</div>
+                        <div class="stat-card">Dallas: $35M+ CDBG</div>
+                        <div class="stat-card">San Antonio: $25M+ CDBG</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h2>💰 Revenue Model Enhancement</h2>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Channel</th>
+                            <th>Model</th>
+                            <th>Pricing</th>
+                            <th>Annual Potential</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>AAA/CIL SaaS</td>
+                            <td>Per-assessment</td>
+                            <td>$25-50/ea</td>
+                            <td>$500K-$2M</td>
+                        </tr>
+                        <tr>
+                            <td>Enterprise</td>
+                            <td>License</td>
+                            <td>$10K-50K</td>
+                            <td>$1M-$5M</td>
+                        </tr>
+                        <tr>
+                            <td>Contractor Network</td>
+                            <td>Lead Fees</td>
+                            <td>$50-200</td>
+                            <td>$1M-$5M</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3 style="text-align:center; color:var(--c-gold); font-size:1.5rem; margin-top:2rem;">Total Addressable
+                Revenue (Year 3): $3M - $13M</h3>
+        </section>
+        <section class="section-card">
+            <h2>🤝 Strategic Partnerships</h2>
+            <p><strong>National:</strong> n4a, LeadingAge, NCOA, NAHB (CAPS), AARP HomeFit<br><strong>Tech:</strong>
+                WellSky, Eldermark, Caspio<br><strong>Texas Focus:</strong> Texas HHSC, Local AAAs</p>
+        </section>
+        <section>
+            <h2>📋 Compliance & Certification Checklist</h2>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem;">
+                <div>
+                    <div class="checklist-item"><span>✅</span> SAM.gov Registration</div>
+                    <div class="checklist-item"><span>✅</span> DUNS/UEI Number</div>
+                    <div class="checklist-item"><span>✅</span> NAICS: 541512, 624120</div>
+                </div>
+                <div>
+                    <div class="checklist-item"><span>🔲</span> CAPS Certification</div>
+                    <div class="checklist-item"><span>🔲</span> Section 508 Compliance</div>
+                    <div class="checklist-item"><span>🔲</span> SOC 2 Type II</div>
+                </div>
+            </div>
+        </section>
+        <section class="section-card" style="border-color:var(--c-cyan)">
+            <h2>Summary</h2>
+            <p>HOMEase AI is <strong>uniquely positioned</strong> to capture the aging-in-place market through a dual
+                B2C and B2G strategy. The existence of HUD Program 14.921 validates the market and provides a clear
+                pathway to government partnerships.</p>
+            <p style="color:var(--c-orange); font-weight:bold">Immediate Next Step: Contact Dr. Taneka Blue at HUD to
+                understand current grantee needs.</p>
+            <div style="margin-top:2rem; font-size:0.8rem; opacity:0.6; font-family:var(--f-mono); text-align:center;">
+                *Report generated from Business Intelligence analysis. December 2025.</div>
+        </section>
+    </main>
+</body>
+
+</html>

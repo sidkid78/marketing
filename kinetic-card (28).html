@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sanctuary Stays</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Space+Mono:ital,wght@0,400;1,400&family=Inter:wght@300;500&display=swap');
+
+        :root {
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-tech: 'Space Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
+            --color-pain: #0f172a;
+            --color-tech: #06b6d4;
+            --color-warm: #f59e0b;
+        }
+
+        body {
+            margin: 0;
+            background-color: #000;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Scrollytelling Layout */
+        .scroller {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .section {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Background Handling */
+        .bg-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            transition: transform 1s ease-out;
+            opacity: 0.6;
+        }
+
+        .section:hover .bg-img {
+            transform: scale(1.05);
+        }
+
+        /* Text Layers */
+        .content {
+            z-index: 10;
+            position: relative;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scanline {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        @keyframes flicker {
+            0% {
+                opacity: 0.9;
+            }
+
+            5% {
+                opacity: 0.5;
+            }
+
+            10% {
+                opacity: 0.9;
+            }
+
+            100% {
+                opacity: 0.9;
+            }
+        }
+
+        .animate-up {
+            opacity: 0;
+            animation: fadeUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation-delay: 0.3s;
+        }
+
+        .delay-1 {
+            animation-delay: 0.6s;
+        }
+
+        .delay-2 {
+            animation-delay: 1.2s;
+        }
+
+        /* Custom Effects */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            padding: 3rem;
+        }
+
+        .tech-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .scan-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: var(--color-tech);
+            box-shadow: 0 0 20px var(--color-tech);
+            animation: scanline 4s linear infinite;
+            opacity: 0.5;
+            z-index: 2;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Highlight text styles */
+        .em-pain {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .em-tech {
+            color: var(--color-tech);
+            font-family: var(--font-tech);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .em-warm {
+            color: var(--color-warm);
+        }
+
+        /* SVG Filter Classes */
+        .filter-grain {
+            filter: url('#grain') grayscale(0.5);
+        }
+
+        .filter-cinematic {
+            filter: contrast(1.1) brightness(0.8);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG FILTERS -->
+    <svg style="display: none;">
+        <defs>
+            <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"
+                    result="noise" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0" in="noise"
+                    result="coloredNoise" />
+                <feBlend mode="overlay" in="SourceGraphic" in2="coloredNoise" result="grainy" />
+            </filter>
+            <filter id="displacement">
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <main class="scroller">
+
+        <!-- 0-10s: THE PRIMAL PAIN -->
+        <section class="section bg-slate-950">
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (19).jpg" alt="Dark Hallway"
+                class="bg-img filter-grain">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-0"></div>
+
+            <div class="content text-center">
+                <h2 class="font-[Cormorant_Garamond] text-4xl md:text-6xl font-light mb-8 animate-up leading-tight">
+                    A home should be a <span class="text-white italic">sanctuary</span>.
+                </h2>
+                <p
+                    class="font-[Inter] text-lg md:text-xl text-gray-400 leading-relaxed max-w-2xl mx-auto animate-up delay-1">
+                    But for millions of seniors, the place they love is becoming a place of risk.
+                    A single step, a slick floor, or a dark hallway is the difference between staying home and a <span
+                        class="border-b border-red-900/50 text-red-100">forced move to a facility</span>.
+                </p>
+            </div>
+        </section>
+
+        <!-- 10-20s: THE MISSION -->
+        <section class="section bg-slate-900">
+            <div class="tech-grid opacity-10"></div>
+            <div class="content relative">
+                <div class="animate-up">
+                    <h3 class="font-[Inter] text-3xl md:text-5xl font-light text-white leading-tight mb-6">
+                        We built <strong class="font-bold">HOMEase</strong> because <br>'Aging in Place' shouldn't be a
+                        guessing game.
+                    </h3>
+                    <p class="text-xl text-slate-300 font-light border-l-2 border-cyan-500 pl-6">
+                        And it shouldn't be a luxury. We’re here to make every home a <span
+                            class="text-white font-medium">forever home</span>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 20-40s: THE MAGIC (GUARDIAN TECH) -->
+        <section class="section bg-black">
+            <!-- Image 2 Placeholder: AR Phone -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (17).jpg" alt="AR Phone"
+                class="bg-img opacity-40 grayscale mix-blend-luminosity">
+
+            <!-- Tech Overlays -->
+            <div class="tech-grid opacity-30"></div>
+            <div class="scan-bar"></div>
+
+            <div class="content w-full max-w-5xl grid md:grid-cols-2 gap-12 items-center">
+                <div class="glass-panel animate-up">
+                    <p class="font-[Inter] text-gray-200 text-lg mb-6 leading-relaxed">
+                        You don't need a clipboard or a week of waiting. You just need your phone.
+                    </p>
+                    <p class="font-[Inter] text-sm text-gray-400">
+                        Scanning environment... <span class="animate-pulse text-green-400">Done.</span>
+                    </p>
+                </div>
+
+                <div class="animate-up delay-1 bg-black/50 p-6 border border-cyan-900/50">
+                    <p class="font-[Space_Mono] text-lg text-white leading-relaxed">
+                        "As you walk through the room, our AI sees what the human eye misses: the hidden friction points
+                        that threaten independence."
+                    </p>
+                    <div class="mt-6 pt-6 border-t border-cyan-900/30">
+                        <p class="text-cyan-300">In minutes, it translates a room into a <span
+                                class="bg-cyan-900/30 px-1">professional-grade safety blueprint</span>.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 40-55s: THE PROFESSIONAL BRIDGE -->
+        <section class="section bg-white">
+            <!-- Image 3 Placeholder: Women planning -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (17).jpg" alt="Professional Planning"
+                class="bg-img opacity-20 filter-cinematic">
+
+            <div class="content text-slate-900">
+                <div class="max-w-3xl">
+                    <h2 class="font-[Cormorant_Garamond] text-5xl md:text-7xl mb-8 animate-up text-slate-900">
+                        The Bridge.
+                    </h2>
+                    <div class="font-[Inter] text-xl font-light space-y-6 animate-up delay-1">
+                        <p>
+                            We don't just find problems; we provide the path out. We connect families with contractors
+                            who aren't just looking for 'leads'—they’re looking to do meaningful work.
+                        </p>
+                        <p class="font-medium text-slate-700">
+                            We provide the measurements, the ADA standards, and the scope, so the focus stays on the
+                            <span class="italic font-serif text-3xl">craft</span>, not the paperwork.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 55-70s: THE STAKES -->
+        <section class="section bg-stone-900">
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (16).jpg" alt="Elderly Man by Window"
+                class="bg-img opacity-60">
+            <div class="absolute inset-0 bg-gradient-to-r from-stone-900 via-stone-900/80 to-transparent"></div>
+
+            <div class="content">
+                <blockquote
+                    class="font-[Cormorant_Garamond] text-3xl md:text-5xl leading-tight text-amber-50 animate-up">
+                    “This isn't about home renovation. <br>
+                    <span class="text-amber-200 filter drop-shadow-lg">It’s about human dignity.</span>”
+                </blockquote>
+                <p class="font-[Inter] text-stone-300 mt-8 text-xl animate-up delay-1">
+                    It’s about ensuring that the next generation can stay exactly where they belong.
+                </p>
+            </div>
+        </section>
+
+        <!-- 70-80s: CALL TO ACTION -->
+        <section class="section bg-amber-950 text-center">
+            <div class="absolute inset-0 opacity-20 filter-grain pointer-events-none"></div>
+            <div class="content flex flex-col items-center justify-center">
+                <p class="font-[Space_Mono] text-amber-200/60 uppercase tracking-widest mb-4 animate-up">Texas is where
+                    we start</p>
+                <h2 class="font-[Cormorant_Garamond] text-5xl md:text-7xl text-white mb-8 animate-up">
+                    Your home is where it matters.
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-8 my-8 w-full max-w-xl animate-up delay-1">
+                    <div class="border border-amber-500/30 p-4 rounded-lg backdrop-blur-sm">
+                        <p class="text-lg font-bold">SCAN YOUR HOME</p>
+                    </div>
+                    <div class="border border-amber-500/30 p-4 rounded-lg backdrop-blur-sm bg-amber-900/20">
+                        <p class="text-lg font-bold">SECURE YOUR FUTURE</p>
+                    </div>
+                </div>
+
+                <h1
+                    class="font-[Inter] text-6xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-amber-200 animate-up delay-2 mt-8 tracking-tighter">
+                    HOMEase
+                </h1>
+                <p class="font-[Cormorant_Garamond] text-3xl italic mt-4 text-amber-100/80 animate-up delay-2">Stay
+                    home.</p>
+            </div>
+        </section>
+
+    </main>
+</body>
+
+</html>

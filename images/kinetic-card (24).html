@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase: The Shield</title>
+    <style>
+        :root {
+            --c-concrete: #1a1a1a;
+            --c-asphalt: #0d0d0d;
+            --c-safety: #ff6600;
+            --c-blueprint: #00f0ff;
+            --c-white: #f0f0f0;
+            --font-head: "Impact", "Arial Black", sans-serif;
+            --font-body: "Courier New", monospace;
+            --filter-grit: url(#grit);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            background-color: var(--c-asphalt);
+            color: var(--c-white);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.6
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: var(--font-head);
+            text-transform: uppercase;
+            line-height: 1
+        }
+
+        svg {
+            display: none
+        }
+
+        .scroll-container {
+            position: relative;
+            width: 100%
+        }
+
+        .chapter {
+            position: relative;
+            min-height: 150vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center
+        }
+
+        .sticky-bg {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            z-index: 0;
+            overflow: hidden
+        }
+
+        .visual {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+            filter: contrast(1.2)
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 2rem;
+            background: rgba(13, 13, 13, 0.8);
+            border-left: 4px solid var(--c-safety);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            margin-top: -50vh;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 1s forwards
+        }
+
+        .text-highlight {
+            color: var(--c-safety)
+        }
+
+        .text-tech {
+            color: var(--c-blueprint)
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: var(--c-safety);
+            color: black;
+            font-family: var(--font-head);
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: all .3s
+        }
+
+        .btn:hover {
+            background: var(--c-white);
+            letter-spacing: 2px
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* Specific Chapter Styles */
+        #chap1 .content {
+            border-color: var(--c-concrete)
+        }
+
+        #chap2 .content {
+            border-color: #ff0000;
+            background: rgba(20, 0, 0, 0.85)
+        }
+
+        #chap3 .visual {
+            animation: pulseShield 4s infinite alternate
+        }
+
+        #chap4 .content {
+            border-color: var(--c-blueprint);
+            background: rgba(0, 10, 20, 0.9)
+        }
+
+        #chap5 .content {
+            border: 4px solid var(--c-safety);
+            text-align: center;
+            background: black
+        }
+
+        @keyframes pulseShield {
+            0% {
+                filter: drop-shadow(0 0 10px var(--c-blueprint))
+            }
+
+            100% {
+                filter: drop-shadow(0 0 30px var(--c-blueprint))
+            }
+        }
+
+        .glitch {
+            position: relative;
+            display: inline-block
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8
+        }
+
+        .glitch::before {
+            color: red;
+            z-index: -1;
+            animation: glitch-anim-1 2s infinite linear alternate-reverse
+        }
+
+        .glitch::after {
+            color: blue;
+            z-index: -2;
+            animation: glitch-anim-2 2s infinite linear alternate-reverse
+        }
+
+        @keyframes glitch-anim-1 {
+            0% {
+                clip-path: inset(20% 0 80% 0)
+            }
+
+            100% {
+                clip-path: inset(80% 0 20% 0)
+            }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% {
+                clip-path: inset(60% 0 10% 0)
+            }
+
+            100% {
+                clip-path: inset(10% 0 50% 0)
+            }
+        }
+    </style>
+</head>
+
+<body><!-- SVG Filters --><svg>
+        <filter id="grit">
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+            <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.2 0" />
+        </filter>
+    </svg><!-- Main Content -->
+    <main class="scroll-container"><!-- Chapter 1: The Problem -->
+        <div class="chapter" id="chap1">
+            <div class="sticky-bg" style="background: radial-gradient(circle at 30% 50%, #2a2a2a 0%, #000 100%);">
+                <!-- Simulated SVG for Storyboard 1: Split Screen -->
+                <div class="visual"
+                    style="background-image: url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22 preserveAspectRatio=%22none%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22%3E%3Cstop offset=%220%25%22 stop-color=%22%23333%22/%3E%3Cstop offset=%2250%25%22 stop-color=%22%23111%22/%3E%3Cstop offset=%2250%25%22 stop-color=%22%23001a33%22/%3E%3Cstop offset=%22100%25%22 stop-color=%22%23004466%22/%3E%3C/linearGradient%3E%3Cpattern id=%22grid%22 width=%2210%22 height=%2210%22 patternUnits=%22userSpaceOnUse%22%3E%3Cpath d=%22M 10 0 L 0 0 0 10%22 fill=%22none%22 stroke=%22rgba(0,255,255,0.1)%22 stroke-width=%220.5%22/%3E%3C/pattern%3E%3C/defs%3E%3Crect width=%22100%22 height=%22100%22 fill=%22url(%23g)%22/%3E%3Crect x=%2250%22 width=%2250%22 height=%22100%22 fill=%22url(%23grid)%22/%3E%3Cline x1=%2250%22 y1=%220%22 x2=%2250%22 y2=%22100%22 stroke=%22white%22 stroke-width=%220.5%22/%3E%3C/svg%3E');">
+                </div>
+            </div>
+            <div class="content">
+                <h1>For too long, the tech industry has treated the American contractor like a <span
+                        class="text-highlight">piggy bank</span>.</h1>
+                <p>Big-tech platforms have built billion-dollar empires by selling you 'ghosts'—vague whispers of jobs
+                    and phone numbers that go nowhere—while you’re the one doing the hard work of building our
+                    communities.</p>
+            </div>
+        </div><!-- Chapter 2: The Pain -->
+        <div class="chapter" id="chap2">
+            <div class="sticky-bg" style="background: #000;">
+                <!-- Simulated SVG for Storyboard 2: Sad Man / Dark Room -->
+                <div class="visual"
+                    style="background-image: url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22 preserveAspectRatio=%22none%22%3E%3Cdefs%3E%3CradialGradient id=%22glow%22 cx=%2250%25%22 cy=%2250%25%22 r=%2250%25%22%3E%3Cstop offset=%220%25%22 stop-color=%22rgba(50,50,150,0.3)%22/%3E%3Cstop offset=%22100%25%22 stop-color=%22%23000%22/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width=%22100%22 height=%22100%22 fill=%22black%22/%3E%3Ccircle cx=%2250%22 cy=%2240%22 r=%2230%22 fill=%22url(%23glow)%22/%3E%3Cpath d=%22M40 70 Q50 60 60 70%22 stroke=%22%23333%22 fill=%22none%22 stroke-width=%221%22/%3E%3C/svg%3E');">
+                </div>
+            </div>
+            <div class="content">
+                <h2>Ghosts & Whispers</h2>
+                <p>Every time you buy a <span class="glitch" data-text="'lead'">'lead'</span> that doesn't pick up the
+                    phone, it’s more than just a lost fee. It’s an <span class="text-highlight">insult to your
+                        craft</span> and a theft of the time you should be spending with your family.</p>
+            </div>
+        </div><!-- Chapter 3: The Shield -->
+        <div class="chapter" id="chap3">
+            <div class="sticky-bg" style="background: #0d1a26;"><!-- Simulated SVG for AI Mood Image: The Shield -->
+                <div class="visual"
+                    style="background-image: url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22 preserveAspectRatio=%22xMidYMid slice%22%3E%3Cdefs%3E%3Cpattern id=%22dots%22 width=%222%22 height=%222%22 patternUnits=%22userSpaceOnUse%22%3E%3Ccircle cx=%221%22 cy=%221%22 r=%220.5%22 fill=%22rgba(0,240,255,0.2)%22/%3E%3C/pattern%3E%3C/defs%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%230d1a26%22/%3E%3Crect width=%22100%22 height=%22100%22 fill=%22url(%23dots)%22/%3E%3Cpath d=%22M50 10 L80 20 V45 C80 65 50 85 50 85 C50 85 20 65 20 45 V20 L50 10 Z%22 fill=%22none%22 stroke=%22%2300f0ff%22 stroke-width=%220.5%22 fill-opacity=%220.1%22/%3E%3Cpath d=%22M50 15 L75 23 V45 C75 60 50 80 50 80 C50 80 25 60 25 45 V23 L50 15 Z%22 fill=%22rgba(0,240,255,0.05)%22 stroke=%22%2300f0ff%22 stroke-width=%220.2%22/%3E%3C/svg%3E'); background-size: contain; background-repeat: no-repeat; background-position: center;">
+                </div>
+            </div>
+            <div class="content" style="border-color: var(--c-blueprint);">
+                <h2>Not a Middleman. <br>A <span class="text-tech">SHIELD</span>.</h2>
+                <p>We didn't build HOMEase to be another middleman; we built it to be your shield.</p>
+            </div>
+        </div><!-- Chapter 4: The Tech -->
+        <div class="chapter" id="chap4">
+            <div class="sticky-bg" style="background: #000;"><!-- Simulated SVG for Storyboard 3: AR Phone -->
+                <div class="visual"
+                    style="background-image: url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Cpath d=%22M0 50 L100 50%22 stroke=%22rgba(0,255,255,0.2)%22/%3E%3Cpath d=%22M50 0 L50 100%22 stroke=%22rgba(0,255,255,0.2)%22/%3E%3Crect x=%2230%22 y=%2220%22 width=%2240%22 height=%2260%22 rx=%222%22 stroke=%22white%22 fill=%22none%22 stroke-width=%220.5%22/%3E%3Cpath d=%22M35 50 L45 40 L65 40 L65 60 L45 60 L35 50%22 stroke=%22%2300f0ff%22 fill=%22none%22 stroke-width=%220.5%22/%3E%3Ctext x=%2250%22 y=%2290%22 font-family=%22monospace%22 font-size=%223%22 fill=%22%2300f0ff%22 text-anchor=%22middle%22%3EINTENT: VERIFIED%3C/text%3E%3C/svg%3E'); background-size: cover;">
+                </div>
+            </div>
+            <div class="content">
+                <h3 class="text-tech">AR Job-Scoping</h3>
+                <p>Our technology does the 'tire-kicking' so you don't have to. Through our AR job-scoping, we force the
+                    world to respect your time. We ensure that by the time a job hits your phone, the games are over,
+                    the <span class="text-tech">intent is real</span>, and the project is ready for a master’s touch.
+                </p>
+            </div>
+        </div><!-- Chapter 5: Conclusion -->
+        <div class="chapter" id="chap5">
+            <div class="sticky-bg" style="background: linear-gradient(to bottom, #331a00, #663300);">
+                <!-- Simulated SVG for Storyboard 4: Happy Contractor -->
+                <div class="visual"
+                    style="background-image: url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2280%22 cy=%2220%22 r=%2210%22 fill=%22%23ffaa00%22 opacity=%220.8%22 filter=%22blur(5px)%22/%3E%3Cpath d=%22M30 100 L40 60 Q50 50 60 60 L70 100 Z%22 fill=%22black%22/%3E%3Cpath d=%22M45 55 Q50 50 55 55%22 stroke=%22%23ff6600%22 stroke-width=%221%22 fill=%22none%22/%3E%3Ctext x=%2250%22 y=%2230%22 font-family=%22sans-serif%22 font-weight=%22bold%22 font-size=%2210%22 fill=%22%2300ff00%22 text-anchor=%22middle%22%3E%E2%9C%93%3C/text%3E%3C/svg%3E'); background-size: cover;">
+                </div>
+            </div>
+            <div class="content">
+                <h2>Stop Gambling.</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 1rem;">Stop gambling on your own livelihood. It’s time to
+                    stop buying leads and start winning jobs.</p><a href="#" class="btn">JOIN HOMEASE</a>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

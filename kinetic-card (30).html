@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase Kinetic Story</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --c-dark: #0f172a;
+            --c-neon: #00ff9d;
+            --c-gold: #fbbf24;
+            --c-light: #f8fafc;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--c-dark);
+            color: white;
+        }
+
+        /* Scroll Snap Logic */
+        .scroll-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        section {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* SVG Filters & Textures */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.15;
+            filter: contrast(150%) brightness(100%);
+        }
+
+        .distorted-text {
+            filter: url('#wobble');
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Kinetic Type Animations */
+        .animate-text-up {
+            animation: slideUpFade 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .delay-1 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.5s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.9s;
+        }
+
+        .delay-4 {
+            animation-delay: 1.4s;
+        }
+
+        @keyframes slideUpFade {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scanner {
+            0% {
+                top: 0%;
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        .scan-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--c-neon);
+            box-shadow: 0 0 20px var(--c-neon);
+            animation: scanner 3s linear infinite;
+            z-index: 20;
+        }
+
+        /* Image Handling */
+        .bg-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            transition: transform 10s ease-out;
+        }
+
+        section:hover .bg-image {
+            transform: scale(1.05);
+        }
+
+        .serif-font {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Text Stroke Effect */
+        .text-outline {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
+            color: transparent;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG Filters Definition -->
+    <svg style="display: none;">
+        <defs>
+            <filter id="noiseFilter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+            </filter>
+            <filter id="wobble">
+                <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise" seed="0" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" />
+            </filter>
+            <filter id="glow">
+                <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+                <feMerge>
+                    <feMergeNode in="coloredBlur" />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Global Grain Texture -->
+    <div class="noise-overlay">
+        <svg width="100%" height="100%">
+            <rect width="100%" height="100%" filter="url(#noiseFilter)" opacity="1" />
+        </svg>
+    </div>
+
+    <main class="scroll-container">
+
+        <!-- SECTION 1: THE STAKES (Pain) -->
+        <section class="bg-slate-900">
+            <!-- Image: Dark Hallway / Hand -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (21).jpg"
+                class="bg-image opacity-40 mix-blend-multiply" alt="Storyboard Image 1: The Dark Hallway">
+
+            <div class="relative z-10 max-w-4xl px-8 text-center">
+                <h1 class="text-6xl md:text-8xl serif-font font-bold mb-6 tracking-tight distorted-text text-red-100">
+                    A SINGLE STEP.
+                </h1>
+                <div class="space-y-6 text-xl md:text-2xl font-light text-gray-300 leading-relaxed">
+                    <p class="animate-text-up delay-1">A slippery rug. A doorway that’s two inches too narrow.</p>
+                    <p class="animate-text-up delay-2 font-semibold text-white">
+                        For a senior, these aren't just 'home features'—they are <span
+                            class="text-red-500 italic">risks</span> to their independence.
+                    </p>
+                    <p class="animate-text-up delay-3 text-lg opacity-80">
+                        Most homes were built for the young, leaving families to guess how to make them safe for the
+                        old.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: THE REVEAL (Tech) -->
+        <section class="bg-black">
+            <!-- Image: AR Phone Scan -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (19).jpg" class="bg-image opacity-30 grayscale"
+                alt="Storyboard Image 2: AI Scanner">
+
+            <!-- Tech Overlay -->
+            <div
+                class="absolute inset-0 bg-[linear-gradient(rgba(0,255,157,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,157,0.1)_1px,transparent_1px)] bg-[size:40px_40px]">
+            </div>
+            <div class="scan-line"></div>
+
+            <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 px-8 max-w-6xl w-full items-center">
+                <div class="glass-panel p-8 rounded-xl border-l-4 border-green-400 animate-text-up">
+                    <h2 class="text-green-400 text-sm tracking-widest uppercase mb-4">System Initialized: HOMEase</h2>
+                    <p class="text-2xl font-medium leading-snug">
+                        We believe no one should be forced out of the home they love because of a preventable hazard.
+                    </p>
+                </div>
+                <div class="text-right animate-text-up delay-2">
+                    <p class="text-5xl md:text-7xl font-bold tracking-tighter text-white mix-blend-overlay">
+                        WE’VE CODED <br> DECADES OF <br> EXPERTISE.
+                    </p>
+                    <p class="mt-6 text-xl text-green-300">
+                        You walk through a room with your phone; <br>
+                        <span class="bg-green-500 text-black px-2 font-bold">our AI sees what you can’t.</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: THE MAGIC (Blueprint) -->
+        <section class="bg-[#0f172a]">
+            <div class="absolute inset-0 opacity-20">
+                <!-- Abstract Blueprint Grid -->
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+                        <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#3b82f6" stroke-width="1" />
+                    </pattern>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                </svg>
+            </div>
+
+            <div class="relative z-10 text-center max-w-5xl px-6">
+                <h2 class="text-5xl md:text-7xl font-bold mb-8 animate-text-up">
+                    NOT A 'REPORT'. <br>
+                    <span class="serif-font italic text-blue-400">A BLUEPRINT.</span>
+                </h2>
+                <div class="grid md:grid-cols-3 gap-6 text-left">
+                    <div class="glass-panel p-6 rounded animate-text-up delay-1">
+                        <div class="text-blue-500 text-3xl mb-2">01</div>
+                        <p>It identifies trip hazards, height requirements, and accessibility gaps instantly.</p>
+                    </div>
+                    <div class="glass-panel p-6 rounded animate-text-up delay-2">
+                        <div class="text-blue-500 text-3xl mb-2">02</div>
+                        <p>No guesswork. No expensive consultants.</p>
+                    </div>
+                    <div class="glass-panel p-6 rounded animate-text-up delay-3 bg-blue-600 border-none">
+                        <div class="text-white text-3xl mb-2">03</div>
+                        <p class="font-bold">Just a clear path to staying home.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: THE PARTNERSHIP (Craftsman) -->
+        <section class="bg-stone-900">
+            <!-- Image: Contractor / Truck -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (19).jpg"
+                class="bg-image opacity-50 mix-blend-overlay" alt="Storyboard Image 3: Reliable Home Services">
+
+            <div class="absolute inset-0 bg-gradient-to-r from-stone-900 via-transparent to-stone-900"></div>
+
+            <div class="relative z-10 flex flex-col items-start max-w-4xl px-12 w-full">
+                <span class="text-amber-500 tracking-[0.2em] mb-4 font-bold animate-text-up">THE HIGH-VALUE PRO</span>
+                <h3 class="text-4xl md:text-6xl font-bold leading-tight mb-8 animate-text-up delay-1">
+                    Meaningful Work.
+                </h3>
+                <div
+                    class="bg-stone-800/80 p-8 border-l-8 border-amber-500 backdrop-blur-md max-w-2xl animate-text-up delay-2 shadow-2xl">
+                    <p class="text-xl md:text-2xl leading-relaxed text-amber-50">
+                        We connect families with contractors who aren't just looking for 'leads'—they’re looking to do
+                        meaningful work.
+                    </p>
+                    <hr class="border-amber-500/30 my-6">
+                    <p class="text-lg text-gray-400 italic serif-font">
+                        "Professionals who show up knowing exactly what’s needed before they even park the truck."
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: THE MOVEMENT -->
+        <section class="bg-white text-slate-900">
+            <div class="absolute inset-0 overflow-hidden">
+                <h1
+                    class="text-[20vw] leading-none font-black text-slate-100 absolute -bottom-10 -right-20 select-none">
+                    TEXAS
+                </h1>
+            </div>
+
+            <div class="relative z-10 text-center max-w-4xl px-4">
+                <h2 class="text-5xl md:text-7xl font-black mb-6 uppercase tracking-tight animate-text-up">
+                    Not for 'Tire-Kickers'.
+                </h2>
+                <p class="text-2xl md:text-3xl font-serif text-slate-600 mb-10 animate-text-up delay-1">
+                    It’s a mission to retrofit America.
+                </p>
+                <div class="inline-block border-2 border-slate-900 px-8 py-4 animate-text-up delay-2">
+                    <p class="text-xl font-bold uppercase tracking-widest">
+                        Starting in Texas. <br>
+                        <span class="normal-case font-serif font-normal">Turning houses back into sanctuaries.</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: CALL TO ACTION -->
+        <section class="bg-orange-50">
+            <!-- Image: Happy Couple -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (18).jpg" class="bg-image opacity-60"
+                style="filter: blur(8px);" alt="Storyboard Image 4: Elderly Couple at Home">
+
+            <div class="absolute inset-0 bg-white/40 backdrop-blur-sm"></div>
+
+            <div class="relative z-10 text-center">
+                <h2 class="text-6xl md:text-9xl serif-font text-slate-800 mb-8 animate-text-up">
+                    Protect Your Home.
+                </h2>
+                <p class="text-2xl text-slate-600 mb-12 animate-text-up delay-1">
+                    Or join us as a certified pro.
+                </p>
+
+                <div class="animate-text-up delay-2 transform transition hover:scale-105 duration-300">
+                    <div class="bg-slate-900 text-white px-12 py-6 rounded-full shadow-2xl inline-block">
+                        <span class="block text-3xl font-bold tracking-tight">HOMEase</span>
+                        <span class="block text-sm uppercase tracking-widest text-gray-400 mt-1">
+                            Because the best place to age is at home.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</body>
+
+</html>

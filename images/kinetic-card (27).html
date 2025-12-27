@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Right to Stay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --warm-bg: #fdf6e3;
+            --text-ink: #2b2b2b;
+            --cage-dark: #0f172a;
+            --tech-glow: #00f0ff;
+            --twilight-purple: #1e1b4b;
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background-color: var(--warm-bg);
+        }
+
+        /* SVG Filters */
+        .texture-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.15;
+            mix-blend-mode: multiply;
+        }
+
+        /* Scrollytelling Sections */
+        .story-section {
+            position: relative;
+            min-height: 120vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        .sticky-bg {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            object-fit: cover;
+            z-index: 0;
+            filter: brightness(0.6);
+            transition: filter 1s ease;
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 10;
+            padding: 2rem;
+            max-width: 900px;
+            mix-blend-mode: normal;
+        }
+
+        /* Typography Styles */
+        .serif-text {
+            font-family: 'Playfair Display', serif;
+            line-height: 1.4;
+        }
+
+        .sans-text {
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        /* Act 1: Nostalgia */
+        .reveal-text span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s forwards;
+        }
+
+        .reveal-text span:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .reveal-text span:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .reveal-text span:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        /* Act 2: The Cage */
+        .cage-bars {
+            background: repeating-linear-gradient(90deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(0, 0, 0, 0.8) 10px,
+                    rgba(0, 0, 0, 0.8) 20px);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: rgba(255, 255, 255, 0.2);
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+
+        .cage-text-effect {
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: clamp(3rem, 6vw, 6rem);
+            line-height: 1;
+        }
+
+        /* Act 3: Armor */
+        .tech-text {
+            color: white;
+            text-shadow:
+                0 0 10px var(--tech-glow),
+                0 0 20px var(--tech-glow);
+        }
+
+        .tech-border {
+            border-left: 2px solid var(--tech-glow);
+            padding-left: 2rem;
+            box-shadow: -10px 0 20px -10px var(--tech-glow);
+        }
+
+        /* Act 4: Forever */
+        .glow-warm {
+            text-shadow: 0 0 30px #fbbf24;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scanline {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        .scanline-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent, rgba(0, 240, 255, 0.2), transparent);
+            height: 20%;
+            animation: scanline 4s linear infinite;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Global Texture Filter -->
+    <svg class="invisible w-0 h-0">
+        <filter id="noiseFilter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="saturate" values="0" />
+        </filter>
+    </svg>
+    <div class="texture-overlay" style="filter: url(#noiseFilter)"></div>
+
+    <!-- SECTION 1: NOSTALGIA -->
+    <div class="relative min-h-screen">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (17).jpg" class="sticky-bg object-cover"
+            alt="Hands holding warm tea cup in sunlight">
+
+        <div class="relative z-10 flex flex-col justify-center items-center min-h-screen text-center p-8">
+            <div
+                class="bg-black/30 backdrop-blur-sm p-10 rounded-lg max-w-4xl border border-white/20 shadow-2xl reveal-text">
+                <p class="serif-text text-2xl md:text-4xl text-white font-light mb-8 italic">
+                    <span>For most of us, 'home' isn't just a building;</span>
+                    <span>it’s the wallpaper that saw our children grow,</span>
+                </p>
+                <p class="serif-text text-xl md:text-3xl text-amber-100/90 leading-relaxed">
+                    <span>the kitchen where forty years of stories were told, and the only place on earth where we truly
+                        feel like ourselves.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 2: THE CAGE -->
+    <div class="relative min-h-[150vh]">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (15).jpg"
+            class="sticky-bg object-cover grayscale contrast-125 brightness-50"
+            alt="Elderly man looking through blinds">
+
+        <div
+            class="relative z-10 flex flex-col justify-center items-start min-h-screen w-full max-w-6xl mx-auto p-6 md:p-12">
+            <h2 class="sans-text text-white text-3xl md:text-5xl font-bold mb-4 drop-shadow-lg">
+                But for 10,000 Americans <br>every single day,
+            </h2>
+            <div class="mt-12">
+                <h1 class="cage-text-effect cage-bars">
+                    THAT HOME <br>IS BECOMING <br>A CAGE.
+                </h1>
+            </div>
+            <p
+                class="mt-12 text-gray-300 sans-text text-lg md:text-xl max-w-2xl border-l-4 border-red-500 pl-6 bg-black/60 p-4">
+                We refuse to accept a world where the reward for a long life is the forced exile of a nursing home.
+            </p>
+        </div>
+    </div>
+
+    <!-- SECTION 3: THE ARMOR -->
+    <div class="relative min-h-[150vh] bg-slate-900">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (15).jpg"
+            class="sticky-bg object-cover opacity-80 mix-blend-luminosity"
+            style="filter: hue-rotate(180deg) contrast(1.1);" alt="Futuristic room with digital lines">
+
+        <!-- Digital Scanline Overlay -->
+        <div class="scanline-overlay z-10 sticky top-0 h-screen w-full"></div>
+
+        <div class="relative z-20 flex flex-col justify-center items-end min-h-screen w-full max-w-7xl mx-auto p-8">
+            <div class="tech-border bg-slate-900/80 p-8 md:p-12 rounded-l-2xl max-w-3xl">
+                <h3 class="sans-text text-white text-xl uppercase tracking-widest mb-4 text-cyan-400 font-bold">
+                    System: Active
+                </h3>
+                <p class="sans-text text-white text-3xl md:text-5xl font-light mb-8 leading-tight">
+                    We are obsessed with one thing: <strong class="text-cyan-300">The Right to Stay.</strong>
+                </p>
+                <p class="sans-text text-slate-300 text-lg md:text-xl leading-relaxed mb-6">
+                    We don't just build software; we build the <span
+                        class="tech-text font-bold italic text-2xl block my-2">invisible armor</span> that protects the
+                    dignity of our parents and grandparents.
+                </p>
+                <div class="h-1 w-full bg-gradient-to-r from-cyan-500 to-transparent mb-4"></div>
+                <p class="sans-text text-cyan-100/80 text-sm">
+                    // By obsessively weaving AI into the fabric of federal support, we are turning the houses they love
+                    into the safe havens they deserve.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 4: FOREVER -->
+    <div class="relative min-h-screen">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (14).jpg" class="sticky-bg object-cover"
+            alt="House at twilight with warm lights">
+
+        <div class="relative z-10 flex flex-col justify-center items-center min-h-screen text-center p-6">
+            <div
+                class="bg-gradient-to-t from-indigo-950/90 to-transparent p-12 w-full absolute bottom-0 h-1/2 flex flex-col justify-end items-center">
+                <p class="sans-text text-white/90 text-xl md:text-2xl mb-8 max-w-3xl">
+                    We aren't just solving a housing crisis—we are making sure that...
+                </p>
+                <h1 class="serif-text text-5xl md:text-8xl text-amber-100 glow-warm mb-12">
+                    ‘home’ remains home,<br>
+                    <span class="italic text-amber-300 text-6xl md:text-9xl">forever.</span>
+                </h1>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HOMEase_Synthesis</title>
+  <style>
+    :root {
+      --bg-dark: #0a0b10;
+      --bg-light: #f4f4f0;
+      --accent-core: #00f2ff;
+      --accent-warm: #ff6b35;
+      --text-primary: #e0e0e0;
+      --text-muted: #8892b0;
+      --font-mono: 'Courier New', Courier, monospace;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      font-size: clamp(16px, 2vw, 22px);
+      line-height: 1.6;
+    }
+
+    /* Persistent HUD Overlay */
+    .hud-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      mix-blend-mode: exclusion;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    .hud-status::before {
+      content: '';
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: var(--accent-core);
+      border-radius: 50%;
+      margin-right: 10px;
+      animation: blink 2s infinite;
+    }
+
+    /* Wireframe Overlay Texture */
+    .wireframe-texture {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 1;
+      background-image: url('https://files.oaiusercontent.com/file-2Tf562s85QcgbwP4FvL89Q?se=2025-02-18T16%3A54%3A50Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3Ddb281878-1a52-474c-8f43-a6b12a8385a8.webp&sig=c1sD11pQ20w81yS2v45bO3hK1s%2BoVl/996G1qW8P%2BbU%3D');
+      background-size: cover;
+      background-position: center;
+      mix-blend-mode: overlay;
+    }
+
+    /* Main Container */
+    main {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Section Styling */
+    section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .node-header {
+      font-family: var(--font-mono);
+      color: var(--accent-core);
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--accent-core);
+      display: inline-block;
+      padding-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    h2 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1.1;
+      font-weight: 800;
+      margin-bottom: 2rem;
+      background: linear-gradient(90deg, #fff, #888);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      max-width: 700px;
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+      text-align: justify;
+    }
+
+    /* --- SECTION SPECIFIC --- */
+
+    /* 01 Pain Node */
+    .section-pain {
+      background-color: #000;
+      color: white;
+      align-items: flex-start;
+    }
+
+    .pain-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1%20(11).jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.4;
+      filter: grayscale(100%) contrast(120%);
+      z-index: -1;
+      -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+    }
+
+    .paralysis-stat {
+      font-size: 4rem;
+      font-family: var(--font-mono);
+      color: var(--accent-warm);
+      display: block;
+      margin: 1rem 0;
+    }
+
+    /* Story Advantage */
+    .section-advantage {
+      background-color: var(--bg-light);
+      color: var(--bg-dark);
+      position: relative;
+    }
+
+    .advantage-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://files.oaiusercontent.com/file-8y18t4rTnmzT23E6P6J88d?se=2025-02-18T16%3A54%3A50Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D746f3438-e4b9-4a0b-80a2-25b81a0b33b0.webp&sig=F28lT%2BrkRrmm3uJvY57b3XvP%2BsDab6wK5gRkLwY0/8g%3D');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.1;
+      transition: opacity 1s ease;
+    }
+
+    /* Kinetic Hover Reveal */
+    .section-advantage:hover .advantage-bg {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    .section-advantage:hover .content-wrapper {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 2rem;
+      border-radius: 4px;
+      z-index: 2;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .content-wrapper {
+      transition: all 0.5s ease;
+      z-index: 2;
+    }
+
+    .highlight-box {
+      border-left: 4px solid var(--accent-warm);
+      padding-left: 2rem;
+      font-style: italic;
+    }
+
+    /* 02 Economy Node */
+    .section-economy {
+      background: var(--bg-dark);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .grid-bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(var(--text-muted) 1px, transparent 1px),
+        linear-gradient(90deg, var(--text-muted) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.1;
+      z-index: -1;
+    }
+
+    .economy-card {
+      border: 1px solid var(--text-muted);
+      padding: 2rem;
+      -webkit-backdrop-filter: blur(5px);
+      backdrop-filter: blur(5px);
+    }
+
+    .big-number {
+      font-size: clamp(3rem, 5vw, 6rem);
+      color: #fff;
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+
+    .tech-highlight {
+      color: var(--accent-core);
+      font-family: var(--font-mono);
+      background: rgba(0, 242, 255, 0.1);
+      padding: 0.2rem 0.5rem;
+    }
+
+    /* 03 Edge Node */
+    .section-edge {
+      background-color: #0f1219;
+      text-align: left;
+      overflow: hidden;
+    }
+
+    .edge-bg {
+      position: absolute;
+      right: -10%;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 80%;
+      width: 60%;
+      background-image: url('https://files.oaiusercontent.com/file-67h6LswmNq2r8X8J8bQ2r2?se=2025-02-18T16%3A54%3A50Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D458ce3e7-e85b-433b-871d-f8ec0a4bbf02.webp&sig=k5tQ227e2r8j6VzR/1O0K/tK%2BS7uXw0hP5mD9L1Fv%2Bk%3D');
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.6;
+      mix-blend-mode: screen;
+      -webkit-mask-image: radial-gradient(circle, black 30%, transparent 70%);
+      mask-image: radial-gradient(circle, black 30%, transparent 70%);
+      z-index: 0;
+    }
+
+    .edge-content {
+      position: relative;
+      z-index: 1;
+      max-width: 50%;
+    }
+
+    .json-block {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+      border-top: 1px dashed var(--accent-core);
+      padding-top: 1rem;
+    }
+
+    /* Kernel Metric */
+    .section-metric {
+      background: #000;
+      color: var(--accent-warm);
+      min-height: 60vh;
+      text-align: center;
+      border-top: 1px solid var(--accent-warm);
+      border-bottom: 1px solid var(--accent-warm);
+    }
+
+    .metric-header {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Unfair Moat */
+    .section-moat {
+      min-height: 120vh;
+      display: flex;
+      align-items: flex-end;
+      padding-bottom: 10vh;
+      color: white;
+      background-color: #000;
+    }
+
+    .moat-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://files.oaiusercontent.com/file-4n4g29Sfb6gK3T5qgLwD8H?se=2025-02-18T16%3A54%3A50Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D0f34af34-4b5b-486a-8b0b-6060c297594d.webp&sig=b/25r%2BW0o%2BhGjG1P4h6XwS4V9JgA108u80k1X88vj4U%3D');
+      background-size: cover;
+      background-position: top center;
+      z-index: 0;
+      filter: brightness(0.6);
+    }
+
+    .moat-text {
+      position: sticky;
+      bottom: 10vh;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+      padding: 2rem;
+      width: 100%;
+      z-index: 2;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 1);
+    }
+
+    /* Animations */
+    @keyframes blink {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Mobile Optimization */
+    @media (max-width: 768px) {
+      .section-economy {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .edge-bg {
+        width: 100%;
+        height: 40%;
+        top: 10%;
+        right: 0;
+        transform: none;
+      }
+
+      .edge-content {
+        max-width: 100%;
+        margin-top: 40vh;
+      }
+
+      .hud-right {
+        display: none;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hud-layer">
+    <div class="hud-status">Master_Synthesis_Complete</div>
+    <div class="hud-right">View_Critique</div>
+  </div>
+
+  <div class="wireframe-texture"></div>
+
+  <main>
+    <!-- HEADER -->
+    <section style="min-height: 50vh; justify-content: flex-end;">
+      <h1 style="font-family: var(--font-mono); font-size: clamp(1.5rem, 4vw, 3rem); text-transform: uppercase;">
+        The AI General <br>
+        <span style="color: var(--accent-core);">Contractor Proxy</span>
+      </h1>
+    </section>
+
+    <!-- NODE 01: PAIN -->
+    <section class="section-pain">
+      <div class="pain-bg"></div>
+      <div class="node-header">01_Pain_Node</div>
+      <h2>The 'Dignity Paralysis.'</h2>
+      <p>87% of seniors refuse to leave their homes, yet <span
+          style="color: var(--accent-warm); font-weight: 700;">96.5%</span> of those homes are physically dangerous for
+        them.</p>
+      <p>Adult children are paralyzed by the complexity of renovation, while contractors are exhausted by vague,
+        uneducated inquiries that rarely convert to paid work.</p>
+    </section>
+
+    <!-- STORY ADVANTAGE -->
+    <section class="section-advantage">
+      <div class="advantage-bg"></div>
+      <div class="content-wrapper">
+        <div class="node-header" style="color: var(--accent-warm); border-color: var(--accent-warm);">Story_Advantage
+        </div>
+        <div class="highlight-box">
+          <h2>Bridging the 'Housing Accessibility Gap'</h2>
+          <p>Transforming the terrifying realization that "Mom can't live here safely" into an immediate, visualized,
+            and priced action plan.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- NODE 02: ECONOMY -->
+    <section class="section-economy">
+      <div class="grid-bg"></div>
+      <div class="economy-card">
+        <div class="node-header">02_Economy_Node</div>
+        <h3>Proven_Sector</h3>
+        <div class="big-number">$151 B</div>
+        <p>The Aging-in-Place (AIP) Home Modification Market. Specifically, the high-friction pre-construction phase
+          where money is currently wasted on Occupational Therapist assessments, architectural renderings, and unbilled
+          contractor estimation hours.</p>
+      </div>
+
+      <div class="economy-card">
+        <h3>Fraction_Strategy</h3>
+        <p><strong>Fractionalized Pre-Construction Intelligence.</strong> HOMEase unbundles the expensive consultation
+          phase. Instead of paying an architect $2,000 for a feasibility study, the platform utilizes <span
+            class="tech-highlight">Gemini 2.5-flash</span> to deliver a 'Pre-Validated Lead'—effectively selling a
+          micro-consultation that serves as a golden ticket for contractors and a roadmap for families.</p>
+      </div>
+    </section>
+
+    <!-- NODE 03: EDGE -->
+    <section class="section-edge">
+      <div class="edge-bg"></div>
+      <div class="edge-content">
+        <div class="node-header">03_Edge_Node</div>
+        <h2>Multimodal Translation Logic.</h2>
+        <p>The obsession isn't just 'using AI'; it is the architectural rigor of using <span
+            class="tech-highlight">Gemini 2.5-flash</span> to convert chaotic inputs (blurry photos + emotional text)
+          into structured, contractor-ready JSON data, while simultaneously using <span class="tech-highlight">Gemini
+            2.5-flash-image</span> to render emotionally compelling 'after' states.</p>
+      </div>
+    </section>
+
+    <!-- METRIC: KERNEL OF POPCORN -->
+    <section class="section-metric">
+      <div class="node-header" style="border: none; color: var(--accent-warm);">Metric: Kernel_Of_Popcorn</div>
+      <h2 class="metric-header">The 'Dead-Letter Queue' Reliability.</h2>
+      <p style="margin: 0 auto;">The acknowledgment that AI is imperfect is handled by a robust fallback architecture
+        (Redis Queues + DLQ + Retry Mechanisms), ensuring that no homeowner's plea for help is lost in a digital void
+        due to an API timeout.</p>
+    </section>
+
+    <!-- UNFAIR MOAT -->
+    <section class="section-moat">
+      <div class="moat-bg"></div>
+      <div class="moat-text">
+        <div class="node-header" style="color: #fff; border-color: #fff;">The_Unfair_Moat</div>
+        <p style="font-size: 1.2rem; max-width: 900px;">
+          The proprietary dataset of 'Before' states mapped to 'Validated JSON Scopes' and 'After' visualizations. As
+          the platform scales, HOMEase will possess the definitive training data for what accessibility actually costs
+          and looks like across millions of US housing units, creating a moat that simple lead-gen forms cannot cross.
+        </p>
+      </div>
+    </section>
+  </main>
+</body>
+
+</html>

@@ -23,11 +23,11 @@ const App: React.FC<AppProps> = ({ apiKey: propApiKey }) => {
     }
   }, [propApiKey]);
 
-  const handleGenerate = async (text: string, images: string[] = []) => {
+  const handleGenerate = async (text: string, images: string[] = [], enableAiImage: boolean = false) => {
     setStatus('generating');
     setError(null);
     try {
-      const result = await generateKineticArt(apiKey, text, images);
+      const result = await generateKineticArt(apiKey, text, images, enableAiImage);
       setCurrentResult(result);
       setStatus('success');
     } catch (err: any) {
