@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase | AI Story</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,300&family=Space+Grotesk:wght@300;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --color-stone: #E8E4DD;
+            --color-wood: #8B5E3C;
+            --color-accent: #D4AF37;
+            --color-tech: #00F0FF;
+            --color-dark: #1A1A1A;
+        }
+
+        body {
+            font-family: 'Merriweather', serif;
+            background-color: var(--color-dark);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- SVG FILTERS --- */
+        .texture-grain {
+            filter: url(#vintage-grain);
+        }
+
+        .ar-glow {
+            filter: url(#ar-glow);
+        }
+
+        .glass-panel {
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- TYPOGRAPHY ANIMATIONS --- */
+        .text-reveal {
+            animation: fadeUp 1s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-500 {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes gridScroll {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 50px 50px;
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .ar-grid-anim {
+            background-image: linear-gradient(var(--color-tech) 1px, transparent 1px),
+                linear-gradient(90deg, var(--color-tech) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridScroll 4s linear infinite;
+            opacity: 0.3;
+        }
+
+        /* --- SCROLLY LAYOUT --- */
+        .scene {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Visual Styles for Illustrated Elements */
+        .bungalow-shape {
+            fill: #C4B5A5;
+            stroke: #5D5245;
+            stroke-width: 2;
+        }
+
+        .ramp-wood {
+            fill: url(#wood-pattern);
+        }
+    </style>
+</head>
+
+<body class="text-stone-800">
+
+    <!-- SVG FILTERS DEFINITION -->
+    <svg class="hidden">
+        <defs>
+            <!-- Paper Texture -->
+            <filter id="vintage-grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.1 0" in="noise"
+                    result="coloredNoise" />
+                <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="composite" />
+                <feBlend mode="multiply" in="composite" in2="SourceGraphic" />
+            </filter>
+            <!-- Wood Texture Pattern -->
+            <pattern id="wood-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M0,5 Q5,0 10,5" stroke="#654321" stroke-width="1" fill="none" opacity="0.5" />
+            </pattern>
+            <!-- AR Glow -->
+            <filter id="ar-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+                <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+                    result="goo" />
+                <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+                <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#00F0FF" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- SCENE 1: THE BEFORE -->
+    <section class="scene z-10 bg-[#E8E4DD]">
+        <!-- Texture Overlay -->
+        <div class="absolute inset-0 opacity-40 pointer-events-none"
+            style="filter: url(#vintage-grain); background: #fff;"></div>
+
+        <div class="relative z-10 w-full max-w-4xl px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div class="order-2 md:order-1">
+                <div class="relative">
+                    <!-- Artistic Representation of Visual 1: Bungalow -->
+                    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (103).jpg" alt="Original Bungalow"
+                        class="w-full drop-shadow-xl rounded-lg">
+                    <!-- Sky -->
+                    <rect width="400" height="300" fill="#D6E6F2" />
+                    <!-- House Body -->
+                    <path d="M50 150 L200 80 L350 150 L350 300 L50 300 Z" class="bungalow-shape" />
+                    <!-- Roof -->
+                    <path d="M40 150 L200 70 L360 150" stroke="#5D5245" stroke-width="8" fill="none" />
+                    <!-- Steep Steps (Visual 1 feature) -->
+                    <path d="M150 300 L150 250 L250 250 L250 300" fill="#999" stroke="#555" />
+                    <rect x="160" y="260" width="80" height="10" fill="#777" />
+                    <rect x="160" y="280" width="80" height="10" fill="#777" />
+                    <!-- Sticker -->
+                    <circle cx="350" cy="50" r="30" fill="#D4AF37" opacity="0.9" />
+                    <text x="350" y="55" text-anchor="middle" fill="white" font-family="sans-serif" font-size="12"
+                        font-weight="bold" transform="rotate(-15, 350, 50)">BEFORE</text>
+                    </svg>
+                </div>
+            </div>
+            <div class="order-1 md:order-2 text-left">
+                <h2 class="text-5xl md:text-7xl font-serif text-[#2C2C2C] leading-tight text-reveal">
+                    Love your <br /><span class="italic text-[#8B5E3C]">Austin home...</span>
+                </h2>
+                <p
+                    class="mt-4 text-stone-600 font-sans tracking-wide text-reveal delay-300 uppercase text-sm border-l-2 border-[#8B5E3C] pl-4">
+                    Independence starts at your front door.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 2: THE AFTER -->
+    <section class="scene z-20 bg-[#F5F1E8]" style="box-shadow: 0 -20px 50px rgba(0,0,0,0.2);">
+        <div class="absolute inset-0 opacity-30 pointer-events-none"
+            style="filter: url(#vintage-grain); background: #fff;"></div>
+
+        <div class="relative z-10 w-full max-w-4xl px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div class="order-2 md:order-1">
+                <div class="relative">
+                    <!-- Visual 2: Renovated Entry -->
+                    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (104).jpg" alt="Renovated Entry"
+                        class="w-full drop-shadow-xl rounded-lg">
+                    <!-- Sky -->
+                    <rect width="400" height="300" fill="#E3F2FD" />
+                    <!-- House Body (Cleaner) -->
+                    <path d="M50 150 L200 80 L350 150 L350 300 L50 300 Z" fill="#D4C5B5" stroke="#5D5245"
+                        stroke-width="2" />
+                    <!-- Roof -->
+                    <path d="M40 150 L200 70 L360 150" stroke="#5D5245" stroke-width="8" fill="none" />
+                    <!-- The Ramp (Visual 2 Feature) -->
+                    <path d="M50 300 L150 250 L250 250 L350 300" class="ramp-wood" stroke="#654321" stroke-width="2" />
+                    <path d="M50 300 L50 280 L150 230 L150 250" fill="#654321" opacity="0.8" />
+                    <!-- Railings -->
+                    <line x1="50" y1="270" x2="150" y2="220" stroke="#333" stroke-width="3" />
+                    <line x1="150" y1="220" x2="250" y2="220" stroke="#333" stroke-width="3" />
+                    </svg>
+                    <div
+                        class="absolute bottom-4 left-4 bg-white px-3 py-1 text-xs font-bold tracking-widest text-[#8B5E3C] shadow-md">
+                        AFTER
+                    </div>
+                </div>
+            </div>
+            <div class="order-1 md:order-2 text-left">
+                <h2 class="text-5xl md:text-7xl font-serif text-[#8B5E3C] leading-tight text-reveal">
+                    ...but make it <span class="text-[#2C2C2C]">safer.</span>
+                </h2>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 3: THE AR PLAN -->
+    <section class="scene z-30 bg-slate-900 text-white">
+        <div class="absolute inset-0 ar-grid-anim pointer-events-none"></div>
+
+        <div class="relative z-10 w-full h-full flex flex-col md:flex-row items-center justify-center p-6">
+            <!-- Split Screen Effect via Flexbox -->
+
+            <!-- Left: Text -->
+            <div class="md:w-1/2 p-8 text-center md:text-right">
+                <h2
+                    class="text-4xl md:text-6xl font-['Space_Grotesk'] font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-500 ar-glow text-reveal">
+                    Plan in AR.
+                </h2>
+                <p class="text-xl font-light text-cyan-100 text-reveal delay-300">
+                    No construction dust required.
+                </p>
+                <div class="mt-8 flex justify-center md:justify-end">
+                    <div class="glass-panel p-4 rounded-lg flex items-center space-x-3 text-sm">
+                        <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                        <span>Recording Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Visual 3 (Phone AR) -->
+            <div class="md:w-1/2 flex justify-center p-8">
+                <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (105).jpg" alt="Phone AR"
+                    class="w-full drop-shadow-xl rounded-lg">
+                <div class="relative w-[280px] h-[500px] bg-black rounded-[40px] border-[8px] border-slate-700 shadow-2xl overflow-hidden"
+                    style="animation: float 6s ease-in-out infinite;">
+                    <!-- Screen Content -->
+                    <div class="absolute inset-0 bg-stone-200">
+                        <!-- Real World Background (Blurred House) -->
+                        <svg viewBox="0 0 400 800" class="absolute inset-0 w-full h-full opacity-50 blur-sm">
+                            <path d="M-50 400 L200 200 L450 400 L450 800 L-50 800 Z" fill="#aaa" />
+                        </svg>
+                        <!-- AR Overlay -->
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <svg viewBox="0 0 200 400" class="w-3/4 h-3/4 ar-glow">
+                                <!-- 3D Door Wireframe -->
+                                <path d="M20 300 L20 100 L180 100 L180 300" fill="none" stroke="#00F0FF"
+                                    stroke-width="3" stroke-dasharray="10,5" />
+                                <rect x="20" y="100" width="160" height="200" fill="rgba(0, 240, 255, 0.1)" />
+                                <!-- Measurement Lines -->
+                                <line x1="10" y1="100" x2="10" y2="300" stroke="#00F0FF" stroke-width="1"
+                                    marker-end="url(#arrow)" marker-start="url(#arrow)" />
+                                <text x="30" y="200" fill="#00F0FF" font-family="monospace" font-size="14">36"
+                                    WIDE</text>
+                            </svg>
+                        </div>
+                        <!-- UI Overlay -->
+                        <div class="absolute bottom-8 left-0 w-full flex justify-center space-x-4">
+                            <div class="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center">
+                                <div class="w-10 h-10 bg-white/20 rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 4: CTA -->
+    <section class="scene z-40 bg-white">
+        <div class="text-center max-w-2xl px-6">
+            <!-- Visual 4: Logo -->
+            <div class="mb-8 flex items-center justify-center space-x-2 text-reveal">
+
+                <span </div>
+
+                    <h1 class="text-4xl md:text-6xl font-serif text-slate-900 mb-6 text-reveal delay-300">
+                        Home is where the heart is. <br />
+                        <span class="text-cyan-600 italic">Keep it safe.</span>
+                    </h1>
+                    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (106).jpg" alt="Logo"
+                        class="w-full drop-shadow-xl rounded-lg">
+
+                    <!-- Caption Block -->
+                    <p
+                        class="text-stone-500 text-sm md:text-base leading-relaxed mb-8 max-w-lg mx-auto text-reveal delay-500 font-sans">
+                        Our proprietary AR tool helps you visualize and plan for a safer, more accessible future without
+                        leaving
+                        your living room. From widened entries to custom ramps that match your Austin style.
+                    </p>
+
+                    <!-- Button -->
+
+                    <div class="mt-8 text-xs text-stone-400 space-x-2">
+                        <span>#AustinAIP</span> <span>#SafeHome</span> <span>#AgingInPlace</span>
+                    </div>
+            </div>
+    </section>
+
+</body>
+
+</html>

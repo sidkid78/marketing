@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase | AI</title>
+    <style>
+        :root {
+            --bg-dark: #111111;
+            --text-light: #F9F9F5;
+            --accent-gold: #D4AF37;
+            --limestone: #EFEBE9;
+            --font-serif: 'Georgia', serif;
+            --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: var(--font-sans);
+            overflow: hidden
+        }
+
+        main {
+            height: 100dvh;
+            width: 100vw;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth
+        }
+
+        .slide {
+            height: 100dvh;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden
+        }
+
+        .img-layer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.7);
+            transition: transform 10s var(--ease-out)
+        }
+
+        .slide:hover .img-layer {
+            transform: scale(1.05)
+        }
+
+        .text-content {
+            z-index: 10;
+            max-width: 85%;
+            text-align: center;
+            padding: 2rem;
+            position: relative
+        }
+
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 1px
+        }
+
+        .h-title {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 5vw, 4rem);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            animation: fadeInUp 1s 0.3s forwards
+        }
+
+        .p-voice {
+            font-family: var(--font-sans);
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            line-height: 1.5;
+            color: var(--limestone);
+            opacity: 0;
+            animation: fadeIn 1s 0.8s forwards;
+            font-weight: 300;
+            letter-spacing: 0.02em
+        }
+
+        .logo-mark {
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: var(--accent-gold)
+        }
+
+        .split-screen {
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            inset: 0;
+            z-index: -1
+        }
+
+        @media(min-width:768px) {
+            .split-screen {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: none
+            }
+        }
+
+        .split-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(0.2) contrast(1.1)
+        }
+
+        .caption-slide {
+            background: var(--limestone);
+            color: var(--bg-dark);
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding: 10vh 2rem
+        }
+
+        .caption-body {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-top: 2rem;
+            transition: background 0.3s;
+            position: relative
+        }
+
+        .cta-btn::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 1px solid var(--bg-dark);
+            opacity: 0;
+            transition: opacity 0.3s
+        }
+
+        .cta-btn:hover::after {
+            opacity: 1
+        }
+
+        .highlight {
+            color: var(--accent-gold);
+            font-style: italic
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7)
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(212, 175, 55, 0)
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(212, 175, 55, 0)
+            }
+        }
+
+        .sticker-pulse {
+            animation: pulse 2s infinite;
+            background: var(--accent-gold);
+            color: var(--bg-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-top: 1rem;
+            display: inline-block
+        }
+
+        .filter-noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.07;
+            mix-blend-mode: overlay
+        }
+    </style>
+</head>
+
+<body><svg style="display: none;">
+        <filter id="grainy">
+            <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="saturate" values="0" />
+        </filter>
+    </svg>
+    <div class="filter-noise" style="filter: url(#grainy);"></div>
+    <main>
+        <section class="slide"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (100).jpg"
+                alt="Modern Grab Bar" class="img-layer">
+            <div class="text-content glass-panel"><span class="logo-mark"></span>
+                <h2 class="h-title">Safety that looks like style.</h2>
+                <p class="p-voice">"Want to keep Dad safe without making him feel ‘old’?"</p>
+            </div>
+        </section>
+        <section class="slide">
+            <div class="split-screen"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (101).jpg"
+                    alt="Austin Home and Woman Split" class="split-img" style="object-position: left center;"><img
+                    src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (101).jpg" alt="Concerned Daughter"
+                    class="split-img" style="object-position: right center;"></div>
+            <div class="text-content"><span class="logo-mark">Scene 2</span>
+                <h2 class="h-title">Peace of mind for you.<br><span class="highlight">Independence for them.</span></h2>
+                <p class="p-voice">"At HOMEase | AI, we bridge the gap between 'medical-looking' and 'modern living'
+                    right here in Austin."</p>
+            </div>
+        </section>
+        <section class="slide"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (102).jpg"
+                alt="Modern Bathroom" class="img-layer">
+            <div class="text-content glass-panel"><span class="logo-mark">HOMEase | AI</span>
+                <h2 class="h-title">Trusted Austin Contractors.<br>AI-Driven Design.</h2>
+                <p class="p-voice">"Design their forever home today. Tap the link to start."</p>
+                <div class="sticker-pulse">Link in Bio</div>
+            </div>
+        </section>
+        <section class="slide caption-slide">
+            <div class="text-content" style="text-align: left; max-width: 100%;">
+                <p class="caption-body">It’s not a "grab bar"—it’s a design upgrade for their independence. 🏡✨ We help
+                    Austin families find the perfect balance of safety and style so you can stop worrying and start
+                    enjoying more Sunday dinners. DM us "SAFE" for our Austin contractor guide!</p>
+                <div style="font-size: 0.9rem; color: #555; margin-top: 1rem;">#AustinAIP #SafeHome #AustinLiving
+                    #AgingInPlace #SandwichGeneration #AustinRealEstate</div><a href="#" class="cta-btn">Get the
+                    Guide</a>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

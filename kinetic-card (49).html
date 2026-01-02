@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listen & Fix - Kinetic Typography</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* CUSTOM FONTS */
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;700&family=JetBrains+Mono:wght@400;800&display=swap');
+
+    :root {
+      --bg-dark: #050505;
+      --text-main: #e0e0e0;
+      --accent-error: #ff2a2a;
+      --accent-tech: #00f3ff;
+      --accent-warn: #ffae00;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Chakra Petch', sans-serif;
+      overflow-x: hidden;
+      margin: 0;
+    }
+
+    /* SVG FILTERS */
+    .filter-grain {
+      filter: url(#grain);
+    }
+
+    .filter-glitch {
+      filter: url(#glitch);
+    }
+
+    .filter-glow {
+      filter: drop-shadow(0 0 5px var(--accent-tech)) drop-shadow(0 0 10px var(--accent-tech));
+    }
+
+    /* TYPOGRAPHY UTILS */
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* SCROLL SNAP LAYOUT */
+    .scroll-container {
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+
+    .section {
+      height: 100vh;
+      width: 100vw;
+      scroll-snap-align: start;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* SECTION 1: THE STOPPED CLOCK */
+    .s1-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (77).jpg');
+      /* Placeholder for Image 1 from prompt context */
+      background-size: cover;
+      background-position: center;
+      opacity: 0.4;
+      z-index: 0;
+      filter: grayscale(100%) contrast(120%);
+      animation: panZoom 20s infinite alternate linear;
+    }
+
+    .s1-content {
+      z-index: 10;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    .clock-pulse {
+      animation: pulseRed 2s infinite ease-in-out;
+    }
+
+    /* SECTION 2: THE CRISIS */
+    .s2-container {
+      background: #0a0a0a;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+
+    .terminal-text {
+      border-left: 2px solid var(--accent-error);
+      padding-left: 2rem;
+      max-width: 800px;
+      font-size: clamp(1.2rem, 2vw, 2rem);
+      line-height: 1.6;
+    }
+
+    .keyword-outdated {
+      color: #555;
+      text-decoration: line-through;
+    }
+
+    .keyword-guessing {
+      color: var(--accent-error);
+      font-weight: 700;
+      animation: flicker 0.2s infinite;
+    }
+
+    /* SECTION 3: THE BRAND */
+    .s3-container {
+      background: radial-gradient(circle at center, #1a2530 0%, #000 100%);
+    }
+
+    .brand-name {
+      font-size: clamp(3rem, 8vw, 10rem);
+      font-weight: 800;
+      background: linear-gradient(90deg, #fff, var(--accent-tech));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+    }
+
+    .shrug {
+      font-family: 'JetBrains Mono', monospace;
+      opacity: 0.7;
+    }
+
+    /* SECTION 4: THE ENGINE */
+    .s4-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (78).jpg');
+      /* Placeholder for Image 2 */
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+    }
+
+    .glass-card {
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.7);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      padding: 3rem;
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      max-width: 900px;
+      margin: 1rem;
+      box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+    }
+
+    .scan-line {
+      width: 100%;
+      height: 2px;
+      background: var(--accent-tech);
+      position: absolute;
+      top: 0;
+      left: 0;
+      animation: scan 3s infinite linear;
+      opacity: 0.5;
+    }
+
+    /* SECTION 5: ZERO FAILURE */
+    .s5-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (79).jpg');
+      /* Placeholder for Image 3 */
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+    }
+
+    .s5-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, #000 10%, transparent 90%);
+      z-index: 1;
+    }
+
+    .final-text {
+      z-index: 10;
+      text-align: right;
+      margin-left: auto;
+      margin-right: 5vw;
+      max-width: 600px;
+    }
+
+    .zero-failure {
+      display: block;
+      font-size: clamp(2rem, 6vw, 5rem);
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 20px var(--accent-tech);
+      letter-spacing: -2px;
+    }
+
+    /* ANIMATIONS */
+    @keyframes pulseRed {
+
+      0%,
+      100% {
+        color: #fff;
+        text-shadow: none;
+      }
+
+      50% {
+        color: var(--accent-error);
+        text-shadow: 0 0 15px var(--accent-error);
+      }
+    }
+
+    @keyframes flicker {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.8;
+        transform: skewX(-10deg);
+      }
+
+      52% {
+        opacity: 1;
+        transform: skewX(10deg);
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes scan {
+      0% {
+        top: 0%;
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      90% {
+        opacity: 1;
+      }
+
+      100% {
+        top: 100%;
+        opacity: 0;
+      }
+    }
+
+    @keyframes panZoom {
+      0% {
+        transform: scale(1);
+      }
+
+      100% {
+        transform: scale(1.1);
+      }
+    }
+
+    @keyframes revealText {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .reveal-delay-1 {
+      animation: revealText 1s forwards 0.3s;
+      opacity: 0;
+    }
+
+    .reveal-delay-2 {
+      animation: revealText 1s forwards 0.8s;
+      opacity: 0;
+    }
+
+    .reveal-delay-3 {
+      animation: revealText 1s forwards 1.3s;
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG DEFINITIONS -->
+  <svg style="display: none;">
+    <defs>
+      <!-- Paper/Grain Texture -->
+      <filter id="grain">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+        <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.5 0" in="noise"
+          result="coloredNoise" />
+        <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="composite" />
+        <feBlend mode="multiply" in="composite" in2="SourceGraphic" />
+      </filter>
+
+      <!-- Glitch Distortion -->
+      <filter id="glitch">
+        <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+        <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="scroll-container">
+
+    <!-- SECTION 1: INTRODUCTION -->
+    <section class="section">
+      <div class="s1-bg"></div>
+      <div class="s1-content">
+        <h1 class="text-5xl md:text-8xl font-bold uppercase leading-tight tracking-tighter mix-blend-difference">
+          Every time a machine stops,<br>
+          <span class="clock-pulse mono">the clock starts.</span>
+        </h1>
+      </div>
+    </section>
+
+    <!-- SECTION 2: THE PROBLEM (CRISIS) -->
+    <section class="section s2-container">
+      <div class="terminal-text mono">
+        <p class="mb-8 filter-grain reveal-delay-1">
+          For a technician, that silence isn't just a technical glitch—it’s a <span
+            class="text-white border-b-2 border-white">crisis of confidence</span>.
+        </p>
+        <p class="mb-4 text-gray-400 reveal-delay-2">
+          You’re standing in front of a complex system with a manual that was
+          <span class="keyword-outdated">outdated</span> the day it was printed...
+        </p>
+        <p class="text-xl reveal-delay-3">
+          ...and an AI that’s just <span class="keyword-guessing text-4xl">GUESSING</span>.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 3: THE SOLUTION -->
+    <section class="section s3-container">
+      <div class="text-center z-10">
+        <p class="text-lg md:text-xl tracking-widest uppercase mb-4 text-gray-500">We started</p>
+        <h2 class="brand-name filter-glow filter-glitch">Listen & Fix</h2>
+        <p class="mt-8 text-2xl md:text-4xl max-w-4xl mx-auto font-light leading-relaxed">
+          because we believe no repair should ever end in a <span class="shrug text-white">'shrug.'</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 4: THE MECHANISM (DATA TUNNEL) -->
+    <section class="section">
+      <div class="s4-bg"></div>
+      <div class="glass-card relative overflow-hidden">
+        <div class="scan-line"></div>
+        <p class="text-2xl font-bold text-white mb-6 uppercase tracking-wider">
+          We don't just <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-white">'retrieve
+            data'</span>;
+        </p>
+        <p class="text-xl md:text-2xl mb-6 font-light leading-relaxed">
+          We hunt for the truth. While other tools hallucinate based on two-year-old memories, our engine <strong
+            class="text-white font-bold">aggressively crawls</strong> the live web in real-time to find the exact,
+          specific heartbeat of the machine in front of you.
+        </p>
+        <p class="text-lg mono text-cyan-300 border-t border-gray-600 pt-4">
+          >> We turn the chaos of the internet into a professional-grade strike team for your hands.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 5: CONCLUSION (AR REPAIR) -->
+    <section class="section">
+      <div class="s5-bg"></div>
+      <div class="s5-overlay"></div>
+      <div class="final-text">
+        <p class="text-xl md:text-2xl mb-2 font-mono text-gray-300">We aren't building a chatbot.</p>
+        <p class="text-2xl md:text-4xl mb-6">We are building the world’s first</p>
+        <span class="zero-failure filter-glow">'Zero-Failure'</span>
+        <span class="text-3xl md:text-5xl font-bold text-gray-400 block mt-2">knowledge layer</span>
+        <p class="mt-12 text-lg md:text-xl border-l-4 border-cyan-400 pl-6 leading-relaxed">
+          —so that when the world breaks, you are the one who actually knows how to fix it.
+        </p>
+      </div>
+    </section>
+
+  </div>
+</body>
+
+</html>

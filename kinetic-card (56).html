@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Forever Home Readiness Check</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+    :root {
+      --c-dark: #0f172a;
+      --c-light: #f8fafc;
+      --c-accent: #2dd4bf;
+      --c-warn: #fbbf24;
+      --c-alert: #f87171;
+      --c-glass: rgba(255, 255, 255, 0.1);
+      --c-glass-border: rgba(255, 255, 255, 0.2);
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--c-dark);
+      color: var(--c-light);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      font-size: clamp(16px, 2vw, 20px);
+      line-height: 1.6;
+    }
+
+    /* SVG Filters */
+    .svg-filters {
+      position: absolute;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    /* Utility: Glassmorphism */
+    .glass-panel {
+      background: var(--c-glass);
+      -webkit-backdrop-filter: blur(12px) saturate(110%);
+      backdrop-filter: blur(12px) saturate(110%);
+      border: 1px solid var(--c-glass-border);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    /* Scrollytelling Container */
+    .scroller {
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+
+    section {
+      height: 100vh;
+      width: 100vw;
+      scroll-snap-align: start;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* Background Layers */
+    .bg-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      filter: url(#grain) brightness(0.6);
+      transition: transform 1s ease-out;
+    }
+
+    section:hover .bg-image {
+      transform: scale(1.05);
+    }
+
+    /* Kinetic Type Base */
+    .content-wrapper {
+      max-width: 800px;
+      padding: 2rem;
+      z-index: 2;
+      text-align: center;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 6vw, 5rem);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+      max-width: 60ch;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Section 1: Intro */
+    .intro-text span {
+      display: inline-block;
+      animation: fadeUp 1s ease forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    /* Section 2 & 3: Quiz */
+    .quiz-grid {
+      display: grid;
+      gap: 1rem;
+      width: 100%;
+      text-align: left;
+      margin-top: 2rem;
+    }
+
+    .quiz-item {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .quiz-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateX(10px);
+    }
+
+    .number-badge {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      color: var(--c-accent);
+      opacity: 0.8;
+    }
+
+    /* Section 4: Results */
+    .results-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    .result-card {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-left: 4px solid var(--border-c);
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulseSlow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 15px rgba(45, 212, 191, 0.2);
+      }
+
+      50% {
+        box-shadow: 0 0 25px rgba(45, 212, 191, 0.5);
+      }
+    }
+
+    .highlight {
+      color: var(--c-accent);
+      font-style: italic;
+    }
+
+    /* CTA Button */
+    .cta-btn {
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 1rem 3rem;
+      background: var(--c-light);
+      color: var(--c-dark);
+      text-decoration: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+    }
+
+    .cta-btn:hover {
+      background: var(--c-accent);
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG Filters -->
+  <svg class="svg-filters">
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 -20 10" />
+      <feComposite operator="in" in2="SourceGraphic" />
+      <feBlend mode="overlay" in="SourceGraphic" />
+    </filter>
+  </svg>
+
+  <main class="scroller">
+
+    <!-- SECTION 1: INTRO -->
+    <section id="intro">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (96).jpg" class="bg-image" alt="Austin Home Kitchen">
+      <div class="content-wrapper">
+        <h1 class="intro-text">
+          <span style="animation-delay: 0.2s">Austin</span>
+          <span style="animation-delay: 0.4s">is</span>
+          <span style="animation-delay: 0.6s">Home.</span>
+        </h1>
+        <p class="glass-panel"
+          style="padding: 1.5rem; margin-top: 2rem; animation: fadeUp 1s 1s ease forwards; opacity: 0;">
+          And we want to help you stay there. 🏡✨ Whether you’re looking out for yourself or a parent, knowing if a home
+          is "future-ready" is the first step toward peace of mind.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 2: THE QUIZ PART 1 -->
+    <section id="quiz-1">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (97).jpg" class="bg-image" alt="Level Entryway">
+      <div class="content-wrapper">
+        <h2>The 'Forever Home'<br><span class="highlight">Readiness Check</span></h2>
+        <p>Swipe through to take our Quiz. Count how many "YES" answers you get:</p>
+        <div class="quiz-grid">
+          <div class="quiz-item glass-panel">
+            <div class="number-badge">1️⃣</div>
+            <div>Is there at least one no-step entry into the house?</div>
+          </div>
+          <div class="quiz-item glass-panel">
+            <div class="number-badge">2️⃣</div>
+            <div>Are the hallways and doorways wide enough for easy movement?</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: THE QUIZ PART 2 -->
+    <section id="quiz-2">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (98).jpg" class="bg-image" alt="Modern Bathroom">
+      <div class="content-wrapper">
+        <div class="quiz-grid">
+          <div class="quiz-item glass-panel">
+            <div class="number-badge">3️⃣</div>
+            <div>Is the primary bedroom and full bath on the main floor?</div>
+          </div>
+          <div class="quiz-item glass-panel">
+            <div class="number-badge">4️⃣</div>
+            <div>Is the lighting bright enough to eliminate shadows in walkways?</div>
+          </div>
+          <div class="quiz-item glass-panel">
+            <div class="number-badge">5️⃣</div>
+            <div>Does the shower have a low threshold or grab bars?</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: RESULTS -->
+    <section id="results">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (99).jpg" class="bg-image"
+        alt="Austin Skyline and Tablet">
+      <div class="content-wrapper">
+        <h2>Your Results</h2>
+        <div class="results-container">
+          <div class="result-card glass-panel" style="--border-c: var(--c-accent);">
+            <h3 style="color: var(--c-accent)">✅ 4-5 Yes</h3>
+            <p>You’re ahead of the curve! Let’s talk about AI-driven smart safety.</p>
+          </div>
+          <div class="result-card glass-panel" style="--border-c: var(--c-warn);">
+            <h3 style="color: var(--c-warn)">⚠️ 1-3 Yes</h3>
+            <p>It’s time for a few practical upgrades.</p>
+          </div>
+          <div class="result-card glass-panel" style="--border-c: var(--c-alert);">
+            <h3 style="color: var(--c-alert)">❌ 0 Yes</h3>
+            <p>Don't worry—that’s what <strong>HOMEase | AI</strong> is here for.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: CTA -->
+    <section id="cta">
+      <!-- Reusing background 4 but with darker overlay via CSS -->
+      <div class="bg-image"
+        style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (99).jpg'); background-size: cover; background-position: center; filter: blur(5px) brightness(0.4);">
+      </div>
+      <div class="content-wrapper">
+        <h2 style="font-size: 3rem">Ready for Peace of Mind?</h2>
+        <p>Comment <strong>READY</strong> below, and we’ll send you our Austin AIP Safety Checklist! 👇</p>
+        <div style="margin-top: 1rem; opacity: 0.7; font-size: 0.8rem; letter-spacing: 1px;">
+          #AustinAIP #SafeHome #AgingInPlace #AustinLiving #HOMEaseAI
+        </div>
+        <a href="#" class="cta-btn">I'm Ready</a>
+      </div>
+    </section>
+
+  </main>
+</body>
+
+</html>

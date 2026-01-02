@@ -1,9 +1,20 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { StoryScene } from "../types";
 
-export const analyzeStory = async (apiKey: string, story: string): Promise<StoryScene[]> => {
-  if (!apiKey) throw new Error("API Key is missing. Please provide a valid API key.");
-  const client = new GoogleGenAI({ apiKey });
+const getClient = () => {
+  // Try to get key from environment variable (standard Next.js public var)
+  // or fallback to process.env.API_KEY if defined (e.g. build time)
+  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.NEXT_PUBLIC_API_KEY || '';
+  if (!apiKey) {
+    console.warn("API Key is missing in environment variables.");
+    // throw new Error("API Key is missing. Please check your environment variables.");
+    // We might want to allow this to fail gracefully later if the user hasn't set it yet
+  }
+  return new GoogleGenAI({ apiKey });
+};
+
+export const analyzeStory = async (story: string): Promise<StoryScene[]> => {
+  const client = getClient();
   try {
     const response = await client.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -38,9 +49,8 @@ export const analyzeStory = async (apiKey: string, story: string): Promise<Story
   }
 };
 
-export const generateSceneImages = async (apiKey: string, scenes: StoryScene[]): Promise<StoryScene[]> => {
-  if (!apiKey) throw new Error("API Key is missing. Please provide a valid API key.");
-  const client = new GoogleGenAI({ apiKey });
+export const generateSceneImages = async (scenes: StoryScene[]): Promise<StoryScene[]> => {
+  const client = getClient();
   const imagePromises = scenes.map(async (scene) => {
     try {
       const response = await client.models.generateImages({
@@ -63,16 +73,15 @@ export const generateSceneImages = async (apiKey: string, scenes: StoryScene[]):
 /**
  * Generate Speech (TTS)
  */
-export const generateSpeech = async (apiKey: string, text: string): Promise<Uint8Array> => {
-  if (!apiKey) throw new Error("API Key is missing. Please provide a valid API key.");
-  const client = new GoogleGenAI({ apiKey });
+export const generateSpeech = async (text: string): Promise<Uint8Array> => {
+  const client = getClient();
   const response = await client.models.generateContent({
     model: "gemini-2.5-flash-preview-tts",
     contents: [{ parts: [{ text: `Narrate this clearly: ${text}` }] }],
     config: {
-      responseModalities: [Modality.AUDIO],
+      responseModalities: ['AUDIO'],
       speechConfig: {
-        voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
+        voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Algieba' } },
       },
     },
   });
@@ -84,25 +93,45 @@ export const generateSpeech = async (apiKey: string, text: string): Promise<Uint
 };
 
 /**
+ * Generate a Context-Aware Video Prompt
+ */
+export const generateVideoPrompt = async (text: string, imageDescription: string): Promise<string> => {
+  const client = getClient();
+  const response = await client.models.generateContent({
+    model: 'gemini-3-flash-preview',
+    contents: `Write a precise, cinematic prompt for an AI video generator (Veo) to animate a static image.
+      
+      Context Story: "${text}"
+      Visual Description: "${imageDescription}"
+      
+      Rules:
+      - Focus on specific camera movements (pan, zoom, tilt) and subject motion.
+      - Keep it under 40 words.
+      - Output ONLY the prompt text.
+      `,
+  });
+  return response.text || `Cinematic slow pan of ${imageDescription}`;
+};
+
+/**
  * Animate Scene (Veo)
  */
-export const animateScene = async (apiKey: string, prompt: string, imageBase64: string): Promise<string> => {
-  if (!apiKey) throw new Error("API Key is missing. Please provide a valid API key.");
-  const client = new GoogleGenAI({ apiKey });
+export const animateScene = async (prompt: string, imageBase64: string): Promise<string> => {
+  const client = getClient();
 
   // Extract base64 if it has the data URI prefix
   const pureBase64 = imageBase64.split(',')[1] || imageBase64;
 
   let operation = await client.models.generateVideos({
     model: 'veo-3.1-fast-generate-preview',
-    prompt: `Animate this scene: ${prompt}`,
+    prompt: prompt,
     image: {
       imageBytes: pureBase64,
       mimeType: 'image/jpeg',
     },
     config: {
       numberOfVideos: 1,
-      resolution: '720p',
+      resolution: '720p', // Removed as it might not be supported in all versions/models or defaults are safer
       aspectRatio: '16:9'
     }
   });
@@ -115,6 +144,7 @@ export const animateScene = async (apiKey: string, prompt: string, imageBase64: 
   const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
   if (!downloadLink) throw new Error("Failed to generate video");
 
+  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.NEXT_PUBLIC_API_KEY || '';
   const videoResponse = await fetch(`${downloadLink}&key=${apiKey}`);
   const videoBlob = await videoResponse.blob();
   return URL.createObjectURL(videoBlob);
@@ -145,8 +175,51 @@ export async function decodeAudioData(
   for (let channel = 0; channel < numChannels; channel++) {
     const channelData = buffer.getChannelData(channel);
     for (let i = 0; i < frameCount; i++) {
+      // Simple conversion from Int16 to Float32 usually involves dividing by 32768
+      // Assuming the input data is 16-bit PCM.
       channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
     }
   }
   return buffer;
+}
+
+export const createWavUrl = (pcmData: Uint8Array, sampleRate: number = 24000): string => {
+  const numChannels = 1;
+  const byteRate = sampleRate * numChannels * 2;
+  const blockAlign = numChannels * 2;
+  const dataSize = pcmData.length;
+  const buffer = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(buffer);
+
+  // RIFF chunk descriptor
+  writeString(view, 0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeString(view, 8, 'WAVE');
+
+  // fmt sub-chunk
+  writeString(view, 12, 'fmt ');
+  view.setUint32(16, 16, true); // Subchunk1Size (16 for PCM)
+  view.setUint16(20, 1, true); // AudioFormat (1 for PCM)
+  view.setUint16(22, numChannels, true); // NumChannels
+  view.setUint32(24, sampleRate, true); // SampleRate
+  view.setUint32(28, byteRate, true); // ByteRate
+  view.setUint16(32, blockAlign, true); // BlockAlign
+  view.setUint16(34, 16, true); // BitsPerSample
+
+  // data sub-chunk
+  writeString(view, 36, 'data');
+  view.setUint32(40, dataSize, true);
+
+  // Write PCM samples
+  const pcmBytes = new Uint8Array(buffer, 44);
+  pcmBytes.set(pcmData);
+
+  const blob = new Blob([buffer], { type: 'audio/wav' });
+  return URL.createObjectURL(blob);
+}
+
+function writeString(view: DataView, offset: number, string: string) {
+  for (let i = 0; i < string.length; i++) {
+    view.setUint8(offset + i, string.charCodeAt(i));
+  }
 }

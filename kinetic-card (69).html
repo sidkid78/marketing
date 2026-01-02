@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase Digital Art</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;0,900;1,300&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --c-dark: #050507;
+            --c-navy: #0f172a;
+            --c-alert: #ef4444;
+            --c-blue: #2563eb;
+            --c-paper: #f8fafc;
+            --c-ink: #1e293b;
+            --c-blueprint: #eff6ff;
+            --font-serif: 'Merriweather', serif;
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--c-dark);
+            color: var(--c-paper);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* UTILITIES */
+        .img-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .text-shadow {
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .sticky-frame {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 800px;
+            padding: 2rem;
+            mix-blend-mode: normal;
+        }
+
+        /* SECTIONS */
+        /* 1. HERO - THE PHONE CALL */
+        .section-hero {
+            height: 150vh;
+            position: relative;
+            background: var(--c-dark);
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            filter: url(#shiver);
+            animation: breath 4s ease-in-out infinite alternate;
+        }
+
+        .sub-head {
+            font-family: var(--font-sans);
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            font-weight: 300;
+            max-width: 60ch;
+            border-left: 2px solid var(--c-alert);
+            padding-left: 1rem;
+            margin-top: 2rem;
+            background: rgba(0, 0, 0, 0.4);
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+
+        /* 2. TERROR - AMYGDALA */
+        .section-terror {
+            background: var(--c-navy);
+            min-height: 100vh;
+            position: relative;
+            color: var(--c-paper);
+            display: grid;
+            place-items: center;
+        }
+
+        .terror-text {
+            font-family: var(--font-serif);
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-style: italic;
+            max-width: 800px;
+            text-align: center;
+            position: relative;
+        }
+
+        .terror-highlight {
+            color: var(--c-alert);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            display: block;
+            margin-top: 1rem;
+            filter: url(#grain);
+        }
+
+        /* 3. FOUNDER - BLUEPRINT */
+        .section-founder {
+            position: relative;
+            background: #fff;
+            color: var(--c-navy);
+        }
+
+        .founder-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        @media(min-width: 768px) {
+            .founder-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .founder-visual {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            background: #e0e7ff;
+            overflow: hidden;
+            filter: url(#blueprint-grain);
+        }
+
+        .founder-visual img {
+            opacity: 0.9;
+            mix-blend-mode: multiply;
+        }
+
+        .founder-copy {
+            padding: 4rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--c-blueprint);
+            position: relative;
+        }
+
+        .blueprint-lines {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(var(--c-blue) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .manifesto-quote {
+            font-family: var(--font-serif);
+            font-size: 1.4rem;
+            border-left: 4px solid var(--c-navy);
+            padding-left: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* 4. DIAGNOSTIC - SCAN */
+        .section-scan {
+            background: #000;
+            color: #00ffcc;
+            font-family: var(--font-mono);
+            position: relative;
+            border-top: 5px solid #00ffcc;
+        }
+
+        .scan-overlay {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, rgba(0, 255, 204, 0.05), rgba(0, 255, 204, 0.05) 1px, transparent 1px, transparent 2px);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .scan-content {
+            position: relative;
+            z-index: 10;
+            padding: 4rem 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            border: 1px solid #00ffcc;
+        }
+
+        .scan-header {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #00ffcc;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .blinker {
+            animation: blink 1s step-end infinite;
+        }
+
+        /* 5. B2B - CONCLUSION */
+        .section-end {
+            min-height: 100vh;
+            background: #fff;
+            color: var(--c-ink);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .end-visual-wrap {
+            width: 100%;
+            height: 50vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+            mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+        }
+
+        .end-copy {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 3rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            border-radius: 4px;
+            margin-top: 30vh;
+        }
+
+        /* ANIMATIONS */
+        @keyframes breath {
+            0% {
+                opacity: 0.9;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body><!-- SVG FILTERS --><svg style="display: none;">
+        <defs>
+            <filter id="shiver">
+                <feTurbulence type="fractalNoise" baseFrequency="0.01 0.002" numOctaves="1" result="warp" />
+                <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="5" in="SourceGraphic" in2="warp" />
+            </filter>
+            <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" result="noise" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0" in="noise"
+                    result="coloredNoise" />
+                <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="composite" />
+                <feBlend mode="multiply" in="composite" in2="SourceGraphic" />
+            </filter>
+            <filter id="blueprint-grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.6" result="noise" />
+                <feColorMatrix type="saturate" values="0" in="noise" result="desaturatedNoise" />
+                <feComponentTransfer in="desaturatedNoise" result="dimNoise">
+                    <feFuncR type="linear" slope="0.5" />
+                    <feFuncG type="linear" slope="0.5" />
+                    <feFuncB type="linear" slope="0.5" />
+                </feComponentTransfer>
+                <feBlend mode="multiply" in="dimNoise" in2="SourceGraphic" result="grainyImage" />
+                <feComposite operator="in" in="grainyImage" in2="SourceGraphic" />
+            </filter>
+        </defs>
+    </svg>
+    <main> <!-- SECTION 1: THE CALL -->
+        <section class="section-hero">
+            <div class="sticky-frame"> <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (208).jpg"
+                    alt="Phone ringing at night" class="img-cover" style="filter: brightness(0.4) contrast(1.2);">
+                <div class="content-layer text-shadow">
+                    <h1>The Phone Call You Never Want to Get.</h1>
+                    <div class="sub-head">
+                        <p class="mb-4"><strong>You’ve spent your life looking up to them. Now, you’re the one keeping
+                                them upright.</strong></p>
+                        <p>Stop wondering <em>if</em> their home is safe. Use the HOMEase Shield to see the invisible
+                            risks and fix them before the ambulance arrives.</p>
+                    </div>
+                </div>
+            </div>
+        </section> <!-- SECTION 2: THE AMYGDALA -->
+        <section class="section-terror">
+            <div class="content-layer">
+                <h2 class="terror-text"> "It’s the sound of a phone ringing in the middle of the night. It’s the feeling
+                    in your chest as you race to the ER. It’s the guilt of knowing that a $200 grab bar could have
+                    prevented a $50,000 hip replacement." <br><br> <span
+                        style="font-family: var(--font-sans); font-size: 1rem; opacity: 0.8; display:block; margin-top:2rem;">
+                        At HOMEase, we don’t see 'renovations.' We see a battle for your parent’s independence. We
+                        aren't building ramps; we are building a <span class="terror-highlight">fortress around their
+                            dignity.</span> </span> </h2>
+            </div>
+        </section> <!-- SECTION 3: THE FOUNDER -->
+        <section class="section-founder">
+            <div class="founder-grid">
+                <div class="founder-visual"> <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (209).jpg"
+                        alt="Cliff examining blueprints" class="img-cover"> </div>
+                <div class="founder-copy">
+                    <div class="blueprint-lines"></div>
+                    <p class="manifesto-quote"> "I spent my career building systems of efficiency. But when I looked at
+                        how we treat our seniors, I didn't see a need for efficiency—I saw a need for a Protector." </p>
+                    <p style="margin-bottom: 1.5rem;"> I created HOMEase to be the <strong>Shield</strong>. We don't
+                        just 'vet' contractors; we interrogate them. </p>
+                    <p class="font-bold" style="color: var(--c-navy);"> "If I wouldn't trust them to hold my own
+                        mother’s hand as she steps into a shower, they don’t get the HOMEase seal. Period." </p>
+                </div>
+            </div>
+        </section> <!-- SECTION 4: THE DIAGNOSTIC -->
+        <section class="section-scan">
+            <div class="img-cover" style="z-index: 1;"> <img
+                    src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (209).jpg" alt="Mobile AR Scan"
+                    style="width:100%; height:100%; object-fit:cover; opacity: 0.6;"> </div>
+            <div class="scan-overlay"></div>
+            <div class="scan-content">
+                <div class="scan-header"> <span>System: Ready</span> <span class="blinker">● Live</span> </div>
+                <h2 style="font-size: 2.5rem; margin-bottom: 1rem; color: #fff;">Don't Guess. Diagnose.</h2>
+                <p style="margin-bottom: 1.5rem; font-size: 1.1rem;"> "Your phone is now a clinical tool. Our AI doesn't
+                    just 'scan a room'—it identifies the tripwires that steal independence." </p>
+                <div style="border-left: 2px solid #00ffcc; padding-left: 1rem;">
+                    <p>Within seconds, you receive a <strong>Home Readiness Prescription.</strong> This isn't a 'to-do
+                        list.' It’s the blueprint for keeping your family whole.</p>
+                </div>
+            </div>
+        </section> <!-- SECTION 5: CONCLUSION -->
+        <section class="section-end">
+            <div class="end-visual-wrap"> <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (210).jpg"
+                    alt="Senior woman walking safely" class="img-cover" style="object-position: top;"> </div>
+            <div class="end-copy">
+                <h2 style="font-family: var(--font-serif); font-size: 2rem; color: var(--c-navy); margin-bottom: 1rem;">
+                    Your Care Ends. Their Risk Begins.</h2>
+                <p style="margin-bottom: 1.5rem; color: #475569;"> "You save lives in the clinic only to send them back
+                    to a 'danger zone.' HOMEase is the missing bridge." </p>
+                <p style="font-weight: 600; color: var(--c-blue);"> We turn your clinical discharge notes into an
+                    immediate, physical reality. We are the technology that ensures your hard work isn't undone by a
+                    single loose rug. </p>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

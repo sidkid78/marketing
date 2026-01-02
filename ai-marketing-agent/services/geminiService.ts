@@ -122,7 +122,7 @@ export async function generateStrategy(userInput: UserInput, apiKey: string): Pr
   const ai = createAIClient(apiKey);
   const prompt = buildPrompt(userInput, 'strategy');
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3-flash-preview',
     contents: prompt,
     config: {
       responseMimeType: 'application/json',
@@ -137,7 +137,7 @@ export async function generateContentIdeas(userInput: UserInput, apiKey: string)
   const ai = createAIClient(apiKey);
   const prompt = buildPrompt(userInput, 'content');
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3-flash-preview',
     contents: prompt,
     config: {
       responseMimeType: 'application/json',
@@ -158,7 +158,7 @@ export async function analyzePerformance(performanceData: PerformanceData, goal:
   };
   const prompt = buildPrompt(mockUserInput, 'analysis', performanceData);
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3-flash-preview',
     contents: prompt,
     config: {
       responseMimeType: 'application/json',
@@ -169,29 +169,24 @@ export async function analyzePerformance(performanceData: PerformanceData, goal:
   return JSON.parse(jsonText);
 }
 
-export async function generateAdImage(visualDescription: string, apiKey: string): Promise<string | null> {
+export async function generateAdImage(prompt: string, apiKey: string): Promise<string | null> {
   try {
     const ai = createAIClient(apiKey);
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-image",
       contents: {
         parts: [
-          { text: "Generate a high-quality, photorealistic image suitable for a marketing campaign based on this description:" },
-          { text: visualDescription }
+          {
+            text: prompt
+          }
         ],
       },
-      config: {
-        imageConfig: {
-          aspectRatio: "1:1"
-        }
-      }
     });
 
-    if (response.candidates && response.candidates[0]?.content?.parts) {
-      for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData) {
-          return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-        }
+    for (const part of response.candidates?.[0]?.content?.parts || []) {
+      if (part.inlineData) {
+        const base64EncodingString = part.inlineData.data;
+        return `data:${part.inlineData.mimeType};base64,${base64EncodingString}`;
       }
     }
     return null;
@@ -207,31 +202,35 @@ export async function generateAdImage(visualDescription: string, apiKey: string)
  *
  * Note: Video generation can be slow (may take 1-2 minutes) and may incur additional costs.
  */
-export async function generateAdVideo(visualDescription: string, apiKey: string): Promise<string | null> {
+export async function generateAdVideo(prompt: string, apiKey: string): Promise<string | null> {
   try {
     const ai = createAIClient(apiKey);
 
     let operation = await ai.models.generateVideos({
-      model: "veo-3.1-generate-preview",
-      prompt: `Create a short, high-quality video suitable for a marketing campaign or advertisement based on this description: ${visualDescription}`,
+      model: "veo-3.1-fast-generate-preview",
+      prompt: prompt,
+      config: {
+        numberOfVideos: 1,
+        resolution: '720p',
+        aspectRatio: '16:9'
+      }
     });
 
     // Poll until the operation is complete.
     while (!operation.done) {
       // Wait ~10 seconds between polls to avoid spamming the API.
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-      operation = await ai.operations.getVideosOperation({ operation });
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      operation = await ai.operations.getVideosOperation({ operation: operation });
     }
 
-    const generatedVideo = operation.response?.generatedVideos?.[0];
-    const uri = (generatedVideo as any)?.video?.uri as string | undefined;
-    if (!uri) {
+    const videoUri = operation.response?.generatedVideos?.[0]?.video?.uri;
+    if (!videoUri) {
       throw new Error("No downloadable video URI returned.");
     }
 
     // In the browser, fetch the video bytes directly using the API key header,
     // then wrap them in a Blob and expose them as an object URL for <video>.
-    const response = await fetch(uri, {
+    const response = await fetch(videoUri, {
       headers: {
         "x-goog-api-key": apiKey,
       },

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase | AI - Kinetic Story</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --color-dark: #0f1012;
+            --color-gold: #c6a87c;
+            --color-light: #f4f4f0;
+            --font-display: 'Cinzel', serif;
+            --font-body: 'Lato', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--color-dark);
+            color: var(--color-light);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar hide */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Scrollytelling Container */
+        .scrolly-container {
+            height: 100vh;
+            width: 100vw;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .scene {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* SVG Filters */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.07;
+            filter: url(#noiseFilter);
+            mix-blend-mode: overlay;
+        }
+
+        /* Kinetic Typography Animations */
+        @keyframes revealUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes trackingExpand {
+            0% {
+                letter-spacing: 0.1em;
+                opacity: 0;
+            }
+
+            100% {
+                letter-spacing: 0.3em;
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInZoom {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-reveal {
+            animation: revealUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            opacity: 0;
+        }
+
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-700 {
+            animation-delay: 0.7s;
+        }
+
+        .animate-tracking {
+            animation: trackingExpand 1.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* Image Handling */
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            transition: transform 10s ease;
+        }
+
+        .scene:hover .bg-image {
+            transform: scale(1.05);
+        }
+
+        .overlay-grad {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.1) 100%);
+            z-index: 1;
+        }
+
+        .text-layer {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 2rem;
+            max-width: 900px;
+        }
+
+        h1,
+        h2 {
+            font-family: var(--font-display);
+            line-height: 1.1;
+        }
+
+        /* Split Screen Styling */
+        .split-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .split-pane {
+            height: 100%;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .split-line {
+            position: absolute;
+            left: 50%;
+            top: 10%;
+            bottom: 10%;
+            width: 1px;
+            background: var(--color-gold);
+            z-index: 5;
+            box-shadow: 0 0 10px var(--color-gold);
+        }
+
+        /* Caption Card Styling */
+        .paper-texture {
+            background-color: #fcfbf9;
+            color: var(--color-dark);
+        }
+
+        .editorial-text {
+            column-count: 1;
+            column-gap: 2rem;
+            text-align: justify;
+        }
+
+        @media (min-width: 768px) {
+            .editorial-text {
+                column-count: 2;
+            }
+        }
+
+        .gold-accent {
+            color: var(--color-gold);
+        }
+
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .glass-btn:hover {
+            background: var(--color-gold);
+            color: #000;
+            border-color: var(--color-gold);
+        }
+
+        /* Logo construction */
+        .logo-text {
+            font-family: var(--font-display);
+            letter-spacing: -0.02em;
+        }
+
+        .logo-ai {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG Filters -->
+    <svg style="display: none;">
+        <filter id="noiseFilter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.5 0" />
+        </filter>
+    </svg>
+
+    <div class="noise-overlay"></div>
+
+    <div class="scrolly-container">
+
+        <!-- SCENE 1: Close Up -->
+        <section class="scene">
+            <!-- Placeholder using Unsplash matching 'sleek black bathroom fixture' -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (89).jpg" alt="Black designer bar"
+                class="bg-image">
+            <div class="overlay-grad"></div>
+            <div class="text-layer">
+                <h1 class="text-5xl md:text-7xl font-bold mb-4 animate-reveal text-white drop-shadow-lg">
+                    Forget the <span class="italic text-gray-400">"Hospital"</span> look.
+                </h1>
+                <p
+                    class="text-lg md:text-2xl font-light text-gray-200 mt-6 animate-reveal delay-300 max-w-xl mx-auto border-l-2 border-yellow-600 pl-4">
+                    "Think safety has to look clinical? Think again."
+                </p>
+            </div>
+        </section>
+
+        <!-- SCENE 2: Wide Shot / Reveal -->
+        <section class="scene">
+            <!-- Placeholder using Unsplash matching 'luxury bathroom interior austin' -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (90).jpg" alt="Modern Austin Bathroom"
+                class="bg-image">
+            <div class="overlay-grad" style="background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"></div>
+            <div class="text-layer">
+                <h2 class="text-4xl md:text-6xl font-bold animate-reveal">
+                    Support disguised as <span class="gold-accent">Style.</span>
+                </h2>
+                <p class="mt-8 text-xl font-light tracking-wide animate-reveal delay-300">
+                    "Our designer grab bars provide heavy-duty support disguised as luxury hardware."
+                </p>
+            </div>
+        </section>
+
+        <!-- SCENE 3: Split Screen Styles -->
+        <section class="scene">
+            <div class="split-container">
+                <!-- Left: Chrome/Cool -->
+                <div class="split-pane">
+                    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (91).jpg" class="bg-image grayscale"
+                        alt="Chrome Texture">
+                </div>
+                <!-- Right: Bronze/Warm -->
+                <div class="split-pane">
+                    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (91).jpg" class="bg-image sepia"
+                        alt="Bronze Texture">
+                </div>
+            </div>
+            <div class="split-line"></div>
+            <div class="text-layer"
+                style="background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); padding: 3rem; border: 1px solid rgba(255,255,255,0.1);">
+                <h2 class="text-3xl md:text-5xl uppercase tracking-[0.2em] animate-tracking">
+                    Safe. Secure. Sophisticated.
+                </h2>
+                <p class="mt-4 text-gray-300 animate-reveal delay-700">
+                    "Keep your independence—and your aesthetic."
+                </p>
+            </div>
+        </section>
+
+        <!-- SCENE 4: Logo & Call to Action -->
+        <section class="scene paper-texture">
+            <!-- Subtle architectural background -->
+            <div
+                style="position: absolute; inset: 0; opacity: 0.1; background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (92).jpg'); background-size: cover; filter: grayscale(100%);">
+            </div>
+
+            <div class="text-layer">
+                <div class="mb-8 p-6 border-2 border-gray-800 inline-block animate-reveal">
+                    <span class="text-4xl md:text-6xl logo-text text-gray-900">HOMEase <span
+                            class="logo-ai text-yellow-600">| AI</span></span>
+                </div>
+
+                <h2 class="text-2xl md:text-4xl text-gray-800 font-bold mb-2 animate-reveal delay-300">
+                    Beautiful AIP Solutions for Austin.
+                </h2>
+
+                <p class="text-gray-600 italic mb-8 animate-reveal delay-300">
+                    "Tap the link to browse our chic collection."
+                </p>
+
+                <a href="#"
+                    class="inline-block px-8 py-4 bg-gray-900 text-white font-bold tracking-widest uppercase hover:bg-yellow-600 transition-colors duration-300 animate-reveal delay-700">
+                    Link in Bio
+                </a>
+            </div>
+        </section>
+
+        <!-- CAPTION / FOOTER SCENE -->
+        <section class="scene bg-neutral-900">
+            <div class="text-layer text-left max-w-4xl">
+                <h3 class="text-2xl font-serif text-yellow-500 mb-6">The Narrative</h3>
+                <div class="editorial-text text-gray-300 text-sm md:text-base leading-relaxed">
+                    <p class="mb-4">
+                        Safety belongs in every room—but "hospital vibes" don't. ✨ At <strong class="text-white">HOMEase
+                            | AI</strong>, we believe your Austin home should be a sanctuary that evolves with you.
+                    </p>
+                    <p class="mb-4">
+                        Our stylish grab bars offer the ultimate peace of mind without sacrificing your interior design.
+                        Ready to upgrade your bathroom? Tap the link in our bio to shop the collection! 🛁 🏠
+                    </p>
+                </div>
+                <div class="mt-8 text-xs text-gray-500 font-mono">
+                    #AustinAIP #SafeHome #AgingInPlace #AustinRealEstate #ModernSeniorLiving
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bell County Pilot: Strategic Framework</title>
+  <style>
+    /* 
+   * DESIGN SYSTEM & VARIABLES
+   */
+    :root {
+      --bg-paper: #f0f4f8;
+      --ink-primary: #0f172a;
+      --ink-secondary: #334155;
+      --accent-tech: #0ea5e9;
+      --accent-safety: #f97316;
+      --font-serif: 'Georgia', 'Times New Roman', serif;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'Courier New', monospace;
+
+      --fluid-headline: clamp(2.5rem, 5vw, 5rem);
+      --fluid-subhead: clamp(1.2rem, 2vw, 2rem);
+      --fluid-body: clamp(1rem, 1.2vw, 1.3rem);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-paper);
+      color: var(--ink-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      /* Paper texture applied via SVG filter at bottom */
+    }
+
+    /* 
+   * UTILITIES & ANIMATIONS
+   */
+    .hidden-a11y {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    @keyframes drawLine {
+      from {
+        width: 0;
+      }
+
+      to {
+        width: 100%;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    /* 
+   * LAYOUT: SCROLLYTELLING CONTAINER
+   */
+    .scrolly-section {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr;
+      width: 100%;
+    }
+
+    @media (min-width: 900px) {
+      .scrolly-section {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .scrolly-section.reverse {
+        direction: rtl;
+      }
+
+      .scrolly-section.reverse .content-col {
+        direction: ltr;
+      }
+
+      .scrolly-section.full-width {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 
+   * VISUAL LAYER (STICKY IMAGES)
+   */
+    .visual-col {
+      position: relative;
+      height: 50vh;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    @media (min-width: 900px) {
+      .visual-col {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+      }
+    }
+
+    .visual-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: sepia(20%) contrast(110%);
+      transition: transform 0.5s ease;
+    }
+
+    /* 
+   * CONTENT LAYER
+   */
+    .content-col {
+      padding: 4rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: rgba(240, 244, 248, 0.9);
+      backdrop-filter: blur(10px);
+      border-left: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    @media (min-width: 900px) {
+      .content-col {
+        background: transparent;
+      }
+
+      .content-block {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 3rem;
+        border: 1px solid #ddd;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.15);
+        margin: 4rem 2rem;
+        animation: fadeInUp 0.8s ease-out both;
+      }
+    }
+
+    /* 
+   * TYPOGRAPHY STYLING
+   */
+    h1,
+    h2,
+    h3 {
+      font-family: var(--font-sans);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-title {
+      font-size: var(--fluid-headline);
+      line-height: 1.1;
+      color: var(--ink-primary);
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      font-size: var(--fluid-subhead);
+      color: var(--accent-safety);
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--accent-safety);
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    p {
+      font-family: var(--font-serif);
+      font-size: var(--fluid-body);
+      color: var(--ink-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .meta-data {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent-tech);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-left: 2px solid var(--accent-tech);
+      padding-left: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .hashtag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .hashtag {
+      background: var(--ink-primary);
+      color: #fff;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      border-radius: 4px;
+    }
+
+    .accent-blue {
+      color: var(--accent-tech);
+    }
+
+    .accent-orange {
+      color: var(--accent-safety);
+    }
+
+    /* 
+   * HERO SECTION SPECIALS
+   */
+    .hero-section {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: var(--ink-primary);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.4;
+      mix-blend-mode: luminosity;
+      object-fit: cover;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(5px);
+      max-width: 900px;
+    }
+
+    /* 
+   * FULL WIDTH SECTIONS
+   */
+    .full-width-section {
+      background: var(--ink-primary);
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .full-width-section p {
+      color: #cbd5e1;
+      max-width: 800px;
+      margin: 0 auto 1.5rem auto;
+    }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .workflow-card {
+      border: 1px solid var(--accent-tech);
+      padding: 1.5rem;
+      border-radius: 8px;
+    }
+
+    /* 
+   * SVG BACKGROUND FILTER
+   */
+    .texture-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+      filter: url(#paper-noise);
+      mix-blend-mode: multiply;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG FILTERS -->
+  <svg class="hidden-a11y">
+    <filter id="paper-noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0" />
+    </filter>
+  </svg>
+
+  <div class="texture-overlay"></div>
+
+  <!-- HERO -->
+  <header class="hero-section">
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-1 (8).png" alt="AR Digital Grid Room" class="hero-bg">
+    <div class="hero-content">
+      <div class="meta-data" style="color: #fff; border-color: #fff;">
+
+      </div>
+      <h1 class="hero-title">Contractor Outreach Guide</h1>
+      <p style="color: #e2e8f0; font-family: var(--font-mono); font-size: 1rem;">
+        A comprehensive guide for recruiting CAPS-certified contractors for the Bell County aging-in-place pilot,
+        featuring AR-validated lead strategies and efficiency-driven workflows.
+      </p>
+      <div class="hashtag-cloud" style="justify-content: center;">
+        <span class="hashtag">#Contractor Outreach</span>
+        <span class="hashtag">#Bell County Pilot</span>
+        <span class="hashtag">#Aging-in-Place</span>
+        <span class="hashtag">#CAPS Certification</span>
+        <span class="hashtag">#Home Modification</span>
+        <span class="hashtag">#AR Technology</span>
+        <span class="hashtag">#Longevity Economy</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SECTION 1: CONTEXT -->
+  <section class="scrolly-section">
+    <div class="visual-col">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-1 (8).png" alt="AR Grid Blueprint Room"
+        class="visual-img">
+    </div>
+    <div class="content-col">
+      <div class="content-block">
+        <h2 class="section-title">The Longevity Economy</h2>
+        <h3>And the Bell County Vision</h3>
+        <br>
+        <p>The longevity economy is a current reality, not a distant projection. As the demographic shift toward an
+          older population gains momentum, the demand for aging-in-place modifications has increased significantly.</p>
+        <p>However, the connection between homeowners and qualified contractors often remains inefficient. In Bell
+          County, Texas, we are launching a pilot program designed to revolutionize this engagement.</p>
+        <p>This guide outlines the strategic framework for identifying, engaging, and onboarding high-caliber
+          contractors. We are seeking partners who understand the specialized needs of older adults, specifically
+          focusing on <span class="accent-orange">Certified Aging-in-Place Specialists (CAPS)</span>.</p>
+        <p>This ensures homeowners receive expert care while contractors benefit from a streamlined, data-driven
+          workflow that eliminates traditional bidding frustrations. This pilot is built on the principle of mutual
+          efficiency, utilizing AR-validated lead reports and precise site data to remove ambiguity from home
+          modifications.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: CAPS -->
+  <section class="scrolly-section reverse">
+    <div class="visual-col">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-2 (7).png" alt="Tablet showing AR bathroom scanning"
+        class="visual-img">
+    </div>
+    <div class="content-col">
+      <div class="content-block">
+        <h2 class="section-title">The Strategic Priority</h2>
+        <h3>Partnering with CAPS-Certified Professionals</h3>
+        <br>
+        <p>The cornerstone of the Bell County pilot is the recruitment of Certified Aging-in-Place Specialists (CAPS).
+          This designation, developed by the National Association of Home Builders (NAHB) in collaboration with AARP,
+          signifies a professional with rigorous training in universal design and the unique requirements of the aging
+          population.</p>
+        <p>CAPS professionals possess the technical expertise and specialized knowledge of universal design required to
+          navigate the complexities of aging-in-place modifications. These specialists are our primary targets because
+          they already value the social mission of fall prevention and hospital readmission reduction.</p>
+        <div class="meta-data" style="margin-top: 2rem;">
+          TARGET: SMALL-TO-MID-SIZED CREWS<br>
+          SPECIALTIES: CURBLESS SHOWERS, ADA RAMPS, NON-SLIP FLOORING
+        </div>
+        <p>When sourcing these partners, we prioritize small-to-mid-sized crews who seek qualified leads but are
+          dissatisfied with generic lead-generation platforms that provide low-intent inquiries. By prioritizing
+          CAPS-certified crews, we build immediate trust with homeowners and medical professionals.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: VALUE PROP (DARK MODE) -->
+  <section class="full-width-section">
+    <div style="max-width: 900px; margin: 0 auto;">
+      <h2 class="section-title" style="border-bottom: none; font-size: 3rem;">The Value Proposition</h2>
+      <h3 style="color: var(--accent-tech); font-family: var(--font-mono);">Efficiency as a Competitive Edge</h3>
+      <br>
+      <p>The primary friction point for any contractor is the 'wasted bid'—the hours spent traveling to a site and
+        drafting a quote for a client who may not be ready to proceed. Our pilot eliminates this inefficiency.</p>
+
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-4 (7).png" alt="Workflow Diagram Zero Wasted Bid"
+        style="width: 100%; border-radius: 8px; border: 1px solid var(--accent-tech); margin: 2rem 0;">
+
+      <p>We frame the pilot as an opportunity for scarcity and operational excellence. We provide contractors with
+        AR-validated lead reports that include room-level risk flags, high-resolution photos, and suggested scopes of
+        work. This allows the contractor to provide an accurate estimate without an initial site visit, significantly
+        increasing their return on investment.</p>
+      <p>Furthermore, we offer 'ZIP code exclusivity' during the pilot phase, ensuring partners are not competing with
+        numerous crews for the same lead. Early adopters are granted 'Founding Contractor' status, which includes a
+        digital badge for marketing and locked-in early-bird pricing for future phases. By providing technical
+        specifications—including ADA-compliant measurements—we empower contractors to quote faster and more accurately
+        than regional competitors.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 4: SOURCING & OUTREACH -->
+  <section class="scrolly-section">
+    <div class="visual-col">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-3 (7).png" alt="Newspaper and Phone on Desk"
+        class="visual-img">
+    </div>
+    <div class="content-col">
+      <div class="content-block">
+        <h2 class="section-title">Sourcing & Outreach</h2>
+        <h3>Identifying High-Quality Crews</h3>
+        <br>
+        <p>Finding the right contractors requires a targeted approach. Start with the NAHB CAPS directory, filtering for
+          the Killeen and Temple areas. Supplement this by utilizing specific search strings such as 'CAPS certified
+          contractor Bell County' or 'aging in place contractor Killeen Temple.'</p>
+        <p>Digital community hubs are also valuable; monitor groups like 'Central Texas Contractors' to identify
+          professionals who maintain a professional digital presence and exhibit responsiveness.</p>
+
+        <div
+          style="background: var(--bg-paper); padding: 1.5rem; border-left: 4px solid var(--accent-safety); margin: 2rem 0;">
+          <h4 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-secondary);">MINIMUM CRITERIA
+          </h4>
+          <ul
+            style="list-style-position: inside; font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem;">
+            <li>FULLY LICENSED & INSURED</li>
+            <li>24-HOUR LEAD RESPONSE WINDOW</li>
+            <li>COLLABORATIVE FEEDBACK LOOP</li>
+          </ul>
+        </div>
+        <p>This feedback is essential for refining our AR-validated reports and ensuring the platform meets the
+          real-world needs of field professionals.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: PLAYBOOK -->
+  <section class="full-width-section" style="background: #fff; color: var(--ink-primary); text-align: left;">
+    <div style="max-width: 1000px; margin: 0 auto;">
+      <h2 class="section-title">The Multi-Channel Outreach Playbook</h2>
+      <p style="color: var(--ink-secondary); margin: 0;">Our outreach strategy utilizes three distinct channels to
+        maximize engagement:</p>
+
+      <div class="workflow-grid">
+        <div class="workflow-card">
+          <h4 style="color: var(--accent-safety); text-transform: uppercase;">High-Intent Email</h4>
+          <p style="font-size: 0.9rem;">Subject lines must emphasize immediate value, such as: 'Pre-qualified home
+            modification leads in Bell County.' The content should be concise, explaining that we are piloting a local
+            safety assessment platform where leads include photos, measurements, and risk summaries at no cost during
+            the pilot phase.</p>
+        </div>
+        <div class="workflow-card">
+          <h4 style="color: var(--accent-tech); text-transform: uppercase;">Direct Digital Messaging</h4>
+          <p style="font-size: 0.9rem;">Contractors often manage operations via mobile devices; a direct message on
+            professional social platforms is frequently more effective than email. Use this script: 'We are piloting a
+            local home-safety assessment application providing pre-qualified leads for Bell County homeowners. Would you
+            like to review a sample report?'</p>
+        </div>
+        <div class="workflow-card">
+          <h4 style="color: var(--ink-primary); text-transform: uppercase;">On-Site Engagement</h4>
+          <p style="font-size: 0.9rem;">Visit industry supply houses during early morning hours to connect with
+            decision-makers. Provide a one-page pilot summary and a brief pitch: 'We are providing pre-qualified safety
+            leads for accessibility work during a local pilot program.'</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: ONBOARDING & CONCLUSION -->
+  <section class="scrolly-section">
+    <div class="content-col" style="border-left: none; border-right: 1px solid rgba(0,0,0,0.1);">
+      <div class="content-block">
+        <h2 class="section-title">Operational Standards</h2>
+        <p>Success depends on maintaining high operational standards. Once a contractor expresses interest, the
+          onboarding process must be efficient. We provide a sample lead report immediately to demonstrate data quality.
+        </p>
+        <p>During the initial onboarding call, we reiterate the 24-hour response requirement. In the aging-in-place
+          market, speed is a safety requirement, as delays can result in preventable accidents.</p>
+        <p>We also emphasize the professional networking benefits; by joining our ecosystem, contractors gain access to
+          a network of local suppliers and senior care organizations. This positioning aligns their business goals with
+          a social mission: helping seniors remain in their homes safely. We are providing a specialized niche in a
+          rapidly growing segment of the residential remodeling industry.</p>
+      </div>
+    </div>
+    <div class="content-col" style="background: var(--ink-primary); color: white;">
+      <div style="padding: 3rem;">
+        <h2 style="color: #fff; font-size: 2.5rem; margin-bottom: 2rem;">Conclusion</h2>
+        <p style="color: #cbd5e1; font-size: 1.1rem;">The Bell County pilot represents a significant advancement in the
+          professionalization of the home modification industry. By combining the technical precision of AR-validated
+          assessments with the expertise of CAPS-certified contractors, we are creating a marketplace that prioritizes
+          safety, efficiency, and trust.</p>
+        <p style="color: #cbd5e1; font-size: 1.1rem;">Our outreach strategy is designed to identify the most capable
+          professionals and provide them with the tools required to thrive in the longevity economy. As we implement
+          these strategies across Killeen and Temple, we will prove the viability of our platform and make a tangible
+          impact on the lives of seniors throughout the region.</p>
+      </div>
+    </div>
+  </section>
+
+</body>
+
+</html>

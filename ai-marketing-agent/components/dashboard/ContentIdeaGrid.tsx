@@ -1,189 +1,272 @@
-import React, { useState } from 'react';
-import type { ContentIdea, ContentIdeaItem } from '../../types';
+import React, { useState, useEffect } from 'react';
+import type { ContentIdea, ContentIdeaItem, MarketingGoal } from '../../types';
 import { Card } from '../ui/Card';
 import { PlatformIcon } from '../icons/PlatformIcons';
 import { MARKETING_GOALS } from '../../constants';
 import { ShareButtons } from '../ui/ShareButtons';
 import { generateAdImage, generateAdVideo } from '../../services/geminiService';
 import { ClipboardCopyButton } from '../ui/ClipboardCopyButton';
+import { SocialMediaService } from '../../services/socialMediaService';
+import { Spinner } from '../ui/Spinner';
 
 interface ContentIdeaGridProps {
   contentIdeas: ContentIdea[];
   apiKey: string;
 }
 
-export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, apiKey = '' }) => {
-  const [generatedImages, setGeneratedImages] = useState<Record<string, string>>({});
-  const [loadingIAdImages, setLoadingIAdImages] = useState<Record<string, boolean>>({});
-  const [generatedVideos, setGeneratedVideos] = useState<Record<string, string>>({});
-  const [loadingAdVideos, setLoadingAdVideos] = useState<Record<string, boolean>>({});
+const formatContentIdeaForSharing = (idea: ContentIdeaItem, platform: string): string => {
+  const platformLabel = platform.replace('_', ' ');
+  const hashtags = idea.hashtag_suggestions.map(t => `#${t}`).join(' ');
+  return `💡 AI-generated content idea for ${platformLabel}!\n\nHeadline: "${idea.headline}"\n\nCaption: "${idea.caption}"\n\n${hashtags}`;
+};
+
+export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, apiKey }) => {
+  const [videoUrls, setVideoUrls] = useState<Record<string, string>>({});
+  const [loadingVideos, setLoadingVideos] = useState<Record<string, boolean>>({});
+  const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
+  const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>({});
+
+  // Social Publishing State
+  const [connectedPlatforms, setConnectedPlatforms] = useState<Record<string, boolean>>({});
+  const [connectingPlatform, setConnectingPlatform] = useState<string | null>(null);
+  const [publishingStatus, setPublishingStatus] = useState<Record<string, 'idle' | 'publishing' | 'published' | 'error'>>({});
+
+  useEffect(() => {
+    // Check initial connection status for platforms present in ideas
+    const platformsToCheck = Array.from(new Set(contentIdeas.map(ci => ci.platform))) as string[];
+    platformsToCheck.forEach(async (platform) => {
+      const isConnected = await SocialMediaService.checkConnection(platform);
+      setConnectedPlatforms(prev => ({ ...prev, [platform]: isConnected }));
+    });
+  }, [contentIdeas]);
 
   if (!contentIdeas || contentIdeas.length === 0) {
-    return <Card className="bg-black/40 border-[#ff00ff]/20 text-white"><p className="font-mono text-[#ff00ff]">No content ideas were generated.</p></Card>;
+    return <Card><p>No content ideas were generated.</p></Card>;
   }
 
-  const formatContentIdeaForSharing = (idea: ContentIdeaItem, platform: string): string => {
-    const platformLabel = platform.replace('_', ' ');
-    const hashtags = idea.hashtag_suggestions.map(t => `#${t}`).join(' ');
-    return `💡 AI-generated content idea for ${platformLabel}!\n\nHeadline: "${idea.headline}"\n\nCaption: "${idea.caption}"\n\n${hashtags}\n\nSee more ideas from the AI Marketing Agent.`;
-  };
-
-  const handleGenerateIAdImage = async (id: string, visualDescription: string) => {
-    setLoadingIAdImages(prev => ({ ...prev, [id]: true }));
+  const handleGenerateVideo = async (id: string, prompt: string) => {
     try {
-      const imageUrl = await generateAdImage(visualDescription, apiKey);
-      if (imageUrl) {
-        setGeneratedImages(prev => ({ ...prev, [id]: imageUrl }));
+      if ((window as any).aistudio) {
+        const hasKey = await (window as any).aistudio.hasSelectedApiKey();
+        if (!hasKey) {
+          await (window as any).aistudio.openSelectKey();
+        }
       }
     } catch (e) {
-      console.error(e);
-      alert("Failed to generate image. Please try again.");
-    } finally {
-      setLoadingIAdImages(prev => ({ ...prev, [id]: false }));
+      console.warn("API Key check skipped or failed", e);
     }
-  };
 
-  const handleGenerateAdVideo = async (id: string, visualDescription: string) => {
-    setLoadingAdVideos(prev => ({ ...prev, [id]: true }));
+    setLoadingVideos(prev => ({ ...prev, [id]: true }));
     try {
-      const videoUrl = await generateAdVideo(visualDescription, apiKey);
-      if (videoUrl) {
-        setGeneratedVideos(prev => ({ ...prev, [id]: videoUrl }));
+      const url = await generateAdVideo(prompt, apiKey);
+      if (url) {
+        setVideoUrls(prev => ({ ...prev, [id]: url }));
       }
     } catch (e) {
       console.error(e);
       alert("Failed to generate video. Please try again.");
     } finally {
-      setLoadingAdVideos(prev => ({ ...prev, [id]: false }));
+      setLoadingVideos(prev => ({ ...prev, [id]: false }));
     }
   };
 
-  const formatContentIdeaForClipboard = (idea: ContentIdeaItem, platform: string, goal: string): string => {
-    const platformLabel = platform.replace('_', ' ');
-    const goalLabel = MARKETING_GOALS.find(g => g.id === goal)?.label || goal;
-    const hashtags = idea.hashtag_suggestions.map(t => `#${t}`).join(' ');
+  const handleGenerateImage = async (id: string, prompt: string) => {
+    setLoadingImages(prev => ({ ...prev, [id]: true }));
+    try {
+      const url = await generateAdImage(prompt, apiKey);
+      if (url) {
+        setImageUrls(prev => ({ ...prev, [id]: url }));
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Failed to generate image. Please try again.");
+    } finally {
+      setLoadingImages(prev => ({ ...prev, [id]: false }));
+    }
+  };
 
-    return `Content Idea
----
-Platform: ${platformLabel}
-Goal: ${goalLabel}
----
-Headline: "${idea.headline}"
-Visual Direction: ${idea.visual_direction}
-Caption: "${idea.caption}"
-Call to Action (CTA): ${idea.cta}
-Hashtags: ${hashtags}
-`;
+  const handleConnectPlatform = async (platform: string) => {
+    setConnectingPlatform(platform);
+    try {
+      await SocialMediaService.connect(platform);
+      setConnectedPlatforms(prev => ({ ...prev, [platform]: true }));
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setConnectingPlatform(null);
+    }
+  };
+
+  const handlePublish = async (id: string, platform: string, idea: ContentIdeaItem, mediaUrl?: string, mediaType?: 'image' | 'video') => {
+    setPublishingStatus(prev => ({ ...prev, [id]: 'publishing' }));
+
+    // Construct the full post text
+    const fullText = `${idea.caption}\n\n${idea.hashtag_suggestions.map(t => `#${t}`).join(' ')}`;
+
+    try {
+      await SocialMediaService.post(platform, fullText, mediaUrl, mediaType);
+      setPublishingStatus(prev => ({ ...prev, [id]: 'published' }));
+    } catch (e) {
+      setPublishingStatus(prev => ({ ...prev, [id]: 'error' }));
+    }
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {contentIdeas.map((ci, i) => (
-        <Card key={i} className="flex flex-col bg-black/40 border border-[#ff00ff]/20 backdrop-blur-sm text-white shadow-lg hover:border-[#ff00ff]/50 transition-all duration-300">
-          <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[#ff00ff]/10">
-            <PlatformIcon platform={ci.platform} className="h-8 w-8 text-[#ff00ff]" />
+        <Card key={i} className="flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <PlatformIcon platform={ci.platform} className="h-8 w-8" />
+              <div>
+                <h3 className="text-lg font-bold text-primary-dark capitalize">{ci.platform.replace('_', ' ')}</h3>
+                <p className="text-xs font-semibold text-secondary uppercase tracking-wide">{MARKETING_GOALS.find(g => g.id === ci.goal)?.label}</p>
+              </div>
+            </div>
+            {/* Connection Status / Button */}
             <div>
-              <h3 className="text-lg font-bold text-[#ff00ff] capitalize font-mono tracking-wider">{ci.platform.replace('_', ' ')}</h3>
-              <p className="text-xs font-semibold text-[#00f0ff] uppercase tracking-wide font-mono">{MARKETING_GOALS.find(g => g.id === ci.goal)?.label}</p>
+              {!connectedPlatforms[ci.platform] ? (
+                <button
+                  onClick={() => handleConnectPlatform(ci.platform)}
+                  disabled={!!connectingPlatform}
+                  className="text-xs bg-gray-900 text-white px-3 py-1.5 rounded-full hover:bg-gray-700 transition-colors flex items-center gap-1"
+                >
+                  {connectingPlatform === ci.platform ? (
+                    <>Connecting...</>
+                  ) : (
+                    <>Connect {ci.platform === 'twitter_x' ? 'X' : 'Account'}</>
+                  )}
+                </button>
+              ) : (
+                <span className="text-xs text-green-600 font-bold bg-green-50 px-2 py-1 rounded-full border border-green-200 flex items-center gap-1">
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span> Connected
+                </span>
+              )}
             </div>
           </div>
+
           <div className="space-y-6 flex-grow flex flex-col">
             {ci.ideas.map((idea, j) => {
-              const uniqueId = `${i}-${j}`;
-              const isLoadingIAdImage = loadingIAdImages[uniqueId];
-              const isLoadingAdVideo = loadingAdVideos[uniqueId];
-              const imageUrl = generatedImages[uniqueId];
-              const videoUrl = generatedVideos[uniqueId];
-              return (
-                <div key={j} id={`content-idea-${i}-${j}`} className="border-t border-[#ff00ff]/10 pt-4 flex-grow flex flex-col first:border-0 first:pt-0">
-                  <div className="flex-grow">
-                    <h4 className="font-bold text-white mb-2 text-lg">"{idea.headline}"</h4>
-                    <p className="text-sm text-gray-400 mb-4 font-mono"><strong className="text-[#00f0ff]">VISUAL:</strong> {idea.visual_direction}</p>
+              const id = `${i}-${j}`;
+              const isVideoSuggested = idea.visual_direction.toLowerCase().includes('video');
+              const hasMedia = imageUrls[id] || videoUrls[id];
+              const mediaType = videoUrls[id] ? 'video' : 'image';
+              const activeMediaUrl = videoUrls[id] || imageUrls[id];
 
-                    <div className="mb-4">
-                      {imageUrl ? (
-                        <div className="relative rounded-lg overflow-hidden shadow-sm border border-[#00f0ff]/30 group">
-                          <img src={imageUrl} alt={idea.visual_direction} className="w-full h-auto object-cover" />
-                          <a href={imageUrl} download={`ad-idea-${uniqueId}.png`} className="absolute top-2 right-2 bg-black/80 p-2 rounded-full text-[#00f0ff] border border-[#00f0ff] hover:bg-[#00f0ff] hover:text-black opacity-0 group-hover:opacity-100 transition-all">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                          </a>
+              return (
+                <div key={j} className="border-t border-gray-200 pt-4 flex-grow flex flex-col">
+                  <div className="flex-grow">
+                    <h4 className="font-bold text-neutral-dark mb-1">"{idea.headline}"</h4>
+                    <p className="text-sm text-neutral mb-2"><strong className="text-neutral-dark">Visual:</strong> {idea.visual_direction}</p>
+
+                    {/* Media Generation Controls */}
+                    <div className="flex flex-wrap gap-2 my-3">
+                      {!imageUrls[id] && !loadingImages[id] && (
+                        <button
+                          onClick={() => handleGenerateImage(id, idea.visual_direction)}
+                          className="flex items-center gap-2 text-xs font-bold text-primary bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors"
+                        >
+                          Generate Image
+                        </button>
+                      )}
+
+                      {isVideoSuggested && !videoUrls[id] && !loadingVideos[id] && (
+                        <button
+                          onClick={() => handleGenerateVideo(id, idea.visual_direction)}
+                          className="flex items-center gap-2 text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 rounded-lg hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+                        >
+                          Generate Video
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Media Content Display */}
+                    <div className="space-y-4 mb-4">
+                      {/* Image Loading/Display */}
+                      {loadingImages[id] && (
+                        <div className="bg-gray-50 rounded-lg p-4 flex flex-col items-center justify-center text-center border border-gray-100 min-h-[160px]">
+                          <Spinner />
+                          <p className="text-xs text-neutral-dark font-medium mt-3">Generating image...</p>
                         </div>
-                      ) : videoUrl ? (
-                        <div className="relative rounded-lg overflow-hidden shadow-sm border border-[#00f0ff]/30 group">
-                          <video src={videoUrl} controls className="w-full h-auto" />
-                          <a href={videoUrl} download={`ad-video-${uniqueId}.mp4`} className="absolute top-2 right-2 bg-black/80 p-2 rounded-full text-[#00f0ff] border border-[#00f0ff] hover:bg-[#00f0ff] hover:text-black opacity-0 group-hover:opacity-100 transition-opacity">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                          </a>
+                      )}
+                      {imageUrls[id] && (
+                        <div className="rounded-lg overflow-hidden shadow-sm border border-gray-100 relative group">
+                          <img src={imageUrls[id]} alt="Generated content visual" className="w-full h-auto object-cover" />
                         </div>
-                      ) : (
-                        <div className="flex flex-wrap gap-2">
-                          <button
-                            onClick={() => handleGenerateIAdImage(uniqueId, idea.visual_direction)}
-                            disabled={isLoadingIAdImage || isLoadingAdVideo}
-                            className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-[#00f0ff] border border-[#00f0ff] rounded-lg hover:bg-[#00f0ff] hover:text-black transition-all disabled:opacity-50 disabled:cursor-not-allowed font-mono uppercase tracking-wide hover:shadow-[0_0_10px_rgba(0,240,255,0.4)]"
-                          >
-                            {isLoadingIAdImage ? (
-                              <>
-                                <svg className="animate-spin h-3 w-3 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                GENERATING...
-                              </>
-                            ) : (
-                              <>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                GEN IMAGE
-                              </>
-                            )}
-                          </button>
-                          <button
-                            onClick={() => handleGenerateAdVideo(uniqueId, idea.visual_direction)}
-                            disabled={isLoadingIAdImage || isLoadingAdVideo}
-                            className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-[#ff00ff] border border-[#ff00ff] rounded-lg hover:bg-[#ff00ff] hover:text-black transition-all disabled:opacity-50 disabled:cursor-not-allowed font-mono uppercase tracking-wide hover:shadow-[0_0_10px_rgba(255,0,255,0.4)]"
-                          >
-                            {isLoadingAdVideo ? (
-                              <>
-                                <svg className="animate-spin h-3 w-3 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                GENERATING...
-                              </>
-                            ) : (
-                              <>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
-                                GEN VIDEO
-                              </>
-                            )}
-                          </button>
+                      )}
+
+                      {/* Video Loading/Display */}
+                      {loadingVideos[id] && (
+                        <div className="bg-gray-50 rounded-lg p-4 flex flex-col items-center justify-center text-center border border-gray-100 min-h-[160px]">
+                          <Spinner />
+                          <p className="text-xs text-neutral-dark font-medium mt-3">Generating video preview...</p>
+                          <p className="text-xs text-neutral mt-1">This takes about a minute.</p>
+                        </div>
+                      )}
+                      {videoUrls[id] && (
+                        <div className="rounded-lg overflow-hidden bg-black shadow-md">
+                          <video controls className="w-full h-auto max-h-[240px]" src={videoUrls[id]} />
                         </div>
                       )}
                     </div>
-                  </div>
-                  <p className="text-sm italic bg-black/30 border border-[#ff00ff]/10 p-3 rounded-md text-gray-300 mb-3 font-mono">"{idea.caption}"</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#000] bg-[#00f0ff] font-bold text-xs px-3 py-1 rounded-full">{idea.cta}</span>
-                    <div className="flex flex-wrap gap-1">
-                      {idea.hashtag_suggestions.map(tag => (
-                        <span key={tag} className="text-xs text-[#ff00ff]">#{tag}</span>
-                      ))}
+
+                    <p className="text-sm italic bg-gray-50 p-3 rounded-md text-neutral mb-3">"{idea.caption}"</p>
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="text-white bg-accent font-bold text-xs px-3 py-1 rounded-full">{idea.cta}</span>
+                      <div className="flex flex-wrap gap-1">
+                        {idea.hashtag_suggestions.map(tag => (
+                          <span key={tag} className="text-xs text-blue-600">#{tag}</span>
+                        ))}
+                      </div>
                     </div>
+
+                    {/* Publishing Action */}
+                    {hasMedia && (
+                      <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-between">
+                        <div className="text-xs text-blue-800">
+                          <strong>Ready to post?</strong>
+                          <p>Publish directly to {ci.platform.replace('_', ' ')}.</p>
+                        </div>
+
+                        {!connectedPlatforms[ci.platform] ? (
+                          <button
+                            onClick={() => handleConnectPlatform(ci.platform)}
+                            className="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded shadow hover:bg-blue-700"
+                          >
+                            Connect Account
+                          </button>
+                        ) : publishingStatus[id] === 'published' ? (
+                          <button disabled className="px-3 py-1.5 bg-green-500 text-white text-xs font-bold rounded flex items-center gap-1 cursor-default">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                            Posted
+                          </button>
+                        ) : publishingStatus[id] === 'publishing' ? (
+                          <button disabled className="px-3 py-1.5 bg-gray-400 text-white text-xs font-bold rounded flex items-center gap-1 cursor-wait">
+                            <span className="animate-spin h-3 w-3 border-2 border-white border-t-transparent rounded-full"></span>
+                            Posting...
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handlePublish(id, ci.platform, idea, activeMediaUrl, mediaType)}
+                            className="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded shadow hover:bg-blue-700 flex items-center gap-1"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                            </svg>
+                            Post Now
+                          </button>
+                        )}
+                      </div>
+                    )}
+
                   </div>
-                  <div className="mt-4 pt-4 border-t border-[#ff00ff]/10 flex justify-end items-center gap-4">
-                    <ClipboardCopyButton textToCopy={formatContentIdeaForClipboard(idea, ci.platform, ci.goal)} className="text-[#00f0ff] hover:text-white" />
-                    <ShareButtons textToShare={formatContentIdeaForSharing(idea, ci.platform)} anchorId={`content-idea-${i}-${j}`} className="text-[#00f0ff]" />
+                  <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end">
+                    <ShareButtons textToShare={formatContentIdeaForSharing(idea, ci.platform)} />
                   </div>
                 </div>
-              );
+              )
             })}
           </div>
         </Card>

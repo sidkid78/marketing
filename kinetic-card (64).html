@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase AI - Editorial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --text-light: #f1f5f9;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Playfair Display', serif;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        .font-sans-tech {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-cyan);
+            border-radius: 4px;
+        }
+
+        /* SVG Filters */
+        .noise-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.05;
+            z-index: 50;
+            filter: url(#noiseFilter);
+        }
+
+        .grid-bg {
+            background-image: linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
+
+        /* Text Effects */
+        .gradient-text {
+            background: linear-gradient(135deg, #fff 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .highlight {
+            color: var(--accent-orange);
+            font-style: italic;
+        }
+
+        /* Scrollytelling Layouts */
+        .sticky-section {
+            position: relative;
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 1024px) {
+            .sticky-section {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .prose-col {
+            padding: 4rem 2rem;
+            max-width: 65ch;
+            margin: 0 auto;
+        }
+
+        .visual-col {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0.9;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-cyan);
+        }
+
+        /* Image Frames */
+        .ar-frame {
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.3);
+            border: 1px solid var(--accent-cyan);
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 15px var(--accent-cyan);
+            animation: scan 3s infinite linear;
+            z-index: 10;
+            opacity: 0.7;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 0;
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border: 1px solid var(--accent-cyan);
+            border-radius: 99px;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            margin: 0.25rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Intro Animation */
+        .hero-title span {
+            display: block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s forwards;
+        }
+
+        .hero-title span:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .hero-title span:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .hero-title span:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Grid for Cards */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG Filters & Background -->
+    <div class="noise-bg"></div>
+    <div class="grid-bg"></div>
+    <svg style="display: none;">
+        <filter id="noiseFilter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.5 0" />
+        </filter>
+    </svg>
+
+    <!-- HERO SECTION -->
+    <header class="min-h-screen flex flex-col justify-center items-center text-center px-6 relative">
+        <div
+            class="absolute top-10 left-0 w-full flex justify-between px-10 opacity-50 font-sans-tech text-xs tracking-widest">
+            <span>HOMEase AI</span>
+        </div>
+
+        <h1 class="hero-title text-5xl md:text-8xl font-bold mb-6 font-sans-tech">
+            <span class="gradient-text">HOMEase AI:</span>
+            <span>Innovative</span>
+            <span>Aging-in-Place Solutions</span>
+        </h1>
+        <p class="max-w-2xl text-lg md:text-xl opacity-80 mb-12">
+            Discover HOMEase AI, leveraging AR/AI to simplify aging-in-place home modifications. Empowering independent
+            living, ensuring family peace of mind, and connecting homeowners with vetted contractors.
+        </p>
+
+        <div class="flex flex-wrap justify-center max-w-4xl">
+            <span class="tag">#Aging in Place</span>
+            <span class="tag">#Home Modifications</span>
+            <span class="tag">#Augmented Reality</span>
+            <span class="tag">#Artificial Intelligence</span>
+            <span class="tag">#Senior Living</span>
+            <span class="tag">#Independent Living</span>
+            <span class="tag">#AgeTech</span>
+        </div>
+
+        <div class="absolute bottom-10 animate-bounce">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
+            </svg>
+        </div>
+    </header>
+
+    <main>
+        <!-- SECTION 1: THE OPPORTUNITY (Split Layout) -->
+        <div class="sticky-section">
+            <div class="visual-col order-last lg:order-last">
+                <!-- Storyboard Image 2: Market Growth -->
+                <div class="relative w-full max-w-lg aspect-[4/3] ar-frame bg-slate-800">
+                    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-1 (5).png" alt="Market Growth Chart"
+                        class="w-full h-full object-cover opacity-60 mix-blend-overlay">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center">
+                            <h3 class="text-4xl font-bold font-sans-tech gradient-text">$161 Billion</h3>
+                            <p class="text-sm uppercase tracking-widest">Market by 2030</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prose-col z-10">
+                <h2 class="text-3xl font-bold mb-8 font-sans-tech text-cyan-400">The Unprecedented Market Opportunity
+                </h2>
+                <p class="text-lg leading-relaxed mb-6 opacity-90">
+                    HOMEase AI: Empowering Independent Living and Family Peace of Mind Through Innovative Aging-in-Place
+                    Solutions.
+                    As the global population ages, a significant demographic shift is reshaping societal needs. By 2030,
+                    the U.S. population over 65 is projected to reach <span class="highlight">71 million</span>, with an
+                    overwhelming majority desiring to 'age in place' within the comfort and familiarity of their own
+                    homes.
+                </p>
+                <p class="text-lg leading-relaxed mb-6 opacity-90">
+                    However, a stark 'Accessibility Gap' exists, as only a fraction of existing housing is structurally
+                    equipped for senior living. This critical intersection of desire and deficiency fuels a rapidly
+                    expanding market for aging-in-place (AIP) home modifications, projected to exceed <span
+                        class="highlight">$161 billion</span> by 2030.
+                </p>
+                <div class="glass-card my-8">
+                    <p class="text-sm font-sans-tech opacity-80 uppercase tracking-widest mb-2">Data Insight</p>
+                    <p>While 75% to 87% of older adults wish to remain in their homes, a mere 3.5% of U.S. residences
+                        are considered 'aging-ready'. This disparity drives a Total Addressable Market (TAM) for AIP
+                        solutions estimated at $105.8 billion in 2024.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: PROPRIETARY TECH (Overlay/Lens Effect) -->
+        <div class="relative min-h-screen flex flex-col items-center justify-center py-20 overflow-hidden">
+
+            <!-- Background: Living Room (Image 1) -->
+            <div class="absolute inset-0 z-0">
+                <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-2 (4).png"
+                    class="w-full h-full object-cover opacity-20 grayscale" alt="Modern Living Room">
+            </div>
+
+            <!-- Phone Overlay (Image 3) -->
+            <div class="relative z-10 w-full max-w-6xl px-6 flex flex-col md:flex-row items-center gap-12">
+                <div class="flex-1 order-2 md:order-1">
+                    <!-- Image 3: Phone Scan -->
+                    <div
+                        class="relative w-[300px] h-[600px] mx-auto ar-frame rounded-[3rem] bg-black border-4 border-slate-700 overflow-hidden">
+                        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-3 (4).png"
+                            class="w-full h-full object-cover opacity-80" alt="Phone Scanning Interface">
+                        <div class="scan-line"></div>
+                        <div
+                            class="absolute bottom-8 left-8 right-8 bg-black/60 backdrop-blur text-xs p-3 rounded font-sans-tech">
+                            <p class="text-green-400">✓ Barrier Detected</p>
+                            <p>Width: 28 inches</p>
+                            <p class="text-orange-400">⚠ Non-Compliant</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 order-1 md:order-2 space-y-8">
+                    <h2 class="text-4xl md:text-5xl font-bold font-sans-tech">
+                        Proprietary Technology: <br>
+                        <span class="gradient-text">Transforming Home Assessment</span>
+                    </h2>
+                    <p class="text-lg leading-relaxed">
+                        HOMEase AI's strategic advantage is firmly rooted in its proprietary technology. The platform's
+                        core is an intuitive AR Assessment Engine that enables homeowners or their caregivers to conduct
+                        a detailed home safety assessment using a smartphone.
+                    </p>
+                    <div class="glass-card">
+                        <p>Using visualization AI, the tool projects suggested modifications (e.g., a curbless shower, a
+                            ramp) directly into the user’s view of their own home, enabling them to visualize the
+                            'after' before any construction begins.</p>
+                    </div>
+                    <p class="text-sm opacity-70 font-sans-tech">
+                        Powered by Google Gemini | ADA-Compliant Reporting | Zero Wasted Bids
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: BUSINESS & STRATEGY (Grid Layout) -->
+        <div class="bg-slate-900 relative py-24 px-6">
+            <div class="max-w-7xl mx-auto">
+                <!-- Header -->
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-bold font-sans-tech text-cyan-400 mb-4">Capital-Efficient Business Model
+                    </h2>
+                    <p class="max-w-2xl mx-auto opacity-80">HOMEase AI operates on an asset-light, pure-play lead
+                        generation model, designed for rapid scalability and high profitability.</p>
+                </div>
+
+                <!-- Network Diagram as Background Element (Image 4) -->
+                <div class="absolute top-0 right-0 w-full h-full pointer-events-none opacity-10">
+                    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-4 (4).png"
+                        class="w-full h-full object-cover" alt="Network Connections">
+                </div>
+
+                <div class="bento-grid relative z-10">
+                    <!-- Card 1: Financials -->
+                    <div class="glass-card">
+                        <h3 class="text-xl font-bold font-sans-tech text-white mb-2">Strong Financials</h3>
+                        <p class="text-sm opacity-80 mb-4">LTV: $2,500 | CAC: $300-$600 | LTV:CAC Ratio: 4:1 to 8:1</p>
+                        <p class="leading-relaxed text-sm">Profitability is projected in Year 2 with grant funding and
+                            Year 4 in the base case, with net margins anticipated to reach approximately 75% by Year 5.
+                        </p>
+                    </div>
+
+                    <!-- Card 2: Go-To-Market -->
+                    <div class="glass-card">
+                        <h3 class="text-xl font-bold font-sans-tech text-white mb-2">Strategic Go-To-Market</h3>
+                        <ul class="text-sm space-y-2 opacity-90">
+                            <li><strong>Phase 1 (2025-2026):</strong> Bell County, TX Pilot. Contractor Activation.</li>
+                            <li><strong>Phase 2 (2027-2028):</strong> Expansion to FL. Targeting 'Adult Child'
+                                demographic (40-60 yrs).</li>
+                            <li><strong>Phase 3 (2029-2030):</strong> Nationwide presence & Insurer Integration.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Card 3: Defensibility -->
+                    <div class="glass-card">
+                        <h3 class="text-xl font-bold font-sans-tech text-white mb-2">The 'Motte-and-Bailey' Strategy
+                        </h3>
+                        <p class="leading-relaxed text-sm"><strong>The Bailey:</strong> Speed and brand momentum. Fast
+                            deployment and partnerships.<br><br><strong>The Motte:</strong> Defense Layer 1 is a
+                            proprietary data moat (10,000+ scans). Defense Layer 2 is deep workflow embedding into
+                            healthcare/insurance ecosystems.</p>
+                    </div>
+
+                    <!-- Card 4: Grants -->
+                    <div class="glass-card border-l-4 border-l-orange-500">
+                        <h3 class="text-xl font-bold font-sans-tech text-white mb-2">Federal Grant Acquisition</h3>
+                        <p class="leading-relaxed text-sm">Strategic position to leverage HUD Older Adults Home
+                            Modification Program (OAHMP). Positioned as a 'grant compliance tool' ensuring cost
+                            reasonableness and professional assessment.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: RISK & CONCLUSION -->
+        <div class="relative py-20 px-6 max-w-4xl mx-auto text-center">
+            <h2 class="text-2xl font-bold font-sans-tech mb-8 opacity-90">Proactive Risk Management</h2>
+            <p class="mb-12 text-lg opacity-80">
+                Concerns regarding poor contractor quality are addressed through a rigorous, multi-stage vetting process
+                (CAPS certification). Data security complies with CCPA/HIPAA. Terms define HOMEase as an 'Information
+                Provider'.
+            </p>
+
+            <div class="w-24 h-1 bg-cyan-500 mx-auto mb-12"></div>
+
+            <h2 class="text-4xl md:text-5xl font-bold font-sans-tech mb-8">Conclusion</h2>
+            <p class="text-xl md:text-2xl leading-relaxed font-serif text-slate-300">
+                "HOMEase AI stands at the vanguard of a generational shift... we are not just building a platform; we
+                are empowering independent living, providing peace of mind to families, and creating a sustainable,
+                profitable enterprise."
+            </p>
+            <p class="mt-12 text-sm font-sans-tech tracking-widest text-cyan-400 uppercase">
+                Ensuring that the desire to age in one's own home becomes a safe and attainable reality.
+            </p>
+        </div>
+    </main>
+
+    <footer class="bg-black py-6 text-center text-xs opacity-50 font-sans-tech">
+        <p>© 2025 HOMEase AI. All Rights Reserved.</p>
+    </footer>
+
+</body>
+
+</html>

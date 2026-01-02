@@ -16,6 +16,7 @@ const Hormozi = React.lazy(() => import("../hormozi/App"));
 const Poetry = React.lazy(() => import("../poetry/App"));
 const ThreePs = React.lazy(() => import("../3ps/App"));
 const ArtifactToLife = React.lazy(() => import("../artifact-to-life/App"));
+const CampaignManager = React.lazy(() => import("../campaign-manager/App"));
 
 // Get environment variable API key if available (for Vercel deployments).
 // Use Next.js compile-time injection so server and client always see the same value.
@@ -34,6 +35,7 @@ const tabs = [
   { id: "poetry", label: "Kinetic Poet", icon: "✍️" },
   { id: "3ps", label: "3Ps Strategist", icon: "💡" },
   { id: "artifact", label: "Artifact to Life", icon: "⚡" },
+  { id: "campaign", label: "Campaign Manager", icon: "📊" },
 ] as const;
 
 type TabId = typeof tabs[number]["id"];
@@ -232,12 +234,13 @@ export default function Home() {
               {activeTab === "orchestrator" && <MultiAgentOrch />}
               {activeTab === "architect" && <ContentArchitect />}
               {activeTab === "sentinel" && <SentinelCode />}
-              {activeTab === "storyboard" && <AgenticStoryboard apiKey={apiKey} />}
+              {activeTab === "storyboard" && <AgenticStoryboard />}
               {activeTab === "promptarch" && <PromptArch apiKey={apiKey} />}
               {activeTab === "hormozi" && <Hormozi apiKey={apiKey} />}
               {activeTab === "poetry" && <Poetry apiKey={apiKey} />}
-              {activeTab === "3ps" && <ThreePs />}
+              {activeTab === "3ps" && <ThreePs apiKey={apiKey} />}
               {activeTab === "artifact" && <ArtifactToLife apiKey={apiKey} />}
+              {activeTab === "campaign" && <CampaignManager apiKey={apiKey} />}
             </Suspense>
           ) : (
             <div className="p-12 text-center">

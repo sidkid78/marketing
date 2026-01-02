@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase - Respect the Craft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;600;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --color-dark: #020617;
+            --color-light: #f8fafc;
+            --color-accent-blue: #3b82f6;
+            --color-accent-green: #10b981;
+            --font-display: 'Archivo Black', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-tech: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            background-color: var(--color-dark);
+            color: var(--color-light);
+            overflow-x: hidden;
+            font-family: var(--font-body);
+        }
+
+        /* --- SVG Filters Classes --- */
+        .filter-noise {
+            filter: url(#noise-filter) brightness(0.8) contrast(1.2);
+        }
+
+        .filter-warm {
+            filter: url(#warm-glow) contrast(1.1);
+        }
+
+        .text-glow-blue {
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        /* --- Animations --- */
+        @keyframes scanline {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        @keyframes revealText {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes wobble {
+
+            0%,
+            100% {
+                transform: translateX(0%);
+            }
+
+            15% {
+                transform: translateX(-2%) skewX(-5deg);
+            }
+
+            30% {
+                transform: translateX(1%) skewX(3deg);
+            }
+
+            45% {
+                transform: translateX(-1%) skewX(-3deg);
+            }
+
+            60% {
+                transform: translateX(1%) skewX(2deg);
+            }
+
+            75% {
+                transform: translateX(-0.5%) skewX(-1deg);
+            }
+        }
+
+        .animate-reveal {
+            animation: revealText 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .animate-wobble {
+            animation: wobble 4s infinite ease-in-out;
+        }
+
+        .scanline::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: rgba(16, 185, 129, 0.5);
+            filter: blur(5px);
+            animation: scanline 2s linear infinite;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* --- Utility --- */
+        .blueprint-grid {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .glass-panel {
+            background: rgba(0, 0, 0, 0.6);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body class="antialiased relative">
+
+    <!-- SVG Filters Definition -->
+    <svg class="hidden">
+        <defs>
+            <!-- Cinematic Grain -->
+            <filter id="noise-filter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"
+                    result="noise" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.5 0" in="noise"
+                    result="coloredNoise" />
+                <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="composite" />
+                <feBlend mode="overlay" in="composite" in2="SourceGraphic" />
+            </filter>
+
+            <!-- Warm Sepia Tone for final shot -->
+            <filter id="warm-glow">
+                <feColorMatrix type="matrix" values="1.1 0 0 0 0 
+                            0 1.05 0 0 0 
+                            0 0 0.9 0 0 
+                            0 0 0 1 0" />
+            </filter>
+
+            <!-- Glitch Distortion -->
+            <filter id="distortion">
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- SCENE 1: THE WEIGHT (0-5s) -->
+    <section class="relative h-screen w-full overflow-hidden">
+        <!-- Image Layer -->
+        <div class="absolute inset-0 bg-cover bg-center filter-noise scale-105"
+            style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (64).jpg');">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+        </div>
+
+        <!-- Typography Layer -->
+        <div class="relative z-10 flex h-full items-end pb-24 md:pb-32 px-6 md:px-20 max-w-4xl">
+            <div>
+                <div class="text-blue-400 font-tech text-sm tracking-widest uppercase mb-4 animate-reveal">
+                    Time: 19:00 | Status: Overworked
+                </div>
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-display leading-tight animate-reveal text-glow-blue"
+                    style="animation-delay: 0.2s;">
+                    "You didn't start this business to be a telemarketer."
+                </h1>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 2: THE CHAOS (5-12s) -->
+    <section class="relative h-[80vh] w-full bg-neutral-900 flex items-center justify-center overflow-hidden">
+        <!-- Abstract Chaos Background -->
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <div
+                class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-900/40 via-transparent to-transparent animate-pulse">
+            </div>
+        </div>
+
+        <div class="relative z-10 px-6 max-w-5xl text-center">
+            <h2
+                class="text-2xl md:text-5xl font-bold text-gray-300 leading-snug animate-wobble filter-[url(#distortion)]">
+                "The 'ghost' leads.<br>
+                The tire-kickers.<br>
+                <span class="text-red-500">The hours spent bidding on projects that don't exist."</span>
+            </h2>
+            <div class="mt-12 h-px w-24 bg-red-500 mx-auto"></div>
+        </div>
+    </section>
+
+    <!-- SCENE 3 & 4: THE SHIFT & MAGIC (12-30s) -->
+    <section class="relative min-h-[150vh]">
+        <div class="sticky top-0 h-screen w-full overflow-hidden">
+            <!-- Image 2 Background -->
+            <div class="absolute inset-0 bg-cover bg-center filter-noise"
+                style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (63).jpg');">
+                <div class="absolute inset-0 bg-slate-900/80 blueprint-grid"></div>
+            </div>
+
+            <!-- Content Container -->
+            <div class="relative z-10 h-full flex flex-col justify-center px-6 md:px-20 max-w-6xl mx-auto space-y-24">
+
+                <!-- Text Part 1 -->
+                <div
+                    class="glass-panel p-8 md:p-12 border-l-4 border-blue-500 max-w-2xl transform transition-all duration-700 hover:scale-105">
+                    <p class="font-tech text-blue-400 mb-2">// INTELLIGENCE ACQUIRED</p>
+                    <h3 class="text-3xl md:text-5xl font-display text-white mb-4">
+                        "Stop guessing. Start knowing."
+                    </h3>
+                    <p class="text-xl md:text-2xl text-blue-100">
+                        This is the Intel you deserve.
+                    </p>
+                </div>
+
+                <!-- Text Part 2 -->
+                <div class="self-end glass-panel p-8 md:p-12 border-r-4 border-white max-w-2xl text-right">
+                    <div class="flex justify-end gap-2 mb-4">
+                        <span class="h-2 w-2 bg-green-500 rounded-full animate-pulse"></span>
+                        <span class="font-tech text-xs text-green-400">LIVE DATA</span>
+                    </div>
+                    <h3 class="text-2xl md:text-4xl font-bold text-white leading-relaxed">
+                        "Every measurement. Every photo. A real scope. <br>
+                        <span class="text-blue-400 font-display">Before you ever turn the key."</span>
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 5: THE CHOICE (30-38s) -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+        <!-- Image 3 Background -->
+        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] ease-linear hover:scale-110"
+            style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (65).jpg');">
+            <div class="absolute inset-0 bg-gradient-to-r from-green-900/90 to-transparent"></div>
+        </div>
+
+        <div class="relative z-10 p-10">
+            <div class="scanline overflow-hidden relative">
+                <h2 class="text-5xl md:text-7xl font-display text-white mb-6 mix-blend-overlay">
+                    "You only pay for the jobs you were <br>born to build."
+                </h2>
+            </div>
+
+            <button
+                class="mt-8 px-10 py-4 bg-green-500 text-white font-bold text-xl tracking-wider uppercase border-2 border-green-400 shadow-[0_0_30px_rgba(16,185,129,0.6)] transform active:scale-95 transition-all">
+                Accept Mission
+            </button>
+        </div>
+    </section>
+
+    <!-- SCENE 6: THE WIN (38-45s) -->
+    <section class="relative h-screen w-full">
+        <!-- Image 4 Background -->
+        <div class="absolute inset-0 bg-cover bg-center filter-warm"
+            style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (28).jpg');">
+            <div class="absolute inset-0 bg-gradient-to-t from-orange-950/80 via-transparent to-transparent"></div>
+        </div>
+
+        <div class="absolute bottom-0 w-full flex flex-col items-center pb-24 text-center px-4">
+            <h2 class="text-6xl md:text-8xl font-display tracking-tighter text-white drop-shadow-2xl mb-4">
+                HOMEase
+            </h2>
+            <div class="h-1 w-20 bg-white mb-6"></div>
+            <p class="text-xl md:text-3xl font-light text-orange-100 tracking-wide">
+                "Respect the Craft. Protect the Builder."
+            </p>
+        </div>
+    </section>
+
+</body>
+
+</html>

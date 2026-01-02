@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase Kinetic Story</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Oswald:wght@500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --brand-dark: #0f172a;
+            --brand-accent: #f97316;
+            --brand-light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--brand-dark);
+            color: white;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        .heading-font {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        /* Scroll Snap Setup */
+        .scroller {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        section {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Animations */
+        @keyframes revealUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slowZoom {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        @keyframes scanline {
+            0% {
+                top: 0%;
+            }
+
+            50% {
+                top: 100%;
+                opacity: 1;
+            }
+
+            51% {
+                top: 100%;
+                opacity: 0;
+            }
+
+            100% {
+                top: 0%;
+                opacity: 0;
+            }
+        }
+
+        .animate-reveal {
+            animation: revealUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            opacity: 0;
+        }
+
+        .delay-1 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.5s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.8s;
+        }
+
+        .ken-burns {
+            animation: slowZoom 20s linear infinite alternate;
+        }
+
+        /* Custom Utilities */
+        .text-shadow-lg {
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-panel-light {
+            background: rgba(255, 255, 255, 0.85);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: #1e293b;
+        }
+
+        /* SVG Filter Classes */
+        .grit-bg {
+            filter: url('#noiseFilter') sepia(20%) contrast(120%);
+        }
+
+        .scanner-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #3b82f6;
+            box-shadow: 0 0 10px #3b82f6;
+            animation: scanline 3s linear infinite;
+            z-index: 10;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG Filters Definition -->
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+        <filter id="noiseFilter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.05 0" />
+            <feComposite operator="in" in2="SourceGraphic" result="monoNoise" />
+            <feBlend in="SourceGraphic" in2="monoNoise" mode="screen" />
+        </filter>
+    </svg>
+
+    <main class="scroller">
+
+        <!-- SECTION 1: MORAL OUTRAGE -->
+        <section class="bg-slate-900 relative">
+            <div class="absolute inset-0 z-0 opacity-30 grit-bg">
+                <!-- Abstract texture generated by SVG filter on dark bg -->
+            </div>
+            <div class="z-10 container mx-auto px-6 max-w-4xl text-center">
+                <h1
+                    class="text-5xl md:text-8xl font-bold mb-6 tracking-tighter animate-reveal text-white leading-tight">
+                    THE <span class="text-orange-500 inline-block hover:animate-[glitch_0.3s_linear_infinite]">RACE TO
+                        THE BOTTOM</span><br> ENDS HERE.
+                </h1>
+                <div class="w-24 h-1 bg-orange-500 mx-auto my-8 animate-reveal delay-1"></div>
+                <p
+                    class="text-xl md:text-3xl text-gray-300 font-light leading-relaxed animate-reveal delay-2 max-w-2xl mx-auto">
+                    &quot;You’re a master of your craft. So why are you spending 40 hours a week acting like a
+                    telemarketer?&quot;
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: THE DEEP PAIN -->
+        <section class="relative">
+            <div class="absolute inset-0 z-0">
+                <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (36).jpg" alt="Exhausted Contractor"
+                    class="w-full h-full object-cover ken-burns brightness-[0.4]">
+            </div>
+            <div class="z-10 container mx-auto px-6 max-w-5xl flex justify-center">
+                <div class="glass-panel p-8 md:p-12 rounded-sm max-w-3xl animate-reveal">
+                    <h2
+                        class="text-3xl md:text-5xl font-bold mb-6 heading-font text-white border-l-4 border-orange-500 pl-4">
+                        IT’S AN INSULT TO YOUR TIME.
+                    </h2>
+                    <p class="text-lg md:text-2xl text-gray-200 leading-relaxed font-light">
+                        &quot;Generic lead sites treat you like a commodity. They sell the same 'maybe' to five guys,
+                        then watch you fight for the scraps.&quot;
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: THE HOMEase PIVOT -->
+        <section class="relative bg-white">
+            <div class="absolute inset-0 z-0">
+                <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (34).jpg"
+                    alt="Clean Accessibility Bathroom" class="w-full h-full object-cover opacity-90 ken-burns">
+            </div>
+            <div class="absolute inset-0 bg-white/40 backdrop-blur-[2px]"></div>
+
+            <div class="z-10 container mx-auto px-6 grid md:grid-cols-2 gap-8 items-center">
+                <div class="hidden md:block"></div>
+                <div class="glass-panel-light p-10 shadow-2xl rounded-lg animate-reveal delay-1">
+                    <h3 class="text-sm font-bold tracking-[0.2em] text-blue-600 mb-4 uppercase">The Sanctuary</h3>
+                    <p class="text-2xl md:text-4xl font-semibold text-slate-800 leading-tight mb-6 heading-font">
+                        &quot;At HOMEase, we believe the best contractors shouldn't have to shout to be heard.&quot;
+                    </p>
+                    <p class="text-lg text-slate-600">
+                        We built a sanctuary for the builders who actually care.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: THE PROOF -->
+        <section class="relative bg-slate-100">
+            <div class="absolute inset-0 z-0">
+                <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (33).jpg" alt="Tablet Plan"
+                    class="w-full h-full object-cover ken-burns">
+                <!-- Tech Overlay -->
+                <div class="absolute inset-0 bg-blue-900/20 mix-blend-overlay"></div>
+                <div class="scanner-line"></div>
+            </div>
+
+            <div class="z-10 container mx-auto px-6 max-w-4xl">
+                <div
+                    class="bg-slate-900/90 text-white p-8 md:p-14 border-t-4 border-blue-500 shadow-2xl animate-reveal">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                        <span class="text-xs font-mono uppercase tracking-widest text-blue-300">Live Data /// Invisible
+                            Labor</span>
+                    </div>
+                    <p class="text-2xl md:text-4xl font-light leading-relaxed mb-6">
+                        &quot;We do the invisible labor for you. Photos, real measurements, and the actual human scope
+                        of the project.&quot;
+                    </p>
+                    <p class="text-xl text-blue-200 font-mono">
+                        &gt; You aren’t guessing. <br>&gt; You’re preparing to help someone.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: IDENTITY SHIFT -->
+        <section class="relative">
+            <div class="absolute inset-0 z-0">
+                <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (30).jpg" alt="Elderly homeowner smiling"
+                    class="w-full h-full object-cover ken-burns sepia-[0.3]">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90">
+                </div>
+            </div>
+
+            <div class="z-10 container mx-auto px-6 max-w-3xl text-center">
+                <h2 class="text-4xl md:text-6xl heading-font font-bold text-white mb-8 text-shadow-lg animate-reveal">
+                    MORE THAN LEADS.
+                </h2>
+                <p class="text-xl md:text-3xl text-orange-50 leading-relaxed font-serif italic animate-reveal delay-1">
+                    &quot;Especially in accessibility, the stakes are too high for 'tire-kickers.' These are people
+                    waiting for a professional to show up.&quot;
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 6: CALL TO RESPECT -->
+        <section class="relative bg-slate-900 flex flex-col items-center justify-center text-center px-4">
+            <!-- Background Grain Pattern -->
+            <div class="absolute inset-0 opacity-10"
+                style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');">
+            </div>
+
+            <div class="z-10 max-w-4xl animate-reveal">
+                <h2 class="text-white text-5xl md:text-7xl font-bold heading-font mb-4 tracking-tight">
+                    RECLAIM YOUR CRAFT.
+                </h2>
+                <p class="text-slate-400 text-xl md:text-2xl mb-12 max-w-2xl mx-auto">
+                    Stop chasing ghosts. Join the elite network of remodelers who know their worth.
+                </p>
+
+                <a href="#"
+                    class="group relative inline-flex items-center justify-center px-8 py-5 text-lg font-bold text-white transition-all duration-200 bg-orange-600 font-pj rounded-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 hover:bg-orange-500 active:scale-95">
+                    <span
+                        class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-gray-700"></span>
+                    <span class="relative flex items-center gap-3">
+                        PROTECT YOUR TIME. JOIN HOMEASE.
+                        <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                        </svg>
+                    </span>
+                </a>
+            </div>
+        </section>
+
+    </main>
+</body>
+
+</html>

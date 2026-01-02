@@ -1,13 +1,13 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { 
-  Briefcase, 
-  Target, 
-  Settings, 
-  Zap, 
-  ChevronRight, 
-  RefreshCcw, 
-  Download, 
+import {
+  Briefcase,
+  Target,
+  Settings,
+  Zap,
+  ChevronRight,
+  RefreshCcw,
+  Download,
   AlertCircle,
   BrainCircuit,
   Lightbulb,
@@ -22,7 +22,11 @@ import {
 import { AppStatus, StrategistInput, StrategistOutput } from './types';
 import { generateStrategy } from './services/geminiService';
 
-const App: React.FC = () => {
+interface AppProps {
+  apiKey?: string;
+}
+
+const App: React.FC<AppProps> = ({ apiKey }) => {
   const [input, setInput] = useState<StrategistInput>({
     userContext: '',
     targetAudience: '',
@@ -51,13 +55,13 @@ const App: React.FC = () => {
 
   const handleGenerate = async () => {
     if (!input.userContext.trim()) return;
-    
+
     setStatus(AppStatus.THINKING);
     setError(null);
     setOutput(null);
-    
+
     try {
-      const result = await generateStrategy(input);
+      const result = await generateStrategy(input, apiKey);
       setOutput(result);
       setStatus(AppStatus.COMPLETED);
     } catch (err: any) {
@@ -98,9 +102,9 @@ const App: React.FC = () => {
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-4">
-            <button 
+            <button
               onClick={toggleDarkMode}
               className="p-2 rounded-none border border-cyan-500/50 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/10 transition-all"
               aria-label="Toggle HUD Mode"
@@ -110,14 +114,14 @@ const App: React.FC = () => {
 
             {status === AppStatus.COMPLETED && (
               <div className="flex items-center gap-3">
-                <button 
+                <button
                   onClick={reset}
                   className="hidden sm:flex items-center gap-2 text-fuchsia-600 dark:text-fuchsia-400 hover:bg-fuchsia-500/10 px-3 py-1.5 border border-fuchsia-500/50 text-xs font-bold uppercase transition-all"
                 >
                   <RefreshCcw size={14} />
                   Re-Init
                 </button>
-                <button 
+                <button
                   onClick={copyToClipboard}
                   className="bg-cyan-600 dark:bg-cyan-700 text-white px-4 py-2 text-xs font-bold uppercase hover:bg-cyan-500 transition-all flex items-center gap-2 shadow-[0_0_10px_rgba(6,182,212,0.4)]"
                 >
@@ -135,7 +139,7 @@ const App: React.FC = () => {
         <div className="lg:col-span-4 space-y-6">
           <section className="bg-white dark:bg-slate-950 p-6 rounded-none border-t-4 border-l-4 border-cyan-500 dark:border-cyan-600 shadow-xl space-y-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-16 h-16 bg-cyan-500/5 rotate-45 translate-x-8 -translate-y-8"></div>
-            
+
             <h2 className="mono text-sm font-black uppercase flex items-center gap-2 border-b dark:border-cyan-900 pb-4 text-cyan-600 dark:text-cyan-400 tracking-tighter">
               <Settings size={18} />
               Input_Buffer.sys
@@ -146,11 +150,11 @@ const App: React.FC = () => {
                 <label className="block text-[10px] font-bold text-slate-500 dark:text-cyan-600 uppercase mb-2 flex items-center gap-1.5 tracking-widest">
                   <Briefcase size={12} /> Neural_History.log
                 </label>
-                <textarea 
+                <textarea
                   className="w-full min-h-[160px] p-3 border-2 border-slate-200 dark:border-cyan-900 dark:bg-black dark:text-cyan-100 rounded-none focus:border-fuchsia-500 transition-all text-xs outline-none resize-none mono"
                   placeholder="[System Prompt: Share professional trajectory + solving key friction + obsessive edge details...]"
                   value={input.userContext}
-                  onChange={(e) => setInput({...input, userContext: e.target.value})}
+                  onChange={(e) => setInput({ ...input, userContext: e.target.value })}
                   disabled={status === AppStatus.THINKING}
                 />
               </div>
@@ -159,12 +163,12 @@ const App: React.FC = () => {
                 <label className="block text-[10px] font-bold text-slate-500 dark:text-cyan-600 uppercase mb-2 flex items-center gap-1.5 tracking-widest">
                   <Target size={12} /> Target_Sector
                 </label>
-                <input 
+                <input
                   type="text"
                   className="w-full p-3 border-2 border-slate-200 dark:border-cyan-900 dark:bg-black dark:text-cyan-100 rounded-none focus:border-fuchsia-500 transition-all text-xs outline-none mono"
                   placeholder="[Node ID: e.g. Solo Ops, Mid-Market HR...]"
                   value={input.targetAudience}
-                  onChange={(e) => setInput({...input, targetAudience: e.target.value})}
+                  onChange={(e) => setInput({ ...input, targetAudience: e.target.value })}
                   disabled={status === AppStatus.THINKING}
                 />
               </div>
@@ -173,10 +177,10 @@ const App: React.FC = () => {
                 <label className="block text-[10px] font-bold text-slate-500 dark:text-cyan-600 uppercase mb-2 flex items-center gap-1.5 tracking-widest">
                   <ChevronRight size={12} /> Format_Stream
                 </label>
-                <select 
+                <select
                   className="w-full p-3 border-2 border-slate-200 dark:border-cyan-900 dark:bg-black dark:text-cyan-100 rounded-none focus:border-fuchsia-500 transition-all text-xs outline-none bg-white dark:bg-black mono"
                   value={input.outputStyle}
-                  onChange={(e) => setInput({...input, outputStyle: e.target.value})}
+                  onChange={(e) => setInput({ ...input, outputStyle: e.target.value })}
                   disabled={status === AppStatus.THINKING}
                 >
                   <option>Strategic Report</option>
@@ -186,14 +190,13 @@ const App: React.FC = () => {
                 </select>
               </div>
 
-              <button 
+              <button
                 onClick={handleGenerate}
                 disabled={status === AppStatus.THINKING || !input.userContext}
-                className={`w-full py-5 rounded-none font-black text-xs uppercase tracking-[0.2em] shadow-lg transition-all flex items-center justify-center gap-3 relative overflow-hidden ${
-                  status === AppStatus.THINKING 
-                    ? 'bg-slate-300 dark:bg-slate-800 text-slate-500 cursor-not-allowed' 
+                className={`w-full py-5 rounded-none font-black text-xs uppercase tracking-[0.2em] shadow-lg transition-all flex items-center justify-center gap-3 relative overflow-hidden ${status === AppStatus.THINKING
+                    ? 'bg-slate-300 dark:bg-slate-800 text-slate-500 cursor-not-allowed'
                     : 'bg-gradient-to-r from-cyan-600 to-fuchsia-600 hover:from-cyan-500 hover:to-fuchsia-500 text-white glitch-hover active:scale-[0.98]'
-                }`}
+                  }`}
               >
                 {status === AppStatus.THINKING ? (
                   <>
@@ -286,7 +289,7 @@ const App: React.FC = () => {
                 <p className="text-slate-600 dark:text-red-400 text-xs mono font-bold uppercase mb-6 leading-relaxed">
                   {error}
                 </p>
-                <button 
+                <button
                   onClick={handleGenerate}
                   className="bg-red-600 hover:bg-red-500 text-white px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all"
                 >
@@ -328,9 +331,9 @@ const App: React.FC = () => {
                       <div className="w-1 h-1 bg-cyan-500 rounded-full animate-pulse delay-75"></div>
                     </div>
                   </div>
-                  <img 
-                    src={output.imageUrl} 
-                    alt="Synthesis Visualization" 
+                  <img
+                    src={output.imageUrl}
+                    alt="Synthesis Visualization"
                     className="w-full aspect-[21/9] object-cover filter brightness-90 contrast-110 group-hover:brightness-100 transition-all duration-700"
                     loading="lazy"
                   />
@@ -352,7 +355,7 @@ const App: React.FC = () => {
                       <p className="text-fuchsia-400 text-[9px] font-black uppercase tracking-[0.3em] mono mt-1">Master_Synthesis_Complete</p>
                     </div>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setShowThinking(!showThinking)}
                     className="flex items-center gap-2 text-[10px] mono font-black bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 px-4 py-2 uppercase tracking-widest transition-all self-end sm:self-auto"
                   >

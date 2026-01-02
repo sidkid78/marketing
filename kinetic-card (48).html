@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase: The Shield</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;800&family=Space+Mono:wght@400;700&display=swap');
+
+        :root {
+            --c-void: #0f172a;
+            --c-alert: #ef4444;
+            --c-paper: #f1f5f9;
+            --c-gold: #d4a373;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--c-void);
+            color: var(--c-paper);
+            overflow-x: hidden;
+        }
+
+        /* Custom Utilities */
+        .text-shadow-sm {
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .text-shadow-lg {
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+        }
+
+        /* SVG Filters Class Applicators */
+        .filter-noise {
+            filter: url(#noiseFilter);
+        }
+
+        .filter-glitch {
+            filter: url(#displacementFilter);
+        }
+
+        .filter-paper {
+            filter: contrast(120%) brightness(90%);
+        }
+
+        /* Section Setup for Scrollytelling */
+        .story-section {
+            position: relative;
+            height: 150vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .sticky-content {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            transition: transform 0.5s ease-out;
+        }
+
+        /* Typography Animations */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes reveal {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .anim-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .anim-reveal {
+            animation: reveal 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        .delay-1 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.5s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.8s;
+        }
+
+        /* Specific Text Treatments */
+        .font-mono-glitch {
+            font-family: 'Space Mono', monospace;
+            letter-spacing: -0.05em;
+        }
+
+        .font-pro {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-human {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* Glass Card */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .warm-glass {
+            background: rgba(255, 250, 240, 0.85);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            color: #2c2c2c;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG Filters Definitions -->
+    <svg style="display: none;">
+        <defs>
+            <!-- Rough Noise for Confusion/Hollow feeling -->
+            <filter id="noiseFilter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+                <feColorMatrix type="saturate" values="0" />
+                <feBlend in="SourceGraphic" in2="noise" mode="overlay" />
+            </filter>
+
+            <!-- Glitch Distortion for 'Predator/Risk' -->
+            <filter id="displacementFilter">
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- SCENE 1: THE COLD METRIC -->
+    <section class="story-section">
+        <div class="sticky-content">
+            <!-- Img 1: Boardroom/Bathroom Split -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (73).jpg"
+                class="bg-image filter-paper brightness-50" alt="Split screen: Boardroom and Bathroom Risk">
+
+            <div class="relative max-w-4xl p-8 mx-4 mix-blend-hard-light">
+                <p
+                    class="font-mono-glitch text-cyan-300 text-lg md:text-xl uppercase tracking-widest mb-4 anim-reveal text-shadow-lg">
+                    Input: Corporate Logic</p>
+                <h1
+                    class="font-pro font-black text-4xl md:text-6xl leading-tight mb-6 anim-reveal delay-1 text-shadow-lg">
+                    "For years, I was told success was measured by the <span
+                        class="text-white bg-blue-900 px-2">profitability of a
+                        negotiation.</span>"
+                </h1>
+                <p
+                    class="font-mono-glitch text-xl md:text-3xl text-gray-200 anim-reveal delay-2 border-l-4 border-cyan-500 pl-6">
+                    Then I looked at the aging-in-place market and realized how <span
+                        class="text-red-400 italic font-bold filter-glitch">hollow</span> that metric is.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 2: THE MINEFIELD -->
+    <section class="story-section">
+        <div class="sticky-content">
+            <!-- Img 2: Dark Hallway/Shadows -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (74).jpg"
+                class="bg-image contrast-125 brightness-50" alt="Dark hallway with shadows">
+
+            <div class="glass-panel p-8 md:p-12 max-w-2xl mx-auto rounded-none border-l-8 border-red-600 anim-float">
+                <p class="font-pro text-2xl md:text-4xl leading-relaxed text-gray-100 font-light">
+                    In this industry, a <span class="font-bold text-red-500">'bad negotiation'</span> doesn't just mean
+                    a lost margin—it means a bathroom floor that’s a <span
+                        class="underline decoration-red-500 underline-offset-4">fall risk</span>.
+                </p>
+                <div class="mt-8 font-mono-glitch text-lg text-gray-300">
+                    It means a <span class="text-red-500 font-bold uppercase text-2xl filter-glitch">PREDATOR</span> in
+                    a contractor’s vest overcharging a widow for work that shouldn't have been done.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 3: THE CRAFTSMEN -->
+    <section class="story-section">
+        <div class="sticky-content">
+            <!-- Img 3: Craftsmen/Blueprints -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (75).jpg" class="bg-image brightness-75"
+                alt="Craftsmen working on plans">
+
+            <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl px-6">
+                <div class="col-span-1">
+                    <!-- Spacer for layout -->
+                </div>
+                <div class="col-span-1 bg-black/80 p-8 text-white border-t-4 border-yellow-600 anim-reveal">
+                    <h2
+                        class="font-pro font-black text-3xl md:text-5xl mb-6 text-yellow-500 uppercase tracking-tighter">
+                        The Real Metric
+                    </h2>
+                    <p class="font-pro text-xl md:text-2xl mb-6 leading-relaxed">
+                        I realized that for our seniors, <span class="italic">'satisfaction'</span> is just another word
+                        for <strong class="text-white bg-yellow-700 px-2">SAFETY.</strong>
+                    </p>
+                    <p class="font-human text-lg text-gray-300 italic">
+                        "I founded HOMEase because I’m tired of seeing the people who built our community left to
+                        navigate a minefield of unreliable repairs alone."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 4: THE SHIELD & DIGNITY -->
+    <section class="story-section" style="height: 120vh;">
+        <div class="sticky-content">
+            <!-- Img 4: Elderly Woman/Sunlight -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (76).jpg" class="bg-image"
+                alt="Elderly woman sitting with dignity">
+
+            <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-90"></div>
+
+            <div class="relative z-10 w-full max-w-4xl px-6 text-center anim-float">
+                <div class="warm-glass p-10 md:p-16 rounded-2xl shadow-2xl">
+                    <p class="font-human text-2xl md:text-3xl mb-8 text-slate-800 leading-loose">
+                        I don’t just 'vet' professionals; I hunt for the craftsmen who treat a stranger’s home like
+                        their own mother’s. My network and my technical background are no longer about closing deals—
+                    </p>
+                    <h3 class="font-pro font-black text-3xl md:text-5xl text-slate-900 mb-8 uppercase tracking-tight">
+                        They are the shield.
+                    </h3>
+                    <div class="w-24 h-1 bg-slate-900 mx-auto mb-8"></div>
+                    <p class="font-human text-3xl md:text-4xl italic text-slate-800">
+                        between our vulnerable neighbors and the chaos of an unsafe home."Because everyone deserves to
+                        age with dignity, in the one place they feel most powerful: <span
+                            class="text-yellow-800 font-semibold">their own home.</span>"
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER MARKER -->
+    <div class="fixed bottom-4 right-4 z-50 mix-blend-difference text-white font-mono text-xs opacity-50">
+        HOMEase Scrollytelling Exp.
+    </div>
+
+</body>
+
+</html>

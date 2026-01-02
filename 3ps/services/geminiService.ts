@@ -2,8 +2,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { StrategistInput, StrategistOutput } from "../types";
 
-export const generateStrategy = async (input: StrategistInput): Promise<StrategistOutput> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+export const generateStrategy = async (input: StrategistInput, apiKey?: string): Promise<StrategistOutput> => {
+  const ai = new GoogleGenAI({ apiKey: apiKey || process.env.API_KEY || '' });
 
   // 1. Generate the text-based strategy analysis
   const textPrompt = `
@@ -27,7 +27,7 @@ export const generateStrategy = async (input: StrategistInput): Promise<Strategi
   `;
 
   const textResponse = await ai.models.generateContent({
-    model: 'gemini-3-pro-preview',
+    model: 'gemini-3-flash-preview',
     contents: [{ parts: [{ text: textPrompt }] }],
     config: {
       temperature: 0.8,
@@ -80,9 +80,18 @@ export const generateStrategy = async (input: StrategistInput): Promise<Strategi
   if (!textOutput) throw new Error("No text response from AI");
   const resultData = JSON.parse(textOutput) as StrategistOutput;
 
-  // 2. Generate a visual representation of the concept with Cyberpunk aesthetic
+  // 2. Generate a visual representation based on the strategy analysis
   try {
-    const imagePrompt = `A stunning cyberpunk high-tech business concept visualization titled "${resultData.synthesis.concept}". Aesthetic: Neon Cyan and Fuchsia accents, dark sleek metallic textures, holographic UI displays, futuristic office or data center landscape. Ultra-professional, sharp detail, volumetric lighting, 8k resolution, cinematic composition. No text in the image. Modern and high-leverage business vibe.`;
+    const imagePrompt = `Create a professional business concept visualization that represents:
+  
+  CONCEPT: ${resultData.synthesis.concept}
+  
+  KEY ELEMENTS TO VISUALIZE:
+  - The Pain Point: ${resultData.painAnalysis.frustration}
+  - The Solution: ${resultData.professionAnalysis.fractionalizationStrategy}
+  - The Unique Edge: ${resultData.passionAnalysis.obsessiveEdge}
+  
+  Style: Clean, modern, professional business illustration. Abstract representation of the concept with symbolic imagery. High quality, sharp detail, cohesive color palette. No text in the image.`;
 
     const imageResponse = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',

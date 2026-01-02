@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Bridge: Scrollytelling Narrative</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --c-dark: #0f172a;
+            --c-text: #e2e8f0;
+            --c-accent: #3b82f6;
+            --c-warm: #f59e0b;
+            --c-paper: #f1f5f9;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--c-dark);
+            color: var(--c-text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Typography Classes */
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .text-shadow {
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Layout Strategy: Sticky Stacking */
+        .scene {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            display: grid;
+            place-items: center;
+            z-index: 1;
+        }
+
+        /* Image Layers */
+        .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.4);
+            transition: filter 1s ease;
+        }
+
+        /* SVG Filters Definitions via Class */
+        .filter-noise {
+            filter: url(#noise) grayscale(0.8) contrast(1.2) brightness(0.6);
+        }
+
+        .filter-blueprint {
+            filter: url(#blueprint) contrast(1.1);
+        }
+
+        .filter-warm {
+            filter: url(#warmth) brightness(0.9);
+        }
+
+        .text-distort {
+            filter: url(#distort);
+        }
+
+        .text-blur-in {
+            animation: blurFadeIn 2s ease forwards;
+        }
+
+        /* Keyframes */
+        @keyframes blurFadeIn {
+            0% {
+                opacity: 0;
+                filter: blur(10px);
+                transform: translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                filter: blur(0);
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes revealLine {
+            0% {
+                width: 0;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        @keyframes pulse-warm {
+
+            0%,
+            100% {
+                text-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+            }
+
+            50% {
+                text-shadow: 0 0 30px rgba(245, 158, 11, 0.6);
+            }
+        }
+
+        /* Specific Text Styling */
+        .quote-box {
+            background: rgba(15, 23, 42, 0.6);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border-left: 4px solid var(--c-warm);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .highlight-blue {
+            background: linear-gradient(120deg, transparent 0%, transparent 6px, var(--c-accent) 6px, var(--c-accent) 100%);
+            background-size: 100% 40%;
+            background-repeat: no-repeat;
+            background-position: 0 88%;
+            padding: 0 4px;
+        }
+
+        /* Layout Utility */
+        .content-container {
+            max-width: 800px;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Parallax/Sticky Wrapper */
+        .sticky-wrapper {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG Filters (Hidden) -->
+    <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+        <defs>
+            <!-- Grainy Noise for Resentment -->
+            <filter id="noise">
+                <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"
+                    result="noise" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.5 0" in="noise"
+                    result="coloredNoise" />
+                <feComposite operator="over" in="coloredNoise" in2="SourceGraphic" />
+            </filter>
+
+            <!-- Distortion for 'Trapped' text -->
+            <filter id="distort">
+                <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+
+            <!-- Blueprint Blue Duotone -->
+            <filter id="blueprint">
+                <feColorMatrix type="matrix" values="0.1 0.1 0.1 0 0
+                            0.1 0.3 0.6 0 0
+                            0.1 0.3 0.8 0 0
+                            0 0 0 1 0" />
+            </filter>
+
+            <!-- Warm Glow -->
+            <filter id="warmth">
+                <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                <feMerge>
+                    <feMergeNode in="coloredBlur" />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- SECTION 1: Resentment & Burnout (Image 1) -->
+    <section class="relative h-[150vh]">
+        <div class="sticky-wrapper">
+            <!-- Image 1: Split Family/Worker -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (70).jpg"
+                alt="Family tense at table and tired worker in truck"
+                class="bg-layer filter-noise object-cover w-full h-full">
+
+            <div class="content-container grid gap-12">
+                <div class="text-blur-in">
+                    <h1 class="font-serif text-5xl md:text-7xl font-bold leading-tight mb-6 tracking-tight">
+                        There is a <br>
+                        <span class="text-red-400 italic opacity-90 text-distort inline-block">quiet
+                            resentment</span><br>
+                        growing in our neighborhoods.
+                    </h1>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 text-lg text-gray-200 leading-relaxed max-w-4xl">
+                    <p class="bg-black/40 p-6 rounded-lg backdrop-blur-sm border-l border-white/20">
+                        It lives in the hearts of families who feel <span class="font-bold text-white">trapped</span> in
+                        homes they no longer love, paralyzed by the fear that one wrong decision will cost them their
+                        life savings.
+                    </p>
+                    <p class="bg-black/40 p-6 rounded-lg backdrop-blur-sm border-r border-white/20 text-right">
+                        And it lives in the souls of master contractors who are <span
+                            class="text-gray-400 line-through decoration-red-500">burning out</span>—not from hard work,
+                        but from the soul-crushing cycle of chasing ghosts and 'tire-kickers' who treat their expertise
+                        like a commodity.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: The Refusal (Transition) -->
+    <section class="relative min-h-screen bg-slate-900 flex items-center justify-center z-20">
+        <div class="content-container text-center">
+            <p class="font-serif text-3xl md:text-5xl leading-snug text-white">
+                <span class="block text-xl md:text-2xl uppercase tracking-[0.3em] text-gray-500 mb-8">The Pivot</span>
+                &ldquo;I refuse to accept that <br>
+                <span class="bg-white text-black px-2 py-1 mx-1 italic transform -skew-x-12 inline-block">'getting work
+                    done'</span> <br>
+                has to feel like a battle.&rdquo;
+            </p>
+        </div>
+    </section>
+
+    <!-- SECTION 3: The Blueprint (Image 2) -->
+    <section class="relative h-[150vh]">
+        <div class="sticky-wrapper">
+            <!-- Image 2: Tablet/Blueprint -->
+            <video class="bg-layer filter-blueprint object-cover w-full h-full opacity-40" autoplay muted loop
+                playsinline>
+                <source src="https://694d8b0339fe8ba173f56f36.imgix.net/animation-2.mp4" type="video/mp4">
+            </video>
+            <div
+                class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgNDBMMDQgMEgwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQuY3NzKSIgLz48L3N2Zz4=')] opacity-30">
+            </div>
+
+            <div class="content-container text-center">
+                <h2 class="text-4xl md:text-6xl font-bold mb-8 text-blue-100">
+                    We didn’t just build a workflow;<br>
+                    we built a <span class="text-blue-400 font-serif italic">bridge.</span>
+                </h2>
+
+                <div
+                    class="bg-slate-900/80 p-8 rounded-xl border border-blue-500/30 backdrop-blur-md shadow-2xl mx-auto max-w-3xl transform transition hover:scale-[1.01] duration-500">
+                    <p class="text-lg md:text-xl leading-relaxed text-blue-50">
+                        In less than five minutes, we strip away the confusion that keeps families awake at night and
+                        give the contractor back their dignity. We turn <span class="font-mono text-blue-300">'I don't
+                            know'</span> into a <strong
+                            class="text-white underline decoration-blue-500 underline-offset-4">blueprint</strong>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: Transformation (Image 3) -->
+    <section class="relative h-[150vh]">
+        <div class="sticky-wrapper">
+            <!-- Image 3: Contractor Truck -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (72).jpg"
+                alt="Contractor leaning on truck at sunset" class="bg-layer filter-warm object-cover w-full h-full">
+
+            <div class="content-container grid place-items-center h-full">
+                <div class="max-w-4xl text-center">
+                    <div
+                        class="flex flex-wrap justify-center gap-4 mb-12 uppercase tracking-widest text-sm font-bold text-amber-400">
+                        <span class="border px-4 py-2 border-amber-500/50 rounded-full bg-black/50">No more
+                            guessing</span>
+                        <span class="border px-4 py-2 border-amber-500/50 rounded-full bg-black/50">No more wasted
+                            miles</span>
+                        <span class="border px-4 py-2 border-amber-500/50 rounded-full bg-black/50">No more broken
+                            trust</span>
+                    </div>
+
+                    <div class="quote-box p-8 md:p-12">
+                        <p class="text-xl md:text-2xl font-light leading-loose text-white">
+                            We’re here to ensure that when a contractor turns the key in their truck, it’s because a
+                            family is <span class="font-serif font-bold text-3xl text-amber-300"
+                                style="animation: pulse-warm 3s infinite">ready for a transformation</span>—not a sales
+                            pitch.
+                        </p>
+                    </div>
+
+                    <div class="mt-16">
+                        <div class="w-1 h-24 bg-gradient-to-b from-amber-400 to-transparent mx-auto rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Signoff -->
+    <footer class="bg-black text-center py-24 px-4">
+        <p class="text-gray-600 font-serif italic text-lg">Quiet Resentment &rarr; Blueprint &rarr; Dignity</p>
+    </footer>
+
+</body>
+
+</html>

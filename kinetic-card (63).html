@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Dignity Scan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Space+Mono:wght@400;700&display=swap');
+
+        :root {
+            --img-1: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (114).jpg');
+            --img-2: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (115).jpg');
+            --img-3: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (116).jpg');
+            --img-4: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (117).jpg');
+            --c-bg: #050505;
+            --c-text: #f0f0f0;
+            --c-accent: #ff3b3b;
+            --c-highlight: #4ade80;
+            --c-gold: #fbbf24;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-mono: 'Space Mono', monospace
+        }
+
+        body {
+            background-color: var(--c-bg);
+            color: var(--c-text);
+            font-family: var(--font-serif);
+            overflow-x: hidden;
+            margin: 0
+        }
+
+        /* UTILITIES */
+        .f-mono {
+            font-family: var(--font-mono)
+        }
+
+        .text-shadow {
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8)
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.4)
+        }
+
+        .filter-noise {
+            filter: url(#noise) contrast(120%)
+        }
+
+        .filter-glitch {
+            filter: url(#glitch)
+        }
+
+        .mix-overlay {
+            mix-blend-mode: overlay
+        }
+
+        .bg-cover-fixed {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover
+        }
+
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.6);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1)
+        }
+
+        /* SCROLLYTELLING SECTIONS */
+        section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            z-index: 2
+        }
+
+        .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            transition: transform 0.5s ease-out
+        }
+
+        .scanner-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--c-accent);
+            box-shadow: 0 0 15px var(--c-accent), 0 0 30px var(--c-accent);
+            z-index: 10;
+            animation: scan-y 4s ease-in-out infinite alternate;
+            opacity: 0.8
+        }
+
+        @keyframes scan-y {
+            0% {
+                top: 10%
+            }
+
+            100% {
+                top: 90%
+            }
+        }
+
+        .grid-overlay {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%)
+        }
+
+        /* TYPOGRAPHY ANIMS */
+        .reveal-text span {
+            opacity: 0;
+            display: inline-block;
+            animation: fadeIn 0.8s forwards
+        }
+
+        .delay-1 {
+            animation-delay: 0.2s
+        }
+
+        .delay-2 {
+            animation-delay: 0.4s
+        }
+
+        .delay-3 {
+            animation-delay: 0.8s
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* SECTION SPECIFIC */
+        #sec-intro {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        #sec-hook {
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), #000 90%), var(--img-1)
+        }
+
+        #sec-mission {
+            background: #000
+        }
+
+        #sec-magic {
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), var(--img-2)
+        }
+
+        #sec-clarity {
+            background-image: linear-gradient(to top, #000 10%, transparent), var(--img-3)
+        }
+
+        #sec-trust {
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%)
+        }
+
+        #sec-stakes {
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.2)), var(--img-4)
+        }
+
+        /* RESPONSIVE TYPE */
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 1
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            line-height: 1.1
+        }
+
+        p {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            line-height: 1.6;
+            max-width: 60ch
+        }
+    </style>
+</head>
+
+<body><!-- SVG FILTERS --><svg style="position:absolute;width:0;height:0">
+        <defs>
+            <filter id="noise">
+                <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" />
+                <feComposite operator="in" in2="SourceGraphic" result="monoNoise" />
+                <feBlend in="SourceGraphic" in2="monoNoise" mode="screen" />
+            </filter>
+            <filter id="glitch">
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+    <main><!-- INTRO -->
+        <section id="sec-intro" class="text-center">
+            <div class="flex flex-col items-center">
+                <h1 class="italic font-serif tracking-tighter text-glow mb-4">The Dignity Scan</h1>
+
+            </div>
+        </section><!-- 0-8s: THE HOOK -->
+        <section id="sec-hook" class="bg-cover-fixed">
+            <div class="glass-panel p-8 md:p-12 rounded-none md:rounded-lg max-w-2xl border-l-4 border-red-600">
+                <p class="text-xl md:text-3xl font-serif font-light mb-6 text-shadow">“A home should be a <span
+                        class="italic text-white font-normal">sanctuary</span>, but for millions of families, it’s
+                    becoming a cage.”</p>
+                <p class="text-lg md:text-2xl font-serif text-gray-300">“One slick floor or one steep step is all it
+                    takes to lose <span class="filter-glitch text-red-400 inline-block">independence</span> forever.”
+                </p>
+            </div>
+        </section><!-- 8-15s: THE MISSION -->
+        <section id="sec-mission">
+            <div class="grid-overlay"></div>
+            <div class="max-w-4xl mx-auto z-10">
+                <h2 class="f-mono text-4xl md:text-6xl mb-8 tracking-tighter">INITIALIZING...</h2>
+                <p class="f-mono text-xl md:text-2xl text-green-400 border-l-2 border-green-500 pl-6">“At HOMEase, we
+                    believe aging-in-place isn't a luxury. It’s a right. We’ve built the technology to make it a reality
+                    in minutes.”</p>
+            </div>
+        </section><!-- 15-30s: THE MAGIC -->
+        <section id="sec-magic" class="bg-cover-fixed">
+            <div class="scanner-line"></div>
+            <div class="absolute top-10 left-10 md:top-20 md:left-20 max-w-lg z-20">
+                <div class="glass-panel p-6 border-l-4 border-red-500">
+                    <h3 class="f-mono text-xs uppercase tracking-[0.2em] text-red-400 mb-2">Analysis in Progress</h3>
+                    <p class="text-xl md:text-3xl font-serif leading-tight">“You walk through the room. Our AI sees what
+                        you can’t: the <span class="text-red-500 font-bold f-mono bg-black px-1">hidden trip
+                            hazards</span>, the bathroom that needs a grip, the doorway that’s two inches too narrow.”
+                    </p>
+                </div>
+            </div><!-- Decorative targeting reticles -->
+            <div
+                class="absolute w-24 h-24 border-2 border-red-500 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-50">
+            </div>
+            <div class="absolute w-2 h-2 bg-red-500 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        </section><!-- 30-45s: THE CLARITY -->
+        <section id="sec-clarity" class="bg-cover-fixed items-end pb-20">
+            <div class="bg-black/90 p-8 md:p-16 max-w-3xl w-full border-t border-gray-800 shadow-2xl">
+                <div class="flex justify-between items-baseline border-b border-gray-700 pb-4 mb-6"><span
+                        class="f-mono text-xs text-gray-500">CLINICAL GRADE REPORT</span><span
+                        class="f-mono text-xl text-yellow-400">RISK: HIGH</span></div>
+                <p class="text-2xl md:text-4xl font-serif mb-6">“This isn't a generic checklist. It’s a clinical-grade
+                    roadmap.”</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 f-mono text-xs text-gray-400">
+                    <div class="border border-gray-800 p-4"><span class="block text-white mb-2 text-lg">WHAT</span>to
+                        change</div>
+                    <div class="border border-gray-800 p-4"><span class="block text-white mb-2 text-lg">WHY</span>it's a
+                        risk</div>
+                    <div class="border border-gray-800 p-4"><span
+                            class="block text-white mb-2 text-lg">BUDGET</span>estimates</div>
+                </div>
+            </div>
+        </section><!-- 45-60s: THE TRUST -->
+        <section id="sec-trust">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="mb-12"><span class="f-mono text-xs border border-white px-3 py-1 rounded-full">CONTRACTOR
+                        MARKETPLACE</span></div>
+                <p class="text-2xl md:text-5xl font-serif font-light leading-snug mb-12">“We don't just find problems;
+                    we find the people to fix them. We bridge the gap between families who need safety and contractors
+                    who take pride in providing it.”</p>
+                <div class="flex justify-center gap-4">
+                    <div
+                        class="w-12 h-12 rounded-full border border-gray-600 flex items-center justify-center text-gray-400">
+                        A</div>
+                    <div class="w-12 h-1 bg-white self-center"></div>
+                    <div
+                        class="w-12 h-12 rounded-full border border-white bg-white text-black flex items-center justify-center font-bold">
+                        B</div>
+                </div>
+            </div>
+        </section><!-- 60-75s: THE STAKES -->
+        <section id="sec-stakes" class="bg-cover-fixed">
+            <div class="absolute inset-0 bg-yellow-900/20 mix-blend-overlay"></div>
+            <div class="text-center z-10 mt-auto mb-auto bg-black/40 backdrop-blur-sm p-12 rounded-xl">
+                <p class="text-xl md:text-3xl font-serif italic mb-8">“Stop guessing. Stop worrying.”</p>
+                <h2 class="text-4xl md:text-7xl font-serif text-white mb-4">Let’s make 'home' a place you never have to
+                    leave.</h2>
+                <div class="mt-16 pt-8 border-t border-white/20">
+                    <h3 class="text-2xl md:text-4xl font-serif text-yellow-100 tracking-wide">HOMEase</h3>
+                    <p class="f-mono text-xs tracking-[0.3em] uppercase mt-2">Keep the Home You Love</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

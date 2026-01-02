@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Care-Sync Kinetic Art</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Inter:wght@300;400;600&display=swap');
+
+    :root {
+      --c-dark: #0f172a;
+      --c-paper: #f1f5f9;
+      --c-accent: #38bdf8;
+      --c-warm: #fbbf24;
+    }
+
+    body {
+      background-color: var(--c-dark);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      color: white;
+    }
+
+    .font-serif {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    /* SVG Filters Classes */
+    .filter-noise {
+      filter: url('#paper-grain') grayscale(100%) contrast(120%);
+    }
+
+    .filter-drown {
+      filter: url('#turbulence-drown');
+    }
+
+    .filter-glow {
+      filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.5));
+    }
+
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.6);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .text-shadow-sm {
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Animations */
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes pulse-opacity {
+
+      0%,
+      100% {
+        opacity: 0.6;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes breathe {
+      0% {
+        letter-spacing: -0.02em;
+        font-weight: 300;
+      }
+
+      50% {
+        letter-spacing: 0.05em;
+        font-weight: 400;
+      }
+
+      100% {
+        letter-spacing: -0.02em;
+        font-weight: 300;
+      }
+    }
+
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .animate-breathe {
+      animation: breathe 4s ease-in-out infinite;
+    }
+
+    /* Scrollytelling Layout Utils */
+    .sticky-section {
+      position: relative;
+      height: 200vh;
+    }
+
+    .sticky-content {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .img-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      transition: transform 0.5s ease-out;
+    }
+
+    /* Typography Specifics */
+    .stroke-text {
+      -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+      color: transparent;
+    }
+
+    .blend-mix {
+      mix-blend-mode: overlay;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG Filter Definitions -->
+  <svg style="display: none;">
+    <defs>
+      <!-- Paper Grain Noise -->
+      <filter id="paper-grain">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" result="noise" />
+        <feColorMatrix type="saturate" values="0" result="grayNoise" />
+        <feBlend in="SourceGraphic" in2="grayNoise" mode="overlay" />
+      </filter>
+
+      <!-- Liquid Distortion for 'Drowning' -->
+      <filter id="turbulence-drown">
+        <feTurbulence type="turbulence" baseFrequency="0.01 0.02" numOctaves="2" result="turbulence">
+          <animate attributeName="baseFrequency" dur="10s" values="0.01 0.02; 0.02 0.04; 0.01 0.02"
+            repeatCount="indefinite" />
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="15" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- SECTION 1: SURVIVAL (The Problem) -->
+  <section class="sticky-section">
+    <div class="sticky-content">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (84).jpg" alt="Stressed Caregiver"
+        class="img-bg filter-noise scale-105" style="opacity: 0.6;">
+      <div class="max-w-4xl px-6 relative z-10 text-center">
+        <h1 class="font-serif text-5xl md:text-7xl mb-6 leading-tight text-shadow-sm">
+          <span class="block opacity-90">Caregiving is an act of love,</span>
+          <span class="block mt-4 text-3xl md:text-5xl italic text-slate-400">but it often feels like an act of</span>
+          <span class="block text-6xl md:text-9xl font-bold tracking-tighter text-white mt-2 filter-drown uppercase"
+            style="text-shadow: 4px 4px 0px #000;">SURVIVAL.</span>
+        </h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: DROWNING (The Detail) -->
+  <section class="sticky-section" style="height: 150vh;">
+    <div class="sticky-content bg-slate-900">
+      <div class="absolute inset-0 opacity-20 filter-noise"
+        style="background: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (85).jpg'); background-size: cover;">
+      </div>
+      <div class="relative z-10 max-w-2xl px-8 text-lg md:text-2xl leading-relaxed font-light text-slate-200">
+        <p class="mb-8 border-l-4 border-slate-600 pl-6 animate-float">
+          Right now, millions of families are <span class="font-serif italic text-3xl text-red-100">drowning</span> in a
+          sea of scribbled medical notes, missed medication windows, and the crushing mental load of coordinating a life
+          they weren't prepared to manage.
+        </p>
+        <p class="pl-6 text-slate-400">
+          They aren't looking for a <span
+            class="font-mono bg-slate-800 px-2 py-1 text-sm uppercase tracking-widest text-white border border-slate-700">'technical
+            blueprint'</span>;
+          <br><br>
+          <span class="text-white font-serif text-3xl block mt-4 animate-breathe">they are looking for a way to breathe
+            again.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: CARE-SYNC (The Solution - Tech) -->
+  <section class="sticky-section">
+    <div class="sticky-content">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (86).jpg" alt="Digital Pulse" class="img-bg"
+        style="filter: brightness(0.6) contrast(1.2);">
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-slate-900"></div>
+
+      <div class="max-w-5xl w-full px-6 flex flex-col md:flex-row items-center justify-between z-10">
+        <div class="md:w-1/2 mb-8 md:mb-0 text-left">
+          <h2 class="text-5xl md:text-7xl font-bold tracking-tighter mb-4 text-white filter-glow"
+            style="font-family: 'Inter';">Care-Sync</h2>
+          <p class="text-xl md:text-2xl text-sky-200 font-light">
+            Born from a singular obsession: <span class="text-white border-b border-sky-400">to ensure that no family
+              ever feels alone in the dark.</span>
+          </p>
+        </div>
+        <div class="md:w-5/12 glass-panel p-8 rounded-lg shadow-2xl border-t border-sky-500/30">
+          <p class="text-sm md:text-base leading-relaxed text-sky-50 font-light">
+            We didn't just build a platform; we built a <span class="font-semibold text-sky-300">digital
+              sanctuary</span>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: SACRED TRUST (The Feature - Human + Tech) -->
+  <section class="sticky-section">
+    <div class="sticky-content">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (87).jpg" alt="Doctor and Tech" class="img-bg"
+        style="filter: brightness(0.7);">
+      <div class="absolute inset-0 bg-blue-900/30 mix-blend-multiply"></div>
+
+      <div class="relative z-10 w-full max-w-4xl px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="glass-panel p-6 rounded-none border-l-2 border-emerald-400">
+            <p class="text-lg text-slate-200">
+              While our <strong class="text-white">AI silently listens</strong> to the doctor so you can focus on
+              holding your mother’s hand, our systems work in the background to scan for risks you’re too exhausted to
+              see.
+            </p>
+          </div>
+          <div class="glass-panel p-6 rounded-none border-r-2 border-amber-400 flex items-center">
+            <p class="text-lg text-slate-200 text-right">
+              We chose the most secure encrypted architecture on earth because your family’s private medical journey
+              isn't <span class="font-mono text-xs uppercase bg-black px-1">'data'</span>—
+              <br>
+              <span class="font-serif text-3xl text-amber-300 italic">it’s a sacred trust.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: FAMILY AGAIN (The Result) -->
+  <section class="sticky-section" style="height: 100vh;">
+    <div class="sticky-content bg-white">
+      <img src="https://i.imgur.com/uN8lqJ2.jpeg" alt="Happy Family" class="img-bg"
+        style="opacity: 0.9; object-position: center;">
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/90"></div>
+
+      <div class="relative z-10 max-w-3xl text-center px-6 mt-32">
+        <p class="text-2xl md:text-4xl font-serif text-slate-800 mb-6 drop-shadow-md">
+          We don’t just manage tasks; we restore the space for you to be a family again.
+        </p>
+        <div class="w-24 h-1 bg-amber-400 mx-auto mb-8"></div>
+        <p class="text-xl md:text-3xl text-slate-700">
+          Because when the logistics of care are handled,
+          <br>
+          <span class="block mt-8 text-5xl md:text-8xl font-serif italic text-amber-600 font-bold"
+            style="text-shadow: 2px 2px 0px rgba(255,255,255,0.8);">all that’s left is the love.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+</body>
+
+</html>

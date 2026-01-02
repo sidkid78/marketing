@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sovereign Repair Economy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --oil: #050505;
+    --steel: #1a1f25;
+    --neon-cyan: #00f3ff;
+    --alert-red: #ff2a2a;
+    --terminal-green: #33ff00;
+    --paper: #e0e0e0;
+  }
+
+  body {
+    background-color: var(--oil);
+    color: var(--paper);
+    font-family: 'Share Tech Mono', monospace;
+    overflow-x: hidden;
+    margin: 0;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+  }
+
+  /* --- SVG FILTERS & TEXTURES --- */
+  .noise-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.15;
+    background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+  }
+
+  .scanline {
+    width: 100%;
+    height: 100px;
+    z-index: 51;
+    background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0, 243, 255, 0.1) 50%, rgba(0,0,0,0) 100%);
+    opacity: 0.1;
+    position: absolute;
+    bottom: 100%;
+    animation: scanline 10s linear infinite;
+    pointer-events: none;
+  }
+
+  /* --- KINETIC ANIMATIONS --- */
+  @keyframes scanline {
+    0% { bottom: 100%; }
+    100% { bottom: -100%; }
+  }
+
+  @keyframes flicker {
+    0% { opacity: 1; }
+    5% { opacity: 0.5; }
+    10% { opacity: 1; }
+    15% { opacity: 0.1; }
+    20% { opacity: 1; }
+    50% { opacity: 1; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes waveform {
+    0%, 100% { height: 10%; }
+    50% { height: 90%; }
+  }
+
+  @keyframes rotate-gear {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .flicker-text {
+    animation: flicker 4s infinite alternate;
+    text-shadow: 0 0 5px var(--neon-cyan);
+  }
+
+  .glitch-layer {
+    position: relative;
+  }
+  
+  .glitch-layer::before {
+    content: attr(data-text);
+    position: absolute;
+    left: -2px;
+    text-shadow: 1px 0 var(--alert-red);
+    top: 0;
+    color: white;
+    background: var(--oil);
+    overflow: hidden;
+    clip: rect(0, 900px, 0, 0);
+    animation: noise-anim-2 3s infinite linear alternate-reverse;
+  }
+
+  @keyframes noise-anim-2 {
+    0% { clip: rect(12px, 9999px, 52px, 0); }
+    5% { clip: rect(32px, 9999px, 8px, 0); }
+    100% { clip: rect(5px, 9999px, 80px, 0); }
+  }
+
+  /* --- UTILITIES --- */
+  .blueprint-grid {
+    background-image: linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .glass-panel {
+    background: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+  }
+
+  .bg-fixed-layer {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: -1;
+    background: radial-gradient(circle at center, #1a202c 0%, #000 100%);
+  }
+</style>
+</head>
+<body class="antialiased selection:bg-cyan-500 selection:text-black">
+
+<!-- BACKGROUND / MOOD IMAGE SIMULATION -->
+<div class="bg-fixed-layer">
+    <!-- Generated SVG simulating 'Industrial Mood Image' -->
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" opacity="0.2">
+        <defs>
+            <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+                <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#00f3ff" stroke-width="0.5" opacity="0.3"/>
+            </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)" />
+        <g transform="translate(800, 300)" opacity="0.4">
+             <circle cx="0" cy="0" r="200" stroke="#333" stroke-width="2" fill="none" />
+             <path d="M-180 0 L180 0 M0 -180 L0 180" stroke="#333" />
+             <circle cx="0" cy="0" r="150" stroke="#555" stroke-width="20" stroke-dasharray="10 10" fill="none">
+                <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="60s" repeatCount="indefinite"/>
+             </circle>
+        </g>
+    </svg>
+</div>
+
+<div class="noise-overlay"></div>
+<div class="scanline"></div>
+
+<main class="relative z-10 container mx-auto px-6">
+
+  <!-- SECTION 1: HEADER -->
+  <section class="min-h-screen flex flex-col justify-center items-start py-20">
+    <div class="w-full max-w-4xl">
+      <p class="text-cyan-400 tracking-widest text-sm mb-4">/// SYSTEM DIAGNOSTIC START</p>
+      <h1 class="text-6xl md:text-9xl font-bold leading-none mb-6 glitch-layer" data-text="LISTEN & FIX">
+        LISTEN <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">& FIX</span>
+      </h1>
+      <h2 class="text-2xl md:text-4xl text-gray-400 font-light tracking-wide border-l-4 border-cyan-500 pl-6">
+        The Sovereign Repair Economy.
+      </h2>
+    </div>
+  </section>
+
+  <!-- SECTION 2: THE PROBLEM (Fear/Tax) -->
+  <section class="min-h-[80vh] flex items-center justify-end py-20">
+    <div class="glass-panel p-10 max-w-2xl border-l-4 border-red-500">
+        <div class="flex items-center space-x-4 mb-6">
+             <svg class="w-8 h-8 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+             <h3 class="text-red-500 text-xl font-mono uppercase">Alert: Exploitation Risk Detected</h3>
+        </div>
+      <p class="text-xl md:text-3xl leading-snug font-light text-gray-100 mb-8">
+        The <strong class="text-white font-bold bg-red-900/50 px-2">'Mechanic's Tax'</strong>—the paralyzing fear of being exploited by a service professional because you don't speak the language of your own machine.
+      </p>
+    </div>
+  </section>
+
+  <!-- SECTION 3: THE SHIFT -->
+  <section class="min-h-[60vh] flex flex-col justify-center items-center text-center py-24">
+    <h2 class="text-4xl md:text-6xl font-bold uppercase tracking-tight text-glow mb-12">
+      "From Helpless to Handler:
+      <span class="block text-cyan-400 mt-2 text-2xl md:text-5xl">Ending the Era of the $150 Diagnostic Fee."</span>
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl mt-8">
+        <div class="glass-panel p-8 text-left">
+            <p class="text-sm text-gray-400 font-mono mb-2">SCOPE // MARKET_SIZE</p>
+            <p class="text-lg leading-relaxed">
+                The <span class="text-cyan-400 font-bold">$800B global automotive and appliance repair market</span>, specifically the 'Diagnostic & Inspection' sub-sector where consumers pay $100-$200 just for a professional to 'take a look.'
+            </p>
+        </div>
+        <div class="glass-panel p-8 text-left border-t-2 border-cyan-400">
+            <p class="text-sm text-gray-400 font-mono mb-2">SOLUTION // UNBUNDLING</p>
+            <p class="text-lg leading-relaxed">
+                <span class="font-bold text-white">Unbundling the Expert:</span> Selling the technician's 'ear' and 'knowledge base' as a $5 instant digital asset, rather than a $150 on-site visit.
+            </p>
+        </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: VISUAL STORYBOARD (Recreated with CSS Grid/SVG) -->
+  <section class="py-20">
+      <!-- Simulation of User Storyboard Image 1 -->
+      <div class="w-full max-w-6xl mx-auto border border-gray-700 bg-gray-900/80 p-4 relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-2 text-xs text-gray-500 font-mono">IMG_SRC: STORYBOARD_01</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
+              <!-- LEFT: PAIN POINT -->
+              <div class="p-12 flex flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-red-900/20 border-r border-gray-700">
+                  <div class="mb-6 p-4 rounded-full border-2 border-red-500/50 shadow-[0_0_30px_rgba(255,0,0,0.3)]">
+                      <svg class="w-20 h-20 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                  </div>
+                  <h3 class="text-2xl font-bold text-red-400 mb-2">PAIN POINT</h3>
+                  <p class="text-center text-gray-400 text-sm max-w-xs">Locked Knowledge.<br>High Cost Access.<br>Information Asymmetry.</p>
+              </div>
+              <!-- RIGHT: UNIQUE EDGE -->
+              <div class="p-12 flex flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-cyan-900/20">
+                  <div class="flex space-x-2 items-end h-24 mb-6">
+                      <div class="w-2 bg-green-400" style="animation: waveform 0.5s infinite ease-in-out;"></div>
+                      <div class="w-2 bg-green-400" style="animation: waveform 0.7s infinite ease-in-out;"></div>
+                      <div class="w-2 bg-green-400" style="animation: waveform 0.4s infinite ease-in-out;"></div>
+                      <div class="w-2 bg-green-400" style="animation: waveform 0.9s infinite ease-in-out;"></div>
+                      <div class="w-2 bg-green-400" style="animation: waveform 0.6s infinite ease-in-out;"></div>
+                  </div>
+                  <h3 class="text-2xl font-bold text-cyan-400 mb-2">UNIQUE EDGE</h3>
+                  <p class="text-center text-gray-400 text-sm max-w-xs">Multimodal Acoustic Fingerprinting.<br>Transparent.<br>Instant.</p>
+              </div>
+          </div>
+      </div>
+  </section>
+
+  <!-- SECTION 5: TECH DEEP DIVE -->
+  <section class="min-h-screen flex items-center justify-center py-20 relative overflow-hidden">
+    <!-- Background Grid for Tech feel -->
+    <div class="absolute inset-0 blueprint-grid opacity-20"></div>
+    
+    <div class="relative z-10 max-w-4xl">
+      <div class="mb-16">
+        <h2 class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 mb-6">
+          MULTIMODAL<br>
+          ACOUSTIC<br>
+          <span class="text-cyan-500 flicker-text">FINGERPRINTING</span>
+        </h2>
+        <p class="text-xl md:text-2xl font-light leading-relaxed text-gray-300 border-l-2 border-cyan-500 pl-6">
+          We don't just 'listen'; we isolate the <span class="text-cyan-400 font-mono">120Hz rhythmic click</span> of a failing compressor clutch against the ambient noise of a garage, cross-referencing it with JIT-crawled Technical Service Bulletins.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm font-mono text-gray-400">
+          <div class="p-4 border border-gray-800 bg-black/50">
+              <div class="text-xs text-cyan-600 mb-2">INPUT_SOURCE</div>
+              <div>Ambient Garage Noise</div>
+          </div>
+          <div class="p-4 border border-cyan-900 bg-cyan-900/10">
+              <div class="text-xs text-cyan-400 mb-2">FILTER_PASS</div>
+              <div class="text-white">Isolate 120Hz Signal</div>
+          </div>
+          <div class="p-4 border border-gray-800 bg-black/50">
+              <div class="text-xs text-cyan-600 mb-2">DATABASE_MATCH</div>
+              <div>Tech Service Bulletin #4092</div>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: THE EDGE -->
+  <section class="min-h-[80vh] flex flex-col justify-center py-20">
+    <div class="flex flex-col md:flex-row items-center gap-12">
+        <div class="md:w-1/2 order-2 md:order-1">
+            <!-- Abstract visual for 'Torque Spec' -->
+            <svg viewBox="0 0 400 300" class="w-full h-auto drop-shadow-2xl">
+                <rect x="10" y="10" width="380" height="280" fill="#111" stroke="#333" stroke-width="2" />
+                <text x="30" y="50" fill="#fff" font-family="monospace" font-size="14">DOC_ID: SAFETY_PROTOCOL_V9</text>
+                <path d="M30 80 H370" stroke="#333" />
+                <circle cx="200" cy="180" r="60" stroke="#00f3ff" stroke-width="2" fill="none" stroke-dasharray="10 5" />
+                <text x="200" y="185" fill="#00f3ff" text-anchor="middle" font-family="monospace" font-size="24">85 Nm</text>
+                <text x="200" y="210" fill="#666" text-anchor="middle" font-family="monospace" font-size="12">TORQUE_SPEC</text>
+                <path d="M200 120 L200 80 M200 240 L200 280 M140 180 L100 180 M260 180 L300 180" stroke="#333" />
+            </svg>
+        </div>
+        <div class="md:w-1/2 order-1 md:order-2 space-y-8">
+            <p class="text-xl md:text-3xl font-light">
+                While the tech focuses on the repair, the true <strong class="text-white border-b-2 border-yellow-500">'obsessive edge'</strong> is the safety-first technical documentation is the exact Newton-meter torque spec for a specific bolt that prevents a DIY disaster.
+            </p>
+        </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7: LIVING MANUAL & CLOSING -->
+  <section class="py-24 pb-40">
+    <div class="glass-panel p-8 md:p-16 border-t-8 border-cyan-500 relative overflow-hidden">
+      <!-- Decoration -->
+      <div class="absolute -right-20 -bottom-20 opacity-10">
+          <svg width="300" height="300" viewBox="0 0 100 100">
+              <path d="M50 0 L100 25 L100 75 L50 100 L0 75 L0 25 Z" fill="none" stroke="white" stroke-width="2"/>
+          </svg>
+      </div>
+
+      <h2 class="text-5xl md:text-8xl font-bold mb-8 text-white uppercase">Living Manual</h2>
+      
+      <div class="grid md:grid-cols-2 gap-12 text-lg md:text-xl text-gray-300 font-light leading-relaxed">
+        <div>
+            Our <span class="text-cyan-400 font-bold">Just-In-Time RAG pipeline</span> creates a 'Living Manual' that outpaces static databases...
+        </div>
+        <div>
+            ...combined with proprietary <span class="text-white border-b border-gray-500">acoustic diagnostic schemas</span> that turn any smartphone into a professional-grade stethoscope.
+        </div>
+      </div>
+      
+      <div class="mt-12 pt-8 border-t border-gray-700 flex justify-between items-end">
+          <div class="text-xs text-gray-500 font-mono">
+              STATUS: ONLINE<br>
+              LATENCY: 12ms<br>
+              VER: 2.0.4
+          </div>
+          <button class="bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 px-8 uppercase tracking-widest transition-all transform hover:scale-105">
+              Initiate Diagnostic
+          </button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>

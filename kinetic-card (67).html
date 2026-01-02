@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Invisible Threat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+    :root {
+      --bg-dark: #050505;
+      --text-light: #e0e0e0;
+      --accent-alert: #ff3b3b;
+      --accent-tech: #00f0ff;
+      --font-head: 'Playfair Display', serif;
+      --font-sub: 'Cinzel', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* SVG Filters */
+    .noise-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.07;
+      z-index: 50;
+      filter: url('#paper-grain');
+    }
+
+    /* Kinetic Text Utilities */
+    .text-reveal {
+      opacity: 0;
+      animation: fadeInUp 1s forwards ease-out;
+    }
+
+    .text-danger {
+      color: var(--accent-alert);
+      display: inline-block;
+      font-style: italic;
+      position: relative;
+    }
+
+    .text-danger:hover {
+      animation: shake 0.5s infinite;
+      text-shadow: 2px 0 0 white, -2px 0 0 blue;
+    }
+
+    .text-tech {
+      color: var(--accent-tech);
+      font-family: var(--font-body);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    /* Sections */
+    .section {
+      min-height: 100vh;
+      position: relative;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    /* HERO */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (200).jpg');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.4) grayscale(0.5);
+      z-index: 0;
+    }
+
+    .scanner-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent-tech);
+      box-shadow: 0 0 15px var(--accent-tech), 0 0 30px var(--accent-tech);
+      animation: scan 4s ease-in-out infinite;
+      z-index: 1;
+      opacity: 0.8;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      text-align: left;
+      mix-blend-mode: hard-light;
+    }
+
+    .hero-headline {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    /* HOLY WAR */
+    .holy-war-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (201).jpg');
+      /* Fallback logic used same img for demo, replaced with real base64 in prod logic */
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (201).jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.3;
+      filter: contrast(1.2) sepia(0.3);
+    }
+
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(0, 229, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 255, 0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      mask-image: linear-gradient(to bottom, black, transparent);
+    }
+
+    .card-glass {
+      background: rgba(255, 255, 255, 0.03);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 3rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* FOUNDER */
+    .founder-bg {
+      position: absolute;
+      inset: 0;
+      background-color: #000;
+      z-index: 0;
+    }
+
+    .founder-img-container {
+      position: relative;
+      width: 300px;
+      height: 400px;
+      margin: 0 auto;
+      transform: rotate(-3deg);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      border: 8px solid white;
+      overflow: hidden;
+    }
+
+    .founder-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%) contrast(1.2);
+    }
+
+    .quote-mark {
+      font-family: var(--font-head);
+      font-size: 8rem;
+      color: rgba(255, 255, 255, 0.1);
+      position: absolute;
+      top: -4rem;
+      left: -2rem;
+    }
+
+    /* CTA */
+    .cta-bg {
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (203).jpg');
+      background-size: cover;
+      filter: brightness(0.6);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: white;
+      color: black;
+      padding: 1rem 2.5rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: 1px solid white;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: black;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      padding: 1rem 2.5rem;
+      border: 1px solid white;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    @keyframes scan {
+      0% {
+        top: 0%;
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      90% {
+        opacity: 1;
+      }
+
+      100% {
+        top: 100%;
+        opacity: 0;
+      }
+    }
+
+    @keyframes shake {
+      0% {
+        transform: translate(1px, 1px) rotate(0deg);
+      }
+
+      10% {
+        transform: translate(-1px, -2px) rotate(-1deg);
+      }
+
+      20% {
+        transform: translate(-3px, 0px) rotate(1deg);
+      }
+
+      30% {
+        transform: translate(3px, 2px) rotate(0deg);
+      }
+
+      40% {
+        transform: translate(1px, -1px) rotate(1deg);
+      }
+
+      50% {
+        transform: translate(-1px, 2px) rotate(-1deg);
+      }
+
+      60% {
+        transform: translate(-3px, 1px) rotate(0deg);
+      }
+
+      70% {
+        transform: translate(3px, 1px) rotate(-1deg);
+      }
+
+      80% {
+        transform: translate(-1px, -1px) rotate(1deg);
+      }
+
+      90% {
+        transform: translate(1px, 2px) rotate(0deg);
+      }
+
+      100% {
+        transform: translate(1px, -2px) rotate(-1deg);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG Filters Definition -->
+  <svg class="hidden" style="position: absolute; width: 0; height: 0; overflow: hidden;">
+    <defs>
+      <filter id="paper-grain">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+        <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0" />
+      </filter>
+      <filter id="distort-text">
+        <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+        <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="noise-overlay"></div>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section class="section">
+      <div class="hero-bg">
+        <!-- Scanner Line Animation -->
+        <div class="scanner-line"></div>
+      </div>
+      <div class="hero-content relative px-4">
+        <h1 class="hero-headline text-reveal" style="animation-delay: 0.2s;">
+          Because "I’m Fine" is the Most <span class="text-danger">Dangerous</span> Phrase Your Parents Use.
+        </h1>
+        <div class="border-l-4 border-red-500 pl-6 mt-8 max-w-2xl text-reveal" style="animation-delay: 0.6s;">
+          <h2 class="text-xl md:text-2xl font-light mb-4 leading-relaxed">
+            That loose rug isn't an inconvenience; it’s an <span class="font-bold text-white">intruder</span>.
+          </h2>
+          <p class="text-gray-400 leading-relaxed mb-6">
+            Use your phone to see the invisible threats that steal independence. We don't just find contractors; we find
+            the men and women who believe your parents’ safety is a <span
+              class="text-white border-b border-gray-600 pb-1">sacred duty</span>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOLY WAR SECTION -->
+    <section class="section bg-gray-900">
+      <div class="holy-war-bg"></div>
+      <div class="grid-overlay"></div>
+      <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
+        <div class="card-glass">
+          <h2 class="text-4xl md:text-5xl font-serif mb-6 leading-tight">
+            The Home Improvement Industry is Built on <span class="italic text-gray-500">Margins</span>.<br>
+            We’re Built on <span class="text-cyan-400 font-bold">Mandates</span>.
+          </h2>
+        </div>
+        <div class="text-gray-300 space-y-6 md:pl-10">
+          <p class="text-lg leading-relaxed">
+            Most contractors see a bathroom remodel as a paycheck. We see it as a fortress.
+          </p>
+          <p class="text-lg leading-relaxed">
+            We didn’t build an AI to meet "industry standards"—we built it to expose the corners contractors cut when
+            they think no one is looking.
+          </p>
+          <p class="text-white font-mono uppercase text-sm tracking-widest mt-8 pt-4 border-t border-gray-700">
+            Because in this house, there is zero margin for error.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOUNDER SECTION -->
+    <section class="section bg-black">
+      <div class="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center max-w-6xl">
+        <div class="order-2 md:order-1 relative">
+          <!-- Founder Image with Photo Filter Style -->
+          <div class="founder-img-container">
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (202).jpg" alt="Founder">
+          </div>
+          <div class="absolute -bottom-10 -right-10 bg-white text-black p-4 font-serif italic text-lg shadow-xl">
+            Cliff & his Grandmother
+          </div>
+        </div>
+        <div class="order-1 md:order-2">
+          <blockquote class="relative p-8 md:p-12 border-l-2 border-gray-800">
+            <div class="quote-mark">“</div>
+            <p class="text-xl md:text-2xl font-serif leading-relaxed text-gray-200 mb-6">
+              In 2024, I realized that every 'standard' contractor quote I saw was a <span
+                class="text-red-500 border-b border-red-500">gamble with a human life</span>. I watched the industry
+              prioritize speed over stability, and I decided I was done.
+            </p>
+            <p class="text-lg md:text-xl font-bold text-white mb-6">
+              I don't run a 'marketplace.' I run a gauntlet.
+            </p>
+            <p class="text-gray-400 italic">
+              If I wouldn't trust a craftsman to look after my own mother when I’m out of town, they don't get the job.
+              Period.
+            </p>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="section">
+      <div class="absolute inset-0 cta-bg"></div>
+      <div class="relative z-10 text-center max-w-4xl px-4">
+        <h2 class="text-5xl md:text-7xl font-serif mb-12 tracking-tight text-white drop-shadow-2xl">
+          Peace of Mind
+        </h2>
+        <div class="flex flex-col md:flex-row gap-6 justify-center">
+          <button class="btn-primary">
+            Protect My Parents' Home
+          </button>
+          <button class="btn-secondary">
+            See How We Spot the Invisible Risks
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+
+</html>

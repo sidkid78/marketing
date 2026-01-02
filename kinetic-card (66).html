@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase AI Scrollytelling</title>
+    <style>
+        :root {
+            --bg-dark: #050a14;
+            --text-main: #e2e8f0;
+            --accent-cyan: #06b6d4;
+            --accent-amber: #f59e0b;
+            --glass: rgba(15, 23, 42, 0.85);
+            --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            overflow-x: hidden
+        }
+
+        /* SVG Filters */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            filter: url(#grain)
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 50%, #000 100%);
+            pointer-events: none;
+            z-index: 9998
+        }
+
+        .hud-line {
+            position: fixed;
+            top: 10vh;
+            left: 5vw;
+            width: 1px;
+            height: 80vh;
+            background: linear-gradient(to bottom, transparent, var(--accent-cyan), transparent);
+            opacity: 0.3;
+            z-index: 1
+        }
+
+        .hud-cross {
+            position: fixed;
+            top: 5vh;
+            right: 5vw;
+            width: 20px;
+            height: 20px;
+            border-top: 2px solid var(--accent-amber);
+            border-right: 2px solid var(--accent-amber);
+            opacity: 0.5;
+            z-index: 1
+        }
+
+        /* Typography */
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            line-height: 1.1;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #fff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+            color: #fff;
+            border-left: 4px solid var(--accent-amber);
+            padding-left: 1rem
+        }
+
+        h3 {
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            color: var(--accent-cyan);
+            margin-bottom: 0.5rem
+        }
+
+        .lead {
+            font-size: 1.25rem;
+            font-weight: 300;
+            color: #94a3b8;
+            max-width: 65ch
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            color: #cbd5e1
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 2rem 0
+        }
+
+        .tag {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            opacity: 0.8
+        }
+
+        /* Layout */
+        section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem
+        }
+
+        .sticky-wrapper {
+            position: relative;
+            height: 300vh;
+            margin: 0 -2rem
+        }
+
+        .sticky-bg {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            z-index: 0
+        }
+
+        .sticky-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.4) saturate(1.2)
+        }
+
+        .content-card {
+            position: relative;
+            z-index: 10;
+            background: var(--glass);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            margin: 0 auto 50vh auto;
+            max-width: 600px;
+            border-radius: 4px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5)
+        }
+
+        .content-card:last-child {
+            margin-bottom: 0
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            padding: 4rem 1rem
+        }
+
+        .meta-block {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            border-top: 1px solid rgba(6, 182, 212, 0.3);
+            border-bottom: 1px solid rgba(6, 182, 212, 0.3);
+            padding: 1rem 0;
+            margin: 2rem auto;
+            max-width: 600px;
+            text-align: left
+        }
+
+        .grid-decor {
+            background-image: linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
+            mask-image: radial-gradient(circle at center, black, transparent 80%);
+
+        }
+
+        /* Specific Styling */
+        .stat-highlight {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-amber);
+            display: block;
+            line-height: 1
+        }
+
+        .caps-seal {
+            border: 2px solid #fff;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem
+        }
+    </style>
+</head>
+
+<body><!-- SVG Filters --><svg style="display:none">
+        <defs>
+            <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" />
+                <feComponentTransfer>
+                    <feFuncA type="linear" slope="0.5" />
+                </feComponentTransfer>
+            </filter>
+        </defs>
+    </svg>
+    <div class="grain-overlay"></div>
+    <div class="vignette"></div>
+    <div class="hud-line"></div>
+    <div class="hud-cross"></div><!-- Hero Section -->
+    <section class="hero">
+        <div class="grid-decor"></div>
+        <div class="container">
+            <h1>HOMEase AI:<br>Revolutionizing Evidence-Based Fall Prevention</h1>
+            <div class="meta-block">Discover how HOMEase AI uses advanced AI and AR to scale clinically validated
+                home modifications, reducing fall risks for seniors and delivering significant economic returns.
+                Empowering safe, independent aging.</div>
+            <div class="tags-container" style="justify-content:center;"><span class="tag">#AI fall
+                    prevention</span><span class="tag">#Home modifications</span><span class="tag">#Senior
+                    safety</span><span class="tag">#Elderly falls</span><span class="tag">#Aging in place</span><span
+                    class="tag">#Healthcare innovation</span><span class="tag">#Economic benefits</span><span
+                    class="tag">#Augmented reality</span><span class="tag">#CAPS certification</span><span
+                    class="tag">#Preventative healthcare</span></div>
+        </div>
+    </section><!-- Intro Text -->
+    <section>
+        <div class="container">
+            <div class="lead" style="margin:0 auto; text-align:justify;">HOMEase AI: Revolutionizing Evidence-Based Fall
+                Prevention<br><br>Falls among older adults represent a monumental public health crisis, exacting a
+                devastating toll on individuals, families, and healthcare systems. With millions of emergency room
+                visits and hundreds of thousands of hospitalizations annually, the urgency for effective, scalable
+                prevention strategies has never been greater. The efficacy of home modifications paired with
+                professional intervention in reducing fall risks is well-established through clinical research. However,
+                the traditional delivery model has often been hampered by high costs, logistical complexities, and
+                limited accessibility. HOMEase AI emerges as a groundbreaking solution, leveraging artificial
+                intelligence to democratize access to clinically validated home safety assessments. By transforming the
+                conventional approach, HOMEase AI not only promises to significantly mitigate fall risks but also
+                delivers substantial economic benefits, making sophisticated fall prevention instantly accessible and
+                remarkably cost-effective.</div>
+        </div>
+    </section><!-- Scene 1: The Problem -->
+    <div class="sticky-wrapper">
+        <div class="sticky-bg"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-2 (6).png"
+                alt="The Senior Falls Epidemic infographic">
+        </div>
+        <div class="container" style="position:relative; z-index:10; margin-top:-90vh;">
+            <div class="content-card">
+                <h2>##<br>Confronting the Falls Epidemic: A National Challenge</h2>
+                <p>The statistics surrounding falls among older adults paint a stark picture of a widespread and
+                    escalating crisis. Annually, one in four adults aged 65 and older experiences a fall, leading to
+                    over 3 million fall-related emergency room visits and more than 800,000 hospitalizations in the U.S.
+                    alone.</p>
+                <p>The economic burden is staggering, with the annual direct medical cost of falls currently exceeding
+                    <span style="color:var(--accent-amber)">$50 billion</span>. Projections indicate this cost could
+                    soar to over $100 billion by 2030 as the population continues to age.
+                </p>
+                <p>Furthermore, falls are the leading cause of injury-related death for adults 65 and older, accounting
+                    for over 36,000 deaths each year in the U.S. These alarming numbers highlight the urgent need for
+                    innovative, effective, and widely accessible solutions to stem the tide of this preventable
+                    epidemic.</p>
+            </div>
+            <div class="content-card">
+                <h2>##<br>The Clinical Imperative: Evidence-Based Fall Prevention</h2>
+                <p>The foundation of effective fall prevention rests firmly on robust clinical evidence. Programs like
+                    the 'Stepping On' study provide compelling validation for multi-faceted interventions. This
+                    evidence-based program combines multi-week group education on fall risk factors, behavioral changes
+                    including balance exercises and home safety awareness, and critically, a professional home visit
+                    conducted by a Certified Aging-in-Place Specialist (CAPS).</p>
+                <p>Key findings from such studies consistently demonstrate a statistically significant reduction in
+                    self-reported falls among participants who complete the program, particularly when incorporating a
+                    professional home assessment and subsequent modifications. This research underscores a vital
+                    principle: the synergistic combination of education, professional assessment, and targeted home
+                    modifications is far more effective than any single intervention, offering a comprehensive shield
+                    against fall-related injuries.</p>
+            </div>
+        </div>
+    </div><!-- Scene 2: The Solution -->
+    <div class="sticky-wrapper">
+        <div class="sticky-bg"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-3 (6).png"
+                alt="Tablet showing AR room scan"></div>
+        <div class="container" style="position:relative; z-index:10; margin-top:-90vh;">
+            <div class="content-card">
+                <h2>##<br>HOMEase AI: Scaling Professional Expertise for Universal Access</h2>
+                <p>Despite the proven efficacy of professional home visits, the traditional model presents significant
+                    barriers. It typically requires scheduling an occupational therapist or CAPS professional, incurring
+                    costs ranging from $150 to $300, and often involves considerable wait times spanning weeks.</p>
+                <p>HOMEase AI directly addresses these challenges by replicating the essential 'professional home visit'
+                    component at an unprecedented scale and accessibility. Through an instant augmented reality (AR)
+                    scan, HOMEase AI generates a comprehensive, professional-grade report that identifies fall hazards
+                    and recommends specific modifications.</p>
+                <p>This innovative approach eliminates the cost burden to the homeowner and dramatically reduces the
+                    time barrier, making expert-level home safety assessments instantaneously available. HOMEase AI thus
+                    bridges the critical gap between clinical best practices and scalable, equitable technology,
+                    transforming a historically resource-intensive service into an accessible digital solution.</p>
+            </div>
+        </div>
+    </div><!-- Scene 3: Economics -->
+    <div class="sticky-wrapper">
+        <div class="sticky-bg"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-4 (6).png"
+                alt="Economic growth and independence visualization"></div>
+        <div class="container" style="position:relative; z-index:10; margin-top:-90vh;">
+            <div class="content-card">
+                <h2>##<br>The Tangible Returns: A Robust Economic Case for Prevention</h2>
+                <p>Beyond the immeasurable value of maintaining independence and quality of life, investing in fall
+                    prevention programs yields a compelling economic return. For every $1 invested in interventions like
+                    the 'Stepping On' program, a direct return of <span style="color:var(--accent-cyan)">$0.64</span> is
+                    realized, culminating in a net benefit of $134.37 per participant. This translates to an impressive
+                    total benefit-cost ratio of 1.64:1.</p>
+                <p>The substantial savings are primarily generated through several critical areas. Firstly, prevented
+                    hospital admissions represent significant cost avoidance; an average fall-related emergency room
+                    visit can cost $3,000, while a hospitalization can exceed $30,000.</p>
+                <p>Secondly, reducing long-term care costs is paramount, as many falls lead to a permanent loss of
+                    independence. Preventing just one fall that would have resulted in nursing home placement can save
+                    upwards of $80,000 per year. These figures underscore that fall prevention is not merely a
+                    healthcare expenditure but a sound economic investment with measurable, positive returns.</p>
+            </div>
+            <div class="content-card">
+                <h2>##<br>The Gold Standard: Why CAPS Certification Matters</h2>
+                <p>In the realm of home modifications for seniors, the Certified Aging-in-Place Specialist (CAPS)
+                    designation stands as the undisputed gold standard. Awarded by the National Association of Home
+                    Builders (NAHB) in partnership with AARP, CAPS professionals undergo specialized training that
+                    encompasses a broad spectrum of critical knowledge areas.</p>
+                <p>This includes a deep understanding of Universal Design Principles, such as the implementation of
+                    lever handles, curbless showers, wider doorways, and non-slip flooring, all designed to enhance
+                    accessibility and safety. Training also covers ADA Compliance, ensuring adherence to accessibility
+                    standards for elements like proper grab bar placement and counter height specifications.</p>
+                <p>Crucially, CAPS professionals are also skilled in client communication, enabling sensitive
+                    discussions about aging topics, collaboration with healthcare providers, and navigation of insurance
+                    and grant funding. HOMEase AI prioritizes the principles and best practices embodied by CAPS
+                    certification, ensuring that its AI-generated recommendations align with the highest standards of
+                    quality, safety, and client-centric outcomes, thereby enhancing satisfaction rates and maximizing
+                    fall prevention results.</p>
+            </div>
+        </div>
+    </div><!-- Scene 4: Conclusion & Hero Image -->
+    <div class="sticky-wrapper">
+        <div class="sticky-bg"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-1 (7).png"
+                alt="Futuristic home scanning interface">
+        </div>
+        <div class="container" style="position:relative; z-index:10; margin-top:-90vh;">
+            <div class="content-card">
+                <h2>##<br>A Supportive Landscape: Regulatory and Insurance Tailwinds</h2>
+                <p>The regulatory and insurance landscape is increasingly recognizing the value of home modifications in
+                    supporting senior independence and reducing healthcare costs, creating a favorable environment for
+                    solutions like HOMEase AI. Medicare Part B, for instance, covers durable medical equipment (DME)
+                    such as grab bars when prescribed by a physician, while some Medicare Advantage plans are expanding
+                    coverage to include home safety assessments as part of their value-based care initiatives.</p>
+                <p>Furthermore, many states offer Medicaid waiver programs, specifically Home and Community-Based
+                    Services (HCBS), which can provide significant funding—up to $5,000 per beneficiary—for home
+                    modifications for eligible individuals who require a nursing home level of care but wish to age in
+                    place. The HUD Older Adult Home Modification Program (OAHMP) also provides substantial grants, up to
+                    $2 million per recipient organization, for non-profits and Area Agencies on Aging to fund home
+                    modifications.</p>
+                <p>HOMEase AI presents a unique opportunity to provide the technological platform for these
+                    organizations, streamlining grant compliance, reporting, and efficient deployment of modification
+                    resources.</p>
+            </div>
+            <div class="content-card" style="border-color:var(--accent-cyan)">
+                <h3>System Summary</h3>
+                <p>The convergence of compelling clinical evidence, robust economic benefits, and an urgent public
+                    health need positions HOMEase AI as a transformative force in fall prevention. By leveraging
+                    advanced artificial intelligence to scale clinically validated home modification assessments,
+                    HOMEase AI not only addresses the critical barriers of cost and accessibility but also aligns with
+                    the gold standards of CAPS certification and capitalizes on a supportive regulatory and insurance
+                    environment.</p>
+                <p>This innovative approach offers a comprehensive solution to the falls epidemic, promising to reduce
+                    healthcare costs, improve quality of life, and empower older adults to age safely and independently
+                    in their homes. HOMEase AI is not just a technology; it is a vital step forward in proactive,
+                    evidence-based senior care.</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

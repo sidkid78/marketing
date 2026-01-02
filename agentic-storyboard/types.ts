@@ -12,6 +12,7 @@ export interface StoryScene {
   imagePrompt: string;
   imageUrl?: string;
   videoUrl?: string;
+  audioUrl?: string;
   isAnimating?: boolean;
   isNarrating?: boolean;
 }
