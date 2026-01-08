@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dante's Inferno - The Nine Circles of Hell</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Playfair+Display:ital,wght@1,400;1,700&family=Spectral:ital,wght@0,300;0,600;1,400&family=IM+Fell+English:ital@0;1&family=Inter:wght@300;400&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ========================================
+       UNIFIED CSS VARIABLES
+       ======================================== */
+        :root {
+            /* Shared Colors */
+            --c-void: #050505;
+            --c-text: #e5e5e5;
+            --c-gold: #cfaa6e;
+            --c-accent: #8a3324;
+
+            /* Circle-specific colors */
+            --limbo-fog: #0a0c0b;
+            --lust-storm: #1a1a24;
+            --gluttony-mud: #1a1815;
+            --greed-fire: #4a0404;
+            --anger-ember: #ff2a00;
+            --heresy-magma: #ff4500;
+
+            /* Typography */
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-display: 'Cinzel', serif;
+            --font-decorative: 'Cinzel Decorative', cursive;
+        }
+
+        /* ========================================
+       BASE RESET & STYLES
+       ======================================== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y proximity;
+        }
+
+        body {
+            background-color: var(--c-void);
+            color: var(--c-text);
+            font-family: var(--font-serif);
+            overflow-x: hidden;
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            line-height: 1.6;
+        }
+
+        /* ========================================
+       GLOBAL OVERLAYS
+       ======================================== */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.12;
+            filter: url(#grain);
+            mix-blend-mode: overlay;
+        }
+
+        .vignette-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 40%, black 120%);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* ========================================
+       NAVIGATION DOTS
+       ======================================== */
+        .nav-dots {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot:hover,
+        .nav-dot.active {
+            background: var(--c-gold);
+            border-color: var(--c-gold);
+            box-shadow: 0 0 10px var(--c-gold);
+        }
+
+        .nav-dot[data-label]::before {
+            content: attr(data-label);
+            position: absolute;
+            right: 24px;
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot:hover::before {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* ========================================
+       CIRCLE CHAPTERS
+       ======================================== */
+        .circle-chapter {
+            min-height: 100vh;
+            position: relative;
+            scroll-snap-align: start;
+            overflow: hidden;
+        }
+
+        .chapter-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+            transition: transform 0.5s ease-out;
+        }
+
+        .chapter-content {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        /* ========================================
+       TYPOGRAPHY
+       ======================================== */
+        .circle-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 10vw, 8rem);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            line-height: 0.9;
+        }
+
+        .circle-subtitle {
+            font-family: var(--font-display);
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--c-gold);
+        }
+
+        .sin-name {
+            font-family: var(--font-decorative);
+            font-size: clamp(4rem, 15vw, 12rem);
+            font-weight: 900;
+            line-height: 0.85;
+        }
+
+        .prose-card {
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 2rem 3rem;
+            max-width: 700px;
+            margin: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .drop-cap {
+            float: left;
+            font-family: var(--font-display);
+            font-size: 4rem;
+            line-height: 0.8;
+            margin-right: 0.5rem;
+            color: var(--c-accent);
+        }
+
+        /* ========================================
+       ANIMATIONS
+       ======================================== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slowZoom {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes drift {
+
+            0%,
+            100% {
+                transform: translate(100vw, 50vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 0.7;
+            }
+
+            80% {
+                opacity: 0.4;
+            }
+
+            100% {
+                transform: translate(-20vw, 20vh) rotate(-15deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                text-shadow: 0 0 20px rgba(255, 69, 0, 0.3);
+            }
+
+            50% {
+                text-shadow: 0 0 40px rgba(255, 69, 0, 0.8), 0 0 60px rgba(255, 0, 0, 0.4);
+            }
+        }
+
+        .animate-fade-up {
+            animation: fadeInUp 1.5s ease-out both;
+        }
+
+        .animate-zoom {
+            animation: slowZoom 25s ease-in-out infinite alternate;
+        }
+
+        .animate-pulse-glow {
+            animation: pulseGlow 4s infinite;
+        }
+
+        /* ========================================
+       FILTER CLASSES
+       ======================================== */
+        .filter-sepia {
+            filter: url(#sepia-soul) brightness(0.6);
+        }
+
+        .filter-wind {
+            filter: url(#wind-distortion);
+        }
+
+        .filter-mud {
+            filter: url(#mud-distort);
+        }
+
+        .filter-heat {
+            filter: url(#heatHaze);
+        }
+
+        .filter-fog {
+            filter: url(#fog-filter);
+        }
+
+        /* ========================================
+       CIRCLE-SPECIFIC STYLES
+       ======================================== */
+
+        /* LIMBO - Ethereal, foggy */
+        .circle-limbo .chapter-bg {
+            filter: url(#sepia-soul) brightness(0.5);
+        }
+
+        .circle-limbo .sin-name {
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            mix-blend-mode: overlay;
+        }
+
+        /* LUST - Stormy, chaotic */
+        .circle-lust .sin-name {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.6);
+            color: transparent;
+            filter: url(#wind-distortion);
+        }
+
+        .circle-lust .drifting-name {
+            position: absolute;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            color: rgba(255, 255, 255, 0.5);
+            mix-blend-mode: overlay;
+            animation: drift 18s linear infinite;
+            pointer-events: none;
+        }
+
+        /* GLUTTONY - Muddy, dreary */
+        .circle-gluttony .chapter-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent, rgba(200, 200, 200, 0.05) 50%, transparent);
+            background-size: 1px 80px;
+            animation: drizzle 0.6s linear infinite;
+        }
+
+        @keyframes drizzle {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(20px);
+            }
+        }
+
+        /* GREED - Fiery, oppressive */
+        .circle-greed .sin-name {
+            background: linear-gradient(to top, #ff4500, #ffae42);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* ANGER - Red, pulsing */
+        .circle-anger .sin-name {
+            color: var(--anger-ember);
+            filter: url(#heatHaze);
+            animation: pulseGlow 3s infinite;
+        }
+
+        /* HERESY - Burning tombs */
+        .circle-heresy .sin-name {
+            color: var(--heresy-magma);
+            filter: url(#heatHaze);
+        }
+
+        /* Names grid for Limbo */
+        .names-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .name-item {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid var(--c-accent);
+            transition: all 0.3s ease;
+        }
+
+        .name-item:hover {
+            color: var(--c-gold);
+            border-color: var(--c-gold);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ========================================
+       SVG FILTERS DEFINITION
+       ======================================== -->
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+        <defs>
+            <!-- Grain Filter -->
+            <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="saturate" values="0" />
+            </filter>
+
+            <!-- Fog Filter (Limbo) -->
+            <filter id="fog-filter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="5" result="noise" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.4 -0.1" in="noise"
+                    result="coloredNoise" />
+                <feGaussianBlur stdDeviation="5" in="coloredNoise" result="fog" />
+            </filter>
+
+            <!-- Sepia Soul Filter (Limbo) -->
+            <filter id="sepia-soul">
+                <feColorMatrix type="matrix"
+                    values="0.393 0.769 0.189 0 0 0.349 0.686 0.168 0 0 0.272 0.534 0.131 0 0 0 0 0 1 0" />
+                <feComponentTransfer>
+                    <feFuncR type="gamma" amplitude="0.9" exponent="1.1" />
+                    <feFuncG type="gamma" amplitude="0.9" exponent="1.1" />
+                    <feFuncB type="gamma" amplitude="0.9" exponent="1.1" />
+                </feComponentTransfer>
+            </filter>
+
+            <!-- Wind Distortion Filter (Lust) -->
+            <filter id="wind-distortion">
+                <feTurbulence type="fractalNoise" baseFrequency="0.02 0.005" numOctaves="5" result="noise" seed="2">
+                    <animate attributeName="baseFrequency" values="0.02 0.005; 0.01 0.005; 0.02 0.005" dur="10s"
+                        repeatCount="indefinite" />
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="25" xChannelSelector="R"
+                    yChannelSelector="G" />
+                <feGaussianBlur stdDeviation="0.5" />
+            </filter>
+
+            <!-- Mud Distortion Filter (Gluttony) -->
+            <filter id="mud-distort">
+                <feTurbulence type="turbulence" baseFrequency="0.02 0.05" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+
+            <!-- Heat Haze Filter (Anger/Heresy) -->
+            <filter id="heatHaze">
+                <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="2" result="turbulence">
+                    <animate attributeName="baseFrequency" dur="5s" values="0.015;0.025;0.015"
+                        repeatCount="indefinite" />
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="8" />
+                <feGaussianBlur stdDeviation="0.5" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Global Overlays -->
+    <div class="grain-overlay"></div>
+    <div class="vignette-overlay"></div>
+
+    <!-- Navigation Dots -->
+    <nav class="nav-dots">
+        <a href="#limbo" class="nav-dot" data-label="I. Limbo"></a>
+        <a href="#lust" class="nav-dot" data-label="II. Lust"></a>
+        <a href="#gluttony" class="nav-dot" data-label="III. Gluttony"></a>
+        <a href="#greed" class="nav-dot" data-label="IV. Greed"></a>
+        <a href="#anger" class="nav-dot" data-label="V. Anger"></a>
+        <a href="#heresy" class="nav-dot" data-label="VI. Heresy"></a>
+    </nav>
+
+    <main>
+
+        <!-- ========================================
+         CIRCLE I: LIMBO
+         ======================================== -->
+        <section id="limbo" class="circle-chapter circle-limbo">
+            <div class="chapter-bg animate-zoom"
+                style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (340).jpg');"></div>
+
+            <!-- Fog overlay -->
+            <div class="absolute inset-0 z-5 mix-blend-hard-light opacity-50 pointer-events-none">
+                <svg width="100%" height="100%">
+                    <rect width="100%" height="100%" filter="url(#fog-filter)" fill="transparent" opacity="0.6" />
+                </svg>
+            </div>
+
+            <div class="chapter-content">
+                <p class="circle-subtitle animate-fade-up" style="animation-delay: 0.2s">First Circle of Hell</p>
+                <h1 class="sin-name animate-fade-up" style="animation-delay: 0.5s">LIMBO</h1>
+
+                <div class="prose-card animate-fade-up mt-8" style="animation-delay: 1s">
+                    <p><span class="drop-cap">I</span>n the book, Limbo is where those who never knew Christ exist.
+                        Dante encounters several historical figures here...</p>
+                </div>
+
+                <div class="names-grid animate-fade-up" style="animation-delay: 1.3s">
+                    <span class="name-item">Ovid</span>
+                    <span class="name-item">Homer</span>
+                    <span class="name-item" style="color: var(--c-gold)">Socrates</span>
+                    <span class="name-item" style="color: var(--c-gold)">Aristotle</span>
+                    <span class="name-item">Julius Caesar</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+         CIRCLE II: LUST
+         ======================================== -->
+        <section id="lust" class="circle-chapter circle-lust">
+            <div class="chapter-bg"
+                style="background-image: linear-gradient(to bottom, #111, #1a1a24), url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (341).jpg'); background-blend-mode: overlay; filter: contrast(1.2) brightness(0.6) grayscale(0.3);">
+            </div>
+
+            <!-- Drifting names -->
+            <span class="drifting-name" style="top: 20%; animation-duration: 14s; animation-delay: 2s;">Achilles</span>
+            <span class="drifting-name"
+                style="top: 40%; animation-duration: 20s; animation-delay: 5s; font-size: 4vw;">Cleopatra</span>
+            <span class="drifting-name" style="top: 60%; animation-duration: 16s; animation-delay: 8s;">Paris</span>
+            <span class="drifting-name" style="top: 75%; animation-duration: 12s; animation-delay: 3s;">Dido</span>
+
+            <div class="chapter-content">
+                <p class="circle-subtitle animate-fade-up">Second Circle of Hell</p>
+                <h1 class="sin-name animate-fade-up" style="animation-delay: 0.4s">LUST</h1>
+
+                <div class="prose-card animate-fade-up" style="animation-delay: 1s">
+                    <p>In the second circle, a stormy and dark realm, Dante encounters <em>Achilles, Paris, Tristan,
+                            Cleopatra, and Dido</em>, among others—souls caught in an eternal whirlwind.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+         CIRCLE III: GLUTTONY
+         ======================================== -->
+        <section id="gluttony" class="circle-chapter circle-gluttony">
+            <div class="chapter-bg animate-zoom"
+                style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (342).jpg'); filter: brightness(0.5) contrast(1.1);">
+            </div>
+
+            <div class="chapter-content">
+                <p class="circle-subtitle animate-fade-up">Third Circle of Hell</p>
+                <h1 class="sin-name filter-mud animate-fade-up" style="animation-delay: 0.4s; color: #a42424;">GLUTTONY
+                </h1>
+
+                <div class="prose-card animate-fade-up" style="animation-delay: 1s">
+                    <p><span class="drop-cap" style="color: #660000;">T</span>he third circle is reserved for those who
+                        overindulge. Dante encounters ordinary people here, not characters from epic poems or gods from
+                        mythology.</p>
+                </div>
+
+                <div class="prose-card animate-fade-up" style="animation-delay: 1.5s; border-top: 3px solid #a42424;">
+                    <p class="italic">The author Boccaccio took one of these characters, <strong
+                            style="color: #a42424;">Ciacco</strong>, and incorporated him into his 14th-century
+                        collection of tales called "The Decameron."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+         CIRCLE IV: GREED
+         ======================================== -->
+        <section id="greed" class="circle-chapter circle-greed">
+            <div class="chapter-bg"
+                style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (345).jpg'); filter: brightness(0.6);">
+            </div>
+
+            <!-- Fire gradient overlay -->
+            <div class="absolute inset-0 z-5 opacity-60 pointer-events-none"
+                style="background: radial-gradient(circle at 50% 80%, #ff9d00 0%, #a10000 40%, #1a0000 100%); mix-blend-mode: overlay;">
+            </div>
+
+            <div class="chapter-content">
+                <p class="circle-subtitle animate-fade-up">Fourth Circle of Hell</p>
+                <h1 class="sin-name animate-fade-up animate-pulse"
+                    style="animation-delay: 0.4s; font-family: Impact, sans-serif; letter-spacing: -0.02em;">GREED</h1>
+
+                <div class="prose-card animate-fade-up" style="animation-delay: 1s">
+                    <p>Dante encounters ordinary people here, and also the guardian <strong
+                            style="color: #ff4500;">PLUTO</strong>—the mythological king of the underworld.</p>
+                </div>
+
+                <div class="flex flex-col items-center gap-4 mt-8 animate-fade-up" style="animation-delay: 1.5s">
+                    <span
+                        style="font-family: Impact; font-size: 3rem; color: #c5a059; text-shadow: 3px 3px 0 #000;">HOARDED</span>
+                    <span class="italic text-stone-400">— or —</span>
+                    <span
+                        style="font-family: Impact; font-size: 3rem; color: #c5a059; text-shadow: 3px 3px 0 #000;">SQUANDERED</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+         CIRCLE V: ANGER
+         ======================================== -->
+        <section id="anger" class="circle-chapter circle-anger">
+            <div class="chapter-bg animate-zoom"
+                style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (347).jpg'); filter: brightness(0.5) contrast(1.3);">
+            </div>
+
+            <div class="chapter-content">
+                <p class="circle-subtitle animate-fade-up"
+                    style="border-bottom: 1px solid #8a0b0b; padding-bottom: 0.5rem;">Inferno • Canto VIII</p>
+                <h1 class="sin-name animate-fade-up" style="animation-delay: 0.4s">ANGER</h1>
+
+                <div class="prose-card animate-fade-up" style="animation-delay: 1s; border-left: 4px solid #ff2a00;">
+                    <p><strong style="color: #ff2a00;">Dante and Virgil</strong> are threatened by the Furies when they
+                        try to enter through the <em class="animate-pulse-glow" style="color: #ff2a00;">walls of
+                            Dis</em> (Satan).</p>
+                </div>
+
+                <div class="prose-card animate-fade-up" style="animation-delay: 1.5s">
+                    <p class="italic text-stone-300">"This is a further progression in Dante's evaluation of the nature
+                        of <span style="color: #ff2a00;">sin</span>..."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+         CIRCLE VI: HERESY
+         ======================================== -->
+        <section id="heresy" class="circle-chapter circle-heresy">
+            <div class="chapter-bg animate-zoom"
+                style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (350).jpg'); filter: brightness(0.5);">
+            </div>
+
+            <div class="chapter-content">
+                <p class="circle-subtitle animate-fade-up">Inferno • Canto X</p>
+                <h1 class="sin-name animate-fade-up" style="animation-delay: 0.4s">HERESY</h1>
+
+                <div class="prose-card animate-fade-up" style="animation-delay: 1s">
+                    <p>Representing the rejection of religious and political norms, the sixth circle leads Dante to
+                        <strong style="color: #ffae42;">Farinata degli Uberti</strong>—a military leader and aristocrat
+                        who tried to win the Italian throne.</p>
+                </div>
+
+                <div class="names-grid animate-fade-up" style="animation-delay: 1.5s">
+                    <span class="name-item" style="border-color: #ff4500;">Epicurus</span>
+                    <span class="name-item" style="border-color: #ff4500;">Pope Anastasius II</span>
+                    <span class="name-item" style="border-color: #ff4500;">Emperor Frederick II</span>
+                </div>
+
+                <p class="mt-12 text-stone-500 text-sm tracking-widest uppercase animate-fade-up"
+                    style="animation-delay: 2s">— The Descent Continues —</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Navigation dot highlighting on scroll
+        const sections = document.querySelectorAll('.circle-chapter');
+        const navDots = document.querySelectorAll('.nav-dot');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navDots.forEach(dot => dot.classList.remove('active'));
+                    const activeId = entry.target.id;
+                    const activeDot = document.querySelector(`.nav-dot[href="#${activeId}"]`);
+                    if (activeDot) activeDot.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => observer.observe(section));
+    </script>
+
+</body>
+
+</html>

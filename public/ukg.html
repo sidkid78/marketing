@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UKG: The End of the Guessing Machine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+    :root {
+      --color-bg: #050505;
+      --color-text: #f0f0f0;
+      --color-accent-danger: #ff3333;
+      --color-accent-tech: #00f0ff;
+      --color-accent-gold: #ffd700;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* SCROLL ANIMATION UTILITIES */
+    @keyframes revealUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+        filter: blur(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    .reveal-on-scroll {
+      animation: revealUp 1s ease-out forwards;
+      opacity: 0;
+      animation-timeline: view();
+      animation-range: entry 10% cover 40%;
+    }
+
+    /* SVG FILTERS CLASSES */
+    .filter-noise {
+      filter: url(#noiseFilter);
+    }
+
+    .filter-glitch {
+      filter: url(#displacementFilter);
+    }
+
+    .filter-prism {
+      background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+    }
+
+    /* TYPOGRAPHY STYLES */
+    .font-mono-tech {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .mega-text {
+      font-size: clamp(3rem, 8vw, 10rem);
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+    }
+
+    /* GLITCH TEXT EFFECT */
+    .glitch-text {
+      position: relative;
+      display: inline-block;
+    }
+
+    .glitch-text::before,
+    .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.8;
+    }
+
+    .glitch-text::before {
+      color: var(--color-accent-danger);
+      z-index: -1;
+      animation: glitch-anim-1 0.4s infinite linear alternate-reverse;
+    }
+
+    .glitch-text::after {
+      color: blue;
+      z-index: -2;
+      animation: glitch-anim-2 0.4s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch-anim-1 {
+      0% {
+        clip-path: inset(20% 0 80% 0);
+        transform: translate(-2px, 1px);
+      }
+
+      100% {
+        clip-path: inset(60% 0 10% 0);
+        transform: translate(2px, -1px);
+      }
+    }
+
+    @keyframes glitch-anim-2 {
+      0% {
+        clip-path: inset(10% 0 60% 0);
+        transform: translate(2px, 1px);
+      }
+
+      100% {
+        clip-path: inset(80% 0 5% 0);
+        transform: translate(-2px, -1px);
+      }
+    }
+
+    /* LAYOUT LAYERING */
+    .story-section {
+      position: relative;
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .bg-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      filter: brightness(0.4) contrast(1.2);
+    }
+
+    .content-layer {
+      position: relative;
+      z-index: 10;
+      padding: 2rem;
+      max-width: 90vw;
+      margin: 0 auto;
+    }
+
+    /* Glassmorphism Card */
+    .glass-card {
+      background: rgba(0, 21, 36, 0.7);
+      -webkit-backdrop-filter: blur(12px) saturate(180%);
+      backdrop-filter: blur(12px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    /* Grid Overlay Pattern */
+    .grid-pattern {
+      background-image: linear-gradient(rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Start Overlay */
+    .start-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--color-bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      cursor: pointer;
+      transition: opacity 0.5s ease;
+    }
+
+    .start-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .start-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(1.2rem, 2.5vw, 2rem);
+      color: var(--color-accent-tech);
+      background: transparent;
+      border: 2px solid var(--color-accent-tech);
+      padding: 1rem 3rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+    }
+
+    .start-btn:hover {
+      background: var(--color-accent-tech);
+      color: var(--color-bg);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- START OVERLAY -->
+  <div class="start-overlay" id="start-overlay">
+    <button class="start-btn" id="start-btn">▶ Start Experience</button>
+  </div>
+
+  <!-- GLOBAL SVG FILTERS -->
+  <svg style="display: none;">
+    <defs>
+      <!-- Noise Filter for Texture -->
+      <filter id="noiseFilter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="0.2" />
+        </feComponentTransfer>
+      </filter>
+      <!-- Displacement for Liquid/Glitch effects -->
+      <filter id="displacementFilter">
+        <feTurbulence type="turbulence" baseFrequency="0.01 0.05" numOctaves="5" result="turbulence" />
+        <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="20" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <main>
+
+    <!-- SECTION 1: THE DELUSION (Server Room) -->
+    <section class="story-section bg-black" id="section-1">
+      <!-- Audio narration -->
+      <audio id="audio-1" preload="auto">
+        <source src="audio/ukg1.wav" type="audio/wav">
+      </audio>
+      <!-- Background music -->
+      <audio id="music-1" preload="auto" loop>
+        <source src="audio/music1.m4a" type="audio/mp4">
+      </audio>
+      <div class="absolute inset-0 z-10 opacity-20 pointer-events-none filter-noise"></div>
+      <video class="bg-image" autoplay muted loop playsinline style="filter: grayscale(100%) brightness(0.5);">
+        <source src="https://694d8b0339fe8ba173f56f36.imgix.net/animation-1 (4).mp4" type="video/mp4">
+      </video>
+
+      <div class="content-layer text-center">
+        <h2 class="text-xl tracking-widest uppercase mb-4 text-red-500 font-mono-tech reveal-on-scroll">The End of the
+          Guessing Machine</h2>
+
+        <h1 class="mega-text font-black mb-8 reveal-on-scroll">
+          The Great <br>
+          <span class="glitch-text" data-text="AI Delusion">AI Delusion</span>
+        </h1>
+
+        <div class="max-w-3xl mx-auto text-lg md:text-2xl leading-relaxed text-gray-300 reveal-on-scroll font-light">
+          <p class="mb-6">
+            We have been told that "probability" is the same as "intelligence." We’ve handed the keys of our most
+            critical industries—finance, law, medicine, defense—to <span
+              class="text-white font-bold bg-red-900/50 px-2">"Black Boxes"</span> that are designed to guess the next
+            likely word, not the actual truth.
+          </p>
+          <p class="text-red-400 font-bold border-l-4 border-red-500 pl-6 my-10 text-3xl md:text-4xl">
+            In a high-stakes world, "pretty sure" is a death sentence.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: THE GUARDRAIL (Network Logic) -->
+    <section class="story-section grid-pattern" id="section-2">
+      <!-- Audio narration -->
+      <audio id="audio-2" preload="auto">
+        <source src="audio/ukg2.wav" type="audio/wav">
+      </audio>
+      <!-- Background music -->
+      <audio id="music-2" preload="auto" loop>
+        <source src="audio/music2.m4a" type="audio/mp4">
+      </audio>
+      <video class="bg-image" autoplay muted loop playsinline
+        style="filter: hue-rotate(180deg) brightness(0.3) saturate(1.5);">
+        <source src="https://694d8b0339fe8ba173f56f36.imgix.net/animation-2 (6).mp4" type="video/mp4">
+      </video>
+
+      <div class="content-layer w-full grid md:grid-cols-2 gap-12 items-center">
+        <div class="glass-card p-10 rounded-sm border-l-4 border-cyan-400 reveal-on-scroll">
+          <p class="text-xl leading-relaxed mb-6">
+            At UKG, we didn't set out to build another AI tool. We set out to build a <strong class="text-white">Gallows
+              for Hallucinations.</strong>
+          </p>
+          <p class="text-gray-300">
+            We believe that if an AI cannot show its work, explain its logic, and cross-examine its own ego, it has no
+            business in the enterprise.
+          </p>
+        </div>
+
+        <div class="text-right reveal-on-scroll">
+          <h2 class="text-4xl md:text-6xl font-black leading-tight text-white mb-6">
+            The Guardrail of <br>
+            <span class="text-cyan-300 filter-glitch">Reality</span>
+          </h2>
+          <p class="text-lg text-cyan-100 font-mono-tech">
+            Mapping the 17 dimensions of human context. <br>
+            From jurisdictional law to temporal ethics.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: THE SIMULATION (Hologram/Experts) -->
+    <section class="story-section bg-[#001015]" id="section-3">
+      <!-- Audio narration -->
+      <audio id="audio-3" preload="auto">
+        <source src="audio/ukg3.wav" type="audio/wav">
+      </audio>
+      <!-- Background music -->
+      <audio id="music-3" preload="auto" loop>
+        <source src="audio/music3.m4a" type="audio/mp4">
+      </audio>
+      <video class="bg-image" autoplay muted loop playsinline style="opacity: 0.6; mix-blend-mode: luminosity;">
+        <source src="https://694d8b0339fe8ba173f56f36.imgix.net/animation-3 (3).mp4" type="video/mp4">
+      </video>
+
+      <div class="content-layer w-full">
+        <div class="text-center mb-16 reveal-on-scroll">
+          <h2 class="text-5xl font-bold mb-4">We don't just "retrieve" data.<br>We <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">simulate
+              thought.</span></h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Card 1 -->
+          <div class="glass-card p-8 reveal-on-scroll" style="animation-delay: 0.1s;">
+            <div class="h-1 w-12 bg-purple-500 mb-4"></div>
+            <h3 class="text-2xl font-bold mb-2">Quad of Experts</h3>
+            <p class="text-gray-400 text-sm font-mono-tech">We deploy a Quad of Experts to argue every answer before you
+              see it.</p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="glass-card p-8 reveal-on-scroll" style="animation-delay: 0.2s;">
+            <div class="h-1 w-12 bg-blue-500 mb-4"></div>
+            <h3 class="text-2xl font-bold mb-2">10-layer Gauntlet</h3>
+            <p class="text-gray-400 text-sm font-mono-tech">Every query runs through a rigorous 10-layer reasoning
+              validation process.</p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="glass-card p-8 reveal-on-scroll" style="animation-delay: 0.3s;">
+            <div class="h-1 w-12 bg-cyan-500 mb-4"></div>
+            <h3 class="text-2xl font-bold mb-2">The TruthEngine</h3>
+            <p class="text-gray-400 text-sm font-mono-tech">Every "neuron" of decision-making recorded in a
+              cryptographically sealed ledger of logic.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: THE BREAKTHROUGH (Prism City) -->
+    <section class="story-section bg-white text-black overflow-hidden" id="section-4">
+      <!-- Audio narration -->
+      <audio id="audio-4" preload="auto">
+        <source src="audio/ukg4.wav" type="audio/wav">
+      </audio>
+      <!-- Background music -->
+      <audio id="music-4" preload="auto" loop>
+        <source src="audio/music4.m4a" type="audio/mp4">
+      </audio>
+      <video class="bg-image" autoplay muted loop playsinline style="opacity: 0.8; filter: contrast(0.9);">
+        <source src="https://694d8b0339fe8ba173f56f36.imgix.net/animation-4 (2).mp4" type="video/mp4">
+      </video>
+
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/90"></div>
+
+      <div class="content-layer text-center relative z-20">
+        <p class="text-2xl font-serif italic mb-6 text-gray-700 reveal-on-scroll">
+          We don’t settle for 90% accuracy. We are chasing the final 1%.
+        </p>
+
+        <div class="h-px w-24 bg-black mx-auto my-8"></div>
+
+        <h1 class="mega-text font-black mb-8 leading-none reveal-on-scroll" style="color: #111;">
+          UKG isn't just <br>technology.
+        </h1>
+
+        <h2 class="text-4xl md:text-6xl font-bold reveal-on-scroll">
+          It’s the return of <br>
+          <span class="filter-prism">Accountability to Intelligence.</span>
+        </h2>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Start overlay - required for audio playback
+    const startOverlay = document.getElementById('start-overlay');
+    const startBtn = document.getElementById('start-btn');
+
+    // Sections and their audio in order
+    const sections = [
+      { section: document.getElementById('section-1'), audio: document.getElementById('audio-1') },
+      { section: document.getElementById('section-2'), audio: document.getElementById('audio-2') },
+      { section: document.getElementById('section-3'), audio: document.getElementById('audio-3') },
+      { section: document.getElementById('section-4'), audio: document.getElementById('audio-4') }
+    ];
+
+    // Background music for each section
+    const musicTracks = [
+      document.getElementById('music-1'),
+      document.getElementById('music-2'),
+      document.getElementById('music-3'),
+      document.getElementById('music-4')
+    ];
+
+    let currentSectionIndex = 0;
+    let isAutoScrolling = false;
+    let currentMusic = null;
+
+    // Stop all music tracks
+    function stopAllMusic() {
+      musicTracks.forEach(music => {
+        if (music) {
+          music.pause();
+          music.currentTime = 0;
+        }
+      });
+    }
+
+    // Scroll to a section and play its audio
+    function playSection(index) {
+      if (index >= sections.length) {
+        isAutoScrolling = false;
+        stopAllMusic();
+        return; // End of presentation
+      }
+
+      currentSectionIndex = index;
+      const { section, audio } = sections[index];
+
+      if (!section) return;
+
+      // Smooth scroll to section
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Play audio after scroll animation
+      setTimeout(() => {
+        if (audio) {
+          audio.play().catch(err => {
+            console.log('Audio play prevented:', err);
+            // If audio fails, still advance after 5 seconds
+            setTimeout(() => playSection(index + 1), 5000);
+          });
+        }
+
+        // Switch to this section's music
+        const newMusic = musicTracks[index];
+        if (newMusic && newMusic !== currentMusic) {
+          // Fade out current music
+          if (currentMusic) {
+            currentMusic.pause();
+            currentMusic.currentTime = 0;
+          }
+          // Start new music
+          currentMusic = newMusic;
+          currentMusic.volume = 0.3;
+          currentMusic.play().catch(err => console.log('Music play prevented:', err));
+        }
+      }, 800);
+    }
+
+    // Set up audio ended listeners to advance to next section
+    sections.forEach((item, index) => {
+      if (item.audio) {
+        item.audio.addEventListener('ended', () => {
+          if (isAutoScrolling) {
+            // Small delay before scrolling to next section
+            setTimeout(() => playSection(index + 1), 500);
+          }
+        });
+      }
+    });
+
+    startBtn.addEventListener('click', function () {
+      startOverlay.classList.add('hidden');
+      isAutoScrolling = true;
+
+      // Remove overlay from DOM after fade
+      setTimeout(() => {
+        startOverlay.style.display = 'none';
+      }, 500);
+
+      // Start the presentation from first section
+      setTimeout(() => playSection(0), 600);
+    });
+  </script>
+
+</body>
+
+</html>

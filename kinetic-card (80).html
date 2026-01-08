@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inferno: Circles 8 & 9</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,600;1,300&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --color-fire: #ff3c00;
+            --color-stone: #1a1a1a;
+            --color-ice: #a5f3fc;
+            --color-deep-ice: #0f172a;
+            --color-blood: #881337;
+        }
+
+        body {
+            margin: 0;
+            background-color: #000;
+            color: #e5e5e5;
+            font-family: 'Crimson Pro', serif;
+            overflow-x: hidden;
+        }
+
+        /* Typography Classes */
+        .font-gothic {
+            font-family: 'Cinzel Decorative', cursive;
+        }
+
+        /* Scrollytelling Layout */
+        .story-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            z-index: 10;
+            perspective: 1000px;
+        }
+
+        .sticky-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            object-fit: cover;
+            transition: opacity 1s ease-in-out, filter 1s ease;
+        }
+
+        .text-card {
+            background: rgba(0, 0, 0, 0.6);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 650px;
+            z-index: 20;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s forwards;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        }
+
+        /* SVG Filters Application */
+        .heat-effect {
+            filter: url(#heat);
+            color: var(--color-fire);
+        }
+
+        .ice-text {
+            text-shadow: 0 0 5px var(--color-ice);
+        }
+
+        .beast-mode {
+            filter: url(#terror);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-red {
+
+            0%,
+            100% {
+                text-shadow: 0 0 10px var(--color-blood);
+            }
+
+            50% {
+                text-shadow: 0 0 30px red;
+            }
+        }
+
+        /* Utilities */
+        .blend-hard {
+            mix-blend-mode: hard-light;
+        }
+
+        .blend-overlay {
+            mix-blend-mode: overlay;
+        }
+
+        .drop-cap::first-letter {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 3.5rem;
+            float: left;
+            line-height: 0.8;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG Filter Library -->
+    <svg style="display: none;">
+        <defs>
+            <!-- Heat Haze Filter: Turbulent displacement for fire text -->
+            <filter id="heat">
+                <feTurbulence type="fractalNoise" baseFrequency="0.015 0.01" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" />
+                <feGaussianBlur stdDeviation="0.5" />
+            </filter>
+
+            <!-- Frost Filter: Crystallized edges -->
+            <filter id="frost">
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+
+            <!-- Terror Filter: Distorted, glitchy look for the Beast -->
+            <filter id="terror">
+                <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="1" seed="1" result="noise">
+                    <animate attributeName="seed" values="1;100" dur="1s" repeatCount="indefinite" />
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+            </filter>
+
+            <!-- Cinematic Grain -->
+            <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" result="noise" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" />
+                <feComposite operator="in" in2="SourceGraphic" operator="arithmetic" k1="0" k2="1" k3="0.1" k4="0" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- BACKGROUND LAYERS (Parallax Simulation via opacity control logic would be JS, here we stack CSS sticky) -->
+    <!-- Using placeholder source URLs to represent the User Provided Images -->
+
+    <!-- Image 1: The Fire Pits -->
+    <div class="fixed inset-0 z-0">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (328).jpg"
+            class="sticky-bg object-cover w-full h-full opacity-100 mix-blend-hard-light brightness-75"
+            style="animation: burn 20s infinite alternate;" alt="Stone pits with fire (Malebolge)">
+        <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-transparent"></div>
+    </div>
+
+    <!-- SECTION 1: CIRCLE 8 -->
+    <main class="relative z-10 space-y-32 pb-32">
+
+        <section class="story-section">
+            <div class="text-card border-l-4 border-orange-600">
+                <h1 class="font-gothic text-5xl md:text-7xl mb-6 text-orange-500 heat-effect tracking-tighter">
+                    Eighth Circle of Hell: Fraud
+                </h1>
+                <p class="text-xl md:text-2xl leading-relaxed drop-cap">
+                    This circle is distinguished from its predecessors by being made up of those who consciously and
+                    willingly commit fraud. Within the eighth circle is another called the Malebolge (“Evil Pockets”),
+                    which houses ten separate bolgias (ditches).
+                </p>
+            </div>
+        </section>
+
+        <section class="story-section">
+            <div class="text-card">
+                <p class="text-lg md:text-xl text-orange-100">
+                    These ditches housed different types of people who committed fraud: panderers; seducers; flatterers;
+                    simoniacs (those who sell ecclesiastical preferment); sorcerers; barrators (corrupt politicians);
+                    schismatics (those who separate religions to form new ones); and alchemists, among others.
+                </p>
+                <hr class="border-orange-900 my-6 opacity-50" />
+                <p class="text-lg md:text-xl italic">
+                    Each bolgia is guarded by different demons, and the inhabitants suffer different punishments, such
+                    as the <span class="text-orange-500 font-bold heat-effect">simoniacs</span>, who stand head-first in
+                    stone bowls and endure flames upon their feet.
+                </p>
+            </div>
+        </section>
+
+        <!-- TRANSITION TO ICE: Inline styles to override previous bg for the scroll effect simulation in CSS-only -->
+        <div class="relative">
+            <!-- Image 2: The Frozen Lake -->
+            <div class="absolute inset-0 -z-10 h-[200%] w-screen -ml-[50vw] left-1/2 overflow-hidden">
+                <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (329).jpg"
+                    class="w-full h-full object-cover opacity-90 hue-rotate-180 brightness-50 contrast-125"
+                    alt="Frozen lake with souls trapped (Cocytus)">
+                <div class="absolute inset-0 bg-blue-900 mix-blend-color opacity-60"></div>
+            </div>
+
+            <section class="story-section text-blue-50">
+                <div class="text-card border-l-4 border-cyan-400 bg-slate-900/80">
+                    <h2 class="font-gothic text-5xl md:text-6xl mb-6 text-cyan-200 ice-text"
+                        style="filter: url(#frost);">
+                        Ninth Circle of Hell: Treachery
+                    </h2>
+                    <p class="text-xl md:text-2xl leading-relaxed">
+                        The ninth circle, the deepest, is where Satan resides. As with the last two circles, this one is
+                        further divided, into four rounds. The first is <strong class="text-cyan-300">Caina</strong>,
+                        named after the biblical Cain, who murdered his brother. This round is for traitors to family.
+                    </p>
+                </div>
+            </section>
+
+            <section class="story-section">
+                <div class="text-card bg-slate-900/80">
+                    <p class="text-lg mb-4">
+                        The second, <strong class="text-cyan-300">Antenora</strong>—from Antenor of Troy, who betrayed
+                        the Greeks—is reserved for political and national traitors.
+                    </p>
+                    <div class="pl-6 border-l-2 border-cyan-800 italic text-cyan-100">
+                        <p>The third is <strong class="text-white">Ptolomaea</strong> for Ptolemy... who is known for
+                            inviting Simon Maccabaeus and his sons to dinner and then murdering them. This round is for
+                            hosts who betray their guests...</p>
+                    </div>
+                    <p class="mt-4 text-sm uppercase tracking-widest text-cyan-400 opacity-80">
+                        Betraying a relationship willingly entered is more despicable than betraying a relationship born
+                        into.
+                    </p>
+                </div>
+            </section>
+
+            <section class="story-section">
+                <div class="text-card bg-slate-900/90">
+                    <h3 class="font-gothic text-3xl text-cyan-100 mb-4">Judecca</h3>
+                    <p class="text-lg leading-relaxed">
+                        The fourth round is Judecca, after Judas Iscariot, who betrayed Jesus Christ. This round is
+                        reserved for traitors to their lords, benefactors, or masters. As in the previous circle, the
+                        subdivisions each have their own demons and punishments.
+                    </p>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECTION 3: CENTER / SATAN -->
+        <div class="relative overflow-hidden">
+            <!-- Image 3: The Beast -->
+            <div class="absolute inset-0 -z-10 w-screen -ml-[50vw] left-1/2 h-full">
+                <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (330).jpg"
+                    class="w-full h-full object-cover opacity-60 brightness-50 sepia" alt="The Three Headed Beast">
+                <div class="absolute inset-0 bg-gradient-to-t from-red-900/50 via-black to-black"></div>
+            </div>
+
+            <section class="story-section">
+                <div class="text-center max-w-4xl mx-auto px-4">
+                    <h2 class="font-gothic text-6xl md:text-9xl text-red-700 mb-12 mix-blend-difference beast-mode">
+                        CENTER OF HELL
+                    </h2>
+                    <div class="bg-black/80 p-8 md:p-12 border border-red-900/30 shadow-2xl">
+                        <p class="text-2xl md:text-3xl font-serif text-stone-300 mb-8">
+                            After making their way through all nine circles of hell, Dante and Virgil reach the center
+                            of hell. Here they meet Satan, who is described as a three-headed beast.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left border-t border-red-900/50 pt-8">
+                            <div class="p-4 bg-red-950/20">
+                                <h4 class="text-red-500 font-bold mb-2 uppercase">Left Mouth</h4>
+                                <p class="text-stone-400">Eating <span class="text-stone-100">Brutus</span></p>
+                            </div>
+                            <div class="p-4 bg-red-950/40 transform scale-105 border border-red-900">
+                                <h4 class="text-red-500 font-bold mb-2 uppercase text-center">Center Mouth</h4>
+                                <p class="text-stone-100 text-center font-gothic text-xl">Eating Judas Iscariot</p>
+                            </div>
+                            <div class="p-4 bg-red-950/20">
+                                <h4 class="text-red-500 font-bold mb-2 uppercase">Right Mouth</h4>
+                                <p class="text-stone-400">Eating <span class="text-stone-100">Cassius</span></p>
+                            </div>
+                        </div>
+                        <p class="mt-12 text-lg text-red-200/60 italic">
+                            “These are the ultimate sinners, in Dante’s opinion, as they consciously committed acts of
+                            treachery against their lords, who were appointed by God.”
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Global Grain Overlay -->
+    <div class="fixed inset-0 pointer-events-none opacity-20 z-50 mix-blend-overlay"
+        style="filter: url(#grain); background: #888;"></div>
+
+</body>
+
+</html>

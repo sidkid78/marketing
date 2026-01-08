@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sixth Circle: Heresy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Custom Design Tokens */
+        :root {
+            --color-magma: #ff4500;
+            --color-ember: #ffae42;
+            --color-ash: #2d2d2d;
+            --color-void: #050505;
+        }
+
+        body {
+            background-color: var(--color-void);
+            color: #e5e5e5;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* SVG Filter Classes */
+        .heat-haze {
+            filter: url(#heatMap);
+            display: inline-block;
+        }
+
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.15;
+            filter: url(#grain);
+            mix-blend-mode: overlay;
+        }
+
+        /* Scrollytelling Transitions */
+        .scrolly-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scrolly-section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Image styling */
+        .storyboard-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.4;
+            transition: opacity 1s ease, transform 10s ease;
+            transform: scale(1.1);
+        }
+
+        .scrolly-section.active .storyboard-img {
+            opacity: 0.6;
+            transform: scale(1);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 69, 0, 0.6);
+        }
+
+        /* Smooth scroll snap mostly for effect */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- SVG Filters Definition -->
+    <svg style="display: none;">
+        <defs>
+            <!-- Grain Filter -->
+            <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="saturate" values="0" />
+            </filter>
+
+            <!-- Heat Distortion Filter -->
+            <filter id="heatMap">
+                <feTurbulence type="turbulence" baseFrequency="0.05 0.02" numOctaves="2" result="turbulence">
+                    <animate attributeName="baseFrequency" values="0.05 0.02; 0.05 0.05; 0.05 0.02" dur="4s"
+                        repeatCount="indefinite" />
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="6" />
+                <feGaussianBlur stdDeviation="0.5" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Global Grain Overlay -->
+    <div class="grain-overlay"></div>
+
+    <main class="relative z-10">
+
+        <!-- SECTION 1: Intro / The Landscape -->
+        <section class="scrolly-section">
+            <!-- Img 1: Landscape of Tombs (Generated SVG for standalone compliance) -->
+            <img class="storyboard-img" src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (350).jpg"
+                alt="Field of burning tombs" />
+
+            <div class="max-w-4xl w-full text-center">
+                <p class="text-ember uppercase tracking-[0.5em] text-sm" mb-4 animate-pulse">Inferno &bull; Canto X</p>
+                <h1 class="text-6xl md:text-9xl text-white font-black leading-tight mix-blend-difference">
+                    SIXTH CIRCLE <br>
+                    OF HELL: <span class="heat-haze text-magma block mt-4">HERESY</span>
+                </h1>
+            </div>
+        </section>
+
+        <!-- SECTION 2: The Definition & Farinata -->
+        <section class="scrolly-section flex-col md:flex-row">
+            <!-- Img 2: Farinata in the Tomb -->
+            <img class="storyboard-img" style="object-position: center bottom;"
+                src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (351).jpg" alt="Farinata rising from tomb" />
+
+            <div class="md:w-1/2 p-8 md:p-12 bg-black/60 backdrop-blur-sm border-l-4 border-magma shadow-2xl">
+                <p class="text-2xl md:text-4xl font-serif text-white leading-relaxed">
+                    <span class="text-magma text-6xl float-left mr-4 mt-[-10px]">R</span>epresenting the rejection of
+                    religious and political norms, the sixth circle leads Dante to
+                    <strong class="text-ember border-b border-ember">Farinata degli Uberti</strong>,
+                </p>
+            </div>
+            <div class="md:w-1/2"></div>
+        </section>
+
+        <!-- SECTION 3: The Aristocrat & History -->
+        <section class="scrolly-section">
+            <div class="relative z-10 max-w-5xl text-center md:text-left">
+                <h2 class="text-4xl md:text-6xl font-serif mb-8 text-white">
+                    A Military Leader <br>
+                    <span class="italic text-gray-400">&amp; Aristocrat</span>
+                </h2>
+                <div class="grid md:grid-cols-2 gap-12 text-lg md:text-xl text-gray-300 leading-relaxed">
+                    <div>
+                        <p>...who tried to win the Italian throne.</p>
+                        <div class="h-1 w-24 bg-red-600 my-6"></div>
+                        <p>He was convicted posthumously of <span
+                                class="text-red-500 font-bold tracking-widest">HERESY</span> in 1283.</p>
+                    </div>
+                    <div class="flex items-center justify-center">
+                        <div class="border border-white/20 p-6">
+                            <p class="font-serif text-center italic text-white/60">"Your accent makes it clear that you
+                                belong<br>to that noble city..."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: The Others / Conclusion -->
+        <section class="scrolly-section justify-end">
+            <!-- Img 3: Silhouettes and Atmosphere -->
+            <img class="storyboard-img" src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (352).jpg"
+                alt="Dark silhouettes of tombs" />
+
+            <div class="max-w-2xl bg-gradient-to-t from-black via-black/80 to-transparent p-12 text-right">
+                <p class="text-white/80 text-lg mb-4">Among the flames, Dante also meets...</p>
+                <ul class="space-y-6">
+                    <li
+                        class="text-3xl md:text-5xl font-serif text-white hover:text-magma transition-colors cursor-default">
+                        Epicurus</li>
+                    <li
+                        class="text-3xl md:text-5xl font-serif text-white hover:text-magma transition-colors cursor-default">
+                        Pope Anastasius II</li>
+                    <li
+                        class="text-3xl md:text-5xl font-serif text-white hover:text-magma transition-colors cursor-default">
+                        Emperor Frederick II</li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Minimal Vanilla JS to trigger scrollytelling animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.4
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    } else {
+                        // Optional: remove class to re-trigger animation on scroll up
+                        entry.target.classList.remove('active');
+                    }
+                });
+            }, observerOptions);
+
+            const sections = document.querySelectorAll('.scrolly-section');
+            sections.forEach(sec => observer.observe(sec));
+        });
+    </script>
+</body>
+
+</html>

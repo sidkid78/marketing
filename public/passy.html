@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Passy Manifesto</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+    :root {
+      --lavender: #E6E6FA;
+      --lavender-dark: #B0A6D6;
+      --deep-slate: #1F1B24;
+      --text-dark: #111111;
+      --text-light: #F9F9F9;
+      --accent-gold: #D4AF37;
+      --paper: #FDFBF7;
+      --margin: clamp(1rem, 5vw, 4rem);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--paper);
+      color: var(--text-dark);
+      overflow-x: hidden;
+      font-size: clamp(1rem, 1.2vw, 1.5rem);
+      line-height: 1.6;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+    }
+
+    /* SVG FILTERS */
+    .filter-container {
+      width: 0;
+      height: 0;
+      position: absolute;
+      visibility: hidden;
+    }
+
+    .texture-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+      filter: url(#paper-grain);
+      mix-blend-mode: multiply;
+    }
+
+    /* SCROLLYTELLING SECTIONS */
+    section {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: var(--margin);
+    }
+
+    /* INTRO */
+    .hero {
+      height: 100vh;
+      align-items: center;
+      text-align: center;
+      background: var(--paper);
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 8vw, 10rem);
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      animation: fadeUp 1.5s ease-out forwards;
+    }
+
+    .hero p {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(1rem, 2vw, 1.5rem);
+      margin-top: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--lavender-dark);
+    }
+
+    /* THE PROBLEM */
+    .problem {
+      background: var(--deep-slate);
+      position: relative;
+      color: var(--text-light);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .problem-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.4;
+      filter: grayscale(100%) contrast(120%) url(#noise);
+      transform: scale(1.1);
+      transition: transform 10s ease;
+    }
+
+    .problem-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: auto;
+      padding: 2rem;
+      background: rgba(31, 27, 36, 0.8);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .problem h2 {
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      margin-bottom: 2rem;
+    }
+
+    .problem h2 em {
+      font-style: italic;
+      color: var(--lavender-dark);
+    }
+
+    /* THE MISSION */
+    .mission {
+      background: linear-gradient(135deg, #fff 0%, var(--lavender) 100%);
+      align-items: center;
+      text-align: center;
+    }
+
+    .mission-text {
+      max-width: 900px;
+    }
+
+    .mission h2 {
+      font-size: clamp(4rem, 10vw, 8rem);
+      color: var(--deep-slate);
+      margin-bottom: 1rem;
+      mix-blend-mode: color-burn;
+    }
+
+    .highlight {
+      color: #6A5ACD;
+      font-style: italic;
+      font-weight: 700;
+      position: relative;
+      display: inline-block;
+    }
+
+    .highlight::after {
+      content: '';
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      background: rgba(230, 230, 250, 0.8);
+      z-index: -1;
+      transform: skewX(-15deg);
+    }
+
+    /* THE EXPERIENCE GRID */
+    .experience {
+      background: var(--paper);
+      display: block;
+      padding-top: 5rem;
+    }
+
+    .exp-header {
+      text-align: center;
+      margin-bottom: 4rem;
+      font-size: clamp(3rem, 6vw, 6rem);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4rem;
+    }
+
+    .card {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      align-items: center;
+      padding: 2rem 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    @media (min-width: 900px) {
+      .card {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .card:nth-child(even) {
+        direction: rtl;
+      }
+
+      .card:nth-child(even) .card-text {
+        direction: ltr;
+      }
+    }
+
+    .card-img-wrap {
+      width: 100%;
+      height: 50vh;
+      overflow: hidden;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .card:hover .card-img {
+      transform: scale(1.05);
+    }
+
+    .card-text h3 {
+      font-size: clamp(2rem, 3vw, 3rem);
+      margin-bottom: 1rem;
+      color: var(--deep-slate);
+    }
+
+    .card-text p {
+      font-size: 1.1rem;
+      color: #555;
+    }
+
+    /* PROMISE */
+    .promise {
+      background: var(--deep-slate);
+      color: var(--lavender);
+      text-align: center;
+      min-height: 60vh;
+    }
+
+    .code-block {
+      font-family: 'Courier New', monospace;
+      border: 1px solid var(--lavender-dark);
+      padding: 2rem;
+      display: inline-block;
+      margin: 2rem 0;
+      text-align: left;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    /* FINAL QUOTE */
+    .final-quote {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      color: #fff;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .final-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .quote-overlay {
+      position: relative;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 3rem;
+      max-width: 600px;
+      color: var(--text-dark);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    }
+
+    .quote-overlay h2 {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-style: italic;
+    }
+
+    /* UTILITIES */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Start Overlay */
+    .start-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--deep-slate);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      cursor: pointer;
+      transition: opacity 0.5s ease;
+    }
+
+    .start-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .start-btn {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      color: var(--lavender);
+      background: transparent;
+      border: 2px solid var(--lavender);
+      padding: 1rem 3rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .start-btn:hover {
+      background: var(--lavender);
+      color: var(--deep-slate);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- FILTERS -->
+  <svg class="filter-container">
+    <filter id="paper-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.1 0" />
+    </filter>
+
+    <!-- Grain/Noise Overlay Filter (blends WITH video/image) -->
+    <filter id="noise" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" stitchTiles="stitch" result="noise" />
+      <feColorMatrix type="saturate" values="0" in="noise" result="monoNoise" />
+      <feBlend in="SourceGraphic" in2="monoNoise" mode="overlay" result="blended" />
+      <feComponentTransfer in="blended">
+        <feFuncA type="linear" slope="0.85" />
+      </feComponentTransfer>
+    </filter>
+  </svg>
+
+  <div class="texture-overlay"></div>
+
+  <!-- START OVERLAY -->
+  <div class="start-overlay" id="start-overlay">
+    <button class="start-btn" id="start-btn">✨ Start Experience ✨</button>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <p>From Mental Load to Magic</p>
+      <h1>The Passy <br>Manifesto</h1>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section class="problem" id="problem-section">
+    <audio id="problem-audio" preload="auto">
+      <source src="audio/passy1.wav" type="audio/wav">
+    </audio>
+    <video src="https://694d8b0339fe8ba173f56f36.imgix.net/animation-1 (2).mp4" class="problem-bg" autoplay muted loop
+      playsinline></video>
+    <div class="problem-content">
+      <h2>The <em>"Beautiful"</em> Burden</h2>
+      <p>Planning a baby shower is an act of love, but it often feels like a second job. Between the
+        "Pinterest-pressure" to have a perfect theme and the logistical nightmare of tracking RSVPs, the joy of the
+        occasion is often buried under a mountain of spreadsheets and decision fatigue. Most tools are just empty
+        containers—they give you a list, but they don't give you ideas.</p>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section class="mission">
+    <div class="mission-text">
+      <h2>Passy</h2>
+      <p>We believe that the woman carrying a life shouldn’t have to carry the stress of a spreadsheet. Passy is not
+        just an app; it is a <span class="highlight">Creative Partner.</span> We’ve harnessed the world’s most advanced
+        AI not to replace the human touch, but to amplify it. We are here to eliminate "blank page syndrome" and
+        logistical anxiety, turning the planning process into a celebration in itself.</p>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="experience">
+    <h2 class="exp-header"><em>Logic Serving Love</em></h2>
+
+    <div class="card-grid">
+      <!-- ITEM 1 -->
+      <div class="card">
+        <div class="card-text">
+          <h3>Your Personal Creative Director</h3>
+          <p>Stop scrolling Pinterest for hours. Our AI-driven Theme Assistant doesn't just suggest names; it paints the
+            vision. It listens to your story and generates bespoke, high-fidelity visualizations of your dream event in
+            seconds.</p>
+        </div>
+        <div class="card-img-wrap">
+          <video src="https://694d8b0339fe8ba173f56f36.imgix.net/animation-2 (4).mp4" class="card-img" autoplay muted
+            loop playsinline></video>
+        </div>
+      </div>
+
+      <!-- ITEM 2 -->
+      <div class="card">
+        <div class="card-text">
+          <h3>End the Cringe</h3>
+          <p>We’re retiring the awkward baby shower games of the past. Our Game Planner analyzes your specific guest
+            list to curate activities that actually build connection, formatted and ready to print.</p>
+        </div>
+        <div class="card-img-wrap">
+          <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (386).jpg" class="card-img"
+            alt="Happy women laughing at baby shower">
+        </div>
+      </div>
+
+      <!-- ITEM 3 -->
+      <div class="card">
+        <div class="card-text">
+          <h3>The "Gratitude Gap" Closed</h3>
+          <p>The shower ends, but the work doesn’t—until now. Our Thank You Note Helper ensures that every guest feels
+            truly seen, drafting personalized, elegant notes that reflect the specific joy of the gift received.</p>
+        </div>
+        <div class="card-img-wrap">
+          <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (387).jpg" class="card-img" alt="Baby card">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMISE -->
+  <section class="promise">
+    <div class="mission-text">
+      <h2>The Promise</h2>
+      <div class="code-block">
+        &lt;Stack type="Lavender"&gt;<br>
+        &nbsp;&nbsp;Next.js 15<br>
+        &nbsp;&nbsp;Google Gemini<br>
+        &lt;/Stack&gt;
+      </div>
+      <p>Passy uses a cutting-edge "Lavender Stack" not because we love code, but because we value your time. We’ve
+        built a fortress of security and a sanctuary of design so that you can stop being a project manager and start
+        being a friend.</p>
+    </div>
+  </section>
+
+  <!-- CONCLUSION -->
+  <section class="final-quote">
+    <img src="https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=2000" class="final-bg"
+      alt="Baby wrapping">
+    <div class="quote-overlay">
+      <h2>"Because the focus should be on the new life, not the guest list."</h2>
+    </div>
+  </section>
+
+  <script>
+    // Start overlay - required for audio playback
+    const startOverlay = document.getElementById('start-overlay');
+    const startBtn = document.getElementById('start-btn');
+    const problemAudio = document.getElementById('problem-audio');
+    let audioEnabled = false;
+
+    startBtn.addEventListener('click', function () {
+      audioEnabled = true;
+      startOverlay.classList.add('hidden');
+
+      // Remove overlay from DOM after fade
+      setTimeout(() => {
+        startOverlay.style.display = 'none';
+      }, 500);
+    });
+
+    // Ensure playsinline works across all browsers
+    document.addEventListener('DOMContentLoaded', function () {
+      const videos = document.querySelectorAll('video[playsinline]');
+      videos.forEach(video => {
+        video.setAttribute('webkit-playsinline', 'true');
+        video.play().catch(err => {
+          console.log('Video autoplay prevented:', err);
+        });
+      });
+
+      // Auto-play audio when problem section comes into view
+      const problemSection = document.getElementById('problem-section');
+      let hasPlayed = false;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !hasPlayed && audioEnabled) {
+            problemAudio.play().catch(err => {
+              console.log('Audio autoplay prevented:', err);
+            });
+            hasPlayed = true;
+          }
+        });
+      }, {
+        threshold: 0.5
+      });
+
+      if (problemSection) {
+        observer.observe(problemSection);
+      }
+    });
+  </script>
+
+</body>
+
+</html>

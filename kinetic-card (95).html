@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manifesto: Engineering Rigor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Oswald:wght@400;700&family=Playfair+Display:ital,wght@1,400&display=swap');
+
+        :root {
+            --color-glitch: #ff003c;
+            --color-term: #0aff00;
+            --color-void: #050505;
+            --color-paper: #f0f0f0;
+            --color-blueprint: #0044cc;
+        }
+
+        /* GLOBAL SCROLL */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--color-void);
+            color: white;
+            overflow-x: hidden;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        .scroll-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+        }
+
+        section {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* SVG FILTERS CLASS */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            filter: url(#noiseFilter);
+            opacity: 0.15;
+            mix-blend-mode: overlay;
+        }
+
+        .glitch-text {
+            filter: url(#glitchFilter);
+        }
+
+        /* TYPOGRAPHY & ANIMATIONS */
+        .mono-type {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .serif-italic {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .cursor::after {
+            content: '_';
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translate(1px, 1px) rotate(0deg);
+            }
+
+            10% {
+                transform: translate(-1px, -2px) rotate(-1deg);
+            }
+
+            20% {
+                transform: translate(-3px, 0px) rotate(1deg);
+            }
+
+            30% {
+                transform: translate(3px, 2px) rotate(0deg);
+            }
+
+            40% {
+                transform: translate(1px, -1px) rotate(1deg);
+            }
+
+            50% {
+                transform: translate(-1px, 2px) rotate(-1deg);
+            }
+
+            60% {
+                transform: translate(-3px, 1px) rotate(0deg);
+            }
+
+            70% {
+                transform: translate(3px, 1px) rotate(-1deg);
+            }
+
+            80% {
+                transform: translate(-1px, -1px) rotate(1deg);
+            }
+
+            90% {
+                transform: translate(1px, 2px) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(1px, -2px) rotate(-1deg);
+            }
+        }
+
+        /* SECTION SPECIFIC STYLES */
+        /* Section 1: The Nightmare */
+        .bg-img-1 {
+            /* Fallback/Simulated Image 1: Dark Coder */
+            background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (381).jpg');
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(100%) contrast(150%) brightness(0.6);
+        }
+
+        .red-overlay {
+            background: linear-gradient(180deg, rgba(255, 0, 60, 0.2) 0%, rgba(0, 0, 0, 0.9) 100%);
+            mix-blend-mode: multiply;
+        }
+
+        /* Section 2: The Fraud */
+        .bg-img-2 {
+            /* Fallback/Simulated Image 2: Abstract Cube */
+            background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (440).jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Section 3: The Crash */
+        .bg-img-3 {
+            /* Fallback/Simulated Image 3: Broken Mannequin/Glass */
+            background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (433).jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .shattered-text span {
+            display: inline-block;
+            transform-origin: bottom center;
+        }
+
+        .shattered-text:hover span:nth-child(odd) {
+            animation: shake 0.5s infinite;
+        }
+
+        /* Section 4: The Solution */
+        .bg-img-4 {
+            /* Fallback/Simulated Image 4: Engineer */
+            background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (435).jpg');
+            background-size: cover;
+            background-position: center;
+            filter: sepia(100%) hue-rotate(190deg) saturate(150%);
+        }
+
+        .grid-lines {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HIDDEN SVG FILTERS -->
+    <svg class="hidden">
+        <defs>
+            <!-- Grain Filter -->
+            <filter id="noiseFilter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="saturate" values="0" />
+            </filter>
+
+            <!-- Glitch Filter -->
+            <filter id="glitchFilter">
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- NOISE OVERLAY GLOBAL -->
+    <div class="noise-overlay"></div>
+
+    <main class="scroll-container">
+
+        <!-- ACT 1: THE NIGHTMARE -->
+        <section class="flex-col text-left px-8 md:px-20">
+            <div class="absolute inset-0 bg-img-1 z-0"></div>
+            <div class="absolute inset-0 red-overlay z-10"></div>
+
+            <div class="relative z-20 max-w-4xl">
+                <h2 class="mono-type text-red-500 text-sm md:text-xl mb-4 tracking-widest uppercase animate-pulse">
+                    [System Error: Recursion Detected]</h2>
+                <p class="text-2xl md:text-5xl font-bold leading-tight drop-shadow-lg">
+                    "I remember the exact moment I realized the 'AI Revolution' was built on sand."
+                </p>
+                <div
+                    class="mt-8 p-6 border-l-4 border-red-500 bg-black/80 font-mono text-sm md:text-lg text-green-400 glitch-text leading-relaxed">
+                    It was 3:00 AM, and I was watching an agent I’d spent weeks building get stuck in a recursive loop,
+                    politely <span class="text-red-500 bg-black">hallucinating</span> its way through $200 of API
+                    credits while it lobotomized my directory structure.
+                    <span class="cursor"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACT 2: THE FRAUD -->
+        <section class="bg-black">
+            <div class="absolute inset-0 bg-img-2 opacity-60 z-0" style="animation: float 6s ease-in-out infinite;">
+            </div>
+
+            <div
+                class="relative z-20 glass-card p-10 md:p-16 max-w-5xl rounded-lg text-center transform hover:scale-[1.01] transition-transform duration-700">
+                <h1
+                    class="text-4xl md:text-7xl serif-italic mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-200 to-white">
+                    I felt like a fraud.
+                </h1>
+                <p class="text-xl md:text-3xl font-light leading-relaxed text-gray-200">
+                    We’ve been told to stop building systems and start <br>
+                    <span class="italic text-purple-300">'whispering'</span> to magic boxes.
+                </p>
+                <p class="mt-8 text-md md:text-xl text-gray-400 font-light">
+                    We’ve traded <strong class="text-white font-bold uppercase tracking-widest">deterministic
+                        logic</strong> for 'prayers and prompts,' and we’re calling it progress.
+                </p>
+            </div>
+        </section>
+
+        <!-- ACT 3: THE CRASH -->
+        <section class="bg-white text-black">
+            <div class="absolute inset-0 bg-img-3 opacity-20 z-0"></div>
+
+            <div class="relative z-20 container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="hidden md:block">
+                    <!-- Decorative graphic mimicking broken glass -->
+                    <div class="w-full h-96 bg-black clip-path-polygon"
+                        style="clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); background: url('https://images.unsplash.com/photo-1516541196182-6bdb0516ed27?q=80&w=1000&auto=format&fit=crop'); background-size: cover; filter: contrast(200%) grayscale(100%);">
+                    </div>
+                </div>
+                <div class="shattered-text">
+                    <h2
+                        class="text-6xl md:text-8xl font-black uppercase tracking-tighter mb-4 mix-blend-difference text-black">
+                        <span>TOY</span> <br> <span class="text-red-600">DEMOS.</span>
+                    </h2>
+                    <p class="text-lg md:text-2xl font-bold border-l-8 border-black pl-6 py-2">
+                        I’m done with the toy demos. I’m sick of 'state-of-the-art' agents that crumble the moment they
+                        hit a real-world edge case.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACT 4: THE MANIFESTO -->
+        <section class="bg-slate-900">
+            <div class="absolute inset-0 bg-img-4 opacity-30 z-0 grayscale mix-blend-luminosity"></div>
+            <div class="absolute inset-0 grid-lines z-10 opacity-20"></div>
+
+            <div class="relative z-30 max-w-6xl w-full px-6 flex flex-col items-start justify-center h-full">
+                <div class="bg-blue-900/90 p-1 md:p-2 mb-6 inline-block">
+                    <span class="mono-type text-xs text-blue-200 uppercase tracking-[0.3em]">Architecture // v1.0.0 //
+                        Final</span>
+                </div>
+
+                <div
+                    class="grid md:grid-cols-12 gap-8 border-t border-b border-white/30 py-12 backdrop-blur-sm bg-black/20">
+                    <div class="md:col-span-8">
+                        <p class="text-2xl md:text-4xl font-light text-white leading-normal">
+                            We didn’t build this framework to be another AI wrapper; we built it to give engineers their
+                            power back.
+                        </p>
+                        <div class="mt-8 flex flex-col md:flex-row gap-8">
+                            <div class="border border-blue-500/50 p-6 flex-1 bg-blue-950/30">
+                                <h3 class="text-blue-400 text-sm uppercase tracking-bold mb-2">Replace Magic With</h3>
+                                <p class="text-3xl font-bold text-white">RIGOR</p>
+                            </div>
+                            <div class="border border-yellow-500/50 p-6 flex-1 bg-yellow-950/30">
+                                <h3 class="text-yellow-400 text-sm uppercase tracking-bold mb-2">Replace Hope With</h3>
+                                <p class="text-3xl font-bold text-white">CONSTRAINTS</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:col-span-4 flex flex-col justify-end text-right">
+                        <p class="text-sm text-gray-400 mb-2 mono-type">[Status: Production Ready]</p>
+                        <p class="text-lg md:text-xl font-medium leading-snug">
+                            Because in the real world, 'good enough' is a disaster, and it’s time we started building AI
+                            like we actually give a damn about engineering.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</body>
+
+</html>

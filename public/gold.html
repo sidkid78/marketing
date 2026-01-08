@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central Texas Gold Exchange</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --gold-primary: #d4af37;
+      --gold-dark: #aa8c2c;
+      --gold-light: #f3e5ab;
+      --charcoal: #111111;
+      --paper: #f4f4f0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--charcoal);
+      color: var(--paper);
+      overflow-x: hidden;
+    }
+
+    h1,
+    h2,
+    h3,
+    .serif {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* SVG Grain Filter */
+    .texture-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 50;
+      opacity: 0.07;
+      filter: url(#noiseFilter);
+    }
+
+    /* Scrollytelling Section Logic */
+    .scroll-section {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    /* Metallic Text Effect */
+    .gold-text {
+      background: linear-gradient(to bottom right, var(--gold-light) 0%, var(--gold-primary) 50%, var(--gold-dark) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Glassmorphism Card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Image Styles */
+    .bg-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      transition: transform 10s ease-out;
+    }
+
+    .scroll-section:hover .bg-image {
+      transform: scale(1.05);
+    }
+
+    /* Vignette Overlay */
+    .vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, transparent 20%, var(--charcoal) 90%);
+      z-index: 0;
+    }
+
+    /* Kinetic Animations */
+    @keyframes floatUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .reveal-text {
+      opacity: 0;
+      animation: floatUp 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+    }
+
+    .delay-1 {
+      animation-delay: 0.2s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.5s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.8s;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--charcoal);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--gold-dark);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG Filters definition -->
+  <svg class="hidden">
+    <filter id="noiseFilter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 21 -7" />
+    </filter>
+  </svg>
+
+  <!-- Global Grain Overlay -->
+  <div class="texture-overlay"></div>
+
+  <!-- SECTION 1: Intro / Wealth -->
+  <section class="scroll-section text-center">
+    <!-- Image 3: Gold & Diamonds -->
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3%20(310).jpg" alt="Gold Bars and Diamonds"
+      class="bg-image" style="opacity: 0.4;">
+    <div class="vignette"></div>
+
+    <div class="relative z-10 max-w-4xl px-4">
+      <p class="text-sm tracking-[0.3em] uppercase mb-4 text-gray-400 reveal-text">Welcome to</p>
+      <h1 class="text-5xl md:text-7xl font-bold mb-6 gold-text serif reveal-text delay-1 leading-tight">
+        Central Texas Gold Exchange
+      </h1>
+      <h2 class="text-2xl md:text-3xl font-light italic serif text-white reveal-text delay-2">
+        Your Wealth, Respected.
+      </h2>
+      <div
+        class="mt-12 h-px w-24 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto reveal-text delay-3">
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: Legacy / Emotion -->
+  <section class="scroll-section bg-gray-900">
+    <!-- Image 1: Hands holding items -->
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1%20(308).jpg" alt="Hands holding heirloom"
+      class="bg-image" style="opacity: 0.3;">
+    <div class="absolute inset-0 bg-gradient-to-r from-[#111] via-[#111]/80 to-transparent z-0"></div>
+
+    <div class="relative z-10 grid md:grid-cols-2 gap-12 max-w-6xl w-full px-6">
+      <div class="flex flex-col justify-center space-y-6">
+        <blockquote class="text-3xl md:text-4xl serif gold-text leading-snug">
+          Most "Gold Buyers" see a transaction. We see a legacy.
+        </blockquote>
+      </div>
+      <div class="glass-card p-8 md:p-12 rounded-sm text-lg leading-relaxed text-gray-300 border-l-4 border-[#d4af37]">
+        <p class="mb-6">
+          For over 20 years, the families of Central Texas have walked through our doors carrying more than just
+          jewelry. They carry memories—class rings from a proud graduation, silverware passed down through generations,
+          or a wedding band that represents a chapter now closed.
+        </p>
+        <p>
+          We know that selling your valuables can feel overwhelming. You wonder:
+          <span class="italic text-white">“Can I trust the scale? Am I being treated fairly? Am I getting what this is
+            truly worth?”</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: Clarity / Process -->
+  <section class="scroll-section bg-[#1a1a1a]">
+    <!-- Image 2: Consultation -->
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2%20(309).jpg" alt="Jewelry Consultation"
+      class="bg-image" style="opacity: 0.2; filter: grayscale(100%);">
+    <div class="vignette"></div>
+
+    <div class="relative z-10 max-w-5xl w-full px-6 flex flex-col md:flex-row items-start gap-12">
+      <div class="md:w-1/2 sticky top-24">
+        <h3 class="text-4xl serif text-white mb-6">
+          At Central Texas Gold Exchange, we don't just trade cash for gold. <br><span class="gold-text">We provide
+            clarity.</span>
+        </h3>
+        <div class="h-1 w-20 bg-[#d4af37]"></div>
+      </div>
+
+      <div class="md:w-1/2 space-y-8">
+        <div
+          class="bg-[#222] p-6 rounded shadow-lg border border-gray-800 hover:border-[#d4af37] transition-colors duration-500">
+          <h4 class="text-xl font-bold text-white mb-2 uppercase tracking-wider">The Family-Owned Difference</h4>
+          <p class="text-gray-400">In an industry of "shady" pawn shops and anonymous mail-in envelopes, we choose to
+            look you in the eye. As a family-owned business, our reputation is our only currency. We don’t just give you
+            an offer; we give you an education.</p>
+        </div>
+
+        <div class="bg-[#222] p-6 rounded shadow-lg border border-gray-800">
+          <h4 class="text-xl font-bold text-[#d4af37] mb-4 uppercase tracking-wider">How we honor your items:</h4>
+          <ul class="space-y-4 text-gray-300">
+            <li class="flex gap-3">
+              <span class="text-[#d4af37]">✦</span>
+              <span><strong class="text-white">Transparent Valuation:</strong> We test and inspect your items right in
+                front of you. No "back rooms," no secrets.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="text-[#d4af37]">✦</span>
+              <span><strong class="text-white">Expert Guidance:</strong> With two decades of experience, we explain the
+                <em>how</em> and <em>why</em> behind the market price of your gold, silver, and diamonds.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="text-[#d4af37]">✦</span>
+              <span><strong class="text-white">Immediate Financial Peace:</strong> When you’re ready, we provide
+                immediate cash liquidity. No checks in the mail. No "waiting for the funds to clear."</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: Specialization / Value -->
+  <section class="scroll-section bg-black">
+    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <h3 class="text-3xl md:text-5xl serif text-white mb-4">Unlock the Value Hidden in Your Home</h3>
+        <p class="text-gray-400 max-w-2xl mx-auto text-lg">Whether you are looking to secure your future by investing in
+          bullion or need to liquidate unwanted items to fund a new dream, we are here to ensure you walk out with 100%
+          confidence.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Card 1 -->
+        <div class="glass-card p-8 text-center group hover:bg-white/10 transition-all duration-300">
+          <div class="text-4xl mb-4">🪙</div>
+          <h4 class="text-xl font-bold text-white mb-3 serif">Precious Metals</h4>
+          <p class="text-sm text-gray-400">Gold, Silver, Platinum (Bullion, Coins, and Bars)</p>
+        </div>
+
+        <!-- Card 2 -->
+        <div
+          class="glass-card p-8 text-center group hover:bg-white/10 transition-all duration-300 transform md:-translate-y-4">
+          <div class="text-4xl mb-4">💍</div>
+          <h4 class="text-xl font-bold text-white mb-3 serif">Heirlooms & Jewelry</h4>
+          <p class="text-sm text-gray-400">Broken pieces, dental gold, class rings, and silverware.</p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="glass-card p-8 text-center group hover:bg-white/10 transition-all duration-300">
+          <div class="text-4xl mb-4">💎</div>
+          <h4 class="text-xl font-bold text-white mb-3 serif">Diamonds</h4>
+          <p class="text-sm text-gray-400">Expert appraisal and competitive offers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: Outro / CTA -->
+  <section class="scroll-section text-center">
+    <!-- Image 4: Confident Exit -->
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4%20(311).jpg" class="bg-image" style="opacity: 0.5;">
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60 z-0"></div>
+
+    <div class="relative z-10 max-w-4xl px-6 py-12 glass-card rounded-lg border-2 border-[#d4af37]/30">
+      <h3 class="text-2xl md:text-4xl serif text-white mb-8 leading-tight">
+        Don’t let your wealth sit in a drawer gathering dust. <br>
+        <span class="italic text-[#d4af37]">Bring your items to a place that respects their value as much as you
+          do.</span>
+      </h3>
+
+      <a href="#"
+        class="inline-block px-10 py-4 bg-[#d4af37] text-black font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors duration-300 shadow-[0_0_20px_rgba(212,175,55,0.4)]">
+        Visit Us Today in Central Texas
+      </a>
+      <p class="mt-6 text-xl text-white font-serif">
+        Get the Truth. Get the Cash.
+      </p>
+    </div>
+  </section>
+
+</body>
+
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentic Infrastructure</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Oswald:wght@400;700&display=swap');
+
+    :root {
+      --c-dark: #050a10;
+      --c-steel: #7b8fa3;
+      --c-electric: #80caff;
+      --c-alert: #ff4d4d;
+      --c-white: #eef2f6;
+    }
+
+    body {
+      background-color: var(--c-dark);
+      color: var(--c-white);
+      font-family: 'JetBrains Mono', monospace;
+      overflow-x: hidden;
+    }
+
+    /* Typography overrides */
+    .font-heading {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+
+    /* SVG Filters Classes */
+    .noise-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 50;
+      filter: url(#grain);
+      opacity: 0.15;
+    }
+
+    .glitch-text {
+      filter: url(#glitch);
+      position: relative;
+    }
+
+    .glow-text {
+      filter: url(#soft-glow);
+      text-shadow: 0 0 20px var(--c-electric);
+    }
+
+    /* Layout Utilities */
+    .reveal-section {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      perspective: 1000px;
+      overflow: hidden;
+    }
+
+    .clip-text-image {
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      background-size: cover;
+      background-attachment: fixed;
+    }
+
+    /* Animations */
+    @keyframes scanline {
+      0% {
+        transform: translateY(-100%);
+      }
+
+      100% {
+        transform: translateY(100%);
+      }
+    }
+
+    .scanline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent 50%, rgba(128, 202, 255, 0.1) 51%, transparent 51%);
+      background-size: 100% 4px;
+      animation: scanline 8s linear infinite;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+
+  <!-- SVG Filters Definition -->
+  <svg class="hidden">
+    <defs>
+      <!-- Grain Filter -->
+      <filter id="grain">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+        <feColorMatrix type="saturate" values="0" />
+        <feBlend in="SourceGraphic" in2="noise" mode="overlay" />
+      </filter>
+
+      <!-- Glitch Distortion -->
+      <filter id="glitch">
+        <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+        <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+
+      <!-- Soft Glow -->
+      <filter id="soft-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+        <feMerge>
+          <feMergeNode in="coloredBlur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Global Noise Overlay -->
+  <div class="noise-overlay"></div>
+  <div class="scanline"></div>
+
+  <!-- SECTION 1: THE PROBLEM -->
+  <section class="reveal-section">
+    <div class="absolute inset-0 z-0">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (300).jpg" alt="Stalled Factory"
+        class="w-full h-full object-cover opacity-40 filter grayscale contrast-125" />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#050a10] via-transparent to-[#050a10]"></div>
+    </div>
+
+    <div class="relative z-10 container mx-auto px-6">
+      <h1 class="font-heading text-4xl md:text-7xl font-bold leading-tight max-w-5xl tracking-tighter">
+        We are tired of watching the <span class="text-[#7b8fa3]">world’s most brilliant minds</span> waste their talent
+        babysitting <span class="glitch-text text-white bg-red-600/20 px-2">chatbots</span>.
+      </h1>
+    </div>
+  </section>
+
+  <!-- SECTION 2: THE CRITIQUE (Typographic Grid) -->
+  <section class="min-h-screen bg-[#050a10] flex items-center py-20">
+    <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+
+      <div class="md:col-span-8 space-y-8">
+        <p class="text-xl md:text-3xl font-light leading-relaxed border-l-4 border-[#80caff] pl-6">
+          The industry is drunk on <span class="italic font-serif text-white opacity-80">'Intelligence'</span>—chasing
+          fractional gains on benchmarks that don't matter while the actual machines of progress sit stalled in the
+          garage.
+        </p>
+        <p class="text-lg text-[#7b8fa3] font-mono">
+          Raw intelligence has become a cheap commodity, yet we’re still treating it like a fragile miracle.
+        </p>
+      </div>
+
+      <div class="md:col-span-4 flex flex-col justify-center border border-[#7b8fa3]/30 p-8">
+        <div class="text-xs text-[#80caff] mb-2">STATUS: STALLED</div>
+        <div class="w-full h-1 bg-[#7b8fa3]/20 mb-4">
+          <div class="h-full bg-red-500 w-[12%] animate-pulse"></div>
+        </div>
+        <div class="font-heading text-4xl text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600">
+          BENCHMARK<br>FAILURE
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 3: THE BUILD (Image 2) -->
+  <section class="reveal-section">
+    <div class="absolute inset-0 z-0 grid grid-cols-2">
+      <div class="bg-black/80 backdrop-blur-sm z-10"></div>
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (301).jpg" alt="Cage and Wheel"
+        class="w-full h-full object-cover filter contrast-125 sepia-[.3]" />
+    </div>
+
+    <div class="relative z-20 container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center h-full">
+      <div class="bg-[#050a10]/90 p-10 border-t border-[#80caff]">
+        <p class="font-heading text-3xl md:text-5xl mb-6">
+          We didn't build another 'smart' model;
+        </p>
+        <div class="space-y-4 text-lg md:text-xl font-mono text-[#7b8fa3]">
+          <p>we built the <span class="text-white font-bold">cage</span>,</p>
+          <p>the <span class="text-white font-bold">fuel</span>,</p>
+          <p>and the <span class="text-white font-bold">steering wheel</span>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: AGENTIC INFRASTRUCTURE (Image 3) -->
+  <section class="reveal-section">
+    <!-- Image with Hard Light Blend for Electric feel -->
+    <div class="absolute inset-0 z-0">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (302).jpg" alt="Energy Core"
+        class="w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-blue-900 mix-blend-color-dodge opacity-50"></div>
+    </div>
+
+    <div class="relative z-20 container mx-auto px-6 flex flex-col items-center text-center">
+      <h2 class="font-heading text-5xl md:text-9xl font-bold text-white glow-text tracking-tight mb-8">
+        AGENTIC<br>INFRASTRUCTURE
+      </h2>
+      <div class="max-w-2xl bg-black/60 backdrop-blur-md p-8 border border-white/20">
+        <p class="text-lg md:text-xl leading-relaxed text-gray-200">
+          We provide the rugged sandboxes and the steel-reinforced orchestration—that stops AI from just <span
+            class="italic">talking</span> and starts letting it <span class="font-bold text-[#80caff]">work</span>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: SYSTEMS ENGINEERING (Transition) -->
+  <section class="min-h-[70vh] bg-[#eef2f6] text-[#050a10] flex flex-col justify-center px-6 relative overflow-hidden">
+    <!-- Background typographic texture -->
+    <div
+      class="absolute inset-0 opacity-5 pointer-events-none font-heading text-9xl leading-none break-all select-none">
+      ENGINEERING ENGINEERING ENGINEERING SYSTEM SYSTEM SYSTEM
+    </div>
+
+    <div class="container mx-auto relative z-10">
+      <div class="md:flex items-baseline gap-4">
+        <p class="text-2xl md:text-4xl font-bold text-gray-400 line-through decoration-red-500 decoration-4">
+          Prompt Engineering
+        </p>
+      </div>
+
+      <p class="my-4 font-mono text-sm text-gray-500 max-w-md">
+        (which was always just polite guessing)
+      </p>
+
+      <h3 class="text-5xl md:text-8xl font-heading font-black tracking-tighter mt-4">
+        <span class="block text-xl font-mono font-normal tracking-normal mb-2 text-blue-600">...and ushering in the era
+          of</span>
+        SYSTEMS<br>ENGINEERING.
+      </h3>
+    </div>
+  </section>
+
+  <!-- SECTION 6: THE FINALE (Image 4) -->
+  <section class="reveal-section">
+    <div class="absolute inset-0 z-0">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (303).jpg" alt="City Done"
+        class="w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#050a10] via-transparent to-transparent opacity-90"></div>
+    </div>
+
+    <div class="relative z-20 container mx-auto px-6 h-full flex flex-col justify-end pb-24">
+      <div class="grid md:grid-cols-2 gap-12">
+
+        <div class="space-y-6">
+          <p class="text-2xl md:text-4xl font-heading">
+            Stop asking how smart your AI is.
+          </p>
+          <p class="text-xl md:text-2xl font-mono text-[#80caff]">
+            Start asking what it has actually achieved today.
+          </p>
+        </div>
+
+        <div class="flex items-center md:justify-end">
+          <div class="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-sm">
+            <p class="text-lg md:text-2xl font-bold leading-none">
+              We build the systems that turn <br>
+              <span class="opacity-50 line-through mr-2">'maybe'</span>
+              into <span class="text-[#4ade80] text-5xl md:text-6xl font-heading align-middle ml-2">'done.'</span>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</body>
+
+</html>

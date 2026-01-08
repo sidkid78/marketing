@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase: A Fortress</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Manrope:wght@300;500;800&display=swap');
+
+        :root {
+            --color-abyss: #0f172a;
+            --color-alert: #ef4444;
+            --color-paper: #f8fafc;
+            --color-gold: #b45309;
+            --font-body: 'Manrope', sans-serif;
+            --font-serif: 'Cormorant Garamond', serif
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background-color: var(--color-abyss);
+            color: white;
+            font-family: var(--font-body)
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: .07;
+            filter: url(#noise)
+        }
+
+        .scroll-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth
+        }
+
+        .section {
+            min-height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            display: grid;
+            place-items: center;
+            padding: 2rem;
+            overflow: hidden
+        }
+
+        .text-shadow-lg {
+            text-shadow: 0 10px 30px rgba(0, 0, 0, .8)
+        }
+
+        .shattered-text {
+            filter: url(#shatter);
+            color: var(--color-alert);
+            display: inline-block
+        }
+
+        .gold-text {
+            color: #fcd34d;
+            font-style: italic
+        }
+
+        .img-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            transition: transform 1s ease-out;
+            opacity: .6
+        }
+
+        .section:hover .img-bg {
+            transform: scale(1.05)
+        }
+
+        .content-card {
+            background: rgba(15, 23, 42, .7);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            padding: 2rem;
+            border-left: 4px solid white;
+            max-width: 800px;
+            position: relative;
+            z-index: 10
+        }
+
+        .card-light {
+            background: rgba(255, 255, 255, .85);
+            color: var(--color-abyss);
+            border-left: 4px solid var(--color-gold)
+        }
+
+        .editorial-h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(2.5rem, 5vw, 5rem);
+            line-height: 1.1;
+            margin-bottom: 1.5rem
+        }
+
+        .editorial-p {
+            font-size: clamp(1rem, 1.5vw, 1.25rem);
+            line-height: 1.8;
+            opacity: .9
+        }
+
+        .btn-cta {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            border: 1px solid currentColor;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: .8rem;
+            transition: all .3s ease
+        }
+
+        .btn-cta:hover {
+            background: white;
+            color: black
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-10px)
+            }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite
+        }
+
+        .duotone-img {
+            filter: grayscale(100%) contrast(120%) sepia(20%)
+        }
+
+        .sanctuary-glow {
+            filter: drop-shadow(0 0 20px rgba(252, 211, 77, .5))
+        }
+    </style>
+</head>
+
+<body><svg style="display:none">
+        <defs>
+            <filter id="noise">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 20 -10" />
+            </filter>
+            <filter id="shatter">
+                <feTurbulence type="turbulence" baseFrequency="0.1 0.02" numOctaves="2" result="warp" />
+                <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="5" in="SourceGraphic" in2="warp" />
+            </filter>
+        </defs>
+    </svg>
+    <div class="noise-overlay"></div>
+    <main class="scroll-container"><!-- SECTION 1: THE ABYSS -->
+        <section class="section"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (39).jpg"
+                alt="Grandmother looking into the abyss" class="img-bg duotone-img">
+            <div class="content-card floating">
+                <h1 class="editorial-h1">Staring into an <span class="text-indigo-300 italic">Abyss</span>.</h1>
+                <p class="editorial-p">In 2024, I watched my grandmother stand at the edge of her own bathtub like she
+                    was staring into an abyss. I realized then that in the home-mod industry, a 'bad negotiation' isn’t
+                    a line item—it’s a <span class="shattered-text font-bold">shattered hip</span>.</p>
+            </div>
+        </section><!-- SECTION 2: THE WOLVES -->
+        <section class="section bg-black">
+            <div class="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black z-10"></div><img
+                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIwIiBoZWlnaHQ9IjEwODAiPjxyZWN0IHdpZHRoPSIxOTIwIiBoZWlnaHQ9IjEwODAiIGZpbGw9IiMwZmIxNzIiLz48ZyBvcGFjaXR5PSIwLjMiPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjIwMCIgcj0iMTUwIiBmaWxsPSIjMzMzIi8+PGNpcmNsZSBjeD0iMTYwMCIgY3k9IjgwMCIgcj0iMjAwIiBmaWxsPSIjMjIyIi8+PC9nPjwvc3ZnPg=="
+                class="img-bg" style="opacity:0.4">
+            <div class="content-card" style="border-left-color: var(--color-alert)">
+                <h1 class="editorial-h1 text-white">Wolves <span class="text-red-500">Circling</span>.</h1>
+                <p class="editorial-p">It’s the moment a senior loses their independence forever because a contractor
+                    prioritized his margin over her safety. I founded HOMEase because I saw the wolves circling, and I
+                    refused to let my family, or yours, be the prey.</p>
+            </div>
+        </section><!-- SECTION 3: THE BOARDROOM vs REALITY -->
+        <section class="section"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (42).jpg" class="img-bg">
+            <div class="grid md:grid-cols-2 gap-12 max-w-6xl w-full z-10">
+                <div class="p-6 bg-slate-800/80 backdrop-blur-md border-t-2 border-slate-500">
+                    <h2 class="text-xl font-serif text-slate-300 mb-4 tracking-widest">THE BOARDROOM</h2>
+                    <p class="editorial-p text-sm">For years, I sat in the boardrooms of the Home Builders Association.
+                        I saw how the 'sausage was made.' I watched leaders obsess over profitability while ignoring the
+                        terrifying reality of a 70-year-old navigating a construction zone alone.</p>
+                </div>
+                <div class="p-6 bg-orange-900/60 backdrop-blur-md border-t-2 border-orange-500 self-end">
+                    <h2 class="text-xl font-serif text-orange-200 mb-4 tracking-widest">THE REALITY</h2>
+                    <p class="editorial-p text-sm">I realized my 'technical background' wasn't for building companies;
+                        it was for building a shield. I don’t just vet contractors—I hunt for the few remaining artisans
+                        who still believe a stranger’s home is sacred ground.</p>
+                </div>
+            </div>
+        </section><!-- SECTION 4: THE CRAFTSMAN -->
+        <section class="section" style="background-color:#fffbeb; color:#451a03"><img
+                src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (40).jpg" class="img-bg" style="opacity:0.2">
+            <div class="content-card card-light shadow-xl">
+                <h1 class="editorial-h1">Reclaiming <br><span style="color:var(--color-gold)">Dignity</span>.</h1>
+                <p class="editorial-p text-slate-700">I’m not selling software or 'project management.' I am reclaiming
+                    dignity. I am filtering out the predators in contractor vests and elevating the craftsmen who treat
+                    your mother’s bathroom like a sanctuary.</p>
+            </div>
+        </section><!-- SECTION 5: THE SANCTUARY -->
+        <section class="section"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (36).jpg" class="img-bg">
+            <div
+                class="relative z-10 text-center max-w-3xl mx-auto p-12 bg-white/40 backdrop-blur-xl rounded-lg border border-white/50 sanctuary-glow">
+                <h1 class="editorial-h1 text-slate-800">A Fortress.</h1>
+                <p class="editorial-p text-slate-900 font-medium mb-8">Because everyone deserves to age in the one place
+                    they still feel powerful: a home that isn't a booby trap, but a fortress.</p>
+                <div class="w-16 h-1 bg-yellow-600 mx-auto mb-6"></div>
+                <p class="text-xs uppercase tracking-[0.3em] text-slate-600 font-bold">HOMEase &copy; 2026</p>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

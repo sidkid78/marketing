@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Third Circle: Gluttony</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=IM+Fell+English:ital@0;1&display=swap');
+
+        :root {
+            --mud-dark: #1a1815;
+            --mud-light: #3e3b36;
+            --blood-red: #660000;
+            --parchment: #dcd0c0;
+            --text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+        }
+
+        body {
+            background-color: black;
+            color: var(--parchment);
+            font-family: 'IM Fell English', serif;
+            overflow-x: hidden;
+        }
+
+        .scrolly-section {
+            height: 150vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sticky-bg {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .bg-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6) contrast(1.1);
+            transition: transform 10s ease-out;
+        }
+
+        .animate-zoom {
+            animation: slowZoom 20s infinite alternate;
+        }
+
+        .content-card {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            padding: 2rem;
+            background: rgba(20, 20, 18, 0.7);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            border-radius: 2px;
+            margin: 0 1rem;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 1s forwards;
+            animation-delay: 0.3s;
+        }
+
+        .title-text {
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .drop-cap {
+            float: left;
+            font-size: 4.5rem;
+            line-height: 0.8;
+            padding-right: 0.5rem;
+            padding-top: 0.2rem;
+            color: var(--blood-red);
+            font-family: 'Cinzel', serif;
+        }
+
+        /* SVG Filter Classes */
+        .filter-mud {
+            filter: url(#mud-distort);
+        }
+
+        .filter-grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            mix-blend-mode: overlay;
+            opacity: 0.4;
+            filter: url(#rain-grain);
+        }
+
+        /* Animations */
+        @keyframes slowZoom {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes drizzle {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(20px);
+            }
+        }
+
+        .rain-layer {
+            background: linear-gradient(to bottom, transparent 0%, rgba(200, 200, 200, 0.1) 50%, transparent 100%);
+            background-size: 1px 100px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.3;
+            animation: drizzle 0.5s linear infinite;
+        }
+    </style>
+</head>
+
+<body class="antialiased"><!-- SVG Filters Definition --><svg aria-hidden="true"
+        style="position: absolute; width: 0; height: 0; overflow: hidden;">
+        <defs>
+            <filter id="rain-grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="saturate" values="0" />
+            </filter>
+            <filter id="mud-distort">
+                <feTurbulence type="turbulence" baseFrequency="0.02 0.05" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+            <filter id="text-glow">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
+                <feFlood flood-color="#000" result="color" />
+                <feComposite in="color" in2="blur" operator="in" result="shadow" />
+                <feMerge>
+                    <feMergeNode in="shadow" />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+        </defs>
+    </svg><!-- Global Noise Overlay -->
+    <div class="filter-grain"></div><!-- Section 1: Introduction -->
+    <div class="relative">
+        <div class="sticky-bg"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (342).jpg"
+                class="bg-img animate-zoom" alt="Landscape of the Third Circle">
+            <div class="rain-layer"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80"></div>
+        </div>
+        <div class="relative z-10 flex flex-col items-center justify-center min-h-screen text-center p-6"
+            style="margin-top: -100vh;">
+            <h1
+                class="title-text text-5xl md:text-7xl lg:text-9xl font-black text-[#8a817c] mb-4 mix-blend-screen opacity-90">
+                Third Circle<br><span class="text-[#a42424] filter-mud block mt-2">of Hell</span></h1>
+            <div class="h-px w-32 bg-[#a42424] my-6"></div>
+            <h2 class="title-text text-4xl md:text-6xl text-white filter-mud tracking-widest mt-4"
+                style="text-shadow: 0 0 20px black;">Gluttony</h2>
+        </div>
+    </div><!-- Section 2: Narrative -->
+    <div class="relative">
+        <div class="sticky-bg"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (343).jpg" class="bg-img"
+                alt="Dante encountering souls" style="object-position: center top;">
+            <div class="absolute inset-0 bg-black/40"></div>
+        </div>
+        <div class="relative z-10 flex items-center justify-end min-h-screen p-6 md:p-12" style="margin-top: -100vh;">
+            <div class="content-card md:mr-10 md:w-1/2">
+                <p class="text-xl md:text-2xl leading-relaxed text-gray-200 drop-shadow-md"><span
+                        class="drop-cap">T</span>he third circle is reserved for those who overindulge. Dante encounters
+                    ordinary people here, not characters from epic poems or gods from mythology.</p>
+            </div>
+        </div>
+    </div><!-- Section 3: Connection -->
+    <div class="relative">
+        <div class="sticky-bg"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (344).jpg" class="bg-img"
+                alt="Ciacco and Boccaccio">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
+        </div>
+        <div class="relative z-10 flex items-end justify-center min-h-screen p-6 md:p-20 pb-32"
+            style="margin-top: -100vh;">
+            <div class="content-card w-full text-center bg-black/80 border-t-4 border-[#a42424]">
+                <p class="text-lg md:text-2xl italic leading-loose text-[#dcd0c0]">The author Boccaccio took one of
+                    these characters, <span class="text-[#a42424] font-bold not-italic font-[Cinzel]">Ciacco</span>, and
+                    incorporated him into his 14th-century collection of tales called "The Decameron."</p>
+            </div>
+        </div>
+    </div>
+    <footer
+        class="bg-black text-center py-12 text-stone-600 text-sm font-[Cinzel] uppercase tracking-widest relative z-20">
+        FINIS</footer>
+</body>
+
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Holistic AI</title>
+  <style>
+    /* FONTS */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@300;500;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
+
+    /* VARS */
+    :root {
+      --c-dark: #030304;
+      --c-light: #f4f4f5;
+      --c-accent-panic: #ff3333;
+      --c-accent-ai: #00f0ff;
+      --c-accent-gold: #d4af37;
+      --font-mono: 'Space Grotesk', monospace;
+      --font-sans: 'Inter', sans-serif;
+      --font-serif: 'Playfair Display', serif;
+      --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    /* RESET */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--c-dark);
+      color: var(--c-light);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* SVG FILTERS */
+    .svg-filter {
+      position: absolute;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    /* UTILS */
+    .noise-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.05;
+      pointer-events: none;
+      filter: url(#noiseFilter);
+      z-index: 999;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-weight: normal;
+    }
+
+    strong {
+      color: white;
+      font-weight: 600;
+    }
+
+    .accent-ai {
+      color: var(--c-accent-ai);
+    }
+
+    .accent-panic {
+      color: var(--c-accent-panic);
+    }
+
+    .accent-gold {
+      color: var(--c-accent-gold);
+    }
+
+    /* SCROLL ANIMATION UTILS */
+    @keyframes reveal-up {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .reveal {
+      animation: reveal-up 1s var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 30%;
+    }
+
+    /* SECTIONS */
+    section {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    /* HERO */
+    .hero {
+      align-items: center;
+      text-align: center;
+      background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+    }
+
+    .hero h1 {
+      font-family: var(--font-mono);
+      font-size: clamp(3rem, 8vw, 8rem);
+      line-height: 0.9;
+      text-transform: uppercase;
+      letter-spacing: -0.05em;
+      mix-blend-mode: exclusion;
+    }
+
+    .hero-sub {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 3vw, 3rem);
+      font-style: italic;
+      color: var(--c-accent-ai);
+      margin-top: 1rem;
+      opacity: 0.8;
+    }
+
+    /* THE PROBLEM */
+    .problem {
+      background-color: #000;
+    }
+
+    .bg-image-1 {
+      position: absolute;
+      inset: 0;
+      /* Placeholder for Stressed Trader Image */
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (400).jpg?auto=format&fit=crop&q=80');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.4;
+      filter: grayscale(100%) contrast(150%);
+      mix-blend-mode: luminosity;
+      transition: transform 1s;
+    }
+
+    .problem:hover .bg-image-1 {
+      transform: scale(1.05);
+    }
+
+    .glitch-container {
+      position: relative;
+      z-index: 10;
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 3rem;
+      border-left: 4px solid var(--c-accent-panic);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .problem h2 {
+      font-family: var(--font-mono);
+      font-size: clamp(2rem, 5vw, 4rem);
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      color: var(--c-accent-panic);
+      filter: url(#glitch);
+    }
+
+    .problem p {
+      font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+      opacity: 0.9;
+    }
+
+    /* THE MISSION */
+    .mission {
+      align-items: flex-end;
+      justify-content: center;
+      text-align: right;
+    }
+
+    .bg-image-2 {
+      position: absolute;
+      inset: 0;
+      /* Placeholder for Holographic UI */
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (401).jpg?auto=format&fit=crop&q=80');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.6;
+      z-index: 0;
+    }
+
+    .glass-card {
+      position: relative;
+      z-index: 2;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-right: 4px solid var(--c-accent-ai);
+      padding: 4rem;
+      max-width: 900px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 1rem 0 0 1rem;
+    }
+
+    .mission h2 {
+      font-family: var(--font-mono);
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .mission .highlight {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--c-accent-ai);
+      display: block;
+      margin-top: 1rem;
+      font-size: 1.5em;
+    }
+
+    /* THE TRANSFORMATION */
+    .transformation {
+      background: #080808;
+      padding: 4rem 2rem;
+    }
+
+    .bg-image-3 {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      /* Placeholder for Digital Brain */
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (402).jpg?auto=format&fit=crop&q=80');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .trans-header {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .trans-header h2 {
+      font-family: var(--font-mono);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      background: linear-gradient(to right, #fff, #999);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .grid-container {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 2rem;
+      border-radius: 12px;
+      transition: all 0.4s var(--ease-out);
+    }
+
+    .feature-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--c-accent-ai);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px -10px rgba(0, 240, 255, 0.2);
+    }
+
+    .feature-card h3 {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: var(--c-accent-ai);
+      text-transform: uppercase;
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    /* PHILOSOPHY */
+    .philosophy {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .bg-image-4 {
+      position: absolute;
+      inset: 0;
+      /* Placeholder for Sunset/Legacy */
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (403).jpg?auto=format&fit=crop&q=80');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.6;
+      z-index: 0;
+    }
+
+    .bg-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, #000 0%, transparent 80%);
+      z-index: 1;
+    }
+
+    .philo-content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+    }
+
+    .philo-content h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      color: var(--c-accent-gold);
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+
+    .philo-content p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .price-tag {
+      display: inline-block;
+      border: 1px solid var(--c-accent-gold);
+      padding: 0.5rem 1.5rem;
+      font-family: var(--font-mono);
+      letter-spacing: 2px;
+      margin-bottom: 2rem;
+    }
+
+    /* OUTRO */
+    .outro {
+      min-height: 50vh;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .outro h2 {
+      font-family: var(--font-mono);
+      font-size: clamp(2rem, 5vw, 4rem);
+      background: linear-gradient(to right, var(--c-accent-ai), #fff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .outro p {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      color: #666;
+      margin-top: 1rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .glass-card {
+        width: 100%;
+        border-right: none;
+        border-bottom: 4px solid var(--c-accent-ai);
+        border-radius: 1rem;
+      }
+
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NOISE FILTER -->
+  <svg class="svg-filter">
+    <filter id="noiseFilter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" stitchTiles="stitch" />
+    </filter>
+    <filter id="glitch">
+      <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+      <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </svg>
+  <div class="noise-overlay"></div>
+
+  <!-- 1. TITLE -->
+  <section class="hero">
+    <div class="reveal">
+      <h1>Your Unfair Advantage</h1>
+      <h1 style="color:transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.5);">In an Unfair Economy</h1>
+    </div>
+  </section>
+
+  <!-- 2. THE PROBLEM -->
+  <section class="problem">
+    <div class="bg-image-1"></div>
+    <div class="glitch-container reveal">
+      <h2>The Problem: The <br>"Complexity Tax"</h2>
+      <p>Wealthy families have an army of CPAs, advisors, and analysts who never sleep. They don’t just "save"; they
+        optimize. Meanwhile, the rest of us are drowning in spreadsheets, "panic-selling" during market dips, and losing
+        thousands of dollars to hidden tax leaks. <br><br>
+        The <strong>"Complexity Tax"</strong> is the price you pay for not being a billionaire.</p>
+    </div>
+  </section>
+
+  <!-- 3. THE MISSION -->
+  <section class="mission">
+    <div class="bg-image-2"></div>
+    <div class="glass-card reveal">
+      <h2>The Mission: <br>The Democratization of the Family Office</h2>
+      <p>Holistic AI was not built to be another "tracking app." It was built to be your <strong>Automated Financial
+          Command Center.</strong> We believe that sophisticated wealth management shouldn't be a luxury—it should be a
+        standard.</p>
+      <span class="highlight">We are here to give you back the one thing money usually takes away: <strong>Peace of
+          Mind.</strong></span>
+    </div>
+  </section>
+
+  <!-- 4. THE TRANSFORMATION -->
+  <section class="transformation">
+    <div class="bg-image-3"></div>
+    <div class="trans-header reveal">
+      <h2>The Transformation: From Anxious to Architect</h2>
+    </div>
+
+    <div class="grid-container">
+      <!-- Point 1 -->
+      <div class="feature-card reveal">
+        <h3>The Coach Who Actually Knows You</h3>
+        <p>Most AI is generic. Our AI Coach lives inside your data. It doesn't give "tips"; it provides context-aware
+          directives. When your cash flow spikes, it doesn't wait for you to ask—it tells you how to deploy it.</p>
+      </div>
+
+      <!-- Point 2 -->
+      <div class="feature-card reveal">
+        <h3>The End of "Tax Leakage"</h3>
+        <p>We’ve turned tax law into an algorithm. Our engine scans your life in real-time to find "harvesting"
+          opportunities and deductions before the window closes. It’s not a tool; it’s a proactive shield for your
+          earnings.</p>
+      </div>
+
+      <!-- Point 3 -->
+      <div class="feature-card reveal">
+        <h3>Kill the Panic Score</h3>
+        <p>We know that the biggest threat to your wealth isn't the market—it’s your own psychology. Our Behavioral Risk
+          engine detects when you’re about to make an emotional mistake and de-risks your portfolio automatically,
+          protecting you from yourself.</p>
+      </div>
+
+      <!-- Point 4 -->
+      <div class="feature-card reveal">
+        <h3>Predictive Certainty</h3>
+        <p>Stop guessing if you’ll have enough to retire. Using the same Monte Carlo simulations used by top-tier hedge
+          funds, we give you a "Probability of Success" score. If it turns red, we don't just warn you—we show you the
+          exact sliders to move to get back to green.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. THE PHILOSOPHY -->
+  <section class="philosophy">
+    <div class="bg-image-4"></div>
+    <div class="bg-gradient"></div>
+    <div class="philo-content reveal">
+      <h2>The Philosophy: <br>Intelligence Over Effort</h2>
+      <div class="price-tag">$29.99 / MONTH</div>
+      <p>You aren't buying software. You are hiring a 24/7 team of analysts, tax strategists, and portfolio managers.
+        You are moving from the chaos of "managing money" to the clarity of "building a legacy."</p>
+    </div>
+  </section>
+
+  <!-- 6. OUTRO -->
+  <section class="outro">
+    <div class="reveal">
+      <h2>Welcome to Holistic AI.</h2>
+      <p>The era of the "unmanaged" life is over.</p>
+    </div>
+  </section>
+
+</body>
+
+</html>

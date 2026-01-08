@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Limbo: The First Circle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0b0e;
+      --text-ghost: #e0e0e0;
+      --text-gold: #c5afa0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-ghost);
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+      margin: 0;
+    }
+
+    h1,
+    h2,
+    .cinzel {
+      font-family: 'Cinzel', serif;
+    }
+
+    /* SVG Filter Utilities */
+    .filter-fog {
+      filter: url(#fog-flow) brightness(0.8) contrast(1.2);
+    }
+
+    .text-spectral {
+      filter: url(#spectral-blur);
+    }
+
+    .text-liquid {
+      filter: url(#heat-wave);
+    }
+
+    /* Scrollytelling Layout */
+    .scene {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .parallax-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background-size: cover;
+      background-position: center;
+      will-change: transform;
+    }
+
+    .content-layer {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 800px;
+      padding: 2rem;
+      text-align: center;
+      mix-blend-mode: hard-light;
+    }
+
+    /* Animations */
+    .reveal-text {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal-text.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .name-item {
+      display: inline-block;
+      margin: 0 10px;
+      opacity: 0;
+      transform: scale(0.9) translateY(20px);
+      transition: all 0.8s ease-out;
+    }
+
+    .name-item.visible {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    /* Utility Overlay */
+    .overlay-grad {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(10, 11, 14, 0.3), rgba(10, 11, 14, 0.9), var(--bg-dark));
+      z-index: 1;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG Filters definition block -->
+  <svg style="display: none;">
+    <defs>
+      <!-- Mist/Fog Texture -->
+      <filter id="fog-flow" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="4" result="noise" />
+        <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.4 0" in="noise"
+          result="coloredNoise" />
+        <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="composite" />
+        <feBlend mode="screen" in="composite" in2="SourceGraphic" />
+      </filter>
+
+      <!-- Spectral Text Blur -->
+      <filter id="spectral-blur">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blur" />
+        <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+        <feComposite in="SourceGraphic" in2="goo" operator="over" />
+      </filter>
+
+      <!-- Heat Wave / Liquid Text -->
+      <filter id="heat-wave">
+        <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+        <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="4" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Scene 1: Intro -->
+  <section class="scene" id="intro">
+    <div class="parallax-layer filter-fog"
+      style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (320).jpg'); transform: scale(1.1);">
+    </div>
+    <div class="overlay-grad"></div>
+
+    <div class="content-layer">
+      <h1
+        class="text-5xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-gray-100 to-gray-500 mb-6 reveal-text text-liquid tracking-widest uppercase">
+        First Circle<br>
+        <span class="text-white font-serif italic text-4xl md:text-6xl lowercase tracking-normal">of Hell:</span><br>
+        Limbo
+      </h1>
+    </div>
+  </section>
+
+  <!-- Scene 2: The Context -->
+  <section class="scene bg-black">
+    <div class="content-layer">
+      <p class="text-2xl md:text-4xl leading-relaxed text-gray-400 font-light reveal-text max-w-2xl mx-auto">
+        <span class="text-6xl float-left mr-4 cinzel text-gold">I</span>n the book, limbo is where those who never knew
+        Christ exist.
+      </p>
+    </div>
+  </section>
+
+  <!-- Scene 3: The Encounter -->
+  <section class="scene" id="figures">
+    <div class="parallax-layer"
+      style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (321).jpg'); filter: brightness(0.6) sepia(0.3);">
+    </div>
+    <div class="overlay-grad"
+      style="background: linear-gradient(to top, var(--bg-dark) 10%, transparent 60%, var(--bg-dark) 95%);"></div>
+
+    <div class="content-layer">
+      <h2 class="text-3xl md:text-5xl mb-12 text-spectral reveal-text">
+        Dante encounters several historical figures,
+      </h2>
+
+      <div class="flex flex-wrap justify-center gap-6 md:gap-12 text-xl md:text-3xl cinzel text-gold tracking-widest">
+        <span class="name-item border-b border-gray-700 pb-2">including Ovid,</span>
+        <span class="name-item border-b border-gray-700 pb-2 delay-100">Homer,</span>
+        <span class="name-item border-b border-gray-700 pb-2 delay-200">Socrates,</span>
+        <span class="name-item border-b border-gray-700 pb-2 delay-300">Aristotle,</span>
+        <span class="name-item border-b border-gray-700 pb-2 delay-500">Julius Caesar,</span>
+      </div>
+
+      <p class="mt-16 text-xl text-gray-500 reveal-text floating">
+        and more, in this circle.
+      </p>
+    </div>
+  </section>
+
+  <script>
+    // Vanilla JS Intersection Observer for Kinetic Typography Effects
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.25
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // Special handling for the list items to trigger staggered animation
+          const names = entry.target.querySelectorAll('.name-item');
+          names.forEach((name, index) => {
+            setTimeout(() => {
+              name.classList.add('visible');
+            }, index * 200);
+          });
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal-text').forEach(el => observer.observe(el));
+    document.querySelectorAll('.scene').forEach(el => observer.observe(el)); // To trigger nested lists
+  </script>
+
+</body>
+
+</html>

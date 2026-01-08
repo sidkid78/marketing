@@ -210,7 +210,7 @@ export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, 
                       )}
                     </div>
 
-                    <p className="text-sm italic bg-gray-50 p-3 rounded-md text-neutral mb-3">"{idea.caption}"</p>
+                    <p className="text-sm italic bg-gray-50 p-3 rounded-md text-gray-700 mb-3">"{idea.caption}"</p>
                     <div className="flex justify-between items-center mb-4">
                       <span className="text-white bg-accent font-bold text-xs px-3 py-1 rounded-full">{idea.cta}</span>
                       <div className="flex flex-wrap gap-1">

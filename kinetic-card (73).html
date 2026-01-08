@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Texas Gold Exchange - A Story of Value</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+
+        /* Base Styles */
+        :root {
+            --gold-primary: #D4AF37;
+            --gold-light: #FCE205;
+            --gold-dark: #AA6C39;
+            --navy-deep: #050b14;
+            --paper-texture: #f4f1ea;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--navy-deep);
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* SVG Filters Class Utility */
+        .texture-grain {
+            filter: url('#grain');
+        }
+
+        /* Text Gradient Effect (Gold) */
+        .text-gold-gradient {
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: shine 6s linear infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* Animations */
+        .fade-in-up {
+            animation: fadeInUp 1s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-500 {
+            animation-delay: 0.5s;
+        }
+
+        .delay-700 {
+            animation-delay: 0.7s;
+        }
+
+        /* Image Styling */
+        .image-mask-vignette {
+            mask-image: radial-gradient(circle, black 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle, black 40%, transparent 100%);
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Section specific transitions */
+        .scrolly-text {
+            transition: color 0.5s ease;
+        }
+
+        .scrolly-text:hover {
+            color: var(--gold-light);
+        }
+    </style>
+</head>
+
+<body class="relative antialiased selection:bg-yellow-600 selection:text-white">
+
+    <!-- SVG Filters Definition -->
+    <svg class="hidden">
+        <defs>
+            <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Fixed Grain Overlay -->
+    <div class="fixed inset-0 pointer-events-none opacity-40 mix-blend-overlay z-50 w-full h-full texture-grain"></div>
+
+    <!-- HERO SECTION -->
+    <section class="min-h-screen flex flex-col items-center justify-center relative p-6 md:p-12 overflow-hidden">
+        <div class="absolute inset-0 z-0 opacity-30">
+            <!-- Background placeholder for visual depth -->
+            <div
+                class="w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-800 to-black">
+            </div>
+        </div>
+
+        <div class="z-10 max-w-4xl text-center space-y-8">
+            <p class="text-sm md:text-base tracking-[0.2em] uppercase text-slate-400 fade-in-up">The Value of Memories
+            </p>
+            <h1 class="text-5xl md:text-7xl font-bold leading-tight fade-in-up delay-300">
+                Your valuables have a <span class="text-gold-gradient italic">story</span>.
+            </h1>
+            <h2 class="text-2xl md:text-4xl text-slate-300 font-light fade-in-up delay-500">
+                We’re here to ensure they have a <span class="text-white font-medium">future</span>.
+            </h2>
+            <div class="w-24 h-1 bg-yellow-600 mx-auto rounded-full mt-8 fade-in-up delay-700"></div>
+        </div>
+    </section>
+
+    <!-- THE CONFLICT (Image 1) -->
+    <section class="min-h-screen grid grid-cols-1 md:grid-cols-2 gap-0">
+        <div class="relative h-[50vh] md:h-auto overflow-hidden">
+            <!-- Image 1: Jewelry Box -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (304).jpg" alt="Gold jewelry in a drawer"
+                class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000 ease-in-out image-mask-vignette scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent md:bg-gradient-to-r"></div>
+        </div>
+        <div class="flex items-center justify-center p-8 md:p-16 bg-[#080f1e]">
+            <div class="max-w-md space-y-6">
+                <p class="text-lg md:text-xl text-slate-300 leading-relaxed">
+                    Most people walk into a gold exchange with a mix of two things: a <span
+                        class="text-white border-b border-yellow-700/50">drawer full of items</span> they no longer use,
+                    and a <strong class="text-red-300/80 font-normal">knot of anxiety</strong> in their stomach.
+                </p>
+                <blockquote class="italic border-l-2 border-yellow-600 pl-6 py-2 text-slate-400 font-serif text-xl">
+                    “Am I getting a fair price? Can I trust the person behind the counter? Is this the right move?”
+                </blockquote>
+            </div>
+        </div>
+    </section>
+
+    <!-- EMPATHY & LEGACY -->
+    <section class="py-24 px-6 md:px-12 bg-slate-900 relative">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+            <div class="md:col-span-7 space-y-8">
+                <h3 class="text-3xl md:text-5xl text-gold-gradient">We see the weight of "what if."</h3>
+                <p class="text-slate-300 text-lg leading-relaxed">
+                    At Central Texas Gold Exchange, we don’t just see gold, silver, or diamonds. We see the class ring
+                    that’s sat in a box for a decade. We see the broken necklace that holds value but no longer holds a
+                    purpose.
+                </p>
+
+                <div class="mt-12 p-8 border border-yellow-900/30 bg-slate-800/50 rounded-lg">
+                    <h4 class="text-2xl text-white mb-4 font-serif">A Legacy of Integrity, Not Just Transactions.</h4>
+                    <p class="text-slate-400 leading-relaxed">
+                        As a family-owned pillar of the Central Texas community for over 20 years, we’ve seen the
+                        "big-box" buyers come and go. We chose a different path. We built our business on the belief
+                        that selling your valuables should feel like a <span class="text-yellow-400">win</span>, not a
+                        compromise.
+                    </p>
+                </div>
+            </div>
+            <!-- Decorative Typographic Element -->
+            <div class="hidden md:block md:col-span-5 text-right opacity-10">
+                <span class="text-[12rem] font-serif leading-none font-bold text-white block -mr-16">20</span>
+                <span class="text-4xl uppercase tracking-widest mr-4">Years</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERT EYE (Image 2 - Parallax) -->
+    <section class="relative min-h-screen flex items-center">
+        <!-- Image 2 Background Fixed -->
+        <div class="absolute inset-0 w-full h-full">
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (305).jpg"
+                alt="Jeweler examining gold with loupe" class="w-full h-full object-cover opacity-40">
+            <div class="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2">
+            <div class="bg-black/40 backdrop-blur-sm p-10 md:p-14 border-l-4 border-yellow-500">
+                <h3 class="text-4xl md:text-5xl mb-6 text-white">The Expert Eye.</h3>
+                <p class="text-lg text-slate-200 mb-6">
+                    When you sit down with our professionals, you aren't just getting a quote; you’re getting an <span
+                        class="italic font-bold text-yellow-200">education</span>.
+                </p>
+                <p class="text-slate-300 leading-relaxed">
+                    We take the time to test, inspect, and explain the "why" behind every dollar offered. Whether it's
+                    dental gold, silverware, or a family heirloom, we treat your items with the respect they—and
+                    you—deserve.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROMISE & INVENTORY (Image 4 & 3) -->
+    <section class="py-20 bg-slate-950">
+        <div class="max-w-6xl mx-auto px-6">
+
+            <!-- Walk Away Promise -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-24">
+                <div
+                    class="order-2 md:order-1 relative rounded-xl overflow-hidden shadow-2xl shadow-yellow-900/10 group">
+                    <!-- Image 4: Cash/Exchange -->
+                    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (306).jpg" alt="Cash transaction"
+                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                    <div class="absolute inset-0 bg-yellow-900/20 mix-blend-overlay"></div>
+                </div>
+                <div class="order-1 md:order-2 space-y-6">
+                    <h3 class="text-3xl md:text-4xl text-white font-serif">The "Walk-Away" Promise.</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        We want you to feel 100% satisfied the moment you walk out our doors. That’s why we provide
+                        <span class="text-green-400 font-bold">cash on the spot</span>—no waiting, no "checks in the
+                        mail," and no second-guessing.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Inventory List -->
+            <div class="relative rounded-3xl overflow-hidden">
+                <!-- Image 3 Background: Flat Lay -->
+                <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (307).jpg"
+                    class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Coins and bars">
+
+                <div class="relative z-10 bg-black/60 p-10 md:p-20 text-center">
+                    <h3 class="text-3xl md:text-5xl text-gold-gradient mb-12 font-serif">What’s Hiding in Your Jewelry
+                        Box?</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Card 1 -->
+                        <div
+                            class="glass-card p-8 rounded-lg text-left hover:bg-white/5 transition-colors duration-300">
+                            <div class="text-yellow-500 mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
+                            </div>
+                            <h4 class="text-xl text-white font-bold mb-2">The Forgotten</h4>
+                            <p class="text-slate-300 text-sm">Broken chains, single earrings, and dental gold.</p>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div
+                            class="glass-card p-8 rounded-lg text-left hover:bg-white/5 transition-colors duration-300">
+                            <div class="text-yellow-500 mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <h4 class="text-xl text-white font-bold mb-2">The Past</h4>
+                            <p class="text-slate-300 text-sm">Class rings and vintage silverware.</p>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div
+                            class="glass-card p-8 rounded-lg text-left hover:bg-white/5 transition-colors duration-300">
+                            <div class="text-yellow-500 mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                </svg>
+                            </div>
+                            <h4 class="text-xl text-white font-bold mb-2">The Portfolio</h4>
+                            <p class="text-slate-300 text-sm">Bullion, bars, and pre-1964 silver coins.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CALL TO ACTION & FOOTER -->
+    <footer class="bg-[#050b14] pt-24 pb-12 px-6 border-t border-slate-800">
+        <div class="max-w-4xl mx-auto text-center space-y-10">
+            <p class="text-2xl md:text-3xl text-slate-200 font-serif leading-snug">
+                Don't let your assets gather dust. Bring them to the family that Central Texas has trusted for two
+                decades.
+                <br><span class="text-gold-gradient block mt-4">Turn your "unwanted" into the capital you need for
+                    what’s next.</span>
+            </p>
+
+            <div class="py-12">
+                <h2 class="text-xl tracking-[0.3em] uppercase text-white font-light">
+                    Central Texas Gold Exchange
+                </h2>
+                <div
+                    class="flex justify-center items-center space-x-4 mt-6 text-sm text-yellow-500 font-bold uppercase tracking-widest">
+                    <span>Local</span>
+                    <span class="text-slate-600">•</span>
+                    <span>Family</span>
+                    <span class="text-slate-600">•</span>
+                    <span>Fair</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

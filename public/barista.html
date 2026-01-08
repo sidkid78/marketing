@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Barista of Justice</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400;1,700&family=Inter:wght@300;400;800&display=swap');
+
+    :root {
+      --c-abyss: #0f172a;
+      --c-wolves: #1c1917;
+      --c-neon: #ccff00;
+      --c-gold: #d4af37;
+      --c-sand: #fdfbf7;
+      --c-text-main: #f1f5f9;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--c-abyss);
+      color: var(--c-text-main);
+      overflow-x: hidden;
+      margin: 0;
+    }
+
+    /* Typography Classes */
+    .editorial-serif {
+      font-family: 'Cormorant Garmond', serif;
+    }
+
+    .speaker-1 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: rgba(255, 255, 255, 0.6);
+      border-left: 1px solid rgba(255, 255, 255, 0.3);
+      padding-left: 1rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .speaker-2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      line-height: 1.1;
+      font-weight: 600;
+    }
+
+    /* SVG Filters & Textures */
+    .grain-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.07;
+      filter: url(#grain);
+    }
+
+    .text-distort {
+      filter: url(#displacement);
+      display: inline-block;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .glass-card-light {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      color: #1a1a1a;
+    }
+
+    /* Scrollytelling Mechanics */
+    .scene {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    .scene-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      transition: transform 1s ease-out;
+    }
+
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    /* Animation Utilities */
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .text-highlight {
+      background: linear-gradient(120deg, transparent 0%, transparent 6%, var(--c-neon) 6%, var(--c-neon) 100%);
+      background-size: 100% 40%;
+      background-repeat: no-repeat;
+      background-position: 0 90%;
+      color: black;
+      padding: 0 5px;
+    }
+
+    /* Image Specific Treatments */
+    .vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, transparent 20%, var(--c-abyss) 120%);
+      z-index: 1;
+    }
+
+    .blue-tint {
+      filter: sepia(100%) hue-rotate(190deg) saturate(150%) contrast(120%) brightness(60%);
+    }
+
+    .gold-tint {
+      filter: contrast(110%) brightness(110%);
+    }
+
+    /* Start Overlay */
+    .start-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--c-abyss);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      cursor: pointer;
+      transition: opacity 0.5s ease;
+    }
+
+    .start-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .start-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      color: var(--c-gold);
+      background: transparent;
+      border: 2px solid var(--c-gold);
+      padding: 1.5rem 4rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .start-btn:hover {
+      background: var(--c-gold);
+      color: var(--c-abyss);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- START OVERLAY -->
+  <div class="start-overlay" id="start-overlay">
+    <button class="start-btn" id="start-btn">▶ Begin the Story</button>
+  </div>
+
+  <!-- Audio narration -->
+  <audio id="barista-audio" preload="auto">
+    <source src="audio/barista.wav" type="audio/wav">
+  </audio>
+
+  <!-- Global SVG Filters -->
+  <svg class="hidden" width="0" height="0">
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.80" numOctaves="4" stitchTiles="stitch" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 -1.5 1.5" />
+    </filter>
+    <filter id="displacement">
+      <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+      <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </svg>
+
+  <div class="grain-overlay"></div>
+
+  <!-- SCENE 1: THE ABYSS -->
+  <section class="scene" id="scene-abyss">
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (40).jpg?q=80&w=2070&auto=format&fit=crop"
+      alt="Dark bathroom abyss" class="scene-bg blue-tint" style="transform: scale(1.1);">
+    <div class="vignette"></div>
+
+    <div class="content-wrapper space-y-24">
+      <!-- Intro Question -->
+      <div class="glass-card p-8 rounded-lg animate-float">
+        <span class="speaker-1">Speaker 1</span>
+        <p class="text-lg leading-relaxed text-gray-300">
+          You’ve often said that the home renovation industry isn't just about budgets and timelines—it’s about
+          survival. What happened that made the stakes so personal for you?
+        </p>
+      </div>
+
+      <!-- The Answer -->
+      <div class="pl-4 md:pl-12">
+        <span class="speaker-2 text-white block mb-6">
+          Girl listen,
+        </span>
+        <p class="editorial-serif text-3xl md:text-5xl text-gray-200 leading-tight mb-8">
+          In 2024, I watched my grandmother stand at the edge of her own bathtub like she was staring into an <span
+            class="text-distort text-blue-200">abyss</span>.
+        </p>
+        <p class="font-sans text-sm tracking-widest uppercase text-blue-300 opacity-80 mb-12">
+          And not the fun kind of abyss, like a bottomless mimosa brunch. The scary kind.
+        </p>
+        <p class="editorial-serif text-2xl md:text-4xl">
+          I realized then that in the home-mod industry, a 'bad negotiation' isn’t a line item—it’s a <span
+            class="italic text-red-400">shattered hip</span>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 2: THE WOLVES -->
+  <section class="scene bg-neutral-900" id="scene-wolves">
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (43).jpg?q=80&w=2070&auto=format&fit=crop"
+      alt="Boardroom wolves" class="scene-bg grayscale opacity-20 mix-blend-overlay">
+
+    <div class="content-wrapper">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div>
+          <span class="speaker-1">Speaker 1</span>
+          <p class="text-gray-400 mb-8">
+            That is a visceral image. It sounds like you realized the cost of a bad contractor isn't just financial,
+            it's physical. Is that the core philosophy behind the founding of HOMEase?
+          </p>
+        </div>
+
+        <div class="glass-card p-8 border-l-4 border-l-yellow-600">
+          <p class="speaker-2 text-xl">
+            girl let me tell you, it’s the moment a senior loses their independence forever because a contractor
+            prioritized his <span class="line-through decoration-red-500 decoration-2">margin</span> over her <span
+              class="text-white font-bold">safety</span>.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-24 text-center">
+        <h2 class="editorial-serif text-4xl md:text-6xl text-white mb-6">
+          I saw the <span class="text-red-500 font-black tracking-tighter">WOLVES</span> circling,
+        </h2>
+        <p class="text-xl font-sans font-light">
+          and I refused to let my family, or yours, be the prey. <br>
+          <span class="text-xs tracking-widest block mt-4 text-pink-300 font-bold uppercase">Damn I need to get my nails
+            did.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 3: BARISTA OF JUSTICE -->
+  <section class="scene bg-stone-900" id="scene-justice">
+    <div class="absolute inset-0 bg-[url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (34).jpg')] opacity-20">
+    </div>
+
+    <div class="content-wrapper space-y-16">
+      <div class="border-b border-stone-700 pb-8">
+        <span class="speaker-1">Speaker 1</span>
+        <p class="text-stone-300 max-w-lg">
+          You call them "wolves," which implies intent. You have a background in this sector—you’ve seen the other side
+          of the table. What did you see inside the industry that the average homeowner misses?
+        </p>
+      </div>
+
+      <div>
+        <p class="speaker-2 text-stone-100">
+          Mm girl, for years, I sat in the boardrooms of the Home Builders Association. I saw how the 'sausage was
+          made.'
+          I watched leaders obsess over profitability while ignoring the terrifying reality of a 70-year-old navigating
+          a construction zone alone.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
+        <div class="md:col-span-3 glass-card p-6 rounded-none border border-stone-600">
+          <p class="font-sans text-sm text-stone-400 mb-4">CONFESSION:</p>
+          <p class="editorial-serif text-2xl italic">
+            "I realized my 'technical background' wasn't for building companies...mostly because I don't know what a
+            phillips head screwdriver is, sounds like a drink I’d order...but it was for building a shield."
+          </p>
+        </div>
+        <div class="md:col-span-2 text-right">
+          <p class="text-xs uppercase tracking-widest text-stone-500">Role:</p>
+          <h3 class="text-4xl font-black text-white transform -rotate-2 mix-blend-difference">
+            BARISTA<br>OF JUSTICE
+          </h3>
+        </div>
+      </div>
+
+      <div class="bg-stone-800 p-6 italic text-stone-300 font-serif text-lg leading-loose">
+        I don’t just vet contractors—I hunt for the few remaining artisans who still believe a stranger’s home is sacred
+        ground. Actually, I just served coffee, but I overheard a lot mmm hmmm. You think those CEOs were jittery
+        because of the caffeine? No, baby, that was my aura judging their ethics. One wrong move and—oops—enjoy your
+        decaf, Chad.
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 4: NEON VESTS -->
+  <section class="scene bg-black" id="scene-vests">
+    <div class="content-wrapper">
+      <div class="mb-12">
+        <span class="speaker-1">Speaker 1</span>
+        <p class="text-gray-500">
+          So, for the listeners trying to understand the service: Are you offering a project management tool, or is this
+          a different category entirely?
+        </p>
+      </div>
+
+      <div class="relative">
+        <!-- Decorative Vest Accent -->
+        <div class="absolute -left-4 top-0 w-2 h-full bg-[var(--c-neon)]"></div>
+
+        <div class="pl-8">
+          <p class="speaker-2 text-3xl md:text-5xl mb-8">
+            I’m not selling software or 'project management.' <span class="text-white font-black">I am reclaiming
+              dignity.</span>
+          </p>
+          <p class="text-xl leading-relaxed text-gray-300">
+            I am filtering out the predators in contractor vests—and honey, can we talk about the vests?
+            <span class="bg-[var(--c-neon)] text-black px-2 font-bold">Neon yellow is nobody’s color.</span>
+          </p>
+          <p class="mt-6 font-serif italic text-2xl">
+            "If you’re gonna scam my grandma, at least accessorize correctly. I am elevating the craftsmen who treat
+            your mother’s bathroom like a sanctuary." <span class="text-sm not-italic font-sans opacity-50">ya
+              heard?</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 5: SANCTUARY -->
+  <section class="scene bg-[#fdfbf7] text-gray-900" id="scene-sanctuary">
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (37).jpg?q=80&w=2070&auto=format&fit=crop"
+      alt="Sanctuary Bathroom" class="scene-bg opacity-40 gold-tint">
+
+    <div class="content-wrapper pt-20">
+      <div class="glass-card-light p-10 md:p-16 rounded-xl shadow-2xl">
+        <div class="mb-12 border-b border-gray-300 pb-6">
+          <span class="speaker-1 text-gray-500 border-gray-400">Speaker 1</span>
+          <p class="text-gray-700 font-medium">
+            And ultimately, what is the goal for the families you protect?
+          </p>
+        </div>
+
+        <div class="text-center">
+          <span class="speaker-2 block mb-6 text-xl md:text-2xl text-gray-600">
+            Because everyone deserves to age in the one place they still feel powerful:
+          </span>
+          <h1 class="editorial-serif text-5xl md:text-7xl mb-8 text-gray-900 tracking-tight">
+            A home that isn't a booby trap, but a <span class="text-amber-600 italic">fortress</span>.
+          </h1>
+          <p class="font-sans font-light text-lg mt-8 text-gray-600">
+            And maybe a heated towel rack. Is that too much to ask? <br>
+            <strong class="font-bold text-gray-900 mt-2 block">I don't think so.</strong>
+          </p>
+        </div>
+      </div>
+
+      <footer class="text-center mt-20 pb-10 opacity-40 font-serif">
+        <p>Kinetic Typography Design © 2024</p>
+      </footer>
+    </div>
+  </section>
+
+</body>
+
+<script>
+  const startOverlay = document.getElementById('start-overlay');
+  const startBtn = document.getElementById('start-btn');
+  const audio = document.getElementById('barista-audio');
+  const firstScene = document.getElementById('scene-abyss');
+
+  startBtn.addEventListener('click', function () {
+    startOverlay.classList.add('hidden');
+
+    setTimeout(() => {
+      startOverlay.style.display = 'none';
+    }, 500);
+
+    setTimeout(() => {
+      firstScene.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      setTimeout(() => {
+        audio.play().catch(err => {
+          console.log('Audio play prevented:', err);
+        });
+      }, 800);
+    }, 600);
+  });
+</script>
+
+</html>

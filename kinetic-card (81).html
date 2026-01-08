@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dante's Inferno</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=IM+Fell+English:ital@0;1&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --c-limbo: #e0e0e0;
+            --c-lust: #4a1c1c;
+            --c-gluttony: #2e2b25;
+            --c-greed: #85691d;
+            --c-anger: #590d0d;
+            --c-heresy: #ff4500;
+            --c-violence: #2b0505;
+            --c-fraud: #1a1110;
+            --c-treachery: #0a1a2e;
+            --c-center: #000000
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background: black;
+            font-family: 'IM Fell English', serif;
+            color: #f0f0f0
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase
+        }
+
+        .sticky-wrapper {
+            position: relative;
+            height: 200vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: start
+        }
+
+        .sticky-bg {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            z-index: 0
+        }
+
+        .sticky-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+            transition: transform 10s ease-out
+        }
+
+        .sticky-wrapper:hover .sticky-bg img {
+            transform: scale(1.1)
+        }
+
+        .content-block {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.8) 20%, rgba(0, 0, 0, 0.9) 80%, transparent);
+            text-shadow: 0 2px 10px black
+        }
+
+        .text-sculpt {
+            font-size: clamp(2rem, 5vw, 5rem);
+            line-height: 0.9;
+            margin-bottom: 2rem;
+            letter-spacing: -0.05em;
+            mix-blend-mode: hard-light
+        }
+
+        .drop-cap::first-letter {
+            font-size: 300%;
+            float: left;
+            line-height: 0.8;
+            margin-right: 0.1em;
+            font-family: 'Cinzel', serif
+        }
+
+        .svg-filters {
+            height: 0;
+            width: 0;
+            position: absolute
+        }
+
+        /* Custom Classes */
+        .mist-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.1);
+            filter: url(#noise-mist);
+            pointer-events: none;
+            z-index: 5
+        }
+
+        .heat-text {
+            filter: url(#heat-wave);
+            animation: heat-shift 4s infinite linear
+        }
+
+        .ice-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(100, 200, 255, 0.05);
+            filter: url(#ice-fracture);
+            pointer-events: none;
+            z-index: 5;
+            mix-blend-mode: overlay
+        }
+
+        @keyframes heat-shift {
+            0% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-2px)
+            }
+
+            100% {
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-10px)
+            }
+        }
+
+        .intro-screen {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle, rgba(50, 50, 50, 1) 0%, rgba(0, 0, 0, 1) 100%)
+        }
+
+        .shaking-text:hover {
+            animation: shake 0.5s infinite
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translate(1px, 1px) rotate(0deg)
+            }
+
+            10% {
+                transform: translate(-1px, -2px) rotate(-1deg)
+            }
+
+            20% {
+                transform: translate(-3px, 0px) rotate(1deg)
+            }
+
+            30% {
+                transform: translate(3px, 2px) rotate(0deg)
+            }
+
+            40% {
+                transform: translate(1px, -1px) rotate(1deg)
+            }
+
+            50% {
+                transform: translate(-1px, 2px) rotate(-1deg)
+            }
+
+            60% {
+                transform: translate(-3px, 1px) rotate(0deg)
+            }
+
+            70% {
+                transform: translate(3px, 1px) rotate(-1deg)
+            }
+
+            80% {
+                transform: translate(-1px, -1px) rotate(1deg)
+            }
+
+            90% {
+                transform: translate(1px, 2px) rotate(0deg)
+            }
+
+            100% {
+                transform: translate(1px, -2px) rotate(-1deg)
+            }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 4px
+        }
+    </style>
+</head>
+
+<body><!-- SVG Filters Definition --><svg class="svg-filters">
+        <defs>
+            <filter id="noise-mist">
+                <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="5" result="noise" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.4 0" />
+            </filter>
+            <filter id="heat-wave">
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="3" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+            <filter id="ice-fracture">
+                <feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="2" result="noise" />
+                <feColorMatrix in="noise" type="luminanceToAlpha" result="alpha" />
+                <feDiffuseLighting in="alpha" lighting-color="#aaddff" surfaceScale="2">
+                    <feDistantLight azimuth="45" elevation="60" />
+                </feDiffuseLighting>
+                <feComposite operator="in" in2="SourceGraphic" />
+            </filter>
+            <filter id="text-erode">
+                <feMorphology operator="erode" radius="0.5" />
+            </filter>
+        </defs>
+    </svg><!-- Intro -->
+    <section class="intro-screen">
+        <h1 class="text-6xl md:text-9xl text-white tracking-widest mb-4 opacity-0 animate-[float_4s_ease-in-out_infinite]"
+            style="animation-delay:0.5s; opacity:1">Dante's<br><span class="text-red-700">Inferno</span></h1>
+        <p class="text-xl md:text-2xl text-gray-400 max-w-2xl px-4">9 Circles of Hell</p>
+        <div class="mt-12 animate-bounce text-gray-500">↓ Descend</div>
+    </section><!-- Preamble -->
+    <section class="py-24 px-6 bg-neutral-900 text-center">
+        <div class="max-w-3xl mx-auto">
+            <p class="text-xl md:text-2xl leading-relaxed text-gray-300">The nine circles of hell, as depicted in
+                Dante's Inferno, represent a gradual descent into increasing levels of sin and punishment—from the first
+                circle, Limbo, to the ninth circle, which is reserved for the worst sinners. Each level represents
+                various types of moral wrongdoing and the corresponding punishment.</p>
+        </div>
+    </section><!-- 1: Limbo (Image 1) -->
+    <div class="sticky-wrapper" style="background: var(--c-limbo);">
+        <div class="sticky-bg">
+            <div class="mist-overlay"></div><img
+                src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80&w=2560&auto=format&fit=crop"
+                alt="Atmospheric Mist Placeholder" class="hidden"><!-- Using provided image --><img
+                src="https://res.cloudinary.com/dz209s6jk/image/upload/v1700000000/DesignChallenge/limbo_mist_ruins.jpg"
+                style="display:none"><!-- Fallback if URL invalid, assuming visual based on prompt description --><img
+                src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (331).jpg" alt="Limbo"
+                class="filter grayscale brightness-50 sepia-[.3]">
+        </div>
+        <div class="content-block mt-[40vh]">
+            <h2 class="text-sculpt text-gray-800">First Circle of Hell: Limbo</h2>
+            <div class="glass-card text-gray-900">
+                <p class="text-lg leading-relaxed drop-cap">In the book, limbo is where those who never knew Christ
+                    exist. Dante encounters several historical figures, including ​Ovid, Homer, Socrates, Aristotle,
+                    Julius Caesar, and more, in this circle.</p>
+            </div>
+        </div>
+    </div><!-- 2: Lust -->
+    <section class="py-32 px-6 relative overflow-hidden bg-[var(--c-lust)]">
+        <div class="absolute inset-0 opacity-20 pointer-events-none"
+            style="filter:url(#heat-wave); background:radial-gradient(circle at center, #ff0000, transparent);"></div>
+        <div class="max-w-4xl mx-auto relative z-10">
+            <h2 class="text-5xl md:text-7xl text-red-200 mb-12 italic" style="transform: skewX(-15deg);">Second Circle
+                of Hell: Lust</h2>
+            <p class="text-2xl text-red-100 font-light">In the second circle, a stormy and dark realm, Dante encounters
+                Achilles, Paris, Tristan, Cleopatra, and Dido, among others.</p>
+        </div>
+    </section><!-- 3: Gluttony -->
+    <section class="py-32 px-6 bg-[var(--c-gluttony)] relative">
+        <div
+            class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0JyBoZWlnaHQ9JzQnPjxyZWN0IHdpZHRoPSc0JyBoZWlnaHQ9JzQnIGZpbGw9JyMxYTExMTAnLz48Y2lyY2xlIGN4PScyJyBjeT0nMicgcj0nMScgZmlsbD0nIzM1MzUzNScvPjwvc3ZnPg==')] opacity-50">
+        </div>
+        <div class="max-w-4xl mx-auto text-center border-y-4 border-yellow-900 py-12">
+            <h2 class="text-6xl text-[#8b4513] mb-8 font-black uppercase tracking-tighter">Third Circle of Hell:
+                Gluttony</h2>
+            <p class="text-xl text-yellow-100/80 leading-loose">The third circle is reserved for those who overindulge.
+                Dante encounters ordinary people here, not characters from epic poems or gods from mythology. The author
+                Boccaccio took one of these characters, Ciacco, and incorporated him into his 14th-century collection of
+                tales called "The Decameron."</p>
+        </div>
+    </section><!-- 4 & 5: Greed & Anger -->
+    <section class="grid grid-cols-1 md:grid-cols-2"><!-- Greed -->
+        <div class="bg-[var(--c-greed)] p-12 flex flex-col justify-center border-r border-black">
+            <h2 class="text-4xl text-yellow-200 mb-6 font-serif">Fourth Circle of Hell: Greed</h2>
+            <p class="text-yellow-100/90 text-justify mb-4">Dante encounters more ordinary people in the fourth circle
+                but also the guardian of the circle, Pluto, the mythological king of the underworld. This circle is
+                reserved for people who hoarded or squandered their money, but Dante and Virgil do not directly interact
+                with any of its inhabitants.</p>
+            <p class="text-yellow-100/70 text-sm italic border-l-2 border-yellow-400 pl-4">This is the first time they
+                pass through a circle without speaking to anyone, a commentary on Dante’s opinion of greed as a higher
+                sin.</p>
+        </div><!-- Anger -->
+        <div class="bg-[var(--c-anger)] p-12 flex flex-col justify-center overflow-hidden">
+            <h2 class="text-4xl text-red-500 mb-6 shaking-text cursor-default">Fifth Circle of Hell: Anger</h2>
+            <p class="text-red-200 mb-6 relative z-10">Dante and Virgil are threatened by the Furies when they try to
+                enter through the walls of Dis (Satan).</p>
+            <p class="text-red-300/80 p-4 border border-red-800 bg-red-950/30">This is a further progression in Dante’s
+                evaluation of the nature of sin; he also begins to question himself and his own life, realizing his
+                actions and nature could lead him to this permanent torture.</p>
+        </div>
+    </section><!-- 6: Heresy -->
+    <section class="py-32 px-6 bg-black relative">
+        <div class="absolute inset-0 bg-gradient-to-t from-[var(--c-heresy)] via-black to-black opacity-40"></div>
+        <div class="max-w-3xl mx-auto relative z-10">
+            <h2 class="text-6xl text-orange-600 mb-8 heat-text text-center">Sixth Circle of Hell: Heresy</h2>
+            <p class="text-xl text-gray-300 columns-1 md:columns-2 gap-8">Representing the rejection of religious and
+                political norms, the sixth circle leads Dante to Farinata degli Uberti, a military leader and aristocrat
+                who tried to win the Italian throne and was convicted posthumously of heresy in 1283. Dante also meets
+                Epicurus, Pope Anastasius II, and Emperor Frederick II.</p>
+        </div>
+    </section><!-- 7: Violence (Image 2) -->
+    <div class="sticky-wrapper" style="background: var(--c-violence);">
+        <div class="sticky-bg"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (332).jpg"
+                alt="Violent Forest and Fire" class="brightness-75 contrast-125 sepia-[.5] saturate-200"></div>
+        <div class="content-block mt-[20vh] bg-red-950/80">
+            <h2 class="text-sculpt text-red-500">Seventh Circle of Hell: Violence</h2>
+            <div class="space-y-6 text-red-100">
+                <p>This is the first circle to be further segmented into sub-circles or rings. There are three of
+                    them—the outer, middle, and inner rings—housing different types of violent criminals.</p>
+                <p>The first are those who were violent against people and property, such as Attila the Hun. Centaurs
+                    guard this outer ring and shoot its inhabitants with arrows.</p>
+                <p>The middle ring consists of those who commit violence against themselves, such as suicide. These
+                    sinners are perpetually eaten by harpies.</p>
+                <hr class="border-red-800 opacity-50">
+                <p>Finally, the inner ring is made up of blasphemers, or those who are violent against God and nature.
+                    One of these sinners is Brunetto Latini, a sodomite, who was Dante’s mentor. (Dante speaks kindly to
+                    him.) The usurers are also here, as are those who blasphemed not just against God but also the gods,
+                    such as Capaneus, who blasphemed against Zeus.</p>
+            </div>
+        </div>
+    </div><!-- 8: Fraud (Image 3) -->
+    <div class="sticky-wrapper" style="height:250vh; background: var(--c-fraud);">
+        <div class="sticky-bg"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (333).jpg"
+                alt="Bridges of Malebolge" class="brightness-50 grayscale contrast-150"></div>
+        <div class="content-block mt-[20vh]">
+            <h2 class="text-sculpt text-purple-200">Eighth Circle of Hell: Fraud</h2>
+            <div class="glass-card mb-8">
+                <p class="text-lg text-purple-50">This circle is distinguished from its predecessors by being made up of
+                    those who consciously and willingly commit fraud. Within the eighth circle is another called the
+                    Malebolge (“Evil Pockets”), which houses ten separate bolgias (ditches).</p>
+            </div>
+            <div
+                class="grid grid-cols-2 gap-4 text-xs md:text-sm uppercase tracking-widest text-gray-400 mb-8 p-4 border border-gray-700">
+                <div class="col-span-2 text-center border-b border-gray-700 pb-2 mb-2">The Inhabitants of the Ditches
+                </div>
+                <div>Panderers</div>
+                <div>Seducers</div>
+                <div>Flatterers</div>
+                <div>Simoniacs</div>
+                <div>Sorcerers</div>
+                <div>Barrators</div>
+                <div>Schismatics</div>
+                <div>Alchemists</div>
+            </div>
+            <p class="text-gray-300 italic">Each bolgia is guarded by different demons, and the inhabitants suffer
+                different punishments, such as the simoniacs, who stand head-first in stone bowls and endure flames upon
+                their feet.</p>
+        </div>
+    </div><!-- 9: Treachery (Image 4 - Part A) -->
+    <div class="sticky-wrapper" style="background: var(--c-treachery);">
+        <div class="sticky-bg">
+            <div class="ice-overlay"></div><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (334).jpg"
+                alt="Frozen Lake" class="brightness-90 contrast-125 hue-rotate-15">
+        </div>
+        <div class="content-block mt-[30vh]">
+            <h2 class="text-sculpt text-cyan-100" style="text-shadow: 0 0 10px cyan;">Ninth Circle of Hell: Treachery
+            </h2>
+            <p class="text-cyan-50 text-xl leading-relaxed">The ninth circle, the deepest, is where Satan resides. As
+                with the last two circles, this one is further divided, into four rounds.</p>
+            <div class="mt-8 space-y-4">
+                <div class="border-l-4 border-cyan-700 pl-4">
+                    <h3 class="text-cyan-400">Caina</h3>
+                    <p class="text-sm text-gray-400">The first is Caina, named after the biblical Cain, who murdered his
+                        brother. This round is for traitors to family.</p>
+                </div>
+                <div class="border-l-4 border-cyan-600 pl-4">
+                    <h3 class="text-cyan-400">Antenora</h3>
+                    <p class="text-sm text-gray-400">The second, Antenora—from Antenor of Troy, who betrayed the
+                        Greeks—is reserved for political and national traitors.</p>
+                </div>
+                <div class="border-l-4 border-cyan-500 pl-4">
+                    <h3 class="text-cyan-400">Ptolomaea</h3>
+                    <p class="text-sm text-gray-400">The third is Ptolomaea for Ptolemy, son of Abubus, who is known for
+                        inviting Simon Maccabaeus and his sons to dinner and then murdering them. This round is for
+                        hosts who betray their guests; they are punished more harshly because of the belief that having
+                        guests means entering into a voluntary relationship, and betraying a relationship willingly
+                        entered is more despicable than betraying a relationship born into.</p>
+                </div>
+                <div class="border-l-4 border-cyan-400 pl-4">
+                    <h3 class="text-cyan-400">Judecca</h3>
+                    <p class="text-sm text-gray-400">The fourth round is Judecca, after Judas Iscariot, who betrayed
+                        Jesus Christ. This round is reserved for traitors to their lords, benefactors, or masters. As in
+                        the previous circle, the subdivisions each have their own demons and punishments.</p>
+                </div>
+            </div>
+        </div>
+    </div><!-- Center (Image 4 - Focus) -->
+    <div class="sticky-wrapper" style="height:150vh; background: black;">
+        <div class="sticky-bg">
+            <div class="ice-overlay"></div><img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (334).jpg"
+                alt="Satan Three Heads" class="scale-125 origin-center">
+        </div>
+        <div class="content-block mt-[40vh] bg-black/90 border border-gray-800 text-center">
+            <h2 class="text-6xl text-white mb-8 tracking-[1rem] uppercase">Center of Hell</h2>
+            <p class="text-gray-400 text-lg mb-6">After making their way through all nine circles of hell, Dante and
+                Virgil reach the center of hell. Here they meet Satan, who is described as a three-headed beast. Each
+                mouth is busy eating a specific person:</p>
+            <div class="flex justify-center gap-8 mb-8 font-bold text-red-700 uppercase tracking-widest">
+                <span>Brutus</span><span>|</span><span>Judas Iscariot</span><span>|</span><span>Cassius</span>
+            </div>
+            <p class="text-gray-500 mb-6">The left mouth is eating Brutus, the right is eating Cassius, and the center
+                mouth is eating Judas Iscariot. Brutus and Cassius betrayed and caused the murder of Julius Caesar,
+                while Judas did the same to Christ.</p>
+            <p class="text-white font-serif italic text-2xl">"These are the ultimate sinners, in Dante’s opinion, as
+                they consciously committed acts of treachery against their lords, who were appointed by God."</p>
+        </div>
+    </div>
+    <footer class="py-12 bg-black text-center text-gray-800 text-sm uppercase tracking-widest">
+        <p>Finis.</p>
+    </footer>
+</body>
+
+</html>

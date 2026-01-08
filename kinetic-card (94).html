@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Center of Hell</title>
+  <style>
+    /* RESET & VARS */
+    :root {
+      --c-ice-dark: #050b14;
+      --c-ice-light: #a4c8e1;
+      --c-blood: #5a0b0b;
+      --c-flesh: #d1bfa7;
+      --c-text: #e2e8f0;
+      --font-serif: 'Times New Roman', Times, serif;
+      --font-sans: 'Courier New', Courier, monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--c-ice-dark);
+      color: var(--c-text);
+      font-family: var(--font-serif);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* UTILS */
+    .img-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      transition: opacity 1s ease;
+    }
+
+    /* SCROLLYTELLING CONTAINER */
+    .scene {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    /* SVG FILTERS */
+    .frost-text {
+      filter: url(#frost);
+    }
+
+    .glitch-text {
+      filter: url(#turbulence);
+    }
+
+    .grain-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 50;
+      opacity: 0.15;
+      filter: contrast(150%) brightness(100%);
+      mix-blend-mode: overlay;
+    }
+
+    /* SECTION 1: THE FROZEN LAKE */
+    #cocytus {
+      min-height: 120vh;
+    }
+
+    .title-block {
+      text-align: center;
+      margin-bottom: 4rem;
+      mix-blend-mode: screen;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 10vw, 8rem);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--c-ice-light);
+      text-shadow: 0 0 20px rgba(164, 200, 225, 0.6);
+      opacity: 0;
+      animation: fadeUp 2s ease forwards;
+    }
+
+    .narrative-card {
+      background: rgba(5, 11, 20, 0.7);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(164, 200, 225, 0.3);
+      padding: 2rem;
+      max-width: 600px;
+      font-family: var(--font-sans);
+      font-size: 1.1rem;
+      border-left: 4px solid var(--c-ice-light);
+      transform: translateY(50px);
+      opacity: 0;
+      transition: all 1s ease;
+    }
+
+    /* SECTION 2: THE BEAST */
+    #beast {
+      min-height: 100vh;
+      background: transparent;
+      color: var(--c-flesh);
+    }
+
+    #beast .img-bg {
+      opacity: 0.85;
+      filter: sepia(0.2) contrast(1.1) saturate(1.2) brightness(0.9);
+    }
+
+    .beast-intro {
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      text-align: center;
+      font-weight: bold;
+      max-width: 800px;
+      text-shadow: 2px 2px 0px #000;
+      margin-bottom: 3rem;
+    }
+
+    /* SECTION 3: THE SINNERS GRID */
+    .sinners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      width: 100%;
+      max-width: 1200px;
+      z-index: 2;
+    }
+
+    .mouth-card {
+      background: linear-gradient(180deg, rgba(20, 0, 0, 0.9) 0%, rgba(60, 10, 10, 0.8) 100%);
+      border: 1px solid var(--c-blood);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      transform: scale(0.95);
+      transition: transform 0.5s ease;
+    }
+
+    .mouth-card:hover {
+      transform: scale(1);
+      border-color: #f00;
+    }
+
+    .mouth-label {
+      font-family: var(--font-sans);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      color: #888;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #888;
+      padding-bottom: 0.5rem;
+    }
+
+    .sinner-name {
+      font-size: 2.5rem;
+      color: var(--c-blood);
+      font-weight: bold;
+      text-shadow: 1px 1px 0 #fff;
+      margin-bottom: 1rem;
+    }
+
+    .action-text {
+      font-style: italic;
+      color: #ccc;
+    }
+
+    /* SECTION 4: THE ULTIMATE SIN */
+    #treachery {
+      background: #000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .final-text {
+      max-width: 800px;
+      padding: 0 1rem;
+    }
+
+    .highlight-sin {
+      display: block;
+      font-size: clamp(2rem, 5vw, 4rem);
+      color: var(--c-blood);
+      margin: 2rem 0;
+      position: relative;
+    }
+
+    .highlight-sin::after {
+      content: '';
+      display: block;
+      width: 0%;
+      height: 2px;
+      background: var(--c-blood);
+      margin: 0.5rem auto;
+      transition: width 1s ease;
+    }
+
+    .visible .highlight-sin::after {
+      width: 100%;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .reveal-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s ease-out;
+    }
+
+    .reveal-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* MEDIA QUERIES */
+    @media (max-width: 768px) {
+      .sinners-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG FILTERS DEFINITION -->
+  <svg style="display: none;">
+    <defs>
+      <filter id="frost">
+        <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" />
+      </filter>
+      <filter id="turbulence">
+        <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+        <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+      <filter id="noiseFilter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.6" stitchTiles="stitch" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- GRAIN OVERLAY -->
+  <div class="grain-overlay">
+    <svg width="100%" height="100%">
+      <rect width="100%" height="100%" filter="url(#noiseFilter)" opacity="0.4" />
+    </svg>
+  </div>
+
+  <!-- SCENE 1: THE FROZEN CENTER -->
+  <section id="cocytus" class="scene">
+    <!-- Image 1 Embedded -->
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (370).jpg" alt="Frozen Lake" class="img-bg"
+      style="filter: brightness(0.7) contrast(1.1);" onerror="this.style.backgroundColor='#05121a'">
+
+    <div class="title-block">
+      <h1 class="frost-text">Center of Hell</h1>
+    </div>
+
+    <article class="narrative-card reveal-on-scroll">
+      After making their way through all nine circles of hell, Dante and Virgil reach the center of hell.
+    </article>
+  </section>
+
+  <!-- SCENE 2: THE BEAST -->
+  <section id="beast" class="scene">
+    <!-- Image 2 Embedded -->
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (371).jpg" alt="Three Headed Beast" class="img-bg"
+      onerror="this.style.backgroundColor='#3b2612'">
+
+    <div class="beast-intro reveal-on-scroll">
+      Here they meet Satan, who is described as a three-headed beast.
+    </div>
+
+    <div class="sinners-grid">
+      <div class="mouth-card reveal-on-scroll" style="transition-delay: 0.1s;">
+        <div class="mouth-label">Left Mouth</div>
+        <div class="sinner-name glitch-text">Brutus</div>
+        <div class="action-text">Busy eating a specific person</div>
+      </div>
+
+      <div class="mouth-card reveal-on-scroll"
+        style="transition-delay: 0.3s; border-color: #fff; transform: scale(1.05);">
+        <div class="mouth-label">Center Mouth</div>
+        <div class="sinner-name glitch-text" style="font-size: 3rem; color: #fff;">Judas Iscariot</div>
+        <div class="action-text">The ultimate sinner</div>
+      </div>
+
+      <div class="mouth-card reveal-on-scroll" style="transition-delay: 0.2s;">
+        <div class="mouth-label">Right Mouth</div>
+        <div class="sinner-name glitch-text">Cassius</div>
+        <div class="action-text">Busy eating a specific person</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 3: THE TREACHERY -->
+  <section id="treachery" class="scene">
+    <div class="final-text reveal-on-scroll">
+      <p style="font-size: 1.2rem; margin-bottom: 2rem;">Brutus and Cassius betrayed and caused the murder of Julius
+        Caesar, while Judas did the same to Christ.</p>
+
+      <span class="highlight-sin">Ultimate Sinners</span>
+
+      <p style="font-family: var(--font-sans); color: #888; margin-top: 2rem;">
+        In Dante’s opinion, as they consciously committed acts of treachery against their lords, who were appointed by
+        God.
+      </p>
+    </div>
+  </section>
+
+  <script>
+    // Intersection Observer to trigger animations on scroll without external libs
+    document.addEventListener('DOMContentLoaded', () => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.15 });
+
+      const elements = document.querySelectorAll('.reveal-on-scroll, .highlight-sin');
+      elements.forEach(el => observer.observe(el));
+    });
+  </script>
+</body>
+
+</html>

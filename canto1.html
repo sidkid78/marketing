@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>First Circle of Hell: Limbo</title>
+  <style>
+    /* IMPORTS & VARS */
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&display=swap');
+
+    :root {
+      --c-bg: #0a0c0b;
+      --c-text: #e0e0d0;
+      --c-accent: #8a3324;
+      /* Dante Crimson */
+      --c-gold: #cfaa6e;
+      --font-head: 'Cinzel', serif;
+      --font-body: 'Cormorant Garamond', serif;
+    }
+
+    /* RESET & BASE */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--c-bg);
+      color: var(--c-text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      line-height: 1.6;
+    }
+
+    /* SCROLL DRIVEN ANIMATION SETUP */
+    @keyframes fade-out {
+      to {
+        opacity: 0;
+        transform: scale(1.1);
+        filter: blur(10px);
+      }
+    }
+
+    @keyframes slide-up {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes text-reveal {
+      0% {
+        color: #333;
+        text-shadow: none;
+      }
+
+      100% {
+        color: var(--c-text);
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    /* LAYOUT GRID */
+    main {
+      position: relative;
+      width: 100%;
+    }
+
+    /* IMAGE LAYERS (Note: Using Unsplash IDs to approximate provided visual content for the code to render correctly) */
+    .scene-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+      filter: url(#sepia-soul) contrast(1.1) brightness(0.6);
+      transition: opacity 1s ease;
+      will-change: opacity, transform;
+    }
+
+    /* Using view-timeline for scroll effects if supported, else fallback to standard sticking */
+    #bg-1 {
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (340).jpg');
+      /* Misty Ruins */
+      z-index: -4;
+    }
+
+    #bg-2 {
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (341).jpg');
+      /* Classic Painting Vibes */
+      z-index: -3;
+      opacity: 0;
+    }
+
+    #bg-3 {
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (342).jpg');
+      /* Columns/Rotunda */
+      z-index: -2;
+      opacity: 0;
+    }
+
+    #bg-4 {
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (343).jpg');
+      /* Statues/Caesar */
+      z-index: -1;
+      opacity: 0;
+    }
+
+    /* SCROLL TRIGGER LOGIC VIA CSS ANIMATION TIMELINE (Chrome/Edge) */
+    @supports (animation-timeline: view()) {
+      #bg-1 {
+        animation: fade-out linear both;
+        animation-timeline: view();
+        animation-range: exit 0% exit 100%;
+      }
+
+      /* We cheat opacity layers by associating them with text sections */
+      body:has(#section-2:hover) #bg-2 {
+        opacity: 1;
+      }
+
+      body:has(#section-3:hover) #bg-3 {
+        opacity: 1;
+      }
+
+      body:has(#section-4:hover) #bg-4 {
+        opacity: 1;
+      }
+
+      /* Since :has is hover based, let's just make sections long and use simple sticky parallax tricks for compatibility */
+    }
+
+    /* ARTISTIC SECTIONS */
+    section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .hero-text {
+      font-family: var(--font-head);
+      font-size: clamp(3rem, 8vw, 6rem);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: transparent;
+      -webkit-background-clip: text;
+      background-image: linear-gradient(to bottom, #fff, #999);
+      filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.8));
+      mix-blend-mode: overlay;
+      position: relative;
+      z-index: 10;
+      animation: slide-up 2s ease-out forwards;
+    }
+
+    .hero-sub {
+      font-family: var(--font-head);
+      font-size: 1.5rem;
+      color: var(--c-gold);
+      letter-spacing: 0.5em;
+      margin-top: 1rem;
+      opacity: 0;
+      animation: slide-up 2s ease-out 0.5s forwards;
+    }
+
+    /* SVG FOG OVERLAY */
+    .fog-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      mix-blend-mode: hard-light;
+      opacity: 0.6;
+    }
+
+    /* TEXT CARD STYLES */
+    .text-card {
+      background: rgba(10, 12, 11, 0.7);
+      padding: 3rem;
+      max-width: 800px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+      -webkit-backdrop-filter: blur(5px);
+      backdrop-filter: blur(5px);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 1s ease;
+    }
+
+    /* Reveal on intersection setup (simple fallback or js-less intersection view timeline) */
+    .reveal-on-scroll {
+      animation: slide-up 1s ease-out both;
+      animation-timeline: view(block);
+      animation-range: entry 10% cover 40%;
+    }
+
+    .drop-cap {
+      font-family: var(--font-head);
+      float: left;
+      font-size: 5rem;
+      line-height: 0.8;
+      margin-right: 1rem;
+      color: var(--c-accent);
+    }
+
+    .highlight {
+      color: var(--c-gold);
+      font-style: italic;
+    }
+
+    /* NAMES LIST GRID */
+    .names-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      width: 100%;
+      max-width: 1000px;
+      margin-top: 3rem;
+    }
+
+    .name-item {
+      font-family: var(--font-head);
+      font-size: 2rem;
+      padding: 1rem;
+      border-bottom: 1px solid var(--c-accent);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .name-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .name-item:hover::before {
+      transform: translateX(100%);
+    }
+
+    /* UTILS */
+    .spacer {
+      height: 20vh;
+    }
+
+    /* BG FADE TRIGGERS (CSS Only Hack using adjacent sibling interaction in a scrolling container isn't reliable without JS or scroll-timeline-name, so we use sticky layering) */
+
+    .parallax-wrapper {
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      perspective: 10px;
+    }
+
+    .scroll-section {
+      scroll-snap-align: start;
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    /* Manually setting backgrounds on sections for non-timeline browsers */
+    .bg-section-1 {
+      background: none;
+    }
+
+    .bg-section-2::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (341).jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.6;
+      filter: url(#sepia-soul);
+    }
+
+    .bg-section-3::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (342).jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.6;
+      filter: url(#sepia-soul);
+    }
+
+    .bg-section-4::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (343).jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.6;
+      filter: url(#sepia-soul);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG FILTERS -->
+  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+    <defs>
+      <filter id="fog-filter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="5" result="noise" />
+        <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.4 -0.1" in="noise"
+          result="coloredNoise" />
+        <feGaussianBlur stdDeviation="5" in="coloredNoise" result="fog" />
+      </filter>
+      <filter id="sepia-soul">
+        <feColorMatrix type="matrix"
+          values="0.393 0.769 0.189 0 0 0.349 0.686 0.168 0 0 0.272 0.534 0.131 0 0 0 0 0 1 0" />
+        <feComponentTransfer>
+          <feFuncR type="gamma" amplitude="0.9" exponent="1.1" />
+          <feFuncG type="gamma" amplitude="0.9" exponent="1.1" />
+          <feFuncB type="gamma" amplitude="0.9" exponent="1.1" />
+        </feComponentTransfer>
+      </filter>
+      <filter id="text-distortion">
+        <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turb" />
+        <feDisplacementMap in2="turb" in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- BACKGROUND FIX (Fallback for Parallax) -->
+  <div class="scene-layer" id="bg-1"></div>
+
+  <div class="parallax-wrapper">
+
+    <!-- HERO -->
+    <section class="scroll-section bg-section-1">
+      <!-- FOG -->
+      <div class="fog-container">
+        <svg width="100%" height="100%">
+          <rect width="100%" height="100%" filter="url(#fog-filter)" fill="transparent" opacity="0.5" />
+        </svg>
+      </div>
+      <div style="position: relative; z-index: 20;">
+        <h2 class="hero-sub">FIRST CIRCLE OF HELL</h2>
+        <h1 class="hero-text">LIMBO</h1>
+      </div>
+    </section>
+
+    <!-- NARRATIVE -->
+    <section class="scroll-section bg-section-2" id="section-2">
+      <div class="text-card reveal-on-scroll">
+        <p>
+          <span class="drop-cap">I</span>n the book, limbo is where those who never knew Christ exist.
+        </p>
+        <p style="margin-top: 1rem; color: #ccc;">
+          Dante encounters several historical figures, including...
+        </p>
+      </div>
+    </section>
+
+    <!-- FIGURES -->
+    <section class="scroll-section bg-section-3" id="section-3">
+      <div class="names-grid reveal-on-scroll">
+        <div class="name-item" style="animation-delay: 0.1s">Ovid</div>
+        <div class="name-item" style="animation-delay: 0.2s">Homer</div>
+        <div class="name-item highlight" style="animation-delay: 0.3s; filter: url(#text-distortion)">Socrates</div>
+        <div class="name-item highlight" style="animation-delay: 0.4s">Aristotle</div>
+      </div>
+      <p
+        style="margin-top: 2rem; opacity: 0.7; font-family: var(--font-head); letter-spacing: 2px; text-transform: uppercase;">
+        The great philosophers dwell here...
+      </p>
+    </section>
+
+    <!-- CAESAR / ROMAN SECTION -->
+    <section class="scroll-section bg-section-4" id="section-4">
+      <div class="text-card reveal-on-scroll" style="text-align: center;">
+        <h2
+          style="font-family: var(--font-head); font-size: clamp(2rem, 5vw, 3.5rem); color: var(--c-gold); margin-bottom: 1.5rem; letter-spacing: 0.15em;">
+          JULIUS CAESAR</h2>
+        <p style="font-size: 1.3rem; font-style: italic; color: var(--c-text); margin-bottom: 1rem;">
+          "The mighty Caesar, who conquered Gaul and crossed the Rubicon..."
+        </p>
+        <p style="opacity: 0.7;">
+          Among the noble Romans who lived virtuously, yet without the light of faith.
+        </p>
+      </div>
+      <p
+        style="margin-top: 3rem; opacity: 0.5; font-family: var(--font-head); letter-spacing: 3px; text-transform: uppercase; font-size: 0.9rem;">
+        ...and more dwell in this circle.
+      </p>
+    </section>
+
+  </div>
+</body>
+
+</html>

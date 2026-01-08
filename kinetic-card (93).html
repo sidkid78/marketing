@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ninth Circle of Hell: Treachery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Font Import */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lato:wght@300;400&display=swap');
+
+        :root {
+            --ice-blue: #a5f3fc;
+            --deep-freeze: #082f49;
+            --void-black: #020617;
+            --text-shard: #f1f5f9;
+        }
+
+        body {
+            background-color: var(--void-black);
+            color: var(--text-shard);
+            font-family: 'Lato', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* SVG Filters */
+        .filter-ice {
+            filter: url(#ice-fracture);
+        }
+
+        .filter-noise {
+            filter: url(#grain);
+        }
+
+        /* Scrollytelling Layout */
+        .scene {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            perspective: 10px;
+        }
+
+        .background-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            transition: transform 0.5s ease-out;
+            will-change: transform;
+        }
+
+        /* Vignette Overlay */
+        .vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, transparent 20%, var(--void-black) 120%);
+            pointer-events: none;
+            z-index: 1;
+            mix-blend-mode: multiply;
+        }
+
+        /* Frost Overlay */
+        .frost-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(8, 47, 73, 0.2), rgba(2, 6, 23, 0.8));
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Content Card */
+        .glass-card {
+            position: relative;
+            z-index: 10;
+            background: rgba(8, 47, 73, 0.4);
+            backdrop-filter: blur(8px) saturate(180%);
+            -webkit-backdrop-filter: blur(8px) saturate(180%);
+            border: 1px solid rgba(165, 243, 252, 0.2);
+            padding: 3rem;
+            max-width: 600px;
+            margin: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeUp 1s ease-out forwards;
+            overflow: hidden;
+        }
+
+        /* Card decorative shards */
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(165, 243, 252, 0.1) 50%, transparent 55%);
+            animation: shine 8s infinite linear;
+            pointer-events: none;
+        }
+
+        /* Typography Animations */
+        .animate-title {
+            animation: fracture 2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            display: inline-block;
+            transform-origin: center;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fracture {
+            0% {
+                opacity: 0;
+                filter: blur(10px);
+                letter-spacing: 1rem;
+            }
+
+            100% {
+                opacity: 1;
+                filter: blur(0px);
+                letter-spacing: normal;
+            }
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translate(-30%, -30%) rotate(45deg);
+            }
+
+            100% {
+                transform: translate(30%, 30%) rotate(45deg);
+            }
+        }
+
+        /* Specific Text Styling */
+        .drop-cap {
+            float: left;
+            font-family: 'Cinzel', serif;
+            font-size: 5rem;
+            line-height: 4rem;
+            margin-right: 1rem;
+            color: var(--ice-blue);
+            text-shadow: 0 0 10px rgba(165, 243, 252, 0.5);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(165, 243, 252, 0.3);
+        }
+
+        .section-marker {
+            font-family: 'Cinzel', serif;
+            color: var(--ice-blue);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: block;
+            border-bottom: 1px solid rgba(165, 243, 252, 0.3);
+            padding-bottom: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Hidden SVG Filters -->
+    <svg style="display: none;">
+        <defs>
+            <filter id="ice-fracture">
+                <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+            </filter>
+
+            <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="saturate" values="0" />
+                <feComponentTransfer>
+                    <feFuncA type="linear" slope="0.3" />
+                </feComponentTransfer>
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Intro & Caina -->
+    <section class="scene">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (360).jpg" alt="Frozen Lake"
+            class="background-layer" style="transform: scale(1.1);">
+        <div class="vignette"></div>
+        <div class="frost-overlay"></div>
+
+        <div class="glass-card">
+            <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight text-white filter-ice animate-title">
+                Ninth Circle of Hell: Treachery
+            </h1>
+            <p class="text-lg md:text-xl leading-relaxed text-slate-200">
+                <span class="drop-cap">T</span>he ninth circle, the deepest, is where Satan resides. As with the last
+                two circles, this one is further divided, into four rounds.
+            </p>
+            <div class="mt-8 border-l-2 border-cyan-300 pl-4">
+                <span class="section-marker">Round I: Caina</span>
+                <p class="text-slate-300 italic">
+                    The first is Caina, named after the biblical Cain, who murdered his brother. This round is for
+                    traitors to family.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Antenora -->
+    <section class="scene">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (361).jpg" alt="Icy Wasteland"
+            class="background-layer" style="object-position: bottom;">
+        <div class="vignette"></div>
+        <div class="frost-overlay"></div>
+
+        <div class="glass-card ml-auto mr-4 md:mr-20">
+            <span class="section-marker">Round II: Antenora</span>
+            <p class="text-lg md:text-xl leading-relaxed text-slate-200">
+                The second, Antenora—from Antenor of Troy, who betrayed the Greeks—is reserved for political and
+                national traitors.
+            </p>
+        </div>
+    </section>
+
+    <!-- Ptolomaea -->
+    <section class="scene">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (362).jpg" alt="Frozen Face"
+            class="background-layer" style="transform: scale(1.05); filter: contrast(1.2);">
+        <div class="vignette" style="background: radial-gradient(circle, transparent 0%, var(--void-black) 150%);">
+        </div>
+
+        <div class="glass-card mx-auto text-center">
+            <span class="section-marker mx-auto w-1/2">Round III: Ptolomaea</span>
+            <p class="text-lg md:text-xl leading-relaxed text-slate-200 mb-4">
+                The third is Ptolomaea for Ptolemy, son of Abubus, who is known for inviting Simon Maccabaeus and his
+                sons to dinner and then murdering them. This round is for hosts who betray their guests;
+            </p>
+            <p class="text-md text-cyan-100 font-light border-t border-cyan-900 pt-4">
+                they are punished more harshly because of the belief that having guests means entering into a voluntary
+                relationship, and betraying a relationship willingly entered is more despicable than betraying a
+                relationship born into.
+            </p>
+        </div>
+    </section>
+
+    <!-- Judecca -->
+    <section class="scene">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (363).jpg" alt="Satan" class="background-layer"
+            style="object-position: center top;">
+        <div class="vignette"></div>
+        <div class="frost-overlay" style="background: linear-gradient(to top, var(--void-black), transparent);"></div>
+
+        <div class="glass-card mt-auto mb-20">
+            <h2 class="text-3xl font-bold mb-4 text-white filter-ice">
+                Round IV: Judecca
+            </h2>
+            <p class="text-lg md:text-xl leading-relaxed text-slate-200">
+                The fourth round is Judecca, after Judas Iscariot, who betrayed Jesus Christ. This round is reserved for
+                traitors to their lords, benefactors, or masters.
+            </p>
+            <p class="text-slate-400 mt-6 text-sm uppercase tracking-widest">
+                As in the previous circle, the subdivisions each have their own demons and punishments.
+            </p>
+        </div>
+    </section>
+
+</body>
+
+</html>

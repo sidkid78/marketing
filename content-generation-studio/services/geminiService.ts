@@ -33,7 +33,7 @@ export function createContentStudioService(apiKey: string) {
 
     try {
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3-flash-preview",
         contents: prompt,
       });
       return response.text || "No content generated";
@@ -65,7 +65,7 @@ export function createContentStudioService(apiKey: string) {
     topic: string,
   ): Promise<{ question: string; options: string[]; answer: string }> => {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3-flash-preview",
       contents: `Generate a single, clear multiple-choice question about "${topic}". Provide one correct answer and three plausible incorrect distractors.`,
       config: {
         responseMimeType: "application/json",

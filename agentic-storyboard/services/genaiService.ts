@@ -53,14 +53,18 @@ export const generateSceneImages = async (scenes: StoryScene[]): Promise<StorySc
   const client = getClient();
   const imagePromises = scenes.map(async (scene) => {
     try {
-      const response = await client.models.generateImages({
-        model: 'imagen-4.0-generate-001',
-        prompt: scene.imagePrompt,
-        config: { numberOfImages: 1, outputMimeType: 'image/jpeg', aspectRatio: '16:9' },
+      const response = await client.models.generateContent({
+        model: 'gemini-3-pro-image-preview',
+        contents: scene.imagePrompt,
+        config: {
+          imageConfig: {
+            aspectRatio: '16:9',
+          },
+        }
       });
-      const generatedImage = response.generatedImages?.[0];
-      if (generatedImage?.image?.imageBytes) {
-        return { ...scene, imageUrl: `data:image/jpeg;base64,${generatedImage.image.imageBytes}` };
+      const generatedImage = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      if (generatedImage) {
+        return { ...scene, imageUrl: `data:image/jpeg;base64,${generatedImage}` };
       }
       return scene;
     } catch (error) {
@@ -69,6 +73,19 @@ export const generateSceneImages = async (scenes: StoryScene[]): Promise<StorySc
   });
   return await Promise.all(imagePromises);
 };
+
+/**
+ * Helper function to decode base64 strings to Uint8Array
+ */
+function decodeBase64(base64: string): Uint8Array {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
+}
 
 /**
  * Generate Speech (TTS)
@@ -119,9 +136,14 @@ export const generateVideoPrompt = async (text: string, imageDescription: string
 export const animateScene = async (prompt: string, imageBase64: string): Promise<string> => {
   const client = getClient();
 
-  // Extract base64 if it has the data URI prefix
-  const pureBase64 = imageBase64.split(',')[1] || imageBase64;
+  // Clean base64 if it has data URI prefix
+  const pureBase64 = imageBase64.includes(',')
+    ? imageBase64.split(',')[1]
+    : imageBase64;
 
+  console.log("Starting video generation with prompt:", prompt.substring(0, 100) + "...");
+
+  // Start video generation with proper image structure
   let operation = await client.models.generateVideos({
     model: 'veo-3.1-fast-generate-preview',
     prompt: prompt,
@@ -131,36 +153,112 @@ export const animateScene = async (prompt: string, imageBase64: string): Promise
     },
     config: {
       numberOfVideos: 1,
-      resolution: '720p', // Removed as it might not be supported in all versions/models or defaults are safer
-      aspectRatio: '16:9'
-    }
+      resolution: '720p',
+      aspectRatio: '16:9',
+      durationSeconds: 8,
+      personGeneration: 'allow_adult',
+    },
   });
 
-  while (!operation.done) {
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    operation = await client.operations.getVideosOperation({ operation: operation });
+  console.log("Initial operation response:", JSON.stringify(operation, null, 2));
+
+  // Poll for completion (every 10 seconds as per docs)
+  let pollCount = 0;
+  const maxPolls = 30; // 5 minutes max wait
+  while (!operation.done && pollCount < maxPolls) {
+    console.log(`Waiting for video generation... (attempt ${pollCount + 1}/${maxPolls})`);
+    await new Promise(resolve => setTimeout(resolve, 10000));
+
+    // Refresh operation
+    operation = await client.operations.getVideosOperation({
+      operation: operation,
+    });
+    pollCount++;
+    console.log("Poll response:", JSON.stringify(operation, null, 2));
   }
 
-  const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-  if (!downloadLink) throw new Error("Failed to generate video");
+  if (pollCount >= maxPolls) {
+    throw new Error("Video generation timed out after 5 minutes");
+  }
 
+  // Check for errors
+  if (operation.error) {
+    console.error("Video generation error:", operation.error);
+    throw new Error(`Video generation failed: ${operation.error.message}`);
+  }
+
+  // Log the full response to understand its structure
+  console.log("Final operation response:", JSON.stringify(operation.response, null, 2));
+
+  // Get the generated video
+  const generatedVideo = operation.response?.generatedVideos?.[0];
+  if (!generatedVideo) {
+    console.error("No generatedVideos in response:", operation.response);
+    throw new Error("No video generated in response");
+  }
+
+  if (!generatedVideo.video) {
+    console.error("No video object in generatedVideo:", generatedVideo);
+    throw new Error("No video data in generated response");
+  }
+
+  // Get video URI for frontend (client-side)
+  const videoUri = generatedVideo.video.uri;
+  if (!videoUri) {
+    console.error("No URI in video object:", generatedVideo.video);
+    throw new Error("No video URI available");
+  }
+
+  console.log("Video URI:", videoUri);
+
+  // Use the correct API key variable
   const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.NEXT_PUBLIC_API_KEY || '';
-  const videoResponse = await fetch(`${downloadLink}&key=${apiKey}`);
-  const videoBlob = await videoResponse.blob();
-  return URL.createObjectURL(videoBlob);
+
+  // Try direct URI first (some Veo responses include auth in the URI)
+  let downloadUrl = videoUri;
+
+  // If URI doesn't contain key param, add it
+  if (!videoUri.includes('key=')) {
+    downloadUrl = `${videoUri}${videoUri.includes('?') ? '&' : '?'}key=${apiKey}`;
+  }
+
+  console.log("Attempting download from:", downloadUrl);
+
+  try {
+    const response = await fetch(downloadUrl, {
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'omit',
+    });
+
+    console.log("Download response status:", response.status, response.statusText);
+
+    if (!response.ok) {
+      // Log more details for debugging
+      const errorText = await response.text().catch(() => 'Could not read error body');
+      console.error("Download error details:", {
+        status: response.status,
+        statusText: response.statusText,
+        url: downloadUrl,
+        errorBody: errorText.substring(0, 500)
+      });
+      throw new Error(`Download failed: ${response.status} ${response.statusText}`);
+    }
+
+    const videoBlob = await response.blob();
+    console.log("Video blob size:", videoBlob.size, "bytes");
+    return URL.createObjectURL(videoBlob);
+  } catch (fetchError) {
+    console.error("Fetch error:", fetchError);
+
+    // If direct fetch fails, return the URI directly (might work in video element)
+    console.log("Direct fetch failed, returning URI for video element to try:", downloadUrl);
+    return downloadUrl;
+  }
 };
 
-// --- Helper Functions ---
 
-function decodeBase64(base64: string): Uint8Array {
-  const binaryString = atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes;
-}
+// --- Helper Functions ---
 
 export async function decodeAudioData(
   data: Uint8Array,

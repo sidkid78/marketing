@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Second Circle: Lust</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@1,400;1,700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --c-void: #050505;
+      --c-storm: #1a1a24;
+      --c-bruise: #2d2436;
+      --c-soul: #a8a8b0;
+      --c-highlight: #e0e0e0;
+    }
+
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--c-void);
+      font-family: 'Cinzel', serif;
+      color: var(--c-soul);
+    }
+
+    /* --- UTILITY CLASSES --- */
+    .full-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .center-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    /* --- VISUAL LAYERS --- */
+    .vignette {
+      background: radial-gradient(circle at center, transparent 30%, var(--c-void) 90%);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .grain {
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 11;
+      filter: url(#noise);
+    }
+
+    .bg-layer-1 {
+      /* Placeholder for Image 1: The Storm/Cliff */
+      /* Replace url below with actual base64 or file path if available */
+      background-image: linear-gradient(to bottom, #111, #223), url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (341).jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.6;
+      filter: contrast(1.2) brightness(0.8) grayscale(0.3);
+      animation: panBackground 30s infinite alternate ease-in-out;
+    }
+
+    .bg-layer-2 {
+      /* Placeholder for Image 2: The Whirlwind */
+      background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (342).jpg');
+      background-size: cover;
+      background-position: center;
+      mix-blend-mode: hard-light;
+      opacity: 0;
+      animation: revealStorm 12s ease-out forwards 2s;
+    }
+
+    /* --- TYPOGRAPHY & FX --- */
+    .title-intro {
+      font-size: clamp(1rem, 3vw, 2rem);
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeIn 3s ease-in forwards 0.5s;
+      color: var(--c-highlight);
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    .title-main {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 900;
+      font-size: clamp(4rem, 15vw, 20rem);
+      line-height: 0.8;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
+      position: relative;
+      z-index: 20;
+      filter: url(#wind-distortion);
+      opacity: 0;
+      animation: slamIn 2s cubic-bezier(0.2, 1, 0.3, 1) forwards 1.5s;
+      mix-blend-mode: overlay;
+    }
+
+    .prose-container {
+      z-index: 30;
+      max-width: 60ch;
+      padding: 2rem;
+      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.2);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 5vh;
+      transform: translateY(20px);
+      opacity: 0;
+      animation: floatUp 3s ease-out forwards 3s;
+    }
+
+    .prose-text {
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      line-height: 1.8;
+      color: var(--c-highlight);
+      text-shadow: 0 2px 4px black;
+    }
+
+    .names-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 25;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .soul-name {
+      position: absolute;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      color: rgba(255, 255, 255, 0.6);
+      mix-blend-mode: overlay;
+      filter: blur(1px) url(#wind-distortion);
+      opacity: 0;
+      animation: swirlName 15s linear infinite;
+    }
+
+    /* --- ANIMATIONS --- */
+    @keyframes panBackground {
+      0% {
+        transform: scale(1.1) translate(0, 0);
+      }
+
+      100% {
+        transform: scale(1.2) translate(-2%, -2%);
+      }
+    }
+
+    @keyframes revealStorm {
+      0% {
+        opacity: 0;
+        transform: scale(1.1);
+      }
+
+      100% {
+        opacity: 0.4;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slamIn {
+      0% {
+        opacity: 0;
+        transform: scale(2) translateY(50px);
+        filter: blur(20px) url(#wind-distortion);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: blur(0px) url(#wind-distortion);
+      }
+    }
+
+    @keyframes floatUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes swirlName {
+      0% {
+        transform: translate(100vw, 50vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      20% {
+        opacity: 0.8;
+      }
+
+      80% {
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: translate(-20vw, 20vh) rotate(-20deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG FILTERS -->
+  <svg style="display: none;">
+    <defs>
+      <!-- Film Grain Noise -->
+      <filter id="noise">
+        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="0.2" /> <!-- Lower opacity noise -->
+        </feComponentTransfer>
+      </filter>
+
+      <!-- The Infernal Wind Distortion -->
+      <filter id="wind-distortion">
+        <feTurbulence type="fractalNoise" baseFrequency="0.02 0.005" numOctaves="5" result="noise" seed="2">
+          <animate attributeName="baseFrequency" values="0.02 0.005; 0.01 0.005; 0.02 0.005" dur="10s"
+            repeatCount="indefinite" />
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="30" xChannelSelector="R" yChannelSelector="G" />
+        <feGaussianBlur stdDeviation="0.5" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- LAYERS -->
+  <div class="full-screen bg-layer-1"></div>
+  <div class="full-screen bg-layer-2"></div>
+  <div class="full-screen grain"></div>
+  <div class="full-screen vignette"></div>
+
+  <!-- SOULS WHIRLWIND (NAMES) -->
+  <div class="names-overlay">
+    <!-- Positioning souls randomly in the wind path -->
+    <span class="soul-name" style="top: 20%; animation-duration: 12s; animation-delay: 4s;">Achilles</span>
+    <span class="soul-name" style="top: 50%; animation-duration: 18s; animation-delay: 6s;">Paris</span>
+    <span class="soul-name" style="top: 80%; animation-duration: 10s; animation-delay: 8s;">Tristan</span>
+    <span class="soul-name"
+      style="top: 35%; animation-duration: 20s; animation-delay: 4.5s; font-size: 5vw;">Cleopatra</span>
+    <span class="soul-name" style="top: 65%; animation-duration: 14s; animation-delay: 7s;">Dido</span>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="full-screen center-content relative">
+
+    <header class="relative z-20 mix-blend-difference">
+      <h2 class="title-intro">Second Circle of Hell</h2>
+      <h1 class="title-main">LUST</h1>
+    </header>
+
+    <article class="prose-container">
+      <p class="prose-text">
+        In the second circle, a stormy and dark realm, Dante encounters Achilles, Paris, Tristan, Cleopatra, and Dido,
+        among others.
+      </p>
+    </article>
+
+  </main>
+
+</body>
+
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Architect of Silence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Cinzel:wght@400;700&family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --c-chaos-bg: #050505;
+            --c-chaos-text: #ff3333;
+            --c-order-bg: #0f172a;
+            --c-order-accent: #38bdf8;
+            --c-life-bg: #f0fdf4;
+            --c-life-text: #15803d;
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background-color: var(--c-chaos-bg);
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* --- UTILITY & SCROLL --- */
+        .scrolly-section {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .sticky-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            object-fit: cover;
+            filter: brightness(0.6);
+            transition: filter 1s ease;
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        /* --- ACT 1: CHAOS (SVG DISTORTION) --- */
+        .text-chaos {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: clamp(2rem, 5vw, 4rem);
+            text-transform: uppercase;
+            color: var(--c-chaos-text);
+            filter: url(#glitch);
+            mix-blend-mode: hard-light;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+        }
+
+        .text-sub-chaos {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            border-left: 2px solid var(--c-chaos-text);
+            padding-left: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+        }
+
+        /* --- ACT 2: SILENCE (GLASS & GLOW) --- */
+        .act-silence {
+            background: var(--c-order-bg);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .text-architect {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            letter-spacing: -0.05em;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            color: transparent;
+            filter: url(#glow);
+        }
+
+        .primitives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .primitive-item {
+            border: 1px solid var(--c-order-accent);
+            padding: 1rem;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--c-order-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.5s ease;
+        }
+
+        .primitive-item:hover {
+            background: var(--c-order-accent);
+            color: black;
+            transform: translateY(-5px);
+        }
+
+        /* --- ACT 3: ALIVE (ORGANIC) --- */
+        .act-alive {
+            color: var(--c-life-text);
+            text-align: center;
+        }
+
+        .text-future {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 300;
+        }
+
+        .text-alive {
+            font-size: clamp(4rem, 15vw, 12rem);
+            font-weight: 700;
+            line-height: 0.9;
+            background: linear-gradient(to right, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: breathe 4s infinite ease-in-out;
+            filter: url(#liquid);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes breathe {
+
+            0%,
+            100% {
+                transform: scale(1);
+                filter: url(#liquid) brightness(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+                filter: url(#liquid) brightness(1.2);
+            }
+        }
+
+        /* Base layout for narrative */
+        .narrative-block {
+            margin: 4rem 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG FILTERS DEFINITION -->
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+        <defs>
+            <!-- Filter 1: Glitch / Distortion -->
+            <filter id="glitch">
+                <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" />
+            </filter>
+
+            <!-- Filter 2: Ethereal Glow -->
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                <feMerge>
+                    <feMergeNode in="coloredBlur" />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+
+            <!-- Filter 3: Liquid/Organic -->
+            <filter id="liquid">
+                <feTurbulence type="turbulence" baseFrequency="0.01" numOctaves="3" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="20" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- ACT 1: VIOLENT CHAOS -->
+    <section class="scrolly-section">
+        <!-- Placeholder for Storyboard Image 1 (Chaos/Server Room) -->
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (337).jpg" alt="Chaos Server Room"
+            class="sticky-bg" style="filter: contrast(1.2) hue-rotate(-20deg) brightness(0.4);">
+
+        <div class="content-layer">
+            <div class="narrative-block">
+                <p class="text-chaos">There is a violent chaos in the way we work today—</p>
+                <p class="text-sub-chaos text-gray-200">a mess of broken workflows and human bottlenecks.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACT 2: THE NEW PRIMITIVES -->
+    <section class="scrolly-section act-silence">
+        <!-- Placeholder for Storyboard Image 2 (Geometric DNA/Nodes) -->
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (338).jpg" alt="Geometric DNA" class="sticky-bg"
+            style="opacity: 0.6; mix-blend-mode: luminosity;">
+
+        <div class="content-layer">
+            <div class="glass-card">
+                <p class="text-xl font-light mb-6 text-gray-300">We are obsessed with the silence that comes when a
+                    system finally learns to build itself.</p>
+
+                <div class="my-12">
+                    <h2 class="text-architect">THE NEW PRIMITIVES</h2>
+                    <p class="mt-4 text-gray-400">Skills. Scouts. Forks.</p>
+                    <p class="mt-2 text-sm uppercase tracking-widest text-cyan-400">Not as tools, but as the DNA.</p>
+                </div>
+
+                <div class="primitives-grid">
+                    <div class="primitive-item">NEVER TIRES</div>
+                    <div class="primitive-item">NEVER FORGETS</div>
+                    <div class="primitive-item">NEVER STOPS</div>
+                </div>
+
+                <p class="mt-8 text-lg text-gray-300 italic">We aren't just building software; we are ending the era of
+                    digital drudgery.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACT 3: IT IS ALIVE -->
+    <section class="scrolly-section act-alive">
+        <!-- Placeholder for Storyboard Image 3 (Solarpunk/Future City) -->
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (339).jpg" alt="Solarpunk Future" class="sticky-bg"
+            style="filter: brightness(0.8);">
+        <div style="position:absolute; inset:0; background: linear-gradient(to top, var(--c-chaos-bg), transparent);">
+        </div>
+
+        <div class="content-layer">
+            <p class="text-future text-white mb-8" style="text-shadow: 0 4px 10px rgba(0,0,0,0.5);">The future isn't
+                automated.</p>
+            <h2 class="text-alive">It’s alive.</h2>
+        </div>
+    </section>
+
+</body>
+
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inferno Kinetic Typography</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Raleway:wght@300;400;600&display=swap');
+
+    :root {
+      --lust-color: #1a237e;
+      --gluttony-color: #37474f;
+      --greed-color: #5d4037;
+      --text-primary: #f8fafc;
+    }
+
+    body {
+      font-family: 'Raleway', sans-serif;
+      background-color: #000;
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+
+    .cinzel {
+      font-family: 'Cinzel', serif;
+    }
+
+    .playfair {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* --- KINETIC ANIMATIONS --- */
+    @keyframes wind-drift {
+      0% {
+        transform: translateX(0) skewX(0deg);
+        opacity: 0.8;
+      }
+
+      50% {
+        transform: translateX(10px) skewX(-2deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(0) skewX(0deg);
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes sink {
+      0% {
+        transform: translateY(0);
+        filter: blur(0px);
+      }
+
+      100% {
+        transform: translateY(10px);
+        filter: blur(0.5px);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -200% center;
+      }
+
+      100% {
+        background-position: 200% center;
+      }
+    }
+
+    /* --- TEXTURE CLASSES --- */
+    .lust-text {
+      animation: wind-drift 6s ease-in-out infinite;
+      text-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
+    }
+
+    .gluttony-text {
+      background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: url(#rainFilter);
+    }
+
+    .greed-text {
+      position: relative;
+      color: #eab308;
+      filter: url(#goldFilter);
+      mix-blend-mode: hard-light;
+    }
+
+    .greed-heading {
+      background: linear-gradient(45deg, #ca8a04, #fde047, #ca8a04);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 3s linear infinite;
+    }
+
+    /* --- LAYOUT UTILS --- */
+    .snap-section {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+      padding: 2rem;
+    }
+
+    .bg-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      transition: transform 1s ease-out;
+    }
+
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+      max-width: 1000px;
+      margin: 0 auto;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      padding: 3rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Mobile Adjustments */
+    @media (max-width: 768px) {
+      .content-wrapper {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+
+      h1 {
+        font-size: 3rem !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG FILTER DEFINITIONS -->
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+      <!-- LUST: Windy Turbulence -->
+      <filter id="windFilter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="2" result="turbulence" />
+        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="15" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+
+      <!-- GLUTTONY: Dripping Rain/Mud -->
+      <filter id="rainFilter">
+        <feTurbulence type="turbulence" baseFrequency="0.05 0.5" numOctaves="2" result="noise" />
+        <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" in="noise" result="goo" />
+        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+        <feGaussianBlur stdDeviation="0.5" />
+      </filter>
+
+      <!-- GREED: Metallic Roughness -->
+      <filter id="goldFilter">
+        <feTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="4" result="noise" />
+        <feDiffuseLighting in="noise" lighting-color="#d4af37" surfaceScale="2">
+          <feDistantLight azimuth="45" elevation="60" />
+        </feDiffuseLighting>
+        <feComposite operator="in" in2="SourceGraphic" />
+        <feComposite operator="arithmetic" k1="0" k2="1" k3="1" k4="0" in="SourceGraphic" />
+      </filter>
+
+      <!-- GLOBAL: Film Grain -->
+      <filter id="noiseOverlay">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch" />
+        <feColorMatrix type="saturate" values="0" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- GRAIN OVERLAY -->
+  <div
+    style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; opacity: 0.07; filter: url(#noiseOverlay);">
+  </div>
+
+  <!-- SECTION 1: LUST -->
+  <section class="snap-section">
+    <div class="absolute inset-0 bg-blue-900 mix-blend-multiply z-10"></div>
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (322).jpg" alt="Stormy Realm" class="bg-img"
+      style="filter: contrast(120%) grayscale(40%);">
+
+    <div class="content-wrapper border-l-4 border-blue-400">
+      <h2 class="cinzel text-xl tracking-[0.3em] text-blue-200 uppercase mb-4 opacity-80">Second Circle of Hell</h2>
+      <h1 class="playfair text-6xl md:text-8xl font-black mb-8 lust-text italic" style="color: #e0f2fe;">Lust</h1>
+
+      <p class="text-lg md:text-2xl leading-relaxed text-blue-50 font-light">
+        In the second circle, a <span class="font-bold italic">stormy and dark realm</span>, Dante encounters Achilles,
+        Paris, Tristan, Cleopatra, and Dido, among others.
+      </p>
+    </div>
+  </section>
+
+  <!-- SECTION 2: GLUTTONY -->
+  <section class="snap-section">
+    <div class="absolute inset-0 bg-stone-900 mix-blend-multiply z-10"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black z-10"></div>
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (323).jpg" alt="Rain and Mud" class="bg-img"
+      style="filter: brightness(60%) sepia(20%);">
+
+    <div class="content-wrapper border-t-4 border-gray-500 mt-24">
+      <h2 class="cinzel text-xl tracking-[0.3em] text-gray-400 uppercase mb-4">Third Circle of Hell</h2>
+      <h1 class="playfair text-6xl md:text-8xl font-black mb-6 gluttony-text">Gluttony</h1>
+
+      <p class="text-lg md:text-xl leading-relaxed text-gray-300 mb-6">
+        The third circle is reserved for those who <span class="text-white border-b border-gray-500">overindulge</span>.
+        Dante encounters ordinary people here, not characters from epic poems or gods from mythology.
+      </p>
+      <div class="p-6 bg-black/40 italic text-gray-400 border-l-2 border-gray-600">
+        The author Boccaccio took one of these characters, <strong class="text-gray-100">Ciacco</strong>, and
+        incorporated him into his 14th-century collection of tales called "The Decameron."
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: GREED -->
+  <section class="snap-section">
+    <div class="absolute inset-0 bg-yellow-900 mix-blend-multiply z-10"></div>
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (324).jpg" alt="Gold and Cave" class="bg-img"
+      style="object-position: bottom; filter: contrast(130%) sepia(60%);">
+
+    <div class="content-wrapper border-r-4 border-yellow-700 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+      <div class="col-span-1 md:col-span-7">
+        <h2 class="cinzel text-xl tracking-[0.3em] text-amber-500 uppercase mb-2">Fourth Circle of Hell</h2>
+        <h1 class="playfair text-6xl md:text-8xl font-black mb-8 greed-heading">Greed</h1>
+
+        <p class="text-lg md:text-xl leading-relaxed text-amber-100 mb-4 greed-text font-serif">
+          Dante encounters more ordinary people in the fourth circle but also the guardian of the circle, <span
+            class="text-2xl small-caps">Pluto</span>, the mythological king of the underworld.
+        </p>
+        <p class="text-md md:text-lg text-amber-200/80 mb-4">
+          This circle is reserved for people who hoarded or squandered their money.
+        </p>
+      </div>
+
+      <div class="col-span-1 md:col-span-5 bg-black/60 p-6 border border-amber-800/50 shadow-2xl transform rotate-1">
+        <p class="text-amber-50 italic text-sm leading-loose tracking-wide">
+          "...but Dante and Virgil do not directly interact with any of its inhabitants. This is the first time they
+          pass through a circle without speaking to anyone, a commentary on Dante’s opinion of greed as a higher sin."
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-black text-center py-8 text-neutral-700 text-xs cinzel uppercase tracking-widest">
+    End of Descent
+  </footer>
+</body>
+
+</html>

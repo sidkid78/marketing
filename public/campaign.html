@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HOMEase: Empowering Independence</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+    :root {
+      --c-dark: #121212;
+      --c-light: #F9F7F2;
+      --c-primary: #2C5F78;
+      --c-accent: #D97757;
+      --c-crisis: #9A2A2A;
+      --font-head: 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+      --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--c-light);
+      color: var(--c-dark);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* SVG FILTERS & TEXTURE */
+    .texture-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.08;
+      filter: url(#paper-grain);
+      mix-blend-mode: multiply;
+    }
+
+    /* TYPOGRAPHY */
+    h1,
+    h2,
+    h3 {
+      font-family: var(--font-head);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 6rem);
+      color: var(--c-light);
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      mix-blend-mode: overlay;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 5vw, 4rem);
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      font-size: clamp(1rem, 1.2vw, 1.25rem);
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+
+    /* LAYOUT UTILITIES */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    .full-screen {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .split-screen {
+      display: grid;
+      grid-template-columns: 1fr;
+      min-height: 100vh;
+    }
+
+    @media(min-width: 768px) {
+      .split-screen {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* SECTION 1: HERO */
+    #hero {
+      background: var(--c-dark);
+      color: var(--c-light);
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.6;
+      animation: panZoom 20s infinite alternate linear;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 800px;
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    /* SECTION 2: CRISIS GAP */
+    #crisis-gap {
+      background: var(--c-light);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-left: 10px solid var(--c-crisis);
+    }
+
+    .crisis-text strong {
+      color: var(--c-crisis);
+      font-weight: 700;
+    }
+
+    .pull-quote {
+      font-size: 1.5rem;
+      font-family: var(--font-head);
+      font-style: italic;
+      color: var(--c-crisis);
+      border-left: 4px solid var(--c-crisis);
+      padding-left: 1rem;
+      margin: 2rem 0;
+    }
+
+    /* SECTION 3: INVISIBLE RISKS */
+    #invisible-risks {
+      position: relative;
+      color: var(--c-light);
+    }
+
+    .sticky-image {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .sticky-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.7) contrast(1.1);
+    }
+
+    .sensor-ring {
+      position: absolute;
+      border: 2px solid #00E5FF;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #00E5FF, inset 0 0 10px #00E5FF;
+      animation: pulse 2s infinite;
+      opacity: 0.8;
+    }
+
+    .scroll-content {
+      position: relative;
+      z-index: 2;
+      margin-top: -100vh;
+      padding-top: 100vh;
+      padding-bottom: 20vh;
+      pointer-events: none;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.15);
+      -webkit-backdrop-filter: blur(15px);
+      backdrop-filter: blur(15px);
+      padding: 3rem;
+      margin: 2rem auto;
+      max-width: 600px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      pointer-events: auto;
+      transform: translateY(20px);
+      opacity: 0;
+      animation: floatUp 0.8s forwards ease-out;
+      animation-timeline: view();
+      animation-range: entry 10% cover 30%;
+    }
+
+    /* SECTION 4: 7 DAY JOURNEY */
+    #roadmap {
+      background: var(--c-dark);
+      color: var(--c-light);
+      padding: 6rem 2rem;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 2rem;
+      border-left: 2px solid var(--c-primary);
+      padding-left: 2rem;
+      margin-left: 1rem;
+    }
+
+    .timeline-item {
+      position: relative;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2.6rem;
+      top: 0.5rem;
+      width: 1rem;
+      height: 1rem;
+      background: var(--c-primary);
+      border-radius: 50%;
+    }
+
+    .day-label {
+      font-family: var(--font-head);
+      color: var(--c-primary);
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    /* SECTION 5: CAREGIVER COMPASS */
+    #caregiver {
+      background: #e5e7eb;
+    }
+
+    .diagonal-split {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 60%;
+      height: 100%;
+      background: url('https://694d8b0339fe8ba173f56f36.imgix.net/visual-3 (8).png?q=80&w=2000') center/cover;
+      clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%);
+      z-index: 1;
+    }
+
+    .content-side {
+      position: relative;
+      z-index: 2;
+      padding: 4rem;
+      background: rgba(255, 255, 255, 0.9);
+      max-width: 50%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+    }
+
+    @media(max-width: 768px) {
+      .diagonal-split {
+        position: relative;
+        width: 100%;
+        height: 50vh;
+        clip-path: none;
+      }
+
+      .content-side {
+        max-width: 100%;
+        height: auto;
+      }
+    }
+
+    /* SECTION 6: PILOT & ACTIONS */
+    #actions {
+      background: var(--c-light);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .actions-bg {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      background: url('https://694d8b0339fe8ba173f56f36.imgix.net/visual-4 (8).png?q=80&w=2000') center/cover;
+      opacity: 0.15;
+      mix-blend-mode: multiply;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 3rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card {
+      background: #fff;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      border-top: 4px solid var(--c-accent);
+    }
+
+    /* SECTION 7: CONCLUSION */
+    footer {
+      background: var(--c-primary);
+      color: var(--c-light);
+      text-align: center;
+      padding: 6rem 2rem;
+    }
+
+    .footer-logo {
+      font-family: var(--font-head);
+      font-size: 3rem;
+      margin-bottom: 2rem;
+      letter-spacing: -1px;
+    }
+
+    /* ANIMATIONS */
+    @keyframes panZoom {
+      0% {
+        transform: scale(1);
+      }
+
+      100% {
+        transform: scale(1.1);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.9);
+        opacity: 0.5;
+      }
+
+      50% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(0.9);
+        opacity: 0.5;
+      }
+    }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(40px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- GRAIN FILTER DEF -->
+  <svg class="texture-overlay" xmlns="http://www.w3.org/2000/svg">
+    <filter id="paper-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0" />
+    </filter>
+    <rect width="100%" height="100%" filter="url(#paper-grain)" opacity="1" />
+  </svg>
+
+  <!-- HERO SECTION -->
+  <section id="hero" class="full-screen">
+    <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-1 (9).png?q=80&w=2000" alt="Senior and daughter"
+      class="hero-bg">
+    <div class="hero-content">
+      <h1 class="hero-title">Empowering Independence</h1>
+      <p style="font-size: 1.5rem; margin-top: 1rem; color: #fff;">A Comprehensive Guide to the HOMEase Home Safety
+        Launch</p>
+    </div>
+  </section>
+
+  <!-- CRISIS GAP SECTION -->
+  <section id="crisis-gap" class="container">
+    <div class="split-screen" style="min-height: auto; gap: 4rem; align-items: start;">
+      <div>
+        <h2 class="section-title" style="color: var(--c-crisis);">The Crisis Gap in Senior Care</h2>
+        <p>The transition to "aging in place" is often a journey defined by reactive measures rather than proactive
+          planning. For millions of seniors and their families, the realization that a home is no longer safe usually
+          arrives in the wake of a traumatic event—an ER visit, a fractured hip, or a devastating fall.</p>
+        <p class="crisis-text">This <strong>"Crisis Gap"</strong> represents a significant failure in the current
+          eldercare landscape, where professional assessments are often expensive, invasive, or tied to high-pressure
+          sales tactics for remodeling services.</p>
+      </div>
+      <div>
+        <div class="pull-quote">
+          HOMEase was founded to bridge this gap, offering a frictionless, data-driven alternative that empowers
+          families before a crisis occurs.
+        </div>
+        <p>Our mission is to prevent "backwards" decision-making—the reactive, stressful choices made under duress after
+          an injury—and replace them with proactive, informed planning. By providing a free, five-minute Home Safety
+          Assessment, we are shifting the narrative from fear-based management to empowered independence.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INVISIBLE RISKS SECTION (Parallax) -->
+  <section id="invisible-risks">
+    <div class="sticky-image">
+      <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-2 (8).png?q=80&w=2000" alt="Modern Stairs">
+      <!-- Abstract Sensor Visualization -->
+      <div class="sensor-ring" style="top: 40%; left: 30%; width: 50px; height: 50px;"></div>
+      <div class="sensor-ring" style="top: 60%; left: 50%; width: 80px; height: 80px; animation-delay: 0.5s;"></div>
+      <div class="sensor-ring" style="top: 20%; left: 70%; width: 40px; height: 40px; animation-delay: 1s;"></div>
+    </div>
+
+    <div class="scroll-content container">
+      <div class="glass-card">
+        <h2 class="section-title">The Invisible Risks: Why Traditional Homes Fail Seniors</h2>
+        <p>Most residential architecture is designed for the able-bodied, featuring high thresholds, poor lighting, and
+          bathrooms that prioritize aesthetics over accessibility. As mobility and vision naturally decline with age,
+          these design choices transform from minor inconveniences into significant hazards.</p>
+      </div>
+
+      <div class="glass-card">
+        <h3 style="margin-bottom:1rem; color: #00E5FF;">High-Risk Zones</h3>
+        <p>Research indicates that one in four older adults falls each year, yet many of these incidents are preventable
+          through simple, low-cost modifications. The primary obstacle is not a lack of will, but a lack of awareness.
+        </p>
+        <p>The HOMEase assessment addresses this by focusing on the "High-Risk Zones"—the bathroom, the stairs, and the
+          entryways—providing users with immediate, actionable data. By identifying these invisible risks early, we can
+          significantly extend the time a senior can safely remain in their own home.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7-DAY JOURNEY -->
+  <section id="roadmap">
+    <div class="container">
+      <h2 class="section-title" style="text-align: center; margin-bottom: 4rem;">The 7-Day Journey: A Roadmap to Peace
+        of Mind</h2>
+      <p style="text-align: center; max-width: 700px; margin: 0 auto 4rem; color: #ccc;">Our launch is structured as a
+        seven-day journey to guide families from initial awareness to meaningful action.</p>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <span class="day-label">Day 1: Clarity and Access</span>
+          <p style="color: #ddd;">We begin by removing barriers, offering the assessment for free with a commitment that
+            it takes only five minutes.</p>
+        </div>
+        <div class="timeline-item">
+          <span class="day-label">Day 2: Understanding the Environment</span>
+          <p style="color: #ddd;">We explore why most homes were never designed for aging, helping families see their
+            surroundings through a new lens.</p>
+        </div>
+        <div class="timeline-item">
+          <span class="day-label">Day 3: Visualizing the Solution</span>
+          <p style="color: #ddd;">We demystify the process by showing exactly what a safety report looks like and how to
+            interpret the findings.</p>
+        </div>
+        <div class="timeline-item">
+          <span class="day-label">Day 4: Our Mission</span>
+          <p style="color: #ddd;">We share the story of HOMEase, born from a desire to replace reactive panic with
+            proactive care.</p>
+        </div>
+        <div class="timeline-item">
+          <span class="day-label">Day 5 & 6: Real-World Impact</span>
+          <p style="color: #ddd;">We highlight how other caregivers are using these tools to manage safety, even from a
+            distance.</p>
+        </div>
+        <div class="timeline-item">
+          <span class="day-label">Day 7: Joining the Movement</span>
+          <p style="color: #ddd;">We invite our community to participate in the pilot phase, ensuring they have access
+            to these resources while we continue to refine the tool.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAREGIVER COMPASS SECTION -->
+  <section id="caregiver">
+    <div class="diagonal-split"></div>
+    <div class="container" style="position: relative; height: 100%; display: flex; align-items: center;">
+      <div class="content-side">
+        <h2 class="section-title">The Caregiver’s Compass: Navigating Remote Safety</h2>
+        <p>A significant portion of our community consists of "Long-Distance Caregivers"—adult children who live in
+          different cities or states than their parents. For these individuals, the anxiety of not knowing the physical
+          state of their parent's environment is a constant burden.</p>
+        <p>The HOMEase assessment serves as a remote diagnostic tool, allowing caregivers to collaborate with their
+          parents to identify risks without needing a professional onsite. This DIY approach is supported by the
+          "Empowered Independence" angle, which frames the safety audit as a way to support a parent’s autonomy rather
+          than diminish it. By providing clear safety issues, practical fixes, and rough cost ranges, we remove the
+          guesswork from caregiving.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILOT & ACTION SECTION -->
+  <section id="actions" class="container">
+    <div class="actions-bg"></div>
+    <div class="action-grid">
+      <div class="card">
+        <h3>The Pilot Phase: Growing Together</h3>
+        <p>The pilot phase of the HOMEase Home Safety Assessment is a critical period for both the product and the
+          community. By offering the tool for free, we are inviting early adopters to help shape the future of senior
+          safety.</p>
+        <p>Our approach emphasizes personalized support; every comment and direct message is an opportunity for us to
+          listen, learn, and refine the user experience. We are looking for honest feedback on what was helpful and what
+          was confusing.</p>
+      </div>
+
+      <div class="card">
+        <h3>Actionable Insights</h3>
+        <p>Unlike traditional home audits that result in a sales pitch for an expensive remodel, the HOMEase report is
+          designed for practicality. Each user receives a breakdown of clear safety issues paired with "Practical
+          Fixes"—many of which are DIY-friendly or low-cost, such as improving bulb wattage or adding non-slip strips to
+          stairs.</p>
+        <p>We also provide rough cost ranges for more significant interventions, giving families a realistic budget to
+          work with. Most importantly, the report is delivered with no pressure. This transparency is our greatest
+          competitive advantage.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONCLUSION -->
+  <footer>
+    <div class="container">
+      <div class="footer-logo">HOMEase</div>
+      <p style="font-size: 1.5rem; color: #fff; max-width: 800px; margin: 0 auto;">"The HOMEase Home Safety Assessment
+        is more than just a digital tool; it is a movement toward proactive, dignified aging."</p>
+      <br>
+      <p style="color: rgba(255,255,255,0.8);">By dismantling the barriers to home safety information, we are giving
+        families the power to act before a crisis occurs. We invite you to join our pilot, share your feedback, and help
+        us redefine what it means to care for our parents in the modern age. Together, we can ensure that "home" remains
+        the safest place for everyone.</p>
+    </div>
+  </footer>
+
+</body>
+
+</html>

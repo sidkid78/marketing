@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eighth Circle of Hell: Fraud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --c-void: #050505;
+            --c-stone: #1a1a1a;
+            --c-ash: #888888;
+            --c-ember: #ff4d00;
+            --c-parchment: #e0d8cc;
+        }
+
+        body {
+            background-color: var(--c-void);
+            font-family: 'Crimson Pro', serif;
+            color: var(--c-parchment);
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        /* Typography Utilities */
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* SVG Filters */
+        .filter-grain {
+            filter: url(#grain);
+        }
+
+        .filter-heat {
+            filter: url(#heat);
+        }
+
+        /* Scrollytelling Setup */
+        .scene {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: 0;
+            filter: contrast(1.2) brightness(0.6);
+            transition: transform 0.5s ease-out;
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 10;
+            padding: 2rem;
+            max-width: 900px;
+            text-align: center;
+            /* Glassmorphism for readability */
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 0 100px rgba(0, 0, 0, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            mix-blend-mode: normal;
+        }
+
+        /* Specific Animation Effects */
+        @keyframes flicker {
+
+            0%,
+            100% {
+                opacity: 1;
+                text-shadow: 0 0 4px var(--c-ember);
+            }
+
+            50% {
+                opacity: 0.8;
+                text-shadow: 0 0 15px var(--c-ember), 0 0 30px red;
+            }
+        }
+
+        .animate-flicker {
+            animation: flicker 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes rise {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .reveal-text {
+            animation: rise 2s ease-out forwards;
+        }
+
+        /* Stylized List */
+        .sin-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .sin-item {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255, 77, 0, 0.3);
+            background: rgba(0, 0, 0, 0.6);
+            color: var(--c-ash);
+            transition: all 0.3s ease;
+        }
+
+        .sin-item:hover {
+            border-color: var(--c-ember);
+            color: var(--c-ember);
+            box-shadow: 0 0 15px rgba(255, 77, 0, 0.2);
+        }
+
+        /* Global Texture Overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.15;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG Filters Definition -->
+    <svg style="display: none;">
+        <defs>
+            <!-- Cinematic Grain -->
+            <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="saturate" values="0" />
+            </filter>
+
+            <!-- Heat Distortion -->
+            <filter id="heat">
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="4" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Global Noise Overlay -->
+    <div class="noise-overlay filter-grain"></div>
+
+    <!-- SCENE 1: The Intro & The Wide Shot -->
+    <section class="scene">
+        <!-- Image 1: Wide shot of Malebolge ruins -->
+        <div class="bg-layer"
+            style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (355).jpg');"></div>
+
+        <div class="content-layer reveal-text">
+            <h1
+                class="font-cinzel text-5xl md:text-7xl mb-6 text-white leading-tight uppercase tracking-widest animate-flicker">
+                Eighth Circle of Hell:<br><span style="color: var(--c-ember)">Fraud</span>
+            </h1>
+            <p class="text-xl md:text-2xl leading-relaxed text-gray-300 max-w-2xl mx-auto">
+                This circle is distinguished from its predecessors by being made up of those who consciously and
+                willingly commit fraud.
+            </p>
+        </div>
+    </section>
+
+    <!-- SCENE 2: The Ditches & The List (Crowd/Bridge) -->
+    <section class="scene">
+        <!-- Image 2: Bridge over ditch/souls -->
+        <div class="bg-layer"
+            style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (356).jpg');"></div>
+
+        <div class="content-layer">
+            <p class="text-lg md:text-xl mb-8 leading-relaxed font-light">
+                Within the eighth circle is another called the <strong class="font-cinzel text-white">Malebolge</strong>
+                (“Evil Pockets”), which houses ten separate bolgias (ditches).
+            </p>
+            <p class="italic text-gray-400 mb-6">These ditches housed different types of people who committed fraud:</p>
+
+            <div class="sin-grid">
+                <span class="sin-item">Panderers</span>
+                <span class="sin-item">Seducers</span>
+                <span class="sin-item">Flatterers</span>
+                <span class="sin-item" title="Those who sell ecclesiastical preferment">Simoniacs</span>
+                <span class="sin-item">Sorcerers</span>
+                <span class="sin-item" title="Corrupt politicians">Barrators</span>
+                <span class="sin-item">Schismatics</span>
+                <span class="sin-item">Alchemists</span>
+                <span class="sin-item">Among Others</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 3: The Demons (Gargoyles) -->
+    <section class="scene">
+        <!-- Image 3: Demons/Gargoyles on rocks -->
+        <div class="bg-layer"
+            style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (357).jpg');"></div>
+
+        <div class="content-layer" style="max-width: 600px;">
+            <h2 class="font-cinzel text-4xl mb-6 text-red-500 tracking-wider">The Guardians</h2>
+            <p class="text-2xl md:text-3xl leading-normal font-serif text-white drop-shadow-lg">
+                Each bolgia is guarded by different demons.
+            </p>
+        </div>
+    </section>
+
+    <!-- SCENE 4: The Punishment (Fire Feet) -->
+    <section class="scene">
+        <!-- Image 4: Feet in stone bowls/fire -->
+        <div class="bg-layer"
+            style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (358).jpg'); background-position: bottom center;">
+        </div>
+
+        <div class="content-layer"
+            style="background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(20,5,0,0.6)); border: none;">
+            <p class="text-xl md:text-2xl mb-4 text-gray-300">...and the inhabitants suffer different punishments, such
+                as the <span class="text-white font-bold">simoniacs</span>,</p>
+
+            <div class="mt-12">
+                <p class="font-cinzel text-3xl md:text-5xl text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 to-red-600 filter-heat"
+                    style="line-height: 1.4;">
+                    who stand head-first in stone bowls and endure flames upon their feet.
+                </p>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>

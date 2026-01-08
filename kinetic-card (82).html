@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>God Mode Narrative</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&family=JetBrains+Mono:wght@100;400&family=Oswald:wght@700&display=swap');
+
+    :root {
+      --neon-blue: #00f3ff;
+      --neon-purple: #bd00ff;
+      --void-black: #050505;
+      --matrix-green: #0aff0a;
+    }
+
+    body {
+      background-color: var(--void-black);
+      color: white;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      margin: 0;
+    }
+
+    /* --- SVG FILTERS --- */
+    .glitch-text {
+      filter: url(#glitch);
+    }
+
+    .liquid-time {
+      filter: url(#heat);
+    }
+
+    .paper-grain {
+      filter: url(#grain);
+    }
+
+    /* --- ANIMATIONS --- */
+    @keyframes scanline {
+      0% {
+        transform: translateY(-100%);
+      }
+
+      100% {
+        transform: translateY(100%);
+      }
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+        opacity: 1;
+      }
+
+      50% {
+        text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
+        opacity: 0.7;
+      }
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    @keyframes rotate-slow {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .scan-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: rgba(0, 243, 255, 0.5);
+      animation: scanline 4s linear infinite;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    /* --- UTILITIES --- */
+    .text-stroke {
+      -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+      color: transparent;
+    }
+
+    .text-fill-anim:hover {
+      color: white;
+      text-shadow: 0 0 15px white;
+      transition: 0.3s ease;
+    }
+
+    .clip-text-image {
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .header-font {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+
+<body class="paper-grain">
+
+  <!-- SVG DEFINITIONS -->
+  <svg style="display: none;">
+    <defs>
+      <!-- Film Grain Filter -->
+      <filter id="grain">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+        <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.5 0" in="noise"
+          result="coloredNoise" />
+        <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="composite" />
+        <feBlend mode="overlay" in="composite" in2="SourceGraphic" />
+      </filter>
+
+      <!-- Glitch Distortion -->
+      <filter id="glitch">
+        <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+        <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+
+      <!-- Heat Wave / Liquid -->
+      <filter id="heat">
+        <feTurbulence type="fractalNoise" baseFrequency="0.01 0.02" numOctaves="1" result="warp" />
+        <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="30" in="SourceGraphic" in2="warp" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- GLOBAL GRAIN OVERLAY -->
+  <div
+    class="fixed inset-0 pointer-events-none opacity-20 z-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJnoiPjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjY1IiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNnKSIgb3BhY2l0eT0iMC40Ii8+PC9zdmc+')] mix-blend-overlay">
+  </div>
+
+  <main>
+
+    <!-- SECTION 1: THE CEILING -->
+    <!-- Image: Cityscape (Simulated via placeholder for demonstration) -->
+    <section class="relative h-screen flex flex-col justify-between p-6 border-b border-gray-800">
+      <div class="absolute inset-0 z-0">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (335).jpg"
+          class="w-full h-full object-cover opacity-40 grayscale mix-blend-luminosity" alt="Futuristic City">
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black"></div>
+      </div>
+
+      <div class="relative z-10 w-full text-center mt-20">
+        <p class="mono text-xs text-green-400 mb-4 tracking-widest">[ SYSTEM STATUS: LIMIT REACHED ]</p>
+        <h1 class="header-font text-6xl md:text-9xl leading-none tracking-tighter mix-blend-difference">
+          THE CEILING<br>
+          OF <span class="italic font-serif text-gray-500">MANUAL</span><br>
+          EFFORT
+        </h1>
+      </div>
+
+      <div class="relative z-10 text-right max-w-md self-end">
+        <h2 class="text-2xl md:text-4xl font-bold glitch-text text-gray-300">Humanity has reached the ceiling.</h2>
+      </div>
+    </section>
+
+    <!-- SECTION 2: ORCHESTRATE -->
+    <section class="min-h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden">
+      <!-- Scanline effect -->
+      <div class="scan-line"></div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 w-full h-full px-8">
+        <div class="flex flex-col justify-center opacity-50 border-r border-gray-800 pr-8">
+          <h3 class="text-4xl md:text-6xl text-stroke font-bold line-through decoration-red-600 decoration-4">
+            MANAGING
+          </h3>
+          <p class="mono text-sm mt-4 text-red-500">ERROR: OBSOLETE PROTOCOL</p>
+          <p class="text-xl mt-2">We are tired of 'managing'</p>
+        </div>
+
+        <div class="flex flex-col justify-center pl-8 relative">
+          <h3 class="text-6xl md:text-8xl font-black text-white liquid-time animate-pulse">
+            ORCHESTRATE
+          </h3>
+          <p class="text-2xl mt-4 font-light text-cyan-300">— we want to orchestrate.</p>
+          <div class="absolute -right-20 top-1/2 w-64 h-64 bg-cyan-500 rounded-full blur-[100px] opacity-20"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: PARALLEL REALITIES -->
+    <!-- Image: Sleep/Vortex -->
+    <section class="relative min-h-[150vh] bg-black text-white overflow-hidden">
+      <div class="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+
+        <!-- Rotating Background Image -->
+        <div class="absolute inset-0 opacity-30">
+          <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (336).jpg"
+            class="w-[150%] h-[150%] object-cover -translate-x-1/4 -translate-y-1/4"
+            style="animation: rotate-slow 60s linear infinite;" alt="Data Vortex">
+        </div>
+
+        <div class="relative z-10 text-center max-w-4xl px-4">
+          <p class="mono text-green-400 mb-2">> INITIATING SEQUENCE: SHATTER_LIMITS</p>
+          <h2 class="header-font text-5xl md:text-7xl mb-8 leading-tight">
+            We don't just build agents; we give you the power to <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600 glitch-text">shatter the
+              limits of time.</span>
+          </h2>
+
+          <div class="grid grid-cols-5 gap-2 mt-12 opacity-80">
+            <!-- 50 Parallel Realities Simulation Grid -->
+            <div class="col-span-5 text-left mb-4 mono text-xs">[ THREADS ACTIVE: 50 ]</div>
+            <script>
+              // Ideally generated by loop, but explicit for HTML constraint
+              for (let i = 0; i < 10; i++) document.write('<div class="h-1 w-full bg-green-500 animate-pulse" style="animation-delay:' + Math.random() + 's"></div>');
+            </script>
+            <div class="h-1 w-full bg-green-500 animate-pulse"></div>
+            <div class="h-1 w-full bg-cyan-500 animate-pulse"></div>
+            <div class="h-1 w-full bg-purple-500 animate-pulse"></div>
+            <!-- ...visual filler implies 50 items -->
+          </div>
+
+          <p class="mt-8 text-xl md:text-3xl font-light">
+            Imagine a world where a single thought triggers <br>
+            <span class="font-bold text-white">fifty parallel realities</span>,
+            each working to solve your hardest problem while you sleep.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: AUTONOMOUS EMPIRE (THE KEY) -->
+    <!-- Image: Key/Hand -->
+    <section class="h-screen flex items-center justify-center bg-white text-black relative">
+      <div class="absolute inset-0">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (337).jpg"
+          class="w-full h-full object-cover opacity-20 invert" alt="Code Key">
+      </div>
+
+      <div class="z-10 relative px-4 w-full max-w-6xl">
+        <div class="flex flex-col md:flex-row items-end">
+          <div class="w-full md:w-1/2 mb-8 md:mb-0">
+            <p class="mono text-xs uppercase tracking-widest mb-4">System Architecture</p>
+            <p class="text-3xl font-bold leading-tight">
+              We aren't just writing code;
+            </p>
+          </div>
+          <div class="w-full md:w-1/2">
+            <p class="text-3xl font-bold leading-tight text-right">
+              we are handing you the
+            </p>
+          </div>
+        </div>
+
+        <h1 class="header-font text-[15vw] leading-none text-center font-black tracking-tighter relative">
+          KEYS
+          <!-- The Key visual embedded inside the text -->
+          <span class="absolute inset-0 clip-text-image opacity-50 z-20 pointer-events-none"
+            style="background-image: url('https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=2000&auto=format&fit=crop'); -webkit-text-stroke: 2px black;">
+            KEYS
+          </span>
+        </h1>
+
+        <h2 class="text-center text-4xl md:text-6xl font-serif italic mt-[-2vw]">
+          to an autonomous empire.
+        </h2>
+      </div>
+    </section>
+
+    <!-- SECTION 5: FINAL COMMAND -->
+    <section class="h-screen bg-black text-white flex flex-col justify-center items-center relative text-center px-4">
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent to-purple-900 opacity-30"></div>
+
+      <div class="space-y-12 z-10">
+        <div class="group cursor-pointer">
+          <h3 class="mono text-lg text-gray-500 group-hover:text-red-500 transition-colors duration-300">
+            [ STOP BUILDING TASKS ]
+          </h3>
+          <div class="h-px w-0 group-hover:w-full bg-red-500 transition-all duration-500 mx-auto"></div>
+        </div>
+
+        <div>
+          <h1 class="header-font text-6xl md:text-9xl tracking-tighter text-white mix-blend-overlay glitch-text">
+            START
+          </h1>
+          <h1
+            class="header-font text-6xl md:text-9xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 animate-[pulse-glow_3s_infinite]">
+            COMMANDING
+          </h1>
+          <h1 class="header-font text-6xl md:text-9xl tracking-tighter text-white">
+            AN EVOLUTION.
+          </h1>
+        </div>
+      </div>
+
+      <!-- Ambient footer particles -->
+      <div class="absolute bottom-10 w-full flex justify-between px-10 mono text-xs text-gray-600">
+        <span>SYS_READY</span>
+        <span>AWAITING INPUT...</span>
+      </div>
+    </section>
+
+  </main>
+</body>
+
+</html>

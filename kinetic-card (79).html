@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dante's Inferno: Circles 5-7</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=UnifrakturMaguntia&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --blood-red: #4a0404;
+            --sulfur: #eab308;
+            --ash: #292524;
+            --parchment: #eecda3;
+        }
+
+        body {
+            font-family: 'IM Fell English', serif;
+            background-color: #000;
+            color: var(--parchment);
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'UnifrakturMaguntia', cursive;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a0505;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--sulfur);
+            border-radius: 4px;
+        }
+
+        /* SVG Filters Class Utilities */
+        .filter-heat {
+            filter: url('#heat-haze');
+        }
+
+        .filter-grain {
+            filter: url('#paper-grain') contrast(120%) brightness(90%);
+        }
+
+        .filter-duotone {
+            filter: url('#duotone');
+        }
+
+        /* Scrollytelling Layout */
+        .chapter {
+            position: relative;
+            min-height: 150vh;
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .sticky-bg {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .sticky-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1s ease-out;
+        }
+
+        .content-overlay {
+            position: relative;
+            z-index: 10;
+            margin-top: -50vh;
+            padding: 2rem;
+            pointer-events: none;
+            /* Allow seeing through to image */
+        }
+
+        .text-card {
+            background: rgba(10, 5, 5, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--blood-red);
+            padding: 3rem;
+            max-width: 600px;
+            margin: 0 auto 50vh auto;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+            transform: translateY(50px);
+            opacity: 0;
+            animation: fadeUp 1s forwards;
+            pointer-events: auto;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        /* Decorative borders */
+        .text-card::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border: 1px solid var(--sulfur);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .drop-cap {
+            float: left;
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 5rem;
+            line-height: 0.8;
+            margin-right: 0.5rem;
+            color: var(--sulfur);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .burning-text {
+            background: linear-gradient(0deg, var(--sulfur) 0%, var(--blood-red) 60%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: url('#heat-haze');
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- SVG FILTERS DEFINITION -->
+    <svg style="display: none;">
+        <defs>
+            <!-- Heat Haze Distortion -->
+            <filter id="heat-haze">
+                <feTurbulence type="fractalNoise" baseFrequency="0.01 0.02" numOctaves="3" result="warp" />
+                <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="5" in="SourceGraphic" in2="warp" />
+            </filter>
+
+            <!-- Grunge Paper Texture -->
+            <filter id="paper-grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.1 0" in="noise"
+                    result="coloredNoise" />
+                <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="composite" />
+                <feBlend mode="multiply" in="composite" in2="SourceGraphic" />
+            </filter>
+
+            <!-- Hellish Duotone -->
+            <filter id="duotone">
+                <feColorMatrix type="matrix" values="0.5 0 0 0 0.5  0.2 0 0 0 0.1  0.1 0 0 0 0.1  0 0 0 1 0" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- CIRCLE 5: ANGER -->
+    <section class="chapter">
+        <div class="sticky-bg">
+            <!-- Img 1: City of Dis -->
+            <div class="absolute inset-0 bg-red-900/40 mix-blend-overlay z-10"></div>
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (324).jpg" alt="The City of Dis"
+                class="filter-duotone">
+        </div>
+        <div class="content-overlay">
+            <div class="text-card">
+                <h2 class="text-5xl mb-4 border-b border-red-900 pb-4 text-red-500 filter-heat">Fifth Circle: Anger</h2>
+                <p class="text-xl leading-relaxed text-gray-300">
+                    <span class="drop-cap">D</span>ante and Virgil are threatened by the Furies when they try to enter
+                    through the walls of Dis (Satan). This is a further progression in Dante’s evaluation of the nature
+                    of sin; he also begins to question himself and his own life, realizing his actions and nature could
+                    lead him to this permanent torture.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CIRCLE 6: HERESY -->
+    <section class="chapter">
+        <div class="sticky-bg">
+            <!-- Img 2: Tombs/Graveyard -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (325).jpg" alt="Open Tombs of Heretics"
+                class="opacity-80 scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black"></div>
+        </div>
+        <div class="content-overlay">
+            <div class="text-card">
+                <h2 class="text-4xl mb-4 text-gray-400">Sixth Circle: Heresy</h2>
+                <p class="text-lg leading-relaxed text-gray-300 mb-4">
+                    Representing the rejection of religious and political norms, the sixth circle leads Dante to
+                    Farinata degli Uberti, a military leader and aristocrat who tried to win the Italian throne and was
+                    convicted posthumously of heresy in 1283.
+                </p>
+                <p class="text-lg leading-relaxed text-gray-300">
+                    Dante also meets Epicurus, Pope Anastasius II, and Emperor Frederick II.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CIRCLE 7: VIOLENCE (OUTER & MIDDLE) -->
+    <section class="chapter">
+        <div class="sticky-bg">
+            <!-- Img 3: Spooky Forest/Nature -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (326).jpg" alt="Wood of Suicides"
+                class="grayscale contrast-125">
+            <div class="absolute inset-0 bg-red-900/20 mix-blend-multiply"></div>
+        </div>
+        <div class="content-overlay">
+            <div class="text-card animate-float">
+                <h2 class="text-4xl mb-6 text-red-600">Seventh Circle: Violence</h2>
+                <p class="text-lg leading-relaxed mb-4">
+                    This is the first circle to be further segmented into sub-circles or rings. There are three of
+                    them—the outer, middle, and inner rings—housing different types of violent criminals.
+                </p>
+                <div class="border-l-2 border-red-800 pl-4 my-6">
+                    <p class="italic text-gray-400 mb-2">The Outer Ring</p>
+                    <p class="mb-4">The first are those who were violent against people and property, such as Attila the
+                        Hun. Centaurs guard this outer ring and shoot its inhabitants with arrows.</p>
+
+                    <p class="italic text-gray-400 mb-2">The Middle Ring</p>
+                    <p>The middle ring consists of those who commit violence against themselves, such as suicide. These
+                        sinners are perpetually eaten by harpies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CIRCLE 7: VIOLENCE (INNER) -->
+    <section class="chapter" style="min-height: 100vh;">
+        <div class="sticky-bg">
+            <!-- Img 4: Fire/Embers -->
+            <img src="https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (327).jpg" alt="Rain of Fire"
+                class="filter-heat scale-125 origin-bottom">
+        </div>
+        <div class="content-overlay">
+            <div class="text-card" style="border-color: var(--sulfur);">
+                <h2 class="text-4xl mb-4 burning-text">The Inner Ring</h2>
+                <p class="text-xl leading-relaxed text-yellow-100">
+                    Finally, the inner ring is made up of blasphemers, or those who are violent against God and nature.
+                    One of these sinners is Brunetto Latini, a sodomite, who was Dante’s mentor. (Dante speaks kindly to
+                    him.)
+                </p>
+                <p class="text-xl leading-relaxed text-yellow-100 mt-4">
+                    The usurers are also here, as are those who blasphemed not just against God but also the gods, such
+                    as Capaneus, who blasphemed against Zeus.
+                </p>
+            </div>
+            <div class="h-48 flex items-center justify-center">
+                <div class="text-center opacity-50">
+                    <p style="font-family: 'UnifrakturMaguntia'; font-size: 2rem;">Finis</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Grain Overlay -->
+    <div class="fixed inset-0 pointer-events-none opacity-20 z-50"
+        style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJ4Ij48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC42IiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCN4KSIgb3BhY2l0eT0iMC41Ii8+PC9zdmc+');">
+    </div>
+
+</body>
+
+</html>

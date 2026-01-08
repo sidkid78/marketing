@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seventh Circle of Hell: Violence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --blood-red: #4a0404;
+            --ember-gold: #ffaa00;
+            --ash-grey: #1a1a1a;
+            --parchment: #f0e6d2;
+        }
+
+        body {
+            background-color: #000;
+            color: var(--parchment);
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* --- SVG Filters --- */
+        .liquid-text {
+            filter: url(#liquid-distortion);
+        }
+
+        .heat-haze {
+            filter: url(#heat-wave);
+        }
+
+        .grainy-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- Animations --- */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes flicker {
+
+            0%,
+            100% {
+                opacity: 1;
+                text-shadow: 0 0 10px var(--ember-gold);
+            }
+
+            50% {
+                opacity: 0.8;
+                text-shadow: 0 0 20px #ff4500;
+            }
+        }
+
+        /* --- Layout Utilities --- */
+        .scene {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .bg-layer {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.5s ease-out;
+        }
+
+        /* Parallax/Sticky Simulation */
+        .sticky-wrapper {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .content-card {
+            background: rgba(10, 5, 5, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            max-width: 600px;
+            margin: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeUp 1s ease-out forwards;
+            border-left: 4px solid var(--blood-red);
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Image Specific Styles */
+        .img-blood {
+            filter: sepia(0.5) contrast(1.2) saturate(1.5);
+        }
+
+        .img-wood {
+            filter: grayscale(0.8) contrast(1.4) brightness(0.6);
+        }
+
+        .img-fire {
+            filter: contrast(1.5) saturate(1.2) hue-rotate(-10deg);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG Filters Definition -->
+    <svg style="display: none;">
+        <defs>
+            <filter id="liquid-distortion">
+                <feTurbulence baseFrequency="0.01 0.02" numOctaves="2" result="warp" />
+                <feDisplacementMap in="SourceGraphic" in2="warp" scale="5" />
+            </filter>
+            <filter id="heat-wave">
+                <feTurbulence type="fractalNoise" baseFrequency="0.01 0.05" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+                <feGaussianBlur stdDeviation="0.5" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Global Grain Overlay -->
+    <div class="grainy-overlay"></div>
+
+    <!-- INTRO SECTION -->
+    <section class="min-h-[50vh] flex flex-col justify-center items-center text-center p-8 z-10 relative bg-black">
+        <h1 class="text-4xl md:text-7xl font-black text-red-700 tracking-widest liquid-text uppercase mb-4">
+            Seventh Circle
+        </h1>
+        <h2 class="text-2xl md:text-4xl text-gray-400 font-serif italic border-b-2 border-red-900 pb-2">
+            of Hell: Violence
+        </h2>
+    </section>
+
+    <!-- SCENE 1: THE OUTER RING (River of Blood) -->
+    <div class="sticky-wrapper">
+        <div class="bg-layer img-blood"
+            style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-1 (353).jpg');">
+            <!-- Fallback color if image fails -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+        </div>
+
+        <div class="scene">
+            <div class="content-card border-l-red-600">
+                <p class="text-lg md:text-xl leading-relaxed">
+                    <span class="block text-4xl font-bold font-cinzel mb-4 text-red-500">I. The Outer Ring</span>
+                    This is the first circle to be further segmented into sub-circles or rings. There are three of
+                    them—the outer, middle, and inner rings—housing different types of violent criminals.
+                </p>
+                <p class="mt-4 text-gray-300 font-light">
+                    The first are those who were violent against people and property, such as Attila the Hun. <strong
+                        class="text-white font-bold">Centaurs guard this outer ring</strong> and shoot its inhabitants
+                    with arrows.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCENE 2: THE MIDDLE RING (Wood of Suicides) -->
+    <div class="sticky-wrapper">
+        <div class="bg-layer img-wood"
+            style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-2 (354).jpg');">
+            <div class="absolute inset-0 bg-gray-900 mix-blend-multiply opacity-60"></div>
+        </div>
+
+        <div class="scene">
+            <div class="content-card border-l-gray-500" style="animation-delay: 0.2s;">
+                <p class="text-lg md:text-xl leading-relaxed">
+                    <span class="block text-4xl font-bold font-cinzel mb-4 text-gray-400">II. The Middle Ring</span>
+                    The middle ring consists of those who commit violence against themselves, such as suicide.
+                </p>
+                <p class="mt-6 font-serif italic text-2xl text-gray-200 border-l-2 border-gray-600 pl-4">
+                    "These sinners are perpetually eaten by harpies."
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCENE 3: THE INNER RING (Burning Sands) -->
+    <div class="sticky-wrapper">
+        <div class="bg-layer img-fire"
+            style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-3 (355).jpg');">
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-orange-900/40 to-black"></div>
+        </div>
+
+        <div class="scene">
+            <div class="content-card border-l-yellow-600 heat-haze" style="animation-delay: 0.4s;">
+                <p class="text-lg md:text-xl leading-relaxed text-amber-100">
+                    <span class="block text-4xl font-bold font-cinzel mb-4 text-amber-500"
+                        style="animation: flicker 4s infinite;">III. The Inner Ring</span>
+                    Finally, the inner ring is made up of blasphemers, or those who are violent against God and nature.
+                    One of these sinners is Brunetto Latini, a sodomite, who was Dante’s mentor. (Dante speaks kindly to
+                    him.)
+                </p>
+                <hr class="border-amber-900/50 my-4">
+                <p class="text-md text-amber-200/80">
+                    The usurers are also here, as are those who blasphemed not just against God but also the gods, such
+                    as <span class="text-white font-semibold">Capaneus</span>, who blasphemed against Zeus.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-black text-center py-12">
+        <div class="text-red-900 font-cinzel text-sm opacity-50 tracking-[1em]">FINIS</div>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase AI - The End of the Nursing Home Trap</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Merriweather:ital,wght@0,300;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --c-dark: #0f1115;
+            --c-accent: #00f0ff;
+            --c-warm: #ffaa5e;
+            --c-text: #f0f0f0;
+        }
+
+        body {
+            background-color: var(--c-dark);
+            color: var(--c-text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        .serif {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* Scrollytelling Setup */
+        .scrolly-section {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+            overflow: hidden;
+        }
+
+        /* Background Layers */
+        .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+            transition: transform 1s ease-out, filter 1s ease;
+            will-change: transform;
+        }
+
+        /* Overlay Gradients */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(to bottom, rgba(15, 17, 21, 0.8), rgba(15, 17, 21, 0.4));
+        }
+
+        /* Content Layers */
+        .content-layer {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 1200px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .content-layer.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Typography Styles */
+        h1,
+        h2 {
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+        }
+
+        .highlight-tech {
+            color: var(--c-accent);
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+
+        .highlight-warm {
+            color: var(--c-warm);
+        }
+
+        /* SVG Filter Classes */
+        .filter-noise {
+            filter: url('#grain') grayscale(100%) contrast(1.2);
+        }
+
+        .filter-tech {
+            filter: url('#tech-glow');
+        }
+
+        .filter-warm {
+            filter: sepia(0.4) saturate(1.4) contrast(1.1);
+        }
+
+        /* Animations */
+        @keyframes scanline {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        .scanner-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--c-accent);
+            box-shadow: 0 0 15px var(--c-accent);
+            animation: scanline 3s linear infinite;
+            z-index: 5;
+            opacity: 0.6;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Data Points Animation */
+        .data-point {
+            transition-delay: 0.3s;
+        }
+
+        .active .data-point:nth-child(1) {
+            transition-delay: 0.2s;
+        }
+
+        .active .data-point:nth-child(2) {
+            transition-delay: 0.4s;
+        }
+
+        .active .data-point:nth-child(3) {
+            transition-delay: 0.6s;
+        }
+
+        /* Start Overlay */
+        .start-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--c-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
+        }
+
+        .start-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .start-btn {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.2rem, 2.5vw, 2rem);
+            color: var(--c-accent);
+            background: transparent;
+            border: 2px solid var(--c-accent);
+            padding: 1rem 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+
+        .start-btn:hover {
+            background: var(--c-accent);
+            color: var(--c-dark);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- START OVERLAY -->
+    <div class="start-overlay" id="start-overlay">
+        <button class="start-btn" id="start-btn">▶ Start Experience</button>
+    </div>
+
+    <!-- SVG Filters Library -->
+    <svg style="display: none;">
+        <defs>
+            <!-- Cinematic Grain -->
+            <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.05 0" in="noise"
+                    result="coloredNoise" />
+                <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="composite" />
+                <feBlend mode="overlay" in="composite" in2="SourceGraphic" />
+            </filter>
+
+            <!-- Tech Glow -->
+            <filter id="tech-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feComposite operator="over" in="blur" in2="SourceGraphic" />
+            </filter>
+
+            <!-- Distortion for 'Crisis' -->
+            <filter id="distortion">
+                <feTurbulence type="turbulence" baseFrequency="0.01 0.1" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="20" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- INTRO -->
+    <section class="scrolly-section bg-black text-center">
+        <div class="content-layer active flex flex-col items-center">
+            <h1 class="text-5xl md:text-8xl font-black mb-4 tracking-tighter mix-blend-difference">
+                HOMEase AI
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-400 font-light tracking-widest uppercase mb-8">
+                The End of the "Nursing Home Trap"
+            </p>
+            <div class="w-px h-24 bg-gradient-to-b from-transparent via-white to-transparent"></div>
+        </div>
+    </section>
+
+    <!-- SECTION 1: THE CRISIS -->
+    <section class="scrolly-section" id="crisis-section">
+        <!-- Audio narration -->
+        <audio id="crisis-audio" preload="auto">
+            <source src="audio/scene1.wav" type="audio/wav">
+        </audio>
+        <!-- Video 1: Dark Hallway -->
+        <video class="bg-layer filter-noise" autoplay muted loop playsinline style="opacity: 0.6; object-fit: cover;">
+            <source src="https://694d8b0339fe8ba173f56f36.imgix.net/animation-1 (3).mp4" type="video/mp4">
+        </video>
+        <div class="overlay"></div>
+
+        <div class="content-layer grid md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <h2 class="text-4xl md:text-6xl font-bold leading-tight">
+                    The Crisis of the <span class="text-red-500" style="filter: url(#distortion)">Invisible Cage</span>
+                </h2>
+                <p class="serif text-lg md:text-xl text-gray-300 leading-relaxed">
+                    By 2030, 71 million Americans will reach a terrifying crossroads. They want to stay in the homes
+                    where they raised their children, but their homes are turning against them.
+                </p>
+            </div>
+            <div class="bg-white/5 backdrop-blur-sm p-8 border-l-4 border-red-500">
+                <p class="text-lg md:text-xl leading-relaxed">
+                    A single ungrabbed rail or a 2-inch threshold is now a life-threatening obstacle. Currently, we
+                    treat aging as a medical crisis, but for 96.5% of American homes, it is actually an <strong
+                        class="text-white">architectural crisis.</strong>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: THE MISSION -->
+    <section class="scrolly-section bg-gray-900" id="mission-section">
+        <!-- Audio narration -->
+        <audio id="mission-audio" preload="auto">
+            <source src="audio/scene2.wav" type="audio/wav">
+        </audio>
+        <div class="content-layer text-center max-w-4xl">
+            <p class="text-accent tracking-widest uppercase mb-4 text-xs md:text-sm font-bold text-[var(--c-accent)]">
+                The HOMEase Mission</p>
+            <h2 class="text-3xl md:text-5xl font-bold mb-8">
+                We aren't just a "lead-gen" platform.
+            </h2>
+            <p class="serif text-xl md:text-3xl text-gray-300 leading-relaxed">
+                We are building the <span class="text-white border-b-2 border-[var(--c-accent)]">Global Nervous System
+                    for Aging-in-Place.</span> We use AR and AI to give families the one thing money usually can’t buy:
+                <strong class="text-[var(--c-accent)]">Certainty.</strong>
+            </p>
+        </div>
+    </section>
+
+    <!-- SECTION 3: THE MAGIC -->
+    <section class="scrolly-section" id="magic-section">
+        <!-- Audio narration -->
+        <audio id="magic-audio" preload="auto">
+            <source src="audio/scene3.wav" type="audio/wav">
+        </audio>
+        <!-- Video 2: Phone AR Scan -->
+        <video class="bg-layer" autoplay muted loop playsinline style="object-fit: cover;">
+            <source src="https://694d8b0339fe8ba173f56f36.imgix.net/animation-2 (5).mp4" type="video/mp4">
+        </video>
+        <div class="absolute inset-0 bg-[#0f1115]/90"></div>
+        <div class="scanner-bar"></div>
+
+        <div class="content-layer grid md:grid-cols-12 gap-8 items-start">
+            <div class="md:col-span-5 space-y-6 sticky top-24">
+                <h2 class="text-4xl md:text-5xl font-bold">
+                    The Magic:
+                    <span class="block text-[var(--c-accent)] text-2xl mt-2">From "What if?" to "Here's how."</span>
+                </h2>
+                <p class="serif text-gray-400">
+                    The "Adult Child" (the 45-year-old daughter) is exhausted. She spends her nights worrying about her
+                    mother’s safety but doesn't know where to start. She doesn't need a "directory of contractors"—she
+                    needs a <strong class="text-white">plan.</strong>
+                </p>
+            </div>
+
+            <div class="md:col-span-1"></div>
+
+            <div class="md:col-span-6 space-y-8">
+                <div
+                    class="data-point border border-gray-700 bg-gray-900/80 p-6 rounded-lg hover:border-[var(--c-accent)] transition-colors group">
+                    <h3 class="text-[var(--c-accent)] font-mono text-sm mb-2">01 // SCAN</h3>
+                    <h4 class="text-xl font-bold mb-2">The 2-Minute Scan</h4>
+                    <p class="text-sm text-gray-400 group-hover:text-white transition-colors">With a smartphone, she
+                        scans her mother's bathroom. The invisible hazards are finally made visible.</p>
+                </div>
+
+                <div
+                    class="data-point border border-gray-700 bg-gray-900/80 p-6 rounded-lg hover:border-[var(--c-accent)] transition-colors group">
+                    <h3 class="text-[var(--c-accent)] font-mono text-sm mb-2">02 // VISUALIZE</h3>
+                    <h4 class="text-xl font-bold mb-2">The Vision</h4>
+                    <p class="text-sm text-gray-400 group-hover:text-white transition-colors">Our AI doesn't just list
+                        problems; it visualizes the cure. She sees the curbless shower and the elegant safety rails in
+                        3D, turning fear into an actionable project.</p>
+                </div>
+
+                <div
+                    class="data-point border border-gray-700 bg-gray-900/80 p-6 rounded-lg hover:border-[var(--c-accent)] transition-colors group">
+                    <h3 class="text-[var(--c-accent)] font-mono text-sm mb-2">03 // BUILD</h3>
+                    <h4 class="text-xl font-bold mb-2">The Handshake</h4>
+                    <p class="text-sm text-gray-400 group-hover:text-white transition-colors">We connect her to the "1%
+                        of Builders"—CAPS-certified specialists who view a bathroom remodel as a life-saving
+                        intervention, not just a job.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: ECONOMICS -->
+    <section class="scrolly-section" id="economics-section">
+        <!-- Audio narration -->
+        <audio id="economics-audio" preload="auto">
+            <source src="audio/scene4.wav" type="audio/wav">
+        </audio>
+        <!-- Video 3: Handshake/Business -->
+        <video class="bg-layer" autoplay muted loop playsinline
+            style="object-fit: cover; filter: grayscale(100%) brightness(0.5);">
+            <source src="https://694d8b0339fe8ba173f56f36.imgix.net/animation-3 (2).mp4" type="video/mp4">
+        </video>
+        <div class="overlay bg-blue-900/40 mix-blend-multiply"></div>
+
+        <div class="content-layer grid md:grid-cols-2 gap-16">
+            <div class="bg-white text-black p-8 md:p-12 shadow-2xl floating">
+                <h2 class="text-3xl font-bold mb-4 uppercase tracking-tight">The Economic Engine <br><span
+                        class="text-blue-600">(The "Moat")</span></h2>
+                <p class="serif mb-6">
+                    While others chase "home improvement" generally, we are owning the <strong>"Safety Data
+                        Moat."</strong> By 2030, HOMEase will hold the world's largest dataset on how homes fail as we
+                    age.
+                </p>
+                <p class="text-sm border-t border-gray-200 pt-4 text-gray-600">
+                    This data doesn't just sell leads; it drives insurance premiums, healthcare discharge protocols, and
+                    government policy. We are becoming the <strong>Standard of Care</strong> for the home environment.
+                </p>
+            </div>
+            <div class="flex flex-col justify-center text-right space-y-8">
+                <div>
+                    <h3 class="text-6xl md:text-8xl font-black text-white/20">75%</h3>
+                    <h4 class="text-2xl font-bold text-white">Margin of Dignity</h4>
+                </div>
+                <p class="serif text-lg text-gray-300">
+                    We operate with capital efficiency not just for the sake of profit, but for the sake of
+                    <strong>scale.</strong> To solve a $161 billion problem, we must be as lean as we are lethal. Our
+                    75% projected margins are the fuel that allows us to integrate into every hospital discharge desk
+                    and every Medicare Advantage plan in the country.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: CONCLUSION -->
+    <section class="scrolly-section" id="conclusion-section">
+        <!-- Audio narration -->
+        <audio id="conclusion-audio" preload="auto">
+            <source src="audio/scene5.wav" type="audio/wav">
+        </audio>
+        <!-- Image 4: Family/Dignity -->
+        <div class="bg-layer filter-warm"
+            style="background-image: url('https://694d8b0339fe8ba173f56f36.imgix.net/scene-4 (397).jpg');"></div>
+        <div class="absolute inset-0 bg-amber-900/30 mix-blend-overlay"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+
+        <div class="content-layer text-center max-w-3xl mb-24">
+            <h2 class="text-3xl md:text-5xl font-bold mb-8 text-white drop-shadow-lg">
+            </h2>
+            <p class="serif text-xl md:text-2xl text-white mb-8 leading-relaxed font-light">
+                We are not building an app. We are building the infrastructure that allows a generation to age with
+                dignity, in the homes they love, surrounded by the people they care about.
+            </p>
+            <div class="inline-block border border-[var(--c-warm)] px-8 py-4 bg-black/40 backdrop-blur-md rounded-full">
+                <p class="text-[var(--c-warm)] font-bold tracking-widest uppercase text-sm md:text-base">
+                    We are ending the "Nursing Home Trap" once and for all.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Start overlay - required for audio playback
+        const startOverlay = document.getElementById('start-overlay');
+        const startBtn = document.getElementById('start-btn');
+
+        // Sections and their audio in order
+        const sections = [
+            { section: document.getElementById('crisis-section'), audio: document.getElementById('crisis-audio') },
+            { section: document.getElementById('mission-section'), audio: document.getElementById('mission-audio') },
+            { section: document.getElementById('magic-section'), audio: document.getElementById('magic-audio') },
+            { section: document.getElementById('economics-section'), audio: document.getElementById('economics-audio') },
+            { section: document.getElementById('conclusion-section'), audio: document.getElementById('conclusion-audio') }
+        ];
+
+        let currentSectionIndex = 0;
+        let isAutoScrolling = false;
+
+        // Scroll to a section and play its audio
+        function playSection(index) {
+            if (index >= sections.length) {
+                isAutoScrolling = false;
+                return; // End of presentation
+            }
+
+            currentSectionIndex = index;
+            const { section, audio } = sections[index];
+
+            // Smooth scroll to section
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // Play audio after scroll animation (500ms delay)
+            setTimeout(() => {
+                if (audio) {
+                    audio.play().catch(err => {
+                        console.log('Audio play prevented:', err);
+                        // If audio fails, still advance after 5 seconds
+                        setTimeout(() => playSection(index + 1), 5000);
+                    });
+                }
+            }, 800);
+        }
+
+        // Set up audio ended listeners to advance to next section
+        sections.forEach((item, index) => {
+            if (item.audio) {
+                item.audio.addEventListener('ended', () => {
+                    if (isAutoScrolling) {
+                        // Small delay before scrolling to next section
+                        setTimeout(() => playSection(index + 1), 500);
+                    }
+                });
+            }
+        });
+
+        startBtn.addEventListener('click', function () {
+            startOverlay.classList.add('hidden');
+            isAutoScrolling = true;
+
+            // Remove overlay from DOM after fade
+            setTimeout(() => {
+                startOverlay.style.display = 'none';
+            }, 500);
+
+            // Start the presentation from first section
+            setTimeout(() => playSection(0), 600);
+        });
+
+        // Intersection Observer for scroll triggers
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: "0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                } else {
+                    entry.target.classList.remove('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.content-layer').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Parallax Effect for Backgrounds
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            document.querySelectorAll('.bg-layer').forEach((bg, index) => {
+                const speed = 0.5;
+                const offset = (scrolled - (index * window.innerHeight)) * speed;
+            });
+        });
+    </script>
+</body>
+
+</html>
