@@ -56,7 +56,7 @@ export const generateArtifact = async (
 
     // We use gemini-2.5-flash for a good balance of vision reasoning and code generation speed.
     // Ideally gemini-3-pro-preview is better for complex vision, but 2.5 is very capable.
-    const modelId = "gemini-2.5-flash";
+    const modelId = "gemini-3-pro-preview";
 
     const parts: any[] = [];
 

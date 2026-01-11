@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Austin Aging-in-Place Sanctuary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --color-sand: #f3f0eb;
+            --color-gold: #cfaa7d;
+            --color-text: #2d3748;
+            --color-glass: rgba(255, 255, 255, 0.65);
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--color-sand);
+            color: var(--color-text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* TYPOGRAPHY */
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* SVG FILTERS & TEXTURES */
+        .liquid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.6;
+            filter: url(#water-distortion) contrast(1.2) brightness(1.1);
+            pointer-events: none;
+        }
+
+        .glass-card {
+            background: var(--color-glass);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+        }
+
+        /* TEXT EFFECTS */
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s ease-out forwards;
+        }
+
+        .shimmer-text {
+            background: linear-gradient(45deg, #2d3748 0%, #cfaa7d 50%, #2d3748 100%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shimmer 4s infinite linear;
+        }
+
+        /* IMAGES & FRAMES */
+        .polaroid-frame {
+            padding: 1rem;
+            background: white;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: rotate(-2deg);
+            transition: transform 0.5s ease;
+        }
+
+        .polaroid-frame:hover {
+            transform: rotate(0deg) scale(1.02);
+            z-index: 10;
+        }
+
+        .image-aspect {
+            aspect-ratio: 4/5;
+            background-color: #ddd;
+            background-image: url('data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=');
+            /* Placeholder for specific user image */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* To simulate the User Storyboard Image provided in context, we use a CSS gradient as a placeholder for the visual vibe */
+        .storyboard-sim {
+            background: linear-gradient(135deg, #e3dac9 0%, #ffffff 50%, #cfaa7d 100%);
+        }
+
+        /* KEYFRAMES */
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* ANIMATION DELAYS */
+        .delay-100 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-500 {
+            animation-delay: 0.5s;
+        }
+
+        /* TECHNICAL STAMP */
+        .tech-stamp {
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.6rem;
+            border: 1px solid currentColor;
+            padding: 4px 8px;
+            display: inline-block;
+            opacity: 0.5;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- SVG FILTERS (The Engine of the Art) -->
+    <svg style="display: none;">
+        <defs>
+            <!-- Turbulent Water Effect -->
+            <filter id="water-distortion">
+                <feTurbulence type="fractalNoise" baseFrequency="0.01 0.04" numOctaves="3" result="noise" seed="5">
+                    <animate attributeName="baseFrequency" values="0.01 0.04;0.015 0.06;0.01 0.04" dur="20s"
+                        repeatCount="indefinite" />
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" />
+                <feGaussianBlur stdDeviation="0.5" />
+            </filter>
+
+            <!-- Frosted Glass Noise -->
+            <filter id="noise-grain">
+                <feTurbulence type="turbulence" baseFrequency="0.6" numOctaves="2" result="grain" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.1 0" in="grain" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- PROCEDURAL BACKGROUND (Simulating the AI Mood Image) -->
+    <div class="liquid-bg">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100%" height="100%" fill="#d4e0e6" opacity="0.4" />
+            <circle cx="10%" cy="20%" r="200" fill="#cfaa7d" opacity="0.2" filter="url(#water-distortion)" />
+            <circle cx="90%" cy="80%" r="300" fill="#e2e8f0" opacity="0.3" filter="url(#water-distortion)" />
+        </svg>
+    </div>
+
+    <main class="max-w-4xl mx-auto px-6 py-12 md:py-20 relative z-10">
+
+        <!-- SECTION 1: HERO & META -->
+        <header class="text-center mb-24">
+            <!-- Verbatim "Option 1" constraint handled as metadata tag -->
+            <div class="reveal-text">
+            </div>
+
+            <h1 class="text-5xl md:text-7xl serif leading-tight mb-8 reveal-text delay-100">
+                ✨ Prepare to be <span class="shimmer-text italic">amazed!</span> ✨
+            </h1>
+
+            <div class="glass-card p-8 rounded-2xl reveal-text delay-200">
+                <p class="text-lg md:text-xl leading-relaxed font-light text-slate-700">
+                    We just wrapped up a breathtaking "Before & After" bathroom transformation, turning an outdated
+                    space into a modern, stylish, and supremely safe aging-in-place sanctuary right here in Austin.
+                </p>
+            </div>
+        </header>
+
+        <!-- SECTION 2: VISUAL STORYTELLING (Storyboard Image) -->
+        <section class="grid md:grid-cols-2 gap-12 items-center mb-32">
+            <div class="reveal-text delay-300 relative">
+                <!-- Framing the storyboard image -->
+                <div class="polaroid-frame transform rotate-2">
+                    <div class="image-aspect storyboard-sim">
+                        <!-- Image tag mimicking provided Storyboard Image -->
+                        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/download (7).jpeg" alt="Renovated Bathroom"
+                            style="width:100%; height:100%; object-fit:cover; mix-blend-mode: multiply; opacity: 0.9;" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-white/40 to-transparent pointer-events-none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal-text delay-500 space-y-6">
+                <p class="text-2xl serif italic text-slate-800">
+                    Watch as we say goodbye to dated and hello to a haven of comfort and independence!
+                </p>
+                <p class="text-sm tracking-widest uppercase text-slate-500 border-b border-slate-300 pb-2 inline-block">
+                    Our reel showcases fast cuts highlighting:
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 3: FEATURES (Kinetic Typography) -->
+        <section class="mb-32">
+            <div class="grid md:grid-cols-3 gap-6">
+
+                <!-- Feature 1 -->
+                <div class="glass-card p-6 rounded-xl hover:bg-white/80 transition duration-500 group reveal-text"
+                    style="animation-delay: 0.6s;">
+                    <div class="text-3xl mb-4 transform group-hover:scale-125 transition duration-300">✅</div>
+                    <h3 class="text-xl font-bold mb-2 serif">Curbless Shower:</h3>
+                    <p class="text-sm text-slate-600">Seamless entry for ultimate accessibility.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass-card p-6 rounded-xl hover:bg-white/80 transition duration-500 group reveal-text"
+                    style="animation-delay: 0.7s;">
+                    <div class="text-3xl mb-4 transform group-hover:scale-125 transition duration-300">✅</div>
+                    <h3 class="text-xl font-bold mb-2 serif">Integrated Grab Bars:</h3>
+                    <p class="text-sm text-slate-600">Safety that blends flawlessly with designer aesthetics.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass-card p-6 rounded-xl hover:bg-white/80 transition duration-500 group reveal-text"
+                    style="animation-delay: 0.8s;">
+                    <div class="text-3xl mb-4 transform group-hover:scale-125 transition duration-300">✅</div>
+                    <h3 class="text-xl font-bold mb-2 serif">Luxurious Finishes:</h3>
+                    <p class="text-sm text-slate-600">Elevating style without compromising function.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 4: MANIFESTO -->
+        <section class="text-center mb-24 px-4 md:px-12 reveal-text" style="animation-delay: 0.9s;">
+            <div class="relative py-12">
+                <span class="absolute top-0 left-0 text-6xl text-gold opacity-20 serif">“</span>
+                <p class="text-2xl md:text-3xl serif leading-snug text-slate-800">
+                    We believe every Austin home deserves to be a place of both beauty and peace of mind. As your local
+                    aging-in-place specialists, we're dedicated to creating spaces that grow with you.
+                </p>
+                <span class="absolute bottom-0 right-0 text-6xl text-gold opacity-20 serif">”</span>
+            </div>
+        </section>
+
+        <!-- SECTION 5: CTA -->
+        <footer class="text-center reveal-text pb-20" style="animation-delay: 1s;">
+            <div class="inline-block relative">
+                <div class="absolute inset-0 bg-yellow-200 blur-xl opacity-30 animate-pulse"></div>
+                <p class="relative text-xl font-bold text-slate-900 mb-4">
+                    🤩 Want to see every stunning detail up close?
+                </p>
+            </div>
+
+            <div class="mt-8 flex items-center justify-center gap-2 text-slate-500 animate-bounce">
+                <span class="serif italic">Swipe to explore the full gallery!</span>
+                <span class="text-2xl">➡️</span>
+            </div>
+
+            <div class="mt-12 text-xs text-slate-400 font-mono tracking-wide opacity-70">
+                #AgingInPlace #UniversalDesign #AustinRenovation #HomeSafety #ATXHomes
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Subtle grainy texture overlay using CSS mix-blend-mode -->
+    <div
+        style="position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0.4; filter: contrast(300%) brightness(100%); mix-blend-mode: overlay;">
+        <svg width="100%" height="100%">
+            <rect width="100%" height="100%" filter="url(#noise-grain)" />
+        </svg>
+    </div>
+
+</body>
+
+</html>

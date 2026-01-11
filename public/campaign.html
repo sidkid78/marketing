@@ -205,11 +205,14 @@
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 4px;
       pointer-events: auto;
-      transform: translateY(20px);
+      transform: translateY(40px);
       opacity: 0;
-      animation: floatUp 0.8s forwards ease-out;
-      animation-timeline: view();
-      animation-range: entry 10% cover 30%;
+      transition: transform 0.8s var(--ease-out), opacity 0.8s var(--ease-out);
+    }
+
+    .glass-card.visible {
+      transform: translateY(0);
+      opacity: 1;
     }
 
     /* SECTION 4: 7 DAY JOURNEY */
@@ -253,6 +256,8 @@
     /* SECTION 5: CAREGIVER COMPASS */
     #caregiver {
       background: #e5e7eb;
+      position: relative;
+      min-height: 100vh;
     }
 
     .diagonal-split {
@@ -303,12 +308,12 @@
     .actions-bg {
       position: absolute;
       top: 0;
-      right: 0;
-      width: 50%;
+      left: 0;
+      width: 100%;
       height: 100%;
       background: url('https://694d8b0339fe8ba173f56f36.imgix.net/visual-4 (8).png?q=80&w=2000') center/cover;
-      opacity: 0.15;
-      mix-blend-mode: multiply;
+      opacity: 0.35;
+      mix-blend-mode: normal;
     }
 
     .action-grid {
@@ -560,6 +565,26 @@
         the safest place for everyone.</p>
     </div>
   </footer>
+
+  <script>
+    // IntersectionObserver for scroll-triggered animations (cross-browser compatible)
+    document.addEventListener('DOMContentLoaded', () => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -10% 0px'
+      });
+
+      document.querySelectorAll('.glass-card').forEach(card => {
+        observer.observe(card);
+      });
+    });
+  </script>
 
 </body>
 

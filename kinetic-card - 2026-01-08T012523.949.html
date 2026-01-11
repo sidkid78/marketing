@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stealth Accessibility</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Manrope:wght@300;400;600&display=swap');
+
+        :root {
+            --bg-paper: #fdfcf8;
+            --text-ink: #1a1a1a;
+            --accent-gold: #a68a64;
+            --dark-slate: #1f2227;
+            --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1)
+        }
+
+        .noise-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            filter: url(#noise)
+        }
+
+        .font-serif {
+            font-family: 'Cormorant Garamond', serif
+        }
+
+        .font-sans {
+            font-family: 'Manrope', sans-serif
+        }
+
+        body {
+            background-color: var(--bg-paper);
+            color: var(--text-ink);
+            margin: 0;
+            overflow-x: hidden
+        }
+
+        /* Scroll Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes revealImage {
+            from {
+                clip-path: inset(0 0 100% 0)
+            }
+
+            to {
+                clip-path: inset(0 0 0 0)
+            }
+        }
+
+        @keyframes slowZoom {
+            from {
+                transform: scale(1)
+            }
+
+            to {
+                transform: scale(1.1)
+            }
+        }
+
+        .kinetic-block {
+            animation: fadeUp linear both;
+            animation-timeline: view();
+            animation-range: entry 10% cover 30%
+        }
+
+        .image-reveal {
+            animation: revealImage linear both;
+            animation-timeline: view();
+            animation-range: entry 20% cover 50%
+        }
+
+        .hero-zoom {
+            animation: slowZoom ease-in-out both;
+            animation-timeline: view();
+            animation-range: entry 0% exit 100%
+        }
+
+        /* Typography */
+        h1 {
+            font-size: clamp(3rem, 8vw, 7rem);
+            line-height: 0.9;
+            letter-spacing: -0.03em
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            line-height: 1.1;
+            letter-spacing: -0.01em
+        }
+
+        .drop-cap::first-letter {
+            float: left;
+            font-size: 4.5rem;
+            line-height: 0.8;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            font-family: 'Cormorant Garamond', serif
+        }
+
+        /* Layout Specifics */
+        .parallax-wrapper {
+            perspective: 1px;
+            height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto
+        }
+
+        .sticky-title {
+            position: sticky;
+            top: 2rem;
+            mix-blend-mode: difference;
+            z-index: 10
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem
+        }
+
+        @media(min-width:768px) {
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 4rem
+            }
+        }
+
+        .editorial-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+            filter: sepia(0.1) contrast(0.95)
+        }
+
+        .dark-mode-section {
+            background-color: var(--dark-slate);
+            color: #e2e2e2;
+            transition: background 0.5s ease
+        }
+
+        .dark-mode-section h2 {
+            color: #fff
+        }
+
+        .marker {
+            color: var(--accent-gold)
+        }
+    </style>
+</head>
+
+<body><svg style="display:none">
+        <filter id="noise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="saturate" values="0" />
+        </filter>
+        <filter id="softGlow">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+    </svg>
+    <div class="noise-layer"></div>
+    <main class="font-sans"><!-- Hero Section -->
+        <section class="relative h-screen w-full overflow-hidden flex flex-col justify-end p-6 md:p-12 text-white">
+            <div class="absolute inset-0 z-0"><img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-1 (11).png"
+                    alt="Modern Minimalist Kitchen" class="w-full h-full object-cover hero-zoom brightness-75"></div>
+            <div class="relative z-10 max-w-5xl">
+                <h1 class="font-serif font-light kinetic-block">The Art of <br><span
+                        class="italic font-semibold">Stealth Accessibility</span></h1>
+                <p class="mt-4 text-lg md:text-2xl font-light tracking-wide max-w-2xl kinetic-block"
+                    style="animation-delay:0.2s">Stylish and Safe Kitchen Remodels</p>
+            </div>
+        </section><!-- Intro -->
+        <section class="max-w-4xl mx-auto px-6 py-24 md:py-32 leading-relaxed text-lg md:text-xl">
+            <div class="kinetic-block space-y-8">
+                <p class="drop-cap">Imagine walking into a kitchen that feels like a spread from <em>Architectural
+                        Digest</em>—sleek, minimalist, and undeniably modern. Now, imagine that this same kitchen is
+                    specifically engineered to prevent falls, reduce joint strain, and allow for effortless movement as
+                    you age.</p>
+                <p>For years, a persistent myth has suggested that 'safety' in home design requires sacrificing style
+                    for clinical, institutional-looking fixtures. We have been conditioned to associate accessibility
+                    with hospital-grade grab bars and clunky plastic modifications. But a new era of Stealth
+                    Accessibility is here to change that narrative.</p>
+                <p>This transformation is about integrating high-function universal design into the very fabric of
+                    luxury aesthetics. It is the art of making a kitchen safer without it looking like a
+                    'senior-friendly' space. By shifting the narrative from 'fixing' a problem to 'elevating' a
+                    lifestyle, we move away from the cluttered, narrow, and dim kitchens of the past toward open,
+                    intentional spaces that accommodate everyone—regardless of age or ability.</p>
+            </div>
+        </section><!-- Cabinetry -->
+        <section class="w-full min-h-screen grid grid-cols-1 md:grid-cols-2 bg-[#f4f2ef]">
+            <div class="sticky top-0 h-screen w-full overflow-hidden"><img
+                    src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-2 (10).png"
+                    class="w-full h-full object-cover editorial-img image-reveal" alt="Pull down shelving"></div>
+            <div class="flex flex-col justify-center p-8 md:p-24 space-y-8"><span
+                    class="text-xs uppercase tracking-[0.2em] text-gray-500 font-bold kinetic-block">Ergonomics</span>
+                <h2 class="font-serif kinetic-block">The Cabinetry Revolution: <br><span
+                        class="italic text-[var(--accent-gold)]">Bringing the Kitchen to You</span></h2>
+                <div class="text-gray-800 space-y-6 kinetic-block">
+                    <p>Traditional base cabinets can be a nightmare for ergonomics. Reaching into the dark, deep
+                        recesses of a lower shelf often requires kneeling or bending at awkward angles—two primary
+                        triggers for back pain and loss of balance. In a modern, safe kitchen, we eliminate this
+                        struggle through pull-out drawers and pull-down shelving systems.</p>
+                    <p>Instead of you moving to the cabinet, the cabinet moves to you. Heavy pots and pans are stored in
+                        wide, deep drawers that glide open with a gentle touch, keeping everything at waist height. For
+                        upper cabinets, internal pull-down mechanisms allow users to bring high-reach items down to eye
+                        level with a single lever. This isn't just a safety feature; it is a premium convenience that
+                        makes cooking more efficient for everyone. These features remain hidden behind beautiful custom
+                        cabinetry faces, maintaining a seamless, high-end look.</p>
+                </div>
+            </div>
+        </section><!-- Lighting (Dark Mode) -->
+        <section class="dark-mode-section w-full py-24 md:py-32">
+            <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+                <div class="md:col-span-5 order-2 md:order-1 kinetic-block space-y-6"><span
+                        class="text-xs uppercase tracking-[0.2em] text-[#a68a64] font-bold">Illumination</span>
+                    <h2 class="font-serif">Strategic Lighting: <br><span class="italic opacity-80">More Than Just
+                            Ambience</span></h2>
+                    <p class="opacity-90 leading-relaxed">Poor lighting is a leading contributor to household accidents,
+                        particularly in the kitchen where sharp knives and hot surfaces are the norm. The Invisible
+                        Transformation utilizes a multi-layered lighting strategy that serves both form and function.
+                    </p>
+                    <p class="opacity-90 leading-relaxed">Under-cabinet LED strips provide focused task lighting,
+                        eliminating shadows on the countertop while you prep meals. However, the real 'stealth' safety
+                        feature is motion-sensor toe-kick lighting. These low-profile lights are installed at the base
+                        of the cabinets, illuminating the floor path automatically when someone enters the room at
+                        night. This prevents trips and stumbles during midnight water runs without requiring you to
+                        fumble for a switch. By using smart dimmers and bulbs that show colors accurately and vibrantly,
+                        we ensure the kitchen is bright enough for safety while maintaining a warm, inviting mood.</p>
+                </div>
+                <div class="md:col-span-7 order-1 md:order-2 h-[60vh] md:h-[80vh] relative"><img
+                        src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-3 (10).png"
+                        class="w-full h-full object-cover rounded shadow-2xl image-reveal"
+                        style="filter: brightness(1.1) contrast(1.1);" alt="Toe kick lighting"></div>
+            </div>
+        </section><!-- Flooring & Tech -->
+        <section class="w-full py-24 px-6 md:px-12 bg-white">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
+                    <div class="space-y-6 kinetic-block">
+                        <div class="h-[400px] overflow-hidden mb-8"><img
+                                src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-4 (10).png"
+                                class="w-full h-full object-cover image-reveal" alt="Smart Faucet"></div>
+                        <h2 class="font-serif text-3xl md:text-4xl mb-4">Slip-Resistant Flooring: <span
+                                class="text-[var(--accent-gold)]">The Foundation of Safety</span></h2>
+                        <p>The floor is the most critical safety element in any kitchen, yet it is often the most
+                            overlooked. High-gloss tiles may look stunning, but they become skating rinks the moment a
+                            drop of water hits them.</p>
+                        <p>The modern solution involves textured porcelain tiles or matte-finish luxury vinyl planks
+                            (LVP) that mimic the look of expensive hardwood or natural stone. These materials offer
+                            superior grip, providing the traction necessary to prevent slips without feeling rough to
+                            the touch. By choosing a matte finish, we also reduce glare, which can be disorienting for
+                            individuals with visual impairments. The result is a floor that looks like a designer choice
+                            but acts as a reliable safety net for every step you take.</p>
+                    </div>
+                    <div class="space-y-6 pt-12 md:pt-48 kinetic-block">
+                        <h2 class="font-serif text-3xl md:text-4xl mb-4">Ergonomic Hardware and Smart Tech</h2>
+                        <p>Small details make the biggest difference in daily usability. Traditional round cabinet knobs
+                            can be difficult for those with arthritis or limited grip strength. The stylish alternative?
+                            Lever-style handles or long, sleek pulls that don't require a tight grip to operate. These
+                            are currently trending in modern kitchen designs, meaning you can achieve a contemporary
+                            look while improving accessibility.</p>
+                        <p>Similarly, touchless or voice-activated faucets are no longer just a futuristic luxury; they
+                            are essential tools for safety. They allow users to turn on the water without reaching
+                            across a deep sink, and many models include digital temperature displays to prevent
+                            scalding. Integrating these smart features reduces physical strain and adds a layer of
+                            technological sophistication to the heart of the home.</p>
+                    </div>
+                </div>
+            </div>
+        </section><!-- Footer / Future -->
+        <section class="relative w-full py-32 px-6 flex flex-col items-center justify-center text-center bg-[#f0eee9]">
+            <div class="max-w-3xl space-y-8 kinetic-block">
+                <h2 class="font-serif text-5xl md:text-7xl italic text-[var(--text-ink)]">Designing for the Future</h2>
+                <p class="text-lg md:text-xl leading-relaxed text-gray-700">The ultimate goal of a stylish and safe
+                    kitchen remodel is to foster independence and peace of mind without compromising on personal style.
+                    By embracing the principles of universal design—pull-out storage, smart lighting, slip-resistant
+                    surfaces, and ergonomic hardware—you create a space that is prepared for the future while remaining
+                    beautiful in the present.</p>
+                <p class="text-lg md:text-xl leading-relaxed text-gray-700">As you plan your next renovation, ask
+                    yourself: <em>Does this design serve me as much as it reflects me?</em> Whether it is the hidden
+                    lighting or the high-grip luxury floors, the most surprising thing about modern safety is how good
+                    it can look. We invite you to explore these concepts further in our latest digital stories and share
+                    which of these 'stealth' upgrades would make the biggest difference in your home.</p>
+                <div class="w-24 h-1 bg-[var(--accent-gold)] mx-auto mt-12"></div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

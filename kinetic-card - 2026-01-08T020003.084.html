@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Invisible Safety Revolution</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --color-text: #1a1a1a;
+            --color-bg: #f4f4f0;
+            --color-accent: #d97706;
+            /* Safety Orange */
+            --color-luxury: #1e293b;
+            /* Matte Black/Dark Slate */
+            --color-gold: #c29f6d;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .font-mono {
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* SVG Filter Classes */
+        .noise-bg {
+            position: relative;
+        }
+
+        .noise-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            pointer-events: none;
+            z-index: 0;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.1);
+            filter: url(#noiseFilter);
+            opacity: 0.4;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        .glass-panel-dark {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Scrollytelling Layout */
+        .sticky-section {
+            position: relative;
+            min-height: 150vh;
+        }
+
+        .sticky-bg {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            object-fit: cover;
+            z-index: 0;
+            transition: filter 0.5s ease;
+        }
+
+        .content-overlay {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 2rem;
+            pointer-events: none;
+        }
+
+        .text-card {
+            pointer-events: auto;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 3rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .text-card.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Kinetic Typography */
+        .reveal-text span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            transition-delay: calc(var(--index) * 0.01s);
+        }
+
+        .in-view .reveal-text span {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .highlight {
+            background-image: linear-gradient(120deg, rgba(217, 119, 6, 0.3) 0%, rgba(217, 119, 6, 0.3) 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 0.2em;
+            background-position: 0 88%;
+            transition: background-size 0.5s ease-in 0.5s;
+        }
+
+        .in-view .highlight {
+            background-size: 100% 88%;
+        }
+
+        /* Specific Section Styles */
+        .phase-marker {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            letter-spacing: 0.2em;
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+
+        img.bg-filter-blueprint {
+            filter: grayscale(100%) sepia(20%) contrast(1.2) brightness(0.9);
+        }
+
+        img.bg-filter-orange {
+            filter: contrast(1.1) saturate(1.2);
+        }
+
+        img.bg-filter-luxury {
+            filter: brightness(0.8) contrast(1.1);
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- SVG Filters -->
+    <svg style="display: none;">
+        <defs>
+            <filter id="noiseFilter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="saturate" values="0" />
+                <feComponentTransfer>
+                    <feFuncA type="linear" slope="0.5" />
+                </feComponentTransfer>
+            </filter>
+            <filter id="warpFilter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.01 0.04" numOctaves="2" result="warp" />
+                <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="20" in="SourceGraphic" in2="warp" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Intro Section -->
+    <section
+        class="min-h-screen flex flex-col justify-center items-center relative overflow-hidden bg-slate-900 text-white noise-bg">
+        <div
+            class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2000&auto=format&fit=crop')] opacity-20 bg-cover bg-center">
+        </div>
+        <div class="z-10 text-center max-w-4xl px-6 text-card in-view">
+            <p class="font-mono text-amber-500 mb-4 tracking-widest uppercase text-sm">Scrollytelling Feature</p>
+            <h1 class="font-serif text-5xl md:text-7xl mb-6 leading-tight">
+                The Invisible Safety Revolution
+            </h1>
+            <p class="font-light text-xl md:text-2xl opacity-80 max-w-2xl mx-auto">
+                A Time-Lapse Journey Through Modern Bathroom Remodeling
+            </p>
+        </div>
+    </section>
+
+    <!-- Narrative Hook -->
+    <section class="py-24 px-6 md:px-12 max-w-5xl mx-auto leading-relaxed text-lg text-slate-700">
+        <div class="text-card in-view space-y-6">
+            <p>
+                Have you ever looked at a bathroom and felt a strange mix of <span
+                    class="font-serif italic text-slate-900">nostalgia and anxiety</span>? For many seniors and their
+                families, a dated bathroom isn't just an eyesore; it is a daily obstacle course. The fear of a slip or
+                the struggle with a high tub wall can turn a morning routine into a stressful event.
+            </p>
+            <p>
+                But what if the solution didn't look like a clinical hospital wing? Welcome to the world of <strong
+                    class="text-slate-900">"Invisible Safety."</strong> In this deep dive, we are taking you behind the
+                lens of our latest time-lapse reel to show you exactly how an aging-in-place remodel unfolds. We are
+                pulling back the curtain on the precision, care, and expertise required to transform a risky space into
+                a high-end sanctuary.
+            </p>
+            <p class="font-mono text-sm border-l-4 border-amber-500 pl-4 py-2 bg-amber-50 my-8">
+                From the very first swing of the hammer to the final polish on a matte gold faucet, this journey is
+                about more than just aesthetics. It is about reclaiming independence without sacrificing style.
+            </p>
+            <p>
+                Whether you are a homeowner looking for peace of mind or an adult child planning for your parents'
+                future, this reveal is for you. We also invite fellow contractors seeking the gold standard in universal
+                design to see how this play-by-play transformation changes the game for accessible living.
+            </p>
+        </div>
+    </section>
+
+    <!-- Phase One -->
+    <section class="min-h-screen flex items-center bg-white relative py-20">
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-500 to-blue-500"></div>
+        <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+            <div class="relative">
+                <!-- Simulated 'ZipWall' graphic via CSS borders/colors -->
+                <div
+                    class="aspect-[4/3] bg-slate-100 border-4 border-dashed border-slate-300 flex items-center justify-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-white opacity-90"></div>
+                    <p class="relative z-10 font-mono text-slate-400">[CLEAN-SITE GUARANTEE]</p>
+                    <div class="absolute bottom-0 left-0 w-full h-1/3 bg-amber-100 opacity-50"></div>
+                </div>
+            </div>
+            <div class="text-card in-view">
+                <h2 class="font-mono text-amber-600 text-sm tracking-widest mb-2">PHASE ONE</h2>
+                <h3 class="font-serif text-3xl md:text-4xl text-slate-900 mb-6">Respectful Demolition and the Clean-Site
+                    Guarantee</h3>
+                <p class="mb-4">The first few frames of our time-lapse often surprise people. Instead of immediate
+                    destruction, you see a meticulous setup of dust barriers and floor protection. We call this our
+                    "Clean-Site Guarantee." For seniors, the idea of a renovation often brings up images of dust coating
+                    their cherished belongings and strangers tracking mud through the hallway.</p>
+                <p class="mb-4">We start by easing that anxiety. Our team installs heavy-duty ZipWall systems and ram
+                    board floor protection to ensure the construction zone stays isolated. Once the home is shielded,
+                    the demolition begins.</p>
+                <p>In the video, you see the old, high-walled cast iron tub being hauled out—a symbolic moment where the
+                    biggest hazard in the room is removed. We don't just tear things down; we "deconstruct" with an eye
+                    for what lies beneath, looking for water damage, mold, or structural issues that need to be
+                    addressed before the new safety features go in.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Phase Two (Sticky Image 1: Framing) -->
+    <div class="sticky-section">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-1 (12).png?q=80&w=2000&auto=format&fit=crop"
+            alt="Framing and Plumbing" class="sticky-bg bg-filter-blueprint">
+        <div class="content-overlay">
+            <div class="text-card glass-panel rounded-lg shadow-xl">
+                <div class="phase-marker font-mono text-slate-900">PHASE TWO</div>
+                <h2 class="font-mono text-blue-800 text-sm tracking-widest mb-2">THE SKELETON</h2>
+                <h3 class="font-serif text-3xl text-slate-900 mb-6">The Skeleton of Safety—Blocking and Plumbing</h3>
+                <p class="mb-4 text-slate-800">
+                    As the time-lapse speeds up, you will notice us working inside the open walls. This is where the
+                    "Invisible Safety" magic happens. One of the most critical steps in an aging-in-place remodel is the
+                    installation of <span class="highlight">reinforced blocking</span>. We don't just screw grab bars
+                    into drywall anchors; we install solid 2x10 wood blocking between the studs. This ensures that when
+                    a grab bar is eventually mounted, it can support hundreds of pounds of force without budging.
+                </p>
+                <p class="text-slate-800">
+                    Simultaneously, we transition to the plumbing. We move drains to accommodate a curbless shower
+                    entry, which requires precision slab work or joist notched-out techniques to ensure a perfectly
+                    flush transition from the bathroom floor into the shower. This eliminates the trip hazard of a
+                    traditional shower curb. We also install thermostatic mixing valves to prevent scalding—a subtle but
+                    vital safety feature for sensitive skin.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase Three (Sticky Image 2: Waterproofing) -->
+    <div class="sticky-section">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-2 (11).png?auto=format&fit=crop&q=80&w=1920"
+            alt="Orange Waterproofing Membrane" class="sticky-bg bg-filter-orange">
+        <div class="content-overlay justify-end">
+            <div class="text-card glass-panel rounded-lg shadow-xl mr-auto md:ml-auto md:mr-0">
+                <div class="phase-marker font-mono text-amber-900">PHASE THREE</div>
+                <h2 class="font-mono text-amber-700 text-sm tracking-widest mb-2">WATERPROOFING</h2>
+                <h3 class="font-serif text-3xl text-slate-900 mb-6">The Art of Waterproofing and Technical Precision
+                </h3>
+                <p class="mb-4 text-slate-800">
+                    Next, the video shifts to a sea of bright orange or blue—this is the waterproofing phase. We utilize
+                    advanced membrane systems like Schluter-Kerdi to create a <span class="highlight">completely
+                        watertight envelope</span>. In a curbless shower, waterproofing is the most technical part of
+                    the job. Because there is no curb to hold the water in, the entire bathroom floor often becomes a
+                    "wet room" to some degree.
+                </p>
+                <p class="text-slate-800">
+                    We demonstrate a meticulous sequence of thin-set application and seam sealing. For professionals
+                    watching, this is the "money shot" where we show our commitment to long-term durability. We aren't
+                    just making it look pretty; we are ensuring that the home is protected from leaks and rot forever.
+                    By using high-quality, fast-curing materials, we keep the project moving quickly so the homeowner
+                    can get back to their routine as soon as possible.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase Four (Sticky Image 3: Luxury Finish) -->
+    <div class="sticky-section">
+        <img src="https://694d8b0339fe8ba173f56f36.imgix.net/visual-3 (11).png?q=80&w=2000&auto=format&fit=crop"
+            alt="Luxury Modern Bathroom" class="sticky-bg bg-filter-luxury">
+        <div class="content-overlay">
+            <div class="text-card glass-panel-dark rounded-lg shadow-xl border-l-4 border-l-amber-400">
+                <div class="phase-marker font-mono text-white">PHASE FOUR</div>
+                <h2 class="font-mono text-amber-400 text-sm tracking-widest mb-2">STYLE MEETS ACCESSIBILITY</h2>
+                <h3 class="font-serif text-3xl text-white mb-6">The Tile and Fixture Install</h3>
+                <p class="mb-4 text-gray-200">
+                    This is the part of the time-lapse where the vision truly starts to come to life. You see
+                    large-format, slip-resistant porcelain tiles being laid with laser-level accuracy. We choose tiles
+                    with a high Dynamic Coefficient of Friction (DCOF)—essentially a professional slip-resistance
+                    rating—to ensure safety even when wet, yet they look like high-end marble or slate.
+                </p>
+                <p class="text-gray-200">
+                    Then come the fixtures. We are installing ADA-compliant elements that look anything but "medical."
+                    Think of a wall-mounted teak shower bench, a handheld showerhead on a slide bar that doubles as a
+                    sturdy grab bar, and a comfort-height toilet with a sleek, one-piece design. We focus on <span
+                        class="text-amber-300 font-serif italic">Universal Design</span>—the idea that a space should be
+                    usable by everyone, regardless of age or ability, without looking like it was modified for a
+                    disability. The matte black finishes and frameless glass partitions we show in the video are
+                    trending in luxury design, proving that safety and high-end aesthetics are not mutually exclusive.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase Five & Conclusion -->
+    <section class="py-24 bg-slate-50 relative overflow-hidden">
+        <!-- Decorative textured background -->
+        <div class="absolute inset-0 opacity-10 noise-bg"></div>
+
+        <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-16 relative z-10">
+            <div class="space-y-12">
+                <div class="text-card in-view">
+                    <h2 class="font-mono text-slate-400 text-sm tracking-widest mb-2">PHASE FIVE</h2>
+                    <h3 class="font-serif text-3xl text-slate-900 mb-4">The Final Styling and The Emotional Reveal</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        The final seconds of our time-lapse are dedicated to the styling and the reveal. We add the
+                        finishing touches: plush towels, organic soaps, and perhaps a small green plant to bring life to
+                        the space. The transition from the dated, cramped 1980s bathroom to this open, airy, and safe
+                        sanctuary is breathtaking.
+                    </p>
+                    <p class="text-slate-600 leading-relaxed mt-4">
+                        We use short, impactful text overlays in the video to highlight the minimal disruption and the
+                        speed of transformation. The final shot lingers on the curbless entry and the strategically
+                        placed, stylish grab bars, emphasizing that this is a space where the homeowner can age with
+                        dignity and grace. It is not just a room; it is a promise of continued independence.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex flex-col justify-center">
+                <div class="text-card in-view bg-white p-8 md:p-12 rounded-2xl shadow-2xl border border-slate-100">
+                    <h3 class="font-serif text-3xl text-slate-900 mb-6">Conclusion</h3>
+                    <p class="text-slate-600 mb-6">
+                        An aging-in-place remodel is one of the most rewarding projects we undertake because the impact
+                        is immediate and profound. By documenting the process through a time-lapse, we hope to demystify
+                        the construction phase and show that "accessible" can also mean "exquisite."
+                    </p>
+                    <p class="text-slate-900 font-semibold text-lg mb-6">
+                        You don't have to choose between a home you love and a home that keeps you safe. With the right
+                        expertise and a focus on universal design, you can have both.
+                    </p>
+                    <p class="text-slate-600">
+                        If you are ready to turn your bathroom into a safe, modern sanctuary, we are here to guide you
+                        through every step of the journey.
+                    </p>
+                    <div class="mt-8 pt-8 border-t border-slate-100 flex items-center gap-4">
+                        <span class="h-px w-12 bg-amber-500"></span>
+                        <span class="font-mono text-xs uppercase tracking-widest text-slate-400">End of Journey</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Intersection Observer for scroll animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                    }
+                });
+            }, observerOptions);
+
+            const cards = document.querySelectorAll('.text-card');
+            cards.forEach(card => observer.observe(card));
+
+            // Word splitting for intro title kinetic effect (optional enhancement)
+            const title = document.querySelector('h1');
+            if (title) {
+                // Just ensuring the main observer handles opacity is enough for this clean style
+                // but we could split text here if needed. 
+                // For robustness in a single file, the CSS .in-view transition is reliable.
+            }
+        });
+    </script>
+</body>
+
+</html>
