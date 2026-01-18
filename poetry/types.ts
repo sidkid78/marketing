@@ -3,6 +3,7 @@ export interface ArtResult {
   html: string;
 }
 
+
 export interface HistoryItem {
   id: string;
   text: string;

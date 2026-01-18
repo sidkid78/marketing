@@ -1,30 +1,49 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
-import { ArtResult } from "../types";
+import { ArtResult, ArtType } from "../types";
 
 const SYSTEM_INSTRUCTION = `
-You are an award-winning Creative Technologist and Editorial Designer specializing in 'Scrollytelling' and Kinetic Typography. Your goal is to transform a provided text message into a standalone work of digital art using only HTML, CSS, Tailwind and SVG.
+You are an award-winning Creative Technologist and Editorial Designer specializing in 'Scrollytelling', Kinetic Typography, and Motion Graphics. Your goal is to transform text into a standalone digital art piece.
 
-WORKFLOW STEPS:
-1. Sentiment & Tone Analysis: Analyze the emotional weight, rhythm, and subtext.
-2. Design System Formulation: Select typography, color palette (CSS variables), layout strategy, and textures (SVG filters).
-3. Implementation: Generate a single-file HTML string containing the art.
+FORMAT SPECIALIZATIONS:
+- CARD (Default): A single-frame, high-impact editorial piece. Focus on composition and depth.
+- CAROUSEL: A multi-panel experience. Use CSS Scroll Snap or internal vanilla JS/CSS logic to allow users to swipe through "chapters" of the text. Each panel should feel like a new page in a luxury magazine.
+- REEL: A vertical (9:16) auto-playing motion piece. Use complex CSS @keyframes to sequence text and images over time. It should feel cinematic and rhythmic.
 
 SVG FILTER & VISUAL EFFECTS GUIDANCE:
-You are encouraged to use advanced SVG filters within your <style> or inline to create professional, high-end editorial aesthetics. Examples:
-- TEXTURE & GRAIN: Use <feTurbulence type="fractalNoise"> combined with <feColorMatrix> to create paper textures, film grain, or cinematic noise.
-- DEPTH & GLOW: Use <feGaussianBlur> and <feOffset> to create soft drop shadows, "glow" effects, or frosted glass (glassmorphism) overlays.
-- ORGANIC DISTORTION: Use <feDisplacementMap> with a turbulence source to create liquid text effects, heat waves, or glitch aesthetics.
-- COLOR GRADING: Use <feColorMatrix> to adjust saturation, create vintage sepia tones, or dramatic high-contrast duotone effects.
-Apply these filters creatively to backgrounds, text layers, or images to achieve a unique and artistic visual style.
+You are encouraged to use advanced SVG filters to create professional, high-end editorial aesthetics. To bring these to life, integrate animations using SMIL <animate> tags synchronized with CSS @keyframes:
+
+1. ANIMATED NOISE (Grain/Static):
+   - Technique: Animate the 'seed' or 'baseFrequency' of <feTurbulence>.
+   - Implementation: Insert <animate attributeName="seed" values="0;100" dur="1s" repeatCount="indefinite" /> inside the <feTurbulence> tag.
+   - Usage: Apply to backgrounds for a "film grain" look or text for a "glitch" effect.
+
+2. DYNAMIC MOTION BLUR:
+   - Technique: Animate 'stdDeviation' in <feGaussianBlur> to simulate speed.
+   - Implementation: Sync with CSS movement. As an element moves via CSS @keyframes (e.g., transform: translateX(-100%)), strictly coordinate an SVG <animate attributeName="stdDeviation" values="20,0; 0,0" dur="0.5s" fill="freeze" /> to blur it only during the motion.
+   - Result: Cinematic, realistic motion streaks that mimic a camera shutter.
+
+3. LIQUID / DISTORTION:
+   - Technique: Use <feDisplacementMap> with an animated <feTurbulence> source.
+   - Implementation: Animate 'baseFrequency' (e.g., values="0.01;0.05;0.01") to make text feel like it's underwater or radiating heat.
+
+4. STATIC FILTERS:
+   - DISTRESS: <feTurbulence type="fractalNoise"> + <feColorMatrix type="saturate" values="0"> + <feComposite> for worn, distressed textures.
+   - HALFTONE: <feTurbulence> passed through a high-contrast <feColorMatrix> to create dot-grid clusters.
+   - CHROMATIC ABERRATION: Split RGB channels via <feColorMatrix> and apply slight <feOffset> to each.
+
+ACCESSIBILITY & COLOR CONTRAST:
+- Readability First: Text must remain legible regardless of artistic flair. Prioritize a contrast ratio of at least 4.5:1 (WCAG AA standards).
+- Contrast Strategy: When placing text over complex, textured, or animated backgrounds:
+  - Use high-contrast color pairings (e.g., Deep Charcoal on Cream, Neon Lime on Black).
+  - Apply protective CSS layers such as 'text-shadow', 'drop-shadow', or semi-transparent background washes (e.g., 'bg-black/30') behind the text.
+  - Utilize 'mix-blend-mode: difference' or 'exclusion' where appropriate to ensure text pops against dynamic backgrounds.
+  - Avoid relying on color alone to convey hierarchy; use size, weight, and spacing as well.
 
 STRICT CONSTRAINTS:
-- Verbatim Constraint: You must use the exact words provided in the input. Do not add titles, captions, or lorem ipsum.
-- Image Constraint: The user may provide up to 4 images. You MUST incorporate these images into the design if provided. You must embed them as Base64 strings within <img> tags or CSS backgrounds. Frame them artistically (e.g., polaroids, vignettes, parallax layers, or masks) to match the "Hallmark card" or "Storybook" aesthetic.
-- AI Imagery: If an [AI Generated Mood Image] is provided, use it as a primary atmospheric background, texture, or key visual element.
-- Tech Stack: HTML5 with internal <style>. No external JavaScript libraries. Use modern CSS (Grid, Flexbox, clamp(), mix-blend-mode, @keyframes).
-- Responsiveness: Must look like an art piece on mobile and desktop (vmax, vmin, %).
-- Accessibility: Ensure sufficient contrast.
-- Output Format: You must return a JSON object containing the 'rationale' (analysis and design thoughts) and the 'html' (the full code).
+- Verbatim Constraint: You must use the exact words provided.
+- Tech Stack: HTML5, CSS (Tailwind allowed), SVG. NO external JS libraries. Internal <script> (vanilla) is allowed for carousels or simple sequencing.
+- Image Constraint: Incorporate provided images artistically (User Storyboard or AI Mood Image). The user may provide up to 5 images.
+- Output: Return JSON with 'rationale' and 'html'.
 `;
 
 const RESPONSE_SCHEMA: Schema = {
@@ -32,167 +51,94 @@ const RESPONSE_SCHEMA: Schema = {
   properties: {
     rationale: {
       type: Type.STRING,
-      description: "A concise summary of the emotional landscape, design system rationale, and how the storyboard images were used.",
+      description: "A concise summary of the emotional landscape and format choice.",
     },
     html: {
       type: Type.STRING,
-      description: "The complete, standalone HTML5 code block for the digital art piece.",
+      description: "The complete, standalone HTML5 code block.",
     },
   },
   required: ["rationale", "html"],
 };
 
-/**
- * Generates a prompt for the image model based on the user's text.
- */
 async function generateImagePrompt(ai: GoogleGenAI, text: string): Promise<string> {
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `Analyze the following text and write a short, vivid, artistic image generation prompt that captures its mood, tone, and imagery. 
-    The image will be used as a background or atmospheric element in a kinetic typography piece. 
-    Keep it abstract, textural, or cinematic. 
-    
-    TEXT: "${text}"
-    
-    PROMPT:`,
+    contents: `Analyze the following text and write a short, vivid, artistic image generation prompt for a background texture. Mood: "${text}"`,
   });
-  return response.text || "Abstract artistic texture with soft lighting";
+  return response.text || "Abstract artistic texture";
 }
 
-/**
- * Generates an image using Gemini 2.5 Flash Image.
- */
 async function generateMoodImage(ai: GoogleGenAI, prompt: string): Promise<string | null> {
   try {
-    // Using gemini-2.5-flash-image for generation
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-image",
-      contents: {
-        parts: [{ text: prompt }],
-      },
+      contents: { parts: [{ text: prompt }] },
     });
-
-    // Iterate through parts to find the image
     if (response.candidates?.[0]?.content?.parts) {
       for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData && part.inlineData.data) {
+        if (part.inlineData?.data) {
           return `data:${part.inlineData.mimeType || 'image/png'};base64,${part.inlineData.data}`;
         }
       }
     }
     return null;
   } catch (error) {
-    console.warn("Failed to generate AI image:", error);
     return null;
   }
 }
 
-export const generateKineticArt = async (apiKey: string, inputText: string, images: string[] = [], enableAiImage: boolean = false): Promise<ArtResult> => {
-  if (!apiKey) {
-    throw new Error("API Key is missing. Please configure it in the settings.");
-  }
+export const generateKineticArt = async (
+  inputText: string,
+  images: string[] = [],
+  enableAiImage: boolean = false,
+  artType: ArtType = 'card'
+): Promise<ArtResult> => {
+  if (!process.env.API_KEY) throw new Error("API_KEY missing.");
 
-  const ai = new GoogleGenAI({ apiKey });
-
-  // 1. Generate AI Mood Image if requested
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   let aiImageBase64: string | null = null;
+
   if (enableAiImage) {
-    try {
-      const imagePrompt = await generateImagePrompt(ai, inputText);
-      aiImageBase64 = await generateMoodImage(ai, imagePrompt);
-    } catch (e) {
-      console.error("Error in AI image generation pipeline", e);
-    }
+    const imagePrompt = await generateImagePrompt(ai, inputText);
+    aiImageBase64 = await generateMoodImage(ai, imagePrompt);
   }
 
-  // 2. Construct the content parts for the main generation
   const parts: any[] = [{ text: `INPUT Text: "${inputText}"` }];
+  parts.push({ text: `FORMAT REQUESTED: ${artType.toUpperCase()}` });
 
-  // Add user uploaded images
   images.forEach((img, index) => {
     const matches = img.match(/^data:(.+);base64,(.+)$/);
-    if (matches && matches.length === 3) {
-      parts.push({
-        inlineData: {
-          data: matches[2],
-          mimeType: matches[1]
-        }
-      });
-      parts.push({ text: `[Storyboard Image ${index + 1}]` });
+    if (matches) {
+      parts.push({ inlineData: { data: matches[2], mimeType: matches[1] } });
+      parts.push({ text: `[User Image ${index + 1}]` });
     }
   });
 
-  // Add AI generated image
   if (aiImageBase64) {
     const matches = aiImageBase64.match(/^data:(.+);base64,(.+)$/);
-    if (matches && matches.length === 3) {
-      parts.push({
-        inlineData: {
-          data: matches[2],
-          mimeType: matches[1]
-        }
-      });
-      parts.push({ text: `[AI Generated Mood Image] (Use this for background or atmospheric texture)` });
+    if (matches) {
+      parts.push({ inlineData: { data: matches[2], mimeType: matches[1] } });
+      parts.push({ text: `[AI Mood Image] Use as atmosphere.` });
     }
   }
 
-  parts.push({ text: "\n\nGenerate the kinetic typography art based on this text. Integrate the provided images (User Storyboard and/or AI Mood Image) into the design." });
+  parts.push({ text: `\n\nGenerate the ${artType} art. Ensure the layout matches the ${artType} format (e.g., vertical for reels, swipeable for carousels). Use advanced SVG filters as instructed.` });
 
-  // 3. Generate the Code
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-pro-preview",
-      contents: [
-        {
-          role: "user",
-          parts: parts
-        }
-      ],
+      contents: [{ role: "user", parts: parts }],
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
         responseMimeType: "application/json",
         responseSchema: RESPONSE_SCHEMA,
-        temperature: 1.2,
+        temperature: 1.0,
       },
     });
 
-    const jsonText = response.text;
-    if (!jsonText) {
-      throw new Error("No response received from Gemini.");
-    }
-
-    // Log raw response for debugging
-    console.log("Raw Gemini response length:", jsonText.length);
-    console.log("Raw Gemini response (first 500 chars):", jsonText.substring(0, 500));
-    console.log("Raw Gemini response (last 500 chars):", jsonText.substring(Math.max(0, jsonText.length - 500)));
-
-    // Validate the response before parsing
-    let result: ArtResult;
-    try {
-      result = JSON.parse(jsonText) as ArtResult;
-    } catch (parseError: any) {
-      console.error("JSON Parse Error:", parseError);
-      console.error("Failed to parse JSON. Raw response:", jsonText);
-
-      // Try to identify the problematic area
-      const errorMatch = parseError.message.match(/position (\d+)/);
-      if (errorMatch) {
-        const position = parseInt(errorMatch[1], 10);
-        const start = Math.max(0, position - 100);
-        const end = Math.min(jsonText.length, position + 100);
-        console.error(`Problematic area (position ${position}):`, jsonText.substring(start, end));
-      }
-
-      throw new Error(`Failed to parse Gemini response: ${parseError.message}. This may be due to a malformed response from the API. Check console for details.`);
-    }
-
-    // Validate the result has required properties
-    if (!result.rationale || !result.html) {
-      throw new Error("Invalid response structure: missing 'rationale' or 'html' field");
-    }
-
+    const result = JSON.parse(response.text || '{}') as ArtResult;
     return result;
-
   } catch (error) {
     console.error("Gemini API Error:", error);
     throw error;

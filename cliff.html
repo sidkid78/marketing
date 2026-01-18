@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEase AI - The Crusader Narrative</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CUSTOM ANIMATIONS & UTILS */
+        body { margin: 0; background: #050505; color: #f0f0f0; overflow-x: hidden; }
+        
+        .scrolly-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .sticky-bg {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            z-index: 0;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .content-block {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            pointer-events: none; /* Let clicks pass through to bg if needed */
+        }
+
+        .text-card {
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            padding: 2rem;
+            border-left: 4px solid white;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            pointer-events: auto;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s ease-out forwards;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* TYPOGRAPHY */
+        .font-serif { font-family: 'Merriweather', serif; }
+        .font-impact { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; }
+        .font-tech { font-family: 'JetBrains Mono', monospace; }
+
+        /* SVG FILTERS CLASSES */
+        .filter-fear {
+            filter: url(#fear-distort);
+        }
+        .filter-broken {
+            filter: url(#broken-signal);
+            color: #ff4a4a;
+        }
+        .filter-ai {
+            filter: url(#ai-glow);
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .scanline::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, transparent, rgba(0, 255, 240, 0.1), transparent);
+            animation: scanline 4s linear infinite;
+            pointer-events: none;
+        }
+        
+        /* Specific Image Styling based on Storyboard logic */
+        .bg-fear { background-image: url('https://images.unsplash.com/photo-1516233758813-a38476cb607f?q=80&w=2574&auto=format&fit=crop'); }
+        .bg-chaos { background-image: url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2670&auto=format&fit=crop'); filter: contrast(120%) sepia(30%); }
+        .bg-tech { background-image: url('https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=2574&auto=format&fit=crop'); }
+        .bg-ai-mood { background-image: url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=2574&auto=format&fit=crop'); }
+        .bg-peace { background-image: url('https://images.unsplash.com/photo-1529124316041-3312c5b20694?q=80&w=2670&auto=format&fit=crop'); }
+
+        /* Glitch Effect on Hover for 'Broken' words */
+        .glitch-text:hover {
+            animation: glitch-anim 0.3s infinite;
+        }
+        @keyframes glitch-anim {
+            0% { transform: translate(0) } 
+            20% { transform: translate(-2px, 2px) } 
+            40% { transform: translate(-2px, -2px) } 
+            60% { transform: translate(2px, 2px) } 
+            80% { transform: translate(2px, -2px) } 
+            100% { transform: translate(0) }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SVG FILTERS DEFINITION -->
+    <svg style="display: none;">
+        <defs>
+            <!-- Filter for Fear/Uncertainty (Turbulence) -->
+            <filter id="fear-distort">
+                <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise"/>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" />
+            </filter>
+
+            <!-- Filter for Broken Industry (Noise + High Contrast) -->
+            <filter id="broken-signal">
+                <feTurbulence type="turbulence" baseFrequency="0.5" numOctaves="2" result="turbulence"/>
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+
+            <!-- Filter for AI Solution (Glow + Softness) -->
+            <filter id="ai-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- ACT 1: THE FEAR -->
+    <section class="relative">
+        <div class="sticky-bg bg-fear grayscale opacity-60"></div>
+        <div class="absolute inset-0 scrolly-container">
+            <div class="content-block items-start">
+                <div class="text-card">
+                    <h2 class="text-4xl md:text-6xl font-impact mb-4 text-gray-200 tracking-tighter">The "Crusader" Narrative</h2>
+                    <p class="font-serif text-lg md:text-xl leading-relaxed text-gray-300">
+                        I watched my grandmother look at her own bathroom—the place she’d started her day for forty years—with fear. 
+                        What used to be a sanctuary had become a <span class="text-red-300 italic filter-fear inline-block">minefield</span> of slick tiles and impossible thresholds.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACT 2: THE CONFLICT (BROKEN INDUSTRY) -->
+    <section class="relative">
+        <div class="sticky-bg bg-chaos opacity-80 mix-blend-hard-light"></div>
+        <div class="absolute inset-0 scrolly-container">
+            <div class="content-block items-end text-right">
+                <div class="text-card border-l-0 border-r-4 border-red-600 bg-black/80">
+                    <p class="font-impact text-2xl md:text-3xl leading-snug uppercase mb-4 text-gray-400">
+                        When I tried to fix it for her, I entered a world of <span class="text-red-500 glitch-text">predatory quotes</span>, 
+                        <span class="text-red-500 glitch-text">ghosting contractors</span>, and jargon designed to confuse the vulnerable.
+                    </p>
+                    <p class="font-serif text-lg text-white">
+                        I saw the industry wasn't just 'fragmented'—it was <span class="font-bold filter-broken block text-4xl mt-2">BROKEN BY DESIGN</span>
+                        <span class="text-sm opacity-70 block mt-2">profiting off the desperation of families in crisis.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRANSITION: THE SHATTER (AI MOOD) -->
+    <section class="relative h-[50vh] flex items-center justify-center bg-black overflow-hidden">
+        <div class="absolute inset-0 bg-ai-mood opacity-40 bg-cover bg-center animate-pulse"></div>
+        <div class="relative z-10 text-center px-4">
+            <h1 class="text-5xl md:text-8xl font-impact text-transparent bg-clip-text bg-gradient-to-r from-gray-500 to-white">
+                ENOUGH.
+            </h1>
+        </div>
+    </section>
+
+    <!-- ACT 3: THE SOLUTION (AI BODYGUARD) -->
+    <section class="relative">
+        <div class="sticky-bg bg-tech opacity-90"></div>
+        <div class="absolute inset-0 bg-blue-900/30 mix-blend-overlay"></div>
+        
+        <div class="absolute inset-0 scrolly-container">
+            <div class="content-block items-center text-center scanline">
+                <div class="text-card border-none bg-black/90 shadow-[0_0_50px_rgba(0,255,255,0.2)] max-w-2xl">
+                    <p class="font-tech text-cyan-400 text-sm tracking-widest mb-4">/// SYSTEM OVERRIDE INITIATED</p>
+                    <p class="font-serif text-xl md:text-2xl mb-6">
+                        I didn't build <strong class="text-white">HOMEase AI</strong> to be a 'software solution.' 
+                    </p>
+                    <h2 class="text-5xl md:text-7xl font-impact filter-ai mb-8 tracking-wide">
+                        I BUILT A BODYGUARD.
+                    </h2>
+                    <p class="font-tech text-gray-300 text-base leading-loose">
+                        We use AI to <span class="bg-cyan-900/50 px-2 text-cyan-200">strip away the deception</span>, 
+                        automate the honesty, and bridge the gap between a senior’s safety and their dignity.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACT 4: RESOLUTION (FUNDAMENTAL RIGHT) -->
+    <section class="relative">
+        <div class="sticky-bg bg-peace opacity-100"></div>
+        <div class="absolute inset-0 bg-amber-500/10 mix-blend-multiply"></div>
+
+        <div class="absolute inset-0 scrolly-container">
+            <div class="content-block items-start justify-end pb-24">
+                <div class="text-card bg-white/90 text-gray-900 border-l-4 border-amber-500">
+                    <p class="font-serif text-xl md:text-2xl mb-4 italic">
+                        "We exist because 'aging in place' shouldn't be a luxury reserved for those who can navigate a nightmare. 
+                        <span class="font-bold text-amber-700">It is a fundamental right.</span>"
+                    </p>
+                    <hr class="border-gray-300 my-4"/>
+                    <p class="font-impact text-lg text-gray-600 tracking-wide">
+                        I am obsessed with making sure that the last thing a family worries about is a renovation—
+                        so the only thing they have to focus on is <span class="text-amber-600 underline decoration-2 underline-offset-4">each other</span>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER/LOGO -->
+    <footer class="bg-black text-center py-12">
+        <h3 class="text-gray-500 font-tech text-sm tracking-[0.5em]">HOMEase AI</h3>
+    </footer>
+
+</body>
+</html>

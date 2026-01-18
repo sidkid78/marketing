@@ -102,7 +102,7 @@ function buildPrompt(userInput: UserInput, task: 'strategy' | 'content' | 'analy
       return `${corePrompt}
             Based on the details above, generate a list of 2-3 creative and platform-specific content ideas for each goal-platform combination. Consider the budget if provided for ad creatives.
             The output must be a JSON array of content idea objects.
-            For each idea, provide a catchy headline, a direction for the visual aspect, a suggested caption, a call-to-action (CTA), and a few relevant hashtags.`;
+            For each idea, provide a catchy headline, a direction for the more detailedvisual aspect, a suggested caption, a call-to-action (CTA), and a few relevant hashtags.`;
     case 'analysis':
       return `
               You are an expert marketing data analyst. I need you to analyze campaign performance.
