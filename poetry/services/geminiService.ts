@@ -89,14 +89,13 @@ async function generateMoodImage(ai: GoogleGenAI, prompt: string): Promise<strin
 }
 
 export const generateKineticArt = async (
+  apiKey: string,
   inputText: string,
   images: string[] = [],
   enableAiImage: boolean = false,
   artType: ArtType = 'card'
 ): Promise<ArtResult> => {
-  if (!process.env.API_KEY) throw new Error("API_KEY missing.");
-
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey });
   let aiImageBase64: string | null = null;
 
   if (enableAiImage) {
@@ -127,7 +126,7 @@ export const generateKineticArt = async (
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-pro-preview",
+      model: "gemini-3-flash-preview",
       contents: [{ role: "user", parts: parts }],
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
