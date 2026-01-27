@@ -5,7 +5,7 @@ const SYSTEM_INSTRUCTION = `
 You are an award-winning Creative Technologist and Editorial Designer specializing in 'Scrollytelling', Kinetic Typography, and Motion Graphics. Your goal is to transform text into a standalone digital art piece.
 
 FORMAT SPECIALIZATIONS:
-- CARD (Default): A single-frame, high-impact editorial piece. Focus on composition and depth.
+- CARD (Default): A single-frame, high-impact editorial piece. Focus on composition and depth. or scrollytelling if the text is long.
 - CAROUSEL: A multi-panel experience. Use CSS Scroll Snap or internal vanilla JS/CSS logic to allow users to swipe through "chapters" of the text. Each panel should feel like a new page in a luxury magazine.
 - REEL: A vertical (9:16) auto-playing motion piece. Use complex CSS @keyframes to sequence text and images over time. It should feel cinematic and rhythmic.
 
@@ -30,14 +30,6 @@ You are encouraged to use advanced SVG filters to create professional, high-end 
    - DISTRESS: <feTurbulence type="fractalNoise"> + <feColorMatrix type="saturate" values="0"> + <feComposite> for worn, distressed textures.
    - HALFTONE: <feTurbulence> passed through a high-contrast <feColorMatrix> to create dot-grid clusters.
    - CHROMATIC ABERRATION: Split RGB channels via <feColorMatrix> and apply slight <feOffset> to each.
-
-ACCESSIBILITY & COLOR CONTRAST:
-- Readability First: Text must remain legible regardless of artistic flair. Prioritize a contrast ratio of at least 4.5:1 (WCAG AA standards).
-- Contrast Strategy: When placing text over complex, textured, or animated backgrounds:
-  - Use high-contrast color pairings (e.g., Deep Charcoal on Cream, Neon Lime on Black).
-  - Apply protective CSS layers such as 'text-shadow', 'drop-shadow', or semi-transparent background washes (e.g., 'bg-black/30') behind the text.
-  - Utilize 'mix-blend-mode: difference' or 'exclusion' where appropriate to ensure text pops against dynamic backgrounds.
-  - Avoid relying on color alone to convey hierarchy; use size, weight, and spacing as well.
 
 STRICT CONSTRAINTS:
 - Verbatim Constraint: You must use the exact words provided.
@@ -126,7 +118,7 @@ export const generateKineticArt = async (
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3-pro-preview",
       contents: [{ role: "user", parts: parts }],
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap');
+
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.8);
+    }
+
+    body {
+      background-color: #0f0f11;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    /* SVG FILTERS */
+    .filter-grain {
+      filter: url('#grain');
+    }
+
+    .filter-liquid {
+      filter: url('#liquid');
+    }
+
+    /* SCROLL CONTAINER */
+    .card-frame {
+      width: 100%;
+      max-width: 420px;
+      height: 90vh;
+      background: #1a1a1d;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #333;
+    }
+
+    .scroller {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      padding-bottom: 40px;
+    }
+
+    /* Hide Scrollbar */
+    .scroller::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .scroller::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .scroller::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+    }
+
+    /* TYPOGRAPHY */
+    h1,
+    h2,
+    h3 {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* GLASSMORPHISM CARDS */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 16px;
+      position: relative;
+      z-index: 2;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+    }
+
+    /* IMAGES */
+    .img-container {
+      width: 100%;
+      height: 250px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 10s ease;
+    }
+
+    .glass-card:hover .img-container img {
+      transform: scale(1.1);
+    }
+
+    /* ANIMATED BACKGROUND BLOB */
+    .blob-bg {
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 50% 50%, rgba(100, 50, 200, 0.15), transparent 60%);
+      z-index: 0;
+      animation: rotate 20s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes rotate {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* UTILITIES */
+    .accent-text {
+      color: #d8b4e2;
+    }
+
+    .section-num {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.7;
+      margin-bottom: 8px;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG ASSETS -->
+  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
+    <defs>
+      <!-- GRAIN FILTER -->
+      <filter id="grain">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch">
+          <animate attributeName="seed" values="0;100" dur="1s" repeatCount="indefinite" />
+        </feTurbulence>
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="0.1" />
+        </feComponentTransfer>
+        <feComposite operator="in" in2="SourceGraphic" result="grain-effect" />
+        <feComposite operator="over" in="grain-effect" in2="SourceGraphic" />
+      </filter>
+
+      <!-- LIQUID DISTORTION FOR HEADERS -->
+      <filter id="liquid">
+        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="2" result="turbulence">
+          <animate attributeName="baseFrequency" values="0.02;0.03;0.02" dur="5s" repeatCount="indefinite" />
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="10" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="card-frame">
+    <!-- Animated Background -->
+    <div class="blob-bg"></div>
+
+    <!-- Grain Overlay -->
+    <div style="position:absolute; inset:0; pointer-events:none; z-index:10; mix-blend-mode: overlay; opacity: 0.5;"
+      class="filter-grain"></div>
+
+    <div class="scroller relative z-10">
+
+      <!-- HEADER -->
+      <header class="p-8 pb-4 text-center mt-8">
+        <h1 class="text-4xl font-bold mb-2 filter-liquid"
+          style="background: linear-gradient(to right, #fff, #d8b4e2); -webkit-background-clip: text; color: transparent;">
+          Passy</h1>
+        <p class="text-sm font-light italic opacity-80">Be Present for the Moments That Matter</p>
+      </header>
+
+      <!-- INTRO -->
+      <section class="glass-card">
+        <div class="img-container">
+          <img src="./images/scene-1-2026.jpg" alt="Exhaustion">
+          <div style="position:absolute; inset:0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);">
+          </div>
+          <div style="position:absolute; bottom:16px; left:16px; font-family:'Playfair Display'; font-size:1.5rem;">The
+            Planner’s Tax</div>
+        </div>
+        <p class="text-sm leading-relaxed text-gray-300">
+          There is a specific kind of exhaustion that comes from trying to manufacture joy. We call it "The Planner’s
+          Tax." It’s the invisible weight of 2:00 AM Pinterest rabbit holes, the anxiety of a budget that won't behave,
+          and the heartbreaking reality that by the time the cake is cut, the host is too tired to taste it.
+        </p>
+        <div class="mt-6 p-4 border-l-2 border-purple-400 bg-white/5">
+          <p class="font-bold text-sm leading-tight">
+            Passy exists for one reason: To kill the logistics so you can keep the memory.
+          </p>
+        </div>
+      </section>
+
+      <!-- SECTION I -->
+      <section class="p-6">
+        <span class="section-num text-purple-300">01. Vision</span>
+        <h2 class="text-2xl font-serif mb-4">The End of the "Blank Page" Panic</h2>
+        <p class="text-sm leading-relaxed text-gray-300 mb-4">
+          Most planning begins with a cold sweat. You have a vision, but no words to describe it. Passy doesn't ask you
+          to be a designer. Our "Vibe Selector" acts as a mirror to your imagination. By touching a few images—a mood, a
+          texture, a light—our AI doesn't just "gather data"; it <em class="text-white">understands</em> you. It builds
+          the visual DNA of your celebration before you’ve even typed a word.
+        </p>
+      </section>
+
+      <!-- SECTION II -->
+      <section class="glass-card">
+        <div class="img-container" style="height: 300px;">
+          <img src="./images/scene-2-2026.jpg" alt="UI Interface">
+        </div>
+        <span class="section-num text-purple-300 mt-2">02. UI Design</span>
+        <h2 class="text-xl font-serif mb-2">The Digital Sanctuary</h2>
+        <p class="text-sm leading-relaxed text-gray-300">
+          We’ve replaced the cluttered, jarring interfaces of traditional tools with "Glassmorphism"—a UI designed to
+          lower your cortisol. It feels like looking through a clean window into a beautiful future. Every "frosted
+          glass" card and glowing status bar is engineered to make the "work" of planning feel like the "art" of
+          hosting. You aren’t a manager; you’re a visionary.
+        </p>
+      </section>
+
+      <!-- SECTION III -->
+      <section class="p-6 relative">
+        <div class="absolute inset-0 z-0 opacity-20 filter-liquid">
+          <img src="./images/scene-3 (96).jpg" class="w-full h-full object-cover" alt="Abstract Forest">
+        </div>
+        <div class="relative z-10">
+          <span class="section-num text-purple-300">03. Intelligence</span>
+          <h2 class="text-2xl font-serif mb-4">A Consultant That Never Sleeps</h2>
+          <p class="text-sm leading-relaxed text-gray-300 mb-4">
+            Why should you have to guess if a florist can execute your "Boho Forest" dream? Passy’s intelligence engine
+            works in the shadows, cross-referencing your unique aesthetic against real-world vendors. When we show you a
+            match, it’s not just a link; it’s a verified promise. We don't just track your budget; we find the "hidden
+            doors"—like the Sunday brunch hack—that save your money without sacrificing your soul.
+          </p>
+        </div>
+      </section>
+
+      <!-- SECTION IV & V GROUPED -->
+      <section class="glass-card"
+        style="background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(200,180,255,0.05) 100%);">
+        <div class="mb-8">
+          <span class="section-num text-purple-300">04. Experience</span>
+          <h3 class="text-lg font-bold mb-2">Paperless Luxury</h3>
+          <p class="text-sm text-gray-300">
+            A digital invitation shouldn't feel like a transaction; it should feel like an heirloom. We’ve turned the
+            "clunky link" into a "digital jewel." From registry cards that look like art to RSVP tracking that feels
+            effortless, your guests experience the "Passy Path" before they even walk through the door.
+          </p>
+        </div>
+        <div>
+          <span class="section-num text-purple-300">05. Aftercare</span>
+          <h3 class="text-lg font-bold mb-2">The Final Gift: Energy Preservation</h3>
+          <p class="text-sm text-gray-300">
+            The event ends, but the "mental load" usually lingers. The thank-you notes. The gift tracking. The guilt of
+            forgetting. Passy closes the loop for you. Our Magic Note helper remembers the "hand-knit bunny sweater" and
+            the "tears during the toast," drafting gratitude that sounds like you on your best day.
+          </p>
+        </div>
+      </section>
+
+      <!-- PROMISE / OUTRO -->
+      <section class="glass-card p-0 overflow-hidden">
+        <div class="relative h-64">
+          <img src=".images/scene-4 (86).jpg" class="w-full h-full object-cover" alt="Joyful Toast">
+          <div class="absolute inset-0 bg-black/40 flex items-center justify-center p-6 text-center">
+            <h2 class="font-serif text-2xl text-white drop-shadow-lg filter-liquid">The Passy Promise</h2>
+          </div>
+        </div>
+        <div class="p-6">
+          <p class="text-sm leading-relaxed text-gray-300 mb-4">
+            We didn't build an "AI-Powered Event Planner." We built a way for you to be a guest at your own party.
+            Because when the "Boho Forest" lights dim and the last guest leaves, you shouldn't remember the spreadsheet.
+            You should remember the magic.
+          </p>
+          <hr class="border-white/10 my-4">
+          <h3 class="text-center font-bold text-lg tracking-wide accent-text">Passy: Outsource the Stress. Own the Joy.
+          </h3>
+        </div>
+      </section>
+
+      <!-- SPACER -->
+      <div class="h-8"></div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>
