@@ -2,7 +2,6 @@
 
 import React, { Suspense, useEffect, useState } from "react";
 import { Cpu, Zap, Terminal } from "lucide-react";
-import UserMenu from "@/components/UserMenu";
 
 const MarketingAgent = React.lazy(() => import("../ai-marketing-agent/App"));
 const ContentStudio = React.lazy(() => import("../content-generation-studio/App"));
@@ -133,7 +132,6 @@ export default function Home() {
               <Terminal size={14} className="text-[#ff00ff]" />
               <span className="text-xs font-mono text-gray-400">v3.0.0</span>
             </div>
-            <UserMenu />
           </div>
         </header>
 

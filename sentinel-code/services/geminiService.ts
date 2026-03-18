@@ -5,8 +5,8 @@ import { SecurityFinding, PerformanceIssue, QualityIssue, CodeReviewReport } fro
 // NOTE: Ideally, process.env.API_KEY is populated. 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
-const MODEL_NAME = 'gemini-2.5-flash';
-const SYNTHESIS_MODEL_NAME = 'gemini-2.5-flash'; // Using flash for speed in demo, Pro is better for synthesis
+const MODEL_NAME = 'gemini-3-flash-preview';
+const SYNTHESIS_MODEL_NAME = 'gemini-3-flash-preview'; // Using flash for speed in demo, Pro is better for synthesis
 
 // Schemas
 const securitySchema: Schema = {

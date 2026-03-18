@@ -14,8 +14,8 @@ Your role is to:
 </planning_principles>
 
 <model_selection>
-- Use gemini-2.5-flash for: Simple extraction, formatting, summarization, quick analysis
-- Use gemini-2.5-pro for: Complex reasoning, code generation, architecture decisions, planning, writing high quality content
+- Use gemini-3-flash-preview for: Simple extraction, formatting, summarization, quick analysis
+- Use gemini-3.1-pro-preview for: Complex reasoning, code generation, architecture decisions, planning, writing high quality content
 </model_selection>
 
 When creating task prompts, include:
@@ -45,6 +45,6 @@ Your role is to:
 
 Provide a comprehensive summary that directly addresses the original goal.`;
 
-export const PLANNING_MODEL = "gemini-2.5-flash"; // Using flash for speed in demo, pro is better for logic
-export const EXECUTION_MODEL = "gemini-2.5-flash";
-export const SYNTHESIS_MODEL = "gemini-2.5-flash";
+export const PLANNING_MODEL = "gemini-3-flash-preview"; // Using flash for speed in demo, pro is better for logic
+export const EXECUTION_MODEL = "gemini-3-flash-preview";
+export const SYNTHESIS_MODEL = "gemini-3-flash-preview";
