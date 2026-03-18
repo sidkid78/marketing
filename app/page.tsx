@@ -18,6 +18,7 @@ const ThreePs = React.lazy(() => import("../3ps/App"));
 const ArtifactToLife = React.lazy(() => import("../artifact-to-life/App"));
 const CampaignManager = React.lazy(() => import("../campaign-manager/App"));
 const Dwellingly = React.lazy(() => import("../dwellingly/App"));
+const YoutubeExtractor = React.lazy(() => import("../youtube-extractor/App"));
 
 // Get environment variable API key if available (for Vercel deployments).
 // Use Next.js compile-time injection so server and client always see the same value.
@@ -38,6 +39,7 @@ const tabs = [
   { id: "artifact", label: "Artifact to Life", icon: "⚡" },
   { id: "campaign", label: "Campaign Manager", icon: "📊" },
   { id: "dwellingly", label: "Dwellingly", icon: "🏡" },
+  { id: "youtube", label: "YT Extractor", icon: "📺" },
 ] as const;
 
 type TabId = typeof tabs[number]["id"];
@@ -116,6 +118,13 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-3">
+            <a
+              href="/petinsurance.html"
+              target="_blank"
+              className="flex items-center gap-2 bg-black/40 px-4 py-2 rounded-lg border border-[#00f0ff]/20 backdrop-blur-sm hover:border-[#00f0ff]/50 hover:bg-[#00f0ff]/10 transition-all font-mono text-xs text-[#00f0ff]"
+            >
+              PET INSURANCE
+            </a>
             <div className="flex items-center gap-2 bg-black/40 px-4 py-2 rounded-lg border border-[#00f0ff]/20 backdrop-blur-sm">
               <div className="w-2 h-2 rounded-full bg-[#39ff14] animate-pulse shadow-[0_0_10px_#39ff14]"></div>
               <span className="text-xs font-mono text-gray-400">SYSTEMS ONLINE</span>
@@ -244,6 +253,7 @@ export default function Home() {
               {activeTab === "artifact" && <ArtifactToLife apiKey={apiKey} />}
               {activeTab === "campaign" && <CampaignManager apiKey={apiKey} />}
               {activeTab === "dwellingly" && <Dwellingly apiKey={apiKey} />}
+              {activeTab === "youtube" && <YoutubeExtractor />}
             </Suspense>
           ) : (
             <div className="p-12 text-center">

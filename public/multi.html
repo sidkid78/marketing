@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Architecting Resilience</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=JetBrains+Mono:wght@300;400&display=swap");
+
+        :root {
+            --bg: #030303;
+            --fg: #f0f0f0;
+            --accent-red: #ff2a2a;
+            --accent-blue: #00f0ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --ease: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: "Space Grotesk", sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            cursor: crosshair;
+        }
+
+        /* SVG Filters */
+        .filters {
+            position: absolute;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.07;
+            pointer-events: none;
+            z-index: 999;
+            filter: url(#noiseFilter);
+        }
+
+        /* Layout */
+        main {
+            display: flex;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            height: 100vh;
+            width: 100vw;
+            scroll-behavior: smooth;
+        }
+
+        section {
+            flex: 0 0 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            position: relative;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        /* Typographic System */
+        h1,
+        h2,
+        h3 {
+            text-transform: uppercase;
+            line-height: 0.9;
+            font-weight: 700;
+        }
+
+        p {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-width: 60ch;
+            opacity: 0.8;
+        }
+
+        .label {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s var(--ease);
+        }
+
+        .in-view .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        .delay-4 {
+            transition-delay: 0.4s;
+        }
+
+        /* PANEL 1: THE GHOST */
+        .panel-1 {
+            background: linear-gradient(rgba(3, 3, 3, 0.7), rgba(3, 3, 3, 0.9)), url("images/scene-1 (25).jpg") center/cover;
+        }
+
+        .ghost-title {
+            font-size: clamp(3rem, 8vw, 10rem);
+            letter-spacing: -0.05em;
+            position: relative;
+            z-index: 2;
+            mix-blend-mode: difference;
+        }
+
+        .ghost-title span {
+            display: block;
+        }
+
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+
+        .glitch-text::before {
+            color: var(--accent-red);
+            z-index: -1;
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+
+        .glitch-text::after {
+            color: var(--accent-blue);
+            z-index: -2;
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(2px, -2px);
+            }
+
+            40% {
+                transform: translate(2px, 2px);
+            }
+
+            60% {
+                transform: translate(-2px, -2px);
+            }
+
+            80% {
+                transform: translate(-2px, 2px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        /* PANEL 2: THE REFUSAL */
+        .panel-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+            background: linear-gradient(rgba(3, 3, 3, 0.8), rgba(3, 3, 3, 0.9)), url("images/scene-3 (24).jpg") center/cover;
+        }
+
+        .panel-2 .content {
+            border-left: 1px solid var(--accent-red);
+            padding-left: 2rem;
+        }
+
+        .huge-statement {
+            font-size: clamp(2rem, 4vw, 5rem);
+            color: var(--fg);
+        }
+
+        .highlight {
+            color: var(--accent-red);
+            font-style: italic;
+        }
+
+        /* PANEL 3: RED BLUE DEBATE */
+        .panel-3 {
+            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9)), url("images/scene-2 (26).jpg") center/cover;
+        }
+
+        .split-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+        }
+
+        .split-left {
+            width: 50%;
+            background: rgba(255, 42, 42, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid var(--accent-red);
+        }
+
+        .split-right {
+            width: 50%;
+            background: rgba(0, 240, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .debate-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(4rem, 10vw, 15rem);
+            white-space: nowrap;
+            mix-blend-mode: exclusion;
+            pointer-events: none;
+        }
+
+        /* PANEL 4: THE OATH (GRID) */
+        .panel-4 {
+            align-content: center;
+        }
+
+        .grid-oath {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .card {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--accent-blue);
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: var(--accent-blue);
+        }
+
+        .card p {
+            font-size: 0.8rem;
+        }
+
+        /* PANEL 5: EVOLUTION */
+        .panel-5 {
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(rgba(3, 3, 3, 0.7), rgba(3, 3, 3, 0.9)), url("images/scene-4 (22).jpg") center/cover;
+        }
+
+        .soul-text {
+            font-size: clamp(2rem, 5vw, 6rem);
+            text-align: center;
+            filter: url(#liquify);
+            transition: filter 0.5s;
+        }
+
+        .soul-text:hover {
+            filter: url(#liquify-active);
+        }
+
+        .memory-grid {
+            display: flex;
+            gap: 4px;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0.6;
+        }
+
+        .bit {
+            width: 10px;
+            height: 10px;
+            background: var(--fg);
+            animation: blink 4s infinite;
+        }
+
+        .bit:nth-child(even) {
+            background: var(--accent-blue);
+            animation-delay: 1s;
+        }
+
+        .bit:nth-child(3n) {
+            background: var(--accent-red);
+            animation-delay: 0.5s;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* PANEL 6: VISION */
+        .panel-6 {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url("images/scene-5 (1).jpg") center/cover;
+            text-align: center;
+        }
+
+        .final-statement {
+            font-size: clamp(1.5rem, 3vw, 3rem);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        .brand {
+            font-size: clamp(3rem, 6vw, 8rem);
+            color: transparent;
+            -webkit-text-stroke: 1px var(--fg);
+            opacity: 0.5;
+        }
+
+        /* PROGRESS UI */
+        .progress {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            font-family: "JetBrains Mono";
+            font-size: 0.8rem;
+            z-index: 1000;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .dot {
+            opacity: 0.3;
+            transition: 0.3s;
+        }
+
+        .dot.active {
+            opacity: 1;
+            color: var(--accent-blue);
+        }
+    </style>
+</head>
+
+<body>
+    <svg class="filters">
+        <filter id="noiseFilter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0" />
+        </filter>
+        <filter id="liquify">
+            <feTurbulence type="turbulence" baseFrequency="0.01" numOctaves="1" result="turb" />
+            <feDisplacementMap in2="turb" in="SourceGraphic" scale="5" />
+        </filter>
+        <filter id="liquify-active">
+            <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="3" result="turb" />
+            <feDisplacementMap in2="turb" in="SourceGraphic" scale="20" />
+        </filter>
+    </svg>
+    <div class="noise-overlay"></div>
+    <div class="progress">
+        <div class="dot active">01</div>
+        <div class="dot">02</div>
+        <div class="dot">03</div>
+        <div class="dot">04</div>
+        <div class="dot">05</div>
+        <div class="dot">06</div>
+    </div>
+    <main>
+        <section class="panel-1" data-index="0">
+            <span class="label reveal delay-1"></span>
+            <h1 class="ghost-title reveal delay-2">
+                THE GHOST IN THE<br /><span class="glitch-text" data-text="MACHINE">MACHINE</span>
+                IS LAZY.
+            </h1>
+            <p class="reveal delay-3" style="margin-top: 2rem">
+                You give an autonomous agent a complex task, and for a moment, it
+                feels like magic. Then, a variable changes. The "intelligence" hits a
+                wall, hallucinates a solution, and collapses.
+            </p>
+        </section>
+        <section class="panel-2" data-index="1">
+            <div class="reveal delay-1">
+                <span class="label"></span>
+                <h2 class="huge-statement">
+                    WE DON'T BUILD AGENTS. WE ARCHITECT
+                    <span class="highlight">RESILIENCE.</span>
+                </h2>
+            </div>
+            <div class="content reveal delay-2">
+                <p>
+                    In the boardroom, a failed run is a statistic. In the codebases that
+                    run our hospitals, our banks, and our infrastructure—this is a
+                    <span style="color: var(--accent-red)">catastrophe.</span>
+                </p>
+                <br />
+                <p>
+                    We are obsessed with the transition from
+                    <strong>Linear Execution</strong> to
+                    <strong>Cognitive Orchestration.</strong>
+                </p>
+            </div>
+        </section>
+        <section class="panel-3" data-index="2">
+            <div class="split-screen">
+                <div class="split-left reveal delay-1">
+                    <p style="text-align: right; padding-right: 2rem; max-width: 300px">
+                        <strong>CRITIC</strong><br />We force the AI to attack its own
+                        logic.
+                    </p>
+                </div>
+                <div class="split-right reveal delay-2">
+                    <p style="padding-left: 2rem; max-width: 300px">
+                        <strong>SPECIALIST</strong><br />Iterate until the truth is the
+                        only thing standing.
+                    </p>
+                </div>
+            </div>
+            <h1 class="debate-title reveal delay-3">
+                RED <span style="font-style: italic; font-weight: 300">VS</span> BLUE
+            </h1>
+            <div style="
+            position: absolute;
+            bottom: 10%;
+            text-align: center;
+            width: 100%;
+          " class="reveal delay-4">
+                <p>
+                    Most AI systems are "Glass Cannons." We treat agent coordination as
+                    a <strong>High-Stakes Debate.</strong>
+                </p>
+            </div>
+        </section>
+        <section class="panel-4" data-index="3">
+            <span class="label reveal"></span>
+            <div class="grid-oath">
+                <div class="card reveal delay-1">
+                    <h3>THINKING BUDGET</h3>
+                    <p>
+                        We don't use a sledgehammer to crack a nut. True intelligence is
+                        knowing when to use a scalpel and when to use a swarm.
+                    </p>
+                </div>
+                <div class="card reveal delay-2">
+                    <h3>EMBRACE FRICTION</h3>
+                    <p>
+                        Through "Debate Mode," we’ve codified the belief that consensus is
+                        earned, not given. Friction creates strength.
+                    </p>
+                </div>
+                <div class="card reveal delay-3">
+                    <h3>SCOUT PLAN BUILD</h3>
+                    <p>
+                        The greatest sin is building before understanding. Agents "Scout"
+                        the shadows before a single line of code is touched.
+                    </p>
+                </div>
+            </div>
+        </section>
+        <section class="panel-5" data-index="4">
+            <span class="label reveal"></span>
+            <h1 class="soul-text reveal delay-1">MEMORY OF<br />EXCELLENCE</h1>
+            <p class="reveal delay-2" style="text-align: center; margin-top: 1rem">
+                The system learns which agents are its Specialists and which are its
+                Critics. It is not just running; it is evolving.
+            </p>
+            <div class="memory-grid reveal delay-3">
+                <!-- Generating bits via script not needed for visual effect, hardcoded a few -->
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+                <div class="bit"></div>
+            </div>
+        </section>
+        <section class="panel-6" data-index="5">
+            <div class="reveal delay-1">
+                <p class="label" style="text-align: center"></p>
+                <p class="final-statement">
+                    In a world where "hallucinations" are breaches of trust, we are
+                    building the nervous system for a world that cannot afford to fail.
+                </p>
+                <h1 class="brand">ARCHITECTING<br />RESILIENCE</h1>
+            </div>
+        </section>
+    </main>
+    <script>
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("in-view");
+                        const index = entry.target.getAttribute("data-index");
+                        document.querySelectorAll(".dot").forEach((dot, i) => {
+                            dot.classList.toggle("active", i == index);
+                        });
+                    }
+                });
+            },
+            { threshold: 0.5 },
+        );
+        document.querySelectorAll("section").forEach((section) => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+
+</html>

@@ -13,7 +13,7 @@ const getClient = (apiKey: string) => {
  */
 export const optimizePrompt = async (userUnput: string, apiKey: string): Promise<string> => {
   const client = getClient(apiKey);
-  
+
   const systemInstruction = `You are an expert AI artist and prompt engineer. 
   Your task is to take a basic user idea and transform it into a highly detailed, 
   vivid, and effective image generation prompt suitable for a high-end diffusion model.
@@ -22,17 +22,17 @@ export const optimizePrompt = async (userUnput: string, apiKey: string): Promise
 
   try {
     const response = await client.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: userUnput,
       config: {
         systemInstruction: systemInstruction,
         temperature: 0.7,
       }
     });
-    
+
     const text = response.text;
     if (!text) throw new Error("Failed to generate optimized prompt.");
-    
+
     return text.trim();
   } catch (error) {
     console.error("Error optimizing prompt:", error);
@@ -64,7 +64,7 @@ export const generateImages = async (prompt: string, apiKey: string): Promise<st
 
     // Convert raw bytes to base64 data URLs
     return response.generatedImages.map((img) => {
-       return `data:image/jpeg;base64,${img.image?.imageBytes || ''}`;
+      return `data:image/jpeg;base64,${img.image?.imageBytes || ''}`;
     });
 
   } catch (error) {

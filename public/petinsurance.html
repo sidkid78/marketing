@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Health Insurance Comparison</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;600;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --bg: #e8e8e3;
+            --ink: #050505;
+            --grid: #c0c0bb;
+            --accent: #2b00ff;
+            --warn: #ff3300;
+            --pad: clamp(1rem, 4vw, 3rem);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            cursor: crosshair
+        }
+
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 900;
+            opacity: 0.35;
+            filter: url(#noiseFilter)
+        }
+
+        .carousel {
+            display: flex;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            height: 100vh;
+            width: 100vw;
+            scroll-behavior: smooth;
+            scrollbar-width: none
+        }
+
+        .carousel::-webkit-scrollbar {
+            display: none
+        }
+
+        .panel {
+            flex: 0 0 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            position: relative;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            padding: var(--pad);
+            border-right: 1px solid var(--grid);
+            overflow: hidden
+        }
+
+        .panel-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 0.15;
+            filter: grayscale(100%) contrast(1.2);
+            transition: opacity 0.6s ease
+        }
+
+        .panel:hover .panel-bg {
+            opacity: 0.25
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%
+        }
+
+        .header {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            mix-blend-mode: multiply;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1)
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            border-top: 2px solid var(--ink);
+            padding-top: 2rem;
+            transform: translateY(40px);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem
+        }
+
+        .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--ink);
+            opacity: 0.6;
+            letter-spacing: 0.05em
+        }
+
+        .value {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.3
+        }
+
+        .highlight {
+            color: var(--accent)
+        }
+
+        .warning {
+            color: var(--warn)
+        }
+
+        .hero-panel .header {
+            text-align: center;
+            font-size: clamp(4rem, 12vw, 10rem);
+            line-height: 0.85
+        }
+
+        .hero-panel .sub {
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em
+        }
+
+        .active .header,
+        .active .meta-grid {
+            transform: translateY(0);
+            opacity: 1
+        }
+
+        .progress {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3rem;
+            z-index: 1000;
+            pointer-events: none;
+            mix-blend-mode: difference;
+            color: #fff
+        }
+
+        /* SVG Filters */
+        .glitch-wrap {
+            position: relative;
+            overflow: hidden
+        }
+
+        .glitch-wrap::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            z-index: -1;
+            filter: url(#displacementFilter)
+        }
+
+        .best-for-tag {
+            position: absolute;
+            top: var(--pad);
+            right: var(--pad);
+            background: var(--ink);
+            color: var(--bg);
+            padding: 0.5rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            transform: rotate(-5deg);
+            z-index: 20
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                font-size: 3rem
+            }
+
+            .meta-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem
+            }
+        }
+    </style>
+</head>
+
+<body><!-- SVGs --><svg style="display: none;">
+        <filter id="noiseFilter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" />
+        </filter>
+        <filter id="displacementFilter">
+            <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+            <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="5" xChannelSelector="R"
+                yChannelSelector="G" />
+        </filter>
+    </svg>
+    <div class="grain"></div>
+    <div class="progress"><span id="current">1</span>/<span id="total">10</span></div>
+    <div class="carousel"><!-- P1 Intro -->
+        <section class="panel hero-panel">
+            <div class="content">
+                <h1 class="header">Pet Health<br>Insurance &<br>Wellness</h1>
+                <p class="sub">Comparison Strategy / Based on 1 Source</p>
+            </div>
+        </section><!-- P2 Banfield -->
+        <section class="panel"><img src="./images/scene-1 (26).jpg" class="panel-bg" alt="Vet">
+            <div class="best-for-tag">Best For: 20-year-old cats</div>
+            <div class="content">
+                <h2 class="header" data-text="Banfield">Banfield</h2>
+                <div class="meta-grid">
+                    <div class="meta-item"><span class="label">Plan Type</span><span class="value">Wellness /
+                            Subscription Model</span></div>
+                    <div class="meta-item"><span class="label">Coverage Features</span><span
+                            class="value highlight">Unlimited office visits; comprehensive blood work (2×/yr); fecal
+                            exams; urinalysis; thyroid testing</span></div>
+                    <div class="meta-item"><span class="label">Restrictions</span><span class="value warning">HMO-style;
+                            12-month contract; cancellation fees apply</span></div>
+                    <div class="meta-item"><span class="label">Wait / Age</span><span class="value">None (Immediate) /
+                            No upper limit</span></div>
+                </div>
+            </div>
+        </section><!-- P3 Wagmo -->
+        <section class="panel"><img src="./images/scene-2 (27).jpg" class="panel-bg" alt="Phone Venmo">
+            <div class="best-for-tag">Best For: Senior pets & Private Vets</div>
+            <div class="content">
+                <h2 class="header">Wagmo</h2>
+                <div class="meta-grid">
+                    <div class="meta-item"><span class="label">Plan Type</span><span class="value">Wellness /
+                            Reimbursement</span></div>
+                    <div class="meta-item"><span class="label">Coverage Features</span><span
+                            class="value highlight">Cash back for blood work, fecal tests, and routine exam fees via
+                            Venmo or PayPal</span></div>
+                    <div class="meta-item"><span class="label">Restrictions</span><span class="value warning">Annual
+                            reimbursement caps; pay upfront required</span></div>
+                    <div class="meta-item"><span class="label">Wait / Age</span><span class="value">None (Immediate) /
+                            No upper limit</span></div>
+                </div>
+            </div>
+        </section><!-- P4 Pet Assure -->
+        <section class="panel">
+            <div class="best-for-tag">Best For: Pre-existing Conditions</div>
+            <div class="content">
+                <h2 class="header">Pet Assure</h2>
+                <div class="meta-grid">
+                    <div class="meta-item"><span class="label">Plan Type</span><span class="value">Veterinary Discount
+                            Plan</span></div>
+                    <div class="meta-item"><span class="label">Coverage Features</span><span
+                            class="value highlight">Instant 25% discount on all in-house medical services including
+                            chronic issues</span></div>
+                    <div class="meta-item"><span class="label">Restrictions</span><span class="value warning">Must use
+                            participating network vets; not insurance; limited presence</span></div>
+                    <div class="meta-item"><span class="label">Wait / Age</span><span class="value">None (Immediate) /
+                            No upper limit</span></div>
+                </div>
+            </div>
+        </section><!-- P5 Embrace -->
+        <section class="panel">
+            <div class="best-for-tag">Best For: Bulldogs & Curable Issues</div>
+            <div class="content">
+                <h2 class="header">Embrace</h2>
+                <div class="meta-grid">
+                    <div class="meta-item"><span class="label">Plan Type</span><span class="value">Comprehensive /
+                            Accident-Only</span></div>
+                    <div class="meta-item"><span class="label">Coverage Features</span><span
+                            class="value highlight">Distinguishes between curable/incurable pre-existing conditions;
+                            covers accidents immediately</span></div>
+                    <div class="meta-item"><span class="label">Restrictions</span><span class="value warning">Orthopedic
+                            waiting period; new pets over 15 limited to Accident-Only</span></div>
+                    <div class="meta-item"><span class="label">Waiting Period</span><span class="value">0-day accidents;
+                            14-day illness; strict orthopedic wait</span></div>
+                </div>
+            </div>
+        </section><!-- P6 MetLife -->
+        <section class="panel"><img src="./images/scene-3 (25).jpg" class="panel-bg" alt="Emergency Vet">
+            <div class="best-for-tag">Best For: Immediate Accident Coverage</div>
+            <div class="content">
+                <h2 class="header">MetLife</h2>
+                <div class="meta-grid">
+                    <div class="meta-item"><span class="label">Plan Type</span><span class="value">Comprehensive /
+                            Accident-Only</span></div>
+                    <div class="meta-item"><span class="label">Coverage Features</span><span
+                            class="value highlight">0-day accident wait; potential illness coverage for seniors; low
+                            deductible (50–100)</span></div>
+                    <div class="meta-item"><span class="label">Restrictions</span><span class="value warning">Illness
+                            coverage expensive for seniors; 14-day illness wait</span></div>
+                    <div class="meta-item"><span class="label">Age Limit</span><span class="value">No upper age
+                            limit</span></div>
+                </div>
+            </div>
+        </section><!-- P7 Trupanion -->
+        <section class="panel">
+            <div class="best-for-tag">Best For: Chronic Conditions</div>
+            <div class="content">
+                <h2 class="header">Trupanion</h2>
+                <div class="meta-grid">
+                    <div class="meta-item"><span class="label">Plan Type</span><span class="value">Comprehensive /
+                            Accident & Illness</span></div>
+                    <div class="meta-item"><span class="label">Coverage Features</span><span class="value highlight">Vet
+                            direct pay; per-condition deductible (pay once per condition for life); no annual
+                            limits</span></div>
+                    <div class="meta-item"><span class="label">Restrictions</span><span class="value warning">Excludes
+                            exam fees; premiums high for Bulldogs</span></div>
+                    <div class="meta-item"><span class="label">Waiting Period</span><span class="value">2–14 days</span>
+                    </div>
+                </div>
+            </div>
+        </section><!-- P8 Lemonade -->
+        <section class="panel"><img src="./images/scene-4 (23).jpg" class="panel-bg" alt="Bulldog Tech">
+            <div class="best-for-tag">Best For: Budget / Tech-Forward</div>
+            <div class="content">
+                <h2 class="header">Lemonade</h2>
+                <div class="meta-grid">
+                    <div class="meta-item"><span class="label">Plan Type</span><span class="value">Comprehensive /
+                            Tech-Forward</span></div>
+                    <div class="meta-item"><span class="label">Coverage Features</span><span class="value highlight">AI
+                            claim processing; low premiums; customizable add-ons</span></div>
+                    <div class="meta-item"><span class="label">Restrictions</span><span class="value warning">Base plan
+                            bare-bones; must add physical therapy/vet fees for Bulldogs</span></div>
+                    <div class="meta-item"><span class="label">Waiting Period</span><span class="value">2–14 days</span>
+                    </div>
+                </div>
+            </div>
+        </section><!-- P9 Spot / ASPCA -->
+        <section class="panel">
+            <div class="best-for-tag">Best For: Behavioral & Alternative</div>
+            <div class="content">
+                <h2 class="header">Spot / ASPCA</h2>
+                <div class="meta-grid">
+                    <div class="meta-item"><span class="label">Plan Type</span><span class="value">Comprehensive /
+                            Accident & Illness</span></div>
+                    <div class="meta-item"><span class="label">Coverage Features</span><span
+                            class="value highlight">Covers behavioral issues, microchipping, and alternative
+                            therapies</span></div>
+                    <div class="meta-item"><span class="label">Restrictions</span><span class="value warning">Slow to
+                            start (14-day wait for everything)</span></div>
+                    <div class="meta-item"><span class="label">Age Limit</span><span class="value">No upper age
+                            limit</span></div>
+                </div>
+            </div>
+        </section><!-- P10 Nationwide -->
+        <section class="panel"><img src="./images/scene-5 (2).jpg" class="panel-bg" alt="Exotic Pets">
+            <div class="best-for-tag">Best For: Exotic Pets</div>
+            <div class="content">
+                <h2 class="header">Nationwide</h2>
+                <div class="meta-grid">
+                    <div class="meta-item"><span class="label">Plan Type</span><span class="value">Comprehensive</span>
+                    </div>
+                    <div class="meta-item"><span class="label">Coverage Features</span><span
+                            class="value highlight">Traditional carrier with broad species coverage (birds, reptiles,
+                            rabbits)</span></div>
+                    <div class="meta-item"><span class="label">Restrictions</span><span class="value warning">Standard
+                            pre-existing condition exclusions</span></div>
+                    <div class="meta-item"><span class="label">Waiting Period</span><span class="value">2–14 days</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>const panels = document.querySelectorAll('.panel'); const currentEl = document.getElementById('current'); const totalEl = document.getElementById('total'); const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); const index = Array.from(panels).indexOf(entry.target) + 1; currentEl.innerText = index.toString().padStart(2, '0'); } }) }, { threshold: 0.5 }); panels.forEach(panel => observer.observe(panel));</script>
+</body>
+
+</html>

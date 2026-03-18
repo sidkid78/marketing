@@ -13,7 +13,7 @@ const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
 const MODEL_NAME = 'gemini-2.5-flash';
-const IMAGE_MODEL_NAME = 'gemini-2.5-flash-image';
+const IMAGE_MODEL_NAME = 'gemini-3.1-flash-image-preview';
 
 // --- Schemas ---
 
@@ -242,7 +242,7 @@ export const agentGenerateImages = async (prompts: string[]): Promise<GeneratedI
         if (!promptText || promptText.trim().length === 0) continue;
 
         try {
-            // Using gemini-2.5-flash-image for efficient image generation
+            // Using gemini-3.1-flash-image-preview for efficient image generation
             const response = await ai.models.generateContent({
                 model: IMAGE_MODEL_NAME,
                 contents: { parts: [{ text: promptText }] },

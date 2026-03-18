@@ -20,7 +20,7 @@ export const analyzeStory = async (story: string): Promise<StoryScene[]> => {
       model: 'gemini-3-flash-preview',
       contents: story,
       config: {
-        systemInstruction: `Analyze the user's story and break it down into 1 to 4 distinct sequential scenes.
+        systemInstruction: `Analyze the user's story and break it down into 1 to 5 distinct sequential scenes.
         For each scene:
         1. "text": Extract the exact segment of the original story.
         2. "imagePrompt": Write a detailed prompt for high-quality image generation. Focus on composition and lighting.`,
@@ -38,7 +38,12 @@ export const analyzeStory = async (story: string): Promise<StoryScene[]> => {
         }
       }
     });
-    const rawScenes = JSON.parse(response.text || "[]");
+    // Filter out thought parts (which cause the `thoughtSignature` warning on response.text)
+    const textParts = response.candidates?.[0]?.content?.parts
+      ?.filter(p => !p.thought && p.text != null)
+      .map(p => p.text)
+      .join('') ?? '[]';
+    const rawScenes = JSON.parse(textParts);
     return rawScenes.map((s: any, i: number) => ({
       id: `scene-${Date.now()}-${i}`,
       text: s.text,
@@ -49,27 +54,46 @@ export const analyzeStory = async (story: string): Promise<StoryScene[]> => {
   }
 };
 
-export const generateSceneImages = async (scenes: StoryScene[]): Promise<StoryScene[]> => {
-  const client = getClient();
-  const imagePromises = scenes.map(async (scene) => {
+const IMAGE_MODELS = ['gemini-3.1-flash-image-preview', 'gemini-3.1-flash-image-preview'];
+
+const generateImageWithFallback = async (
+  client: GoogleGenAI,
+  prompt: string,
+): Promise<string | null> => {
+  for (const model of IMAGE_MODELS) {
     try {
+      console.log(`Attempting image generation with model: ${model}`);
       const response = await client.models.generateContent({
-        model: 'gemini-3-pro-image-preview',
-        contents: scene.imagePrompt,
+        model,
+        contents: prompt,
         config: {
           imageConfig: {
             aspectRatio: '16:9',
           },
-        }
+        },
       });
-      const generatedImage = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-      if (generatedImage) {
-        return { ...scene, imageUrl: `data:image/jpeg;base64,${generatedImage}` };
+      const imageData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      if (imageData) {
+        console.log(`Image generated successfully with model: ${model}`);
+        return imageData;
       }
-      return scene;
-    } catch (error) {
-      return scene;
+    } catch (error: any) {
+      const status = error?.status ?? error?.httpStatusCode ?? '';
+      console.warn(`Image generation failed with model: ${model} (status: ${status}). Trying next...`, error?.message);
     }
+  }
+  console.error('All image generation models failed.');
+  return null;
+};
+
+export const generateSceneImages = async (scenes: StoryScene[]): Promise<StoryScene[]> => {
+  const client = getClient();
+  const imagePromises = scenes.map(async (scene) => {
+    const imageData = await generateImageWithFallback(client, scene.imagePrompt);
+    if (imageData) {
+      return { ...scene, imageUrl: `data:image/jpeg;base64,${imageData}` };
+    }
+    return scene;
   });
   return await Promise.all(imagePromises);
 };

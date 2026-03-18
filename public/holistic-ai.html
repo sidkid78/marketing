@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Guardian Manifesto</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@300;500;700&display=swap');
+
+        :root {
+            --bg: #050507;
+            --text-main: #EAEAEA;
+            --text-muted: #888890;
+            --accent: #00F0FF;
+            --accent-dim: rgba(0, 240, 255, 0.1);
+            --alert: #FF3366;
+            --gold: #D4AF37;
+            --ease: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw
+        }
+
+        .carousel {
+            display: flex;
+            flex-direction: row;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            height: 100vh;
+            width: 100vw;
+            scroll-behavior: smooth;
+            -ms-overflow-style: none;
+            scrollbar-width: none
+        }
+
+        .carousel::-webkit-scrollbar {
+            display: none
+        }
+
+        section {
+            flex: 0 0 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem
+        }
+
+        .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: brightness(0.4) contrast(1.2);
+            background-size: cover;
+            background-position: center;
+            transition: transform 10s ease-out
+        }
+
+        .noise-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.07;
+            pointer-events: none;
+            z-index: 0;
+            filter: url(#noise)
+        }
+
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            z-index: 2;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s var(--ease)
+        }
+
+        .active .content-wrapper {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        .active .bg-layer {
+            transform: scale(1.05)
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            line-height: 1.1
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 1.5rem
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
+            font-weight: 700
+        }
+
+        p {
+            font-size: clamp(1rem, 1.2vw, 1.3rem);
+            line-height: 1.6;
+            color: var(--text-muted);
+            max-width: 65ch;
+            margin-bottom: 1.5rem
+        }
+
+        ul {
+            list-style: none
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 2px solid var(--accent);
+            padding: 1.5rem;
+            backdrop-filter: blur(10px)
+        }
+
+        .feature-card h4 {
+            font-family: 'Space Grotesk';
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 0.5rem
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            margin-bottom: 0
+        }
+
+        .hero-number {
+            font-size: clamp(4rem, 10vw, 8rem);
+            font-family: 'Space Grotesk';
+            color: transparent;
+            -webkit-text-stroke: 2px var(--gold);
+            display: block;
+            line-height: 1;
+            margin-bottom: 1rem
+        }
+
+        .stat-box {
+            border: 1px solid var(--text-muted);
+            padding: 2rem;
+            display: inline-block;
+            margin-right: 2rem;
+            margin-bottom: 2rem
+        }
+
+        .progress {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 100
+        }
+
+        .dot {
+            width: 40px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s var(--ease)
+        }
+
+        .dot.active-dot {
+            background: var(--accent);
+            width: 60px
+        }
+
+        .glitch {
+            position: relative
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg)
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -1px 0 red;
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -1px 0 blue;
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim 2.5s infinite linear alternate-reverse
+        }
+
+        @keyframes glitch-anim {
+            0% {
+                clip: rect(10px, 9999px, 31px, 0)
+            }
+
+            20% {
+                clip: rect(65px, 9999px, 19px, 0)
+            }
+
+            40% {
+                clip: rect(99px, 9999px, 23px, 0)
+            }
+
+            60% {
+                clip: rect(12px, 9999px, 82px, 0)
+            }
+
+            80% {
+                clip: rect(34px, 9999px, 66px, 0)
+            }
+
+            100% {
+                clip: rect(6px, 9999px, 73px, 0)
+            }
+        }
+
+        /* Slide specific visuals */
+        #slide-1 .bg-layer {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8)), url('?q=80&w=2532&auto=format&fit=crop')
+        }
+
+        #slide-2 .bg-layer {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.9)), url('./images/scene-1 (30).jpg?q=80&w=2670&auto=format&fit=crop')
+        }
+
+        #slide-3 .bg-layer {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), url('./images/scene-2 (31).jpg?q=80&w=2400&auto=format&fit=crop')
+        }
+
+        #slide-4 .bg-layer {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('./images/scene-3 (29).jpg?q=80&w=2574&auto=format&fit=crop')
+        }
+
+        #slide-5 .bg-layer {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), url('./images/scene-4 (27).jpg?q=80&w=2670&auto=format&fit=crop')
+        }
+
+        #slide-6 .bg-layer {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6)), url('./images/scene-5 (5).jpg?q=80&w=2621&auto=format&fit=crop')
+        }
+
+        .highlight {
+            color: var(--accent)
+        }
+
+        .strong {
+            font-weight: 700;
+            color: white
+        }
+
+        /* Utility */
+        .hidden {
+            opacity: 0
+        }
+
+        @media (max-width:768px) {
+            h1 {
+                font-size: 3rem
+            }
+
+            h2 {
+                font-size: 2rem
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+
+<body><svg width="0" height="0">
+        <filter id="noise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="saturate" values="0" />
+            <feComponentTransfer>
+                <feFuncA type="table" tableValues="0 0.2" />
+            </feComponentTransfer>
+        </filter>
+    </svg>
+    <div class="carousel">
+        <section id="slide-1">
+            <div class="bg-layer"></div>
+            <div class="noise-overlay"></div>
+            <div class="content-wrapper">
+                <h3></h3>
+                <h1 class="glitch" data-text="THE GUARDIAN MANIFESTO">THE GUARDIAN<br>MANIFESTO</h1>
+                <p style="margin-top:2rem; font-size:1.2rem; border-left: 1px solid var(--accent); padding-left: 1rem;">
+                    From financial anxiety to total authority.</p>
+            </div>
+        </section>
+        <section id="slide-2">
+            <div class="bg-layer"></div>
+            <div class="noise-overlay"></div>
+            <div class="content-wrapper">
+                <h3></h3>
+                <h2 style="color:var(--alert)">THE INVISIBLE LEAK</h2>
+                <p>Most successful people are actually failing their future. They are earning well, but their wealth is
+                    "leaking"—evaporating through tax inefficiencies, hidden bank fees, and the sheer cognitive
+                    exhaustion of trying to manage a fragmented financial life.</p>
+                <p>Traditional "wealth management" is a slow, expensive human relic. It’s reactive, biased, and leaves
+                    you wondering: <em class="strong">“Am I actually going to be okay?”</em></p>
+            </div>
+        </section>
+        <section id="slide-3">
+            <div class="bg-layer"></div>
+            <div class="noise-overlay"></div>
+            <div class="content-wrapper">
+                <h3></h3>
+                <h2>TOTAL FINANCIAL<br><span class="highlight">SOVEREIGNTY</span></h2>
+                <p>We didn't build Holistic AI to be another dashboard. We built it to be your <span
+                        class="strong">Financial Nervous System.</span> We believe that your wealth deserves the same
+                    level of intelligence that powers self-driving cars and global logistics.</p>
+                <p>Our mission is to move you from "Financial Anxiety" to "Financial Authority."</p>
+            </div>
+        </section>
+        <section id="slide-4">
+            <div class="bg-layer"></div>
+            <div class="noise-overlay"></div>
+            <div class="content-wrapper">
+                <h3></h3>
+                <h2>THE AI GUARDIAN</h2>
+                <p>Imagine a sentinel that never sleeps.</p>
+                <div class="card-grid">
+                    <div class="feature-card">
+                        <h4>The AI Coach</h4>
+                        <p>Doesn't just "chat." It anticipates. When it sees a surplus, it invites you to optimize. The
+                            expert voice in your pocket, grounding every decision in the hard truth of your data.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>The Predictive Engine</h4>
+                        <p>We use Vertex AI for <span class="highlight">Time Travel</span>. Look 25 years into the
+                            future. If "Success Probability" drops, we give you tactical maneuvers to fix it before it
+                            happens.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>The Tax Fortress</h4>
+                        <p>We treat every dollar like a soldier. Our Optimizer scans for "leaks" in real-time—turning
+                            the complex tax code into a weapon for your wealth.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="slide-5">
+            <div class="bg-layer"></div>
+            <div class="noise-overlay"></div>
+            <div class="content-wrapper">
+                <h3></h3>
+                <h2>INTELLIGENCE<br>OVER FEES</h2>
+                <div style="display:flex; flex-wrap:wrap; align-items:flex-end;">
+                    <div class="stat-box"><span class="hero-number">1%</span><small>FEE (OLD GUARD)</small></div>
+                    <div class="stat-box" style="border-color:var(--accent)"><span class="hero-number"
+                            style="-webkit-text-stroke-color:var(--accent)">$29</span><small>PER MONTH (US)</small>
+                    </div>
+                </div>
+                <p>The "Old Guard" of finance wants a 1% fee to do 0.1% of the work. We’ve flipped the script. For the
+                    cost of a single dinner out, you gain access to a supercomputer dedicated to your family’s legacy.
+                    We don’t just manage assets; we eliminate the "Panic Score."</p>
+            </div>
+        </section>
+        <section id="slide-6">
+            <div class="bg-layer"></div>
+            <div class="noise-overlay"></div>
+            <div class="content-wrapper">
+                <h3></h3>
+                <h2>THE SILENT ENGINE</h2>
+                <p>While you experience clarity, our engine is performing a symphony of React-driven precision,
+                    Gemini-powered reasoning, and Monte Carlo simulations. We’ve automated the "Mercenary" work of
+                    rebalancing and reinvesting so you can focus on the "Missionary" work of living your life.</p>
+                <div style="margin-top:3rem; padding-top:2rem; border-top:1px solid rgba(255,255,255,0.2)">
+                    <h3 style="color:white; font-size:1.5rem">HOLISTIC AI</h3>
+                    <p class="highlight" style="font-size:1.5rem; max-width:100%">Own your time. Secure your legacy.
+                        Kill the uncertainty.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="progress">
+        <div class="dot active-dot" onclick="scrollToSlide(0)"></div>
+        <div class="dot" onclick="scrollToSlide(1)"></div>
+        <div class="dot" onclick="scrollToSlide(2)"></div>
+        <div class="dot" onclick="scrollToSlide(3)"></div>
+        <div class="dot" onclick="scrollToSlide(4)"></div>
+        <div class="dot" onclick="scrollToSlide(5)"></div>
+    </div>
+    <script>
+        const carousel = document.querySelector('.carousel');
+        const sections = document.querySelectorAll('section');
+        const dots = document.querySelectorAll('.dot');
+
+        const scrollToSlide = (index) => {
+            carousel.scrollTo({ left: window.innerWidth * index, behavior: 'smooth' });
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    const index = Array.from(sections).indexOf(entry.target);
+                    dots.forEach(d => d.classList.remove('active-dot'));
+                    dots[index].classList.add('active-dot');
+                }
+            });
+        }, { threshold: 0.5 });
+
+        sections.forEach(s => observer.observe(s));
+
+        // Slow Autoscroll (Auto-advance slides)
+        let autoScrollTimer = setInterval(() => {
+            const activeIndex = Array.from(sections).findIndex(s => s.classList.contains('active'));
+            let nextIndex = activeIndex >= 0 ? activeIndex + 1 : 1;
+            if (nextIndex >= sections.length) nextIndex = 0;
+            scrollToSlide(nextIndex);
+        }, 7000);
+
+        // Pause autoscroll on user interaction
+        ['touchstart', 'wheel', 'mousedown'].forEach(evt => {
+            carousel.addEventListener(evt, () => clearInterval(autoScrollTimer), { passive: true });
+        });
+    </script>
+</body>
+
+</html>

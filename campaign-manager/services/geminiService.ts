@@ -28,7 +28,7 @@ export const generateTweetContent = async (topic: string, format: 'single' | 'th
   try {
     const ai = getClient();
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash-exp', // Updated model
+      model: 'gemini-3-flash-preview', // Updated model
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
@@ -67,7 +67,7 @@ export const generateVisualConcept = async (concept: string): Promise<VisualConc
 
     // Note: Python SDK uses imagen-3.0-generate-001, verifying JS SDK support
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash-exp', // Fallback to text model if image not supported directly in this SDK version or use specific image model
+      model: 'gemini-3.1-flash-image-preview', // Fallback to text model if image not supported directly in this SDK version or use specific image model
       contents: {
         parts: [{ text: imagePrompt }]
       }
@@ -111,7 +111,7 @@ export const analyzeAndReply = async (incomingTweet: string): Promise<string> =>
     `;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,

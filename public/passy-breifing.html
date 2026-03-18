@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Story of Passy</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
+
+    :root {
+      --c-lavender: #E6E6FA;
+      --c-rose: #D8A1A6;
+      --c-rose-dim: #C58B90;
+      --c-cream: #F9F7F2;
+      --c-slate: #2C2C34;
+      --c-charcoal: #1A1A1D;
+      --font-hero: 'Cormorant Garamond', serif;
+      --font-body: 'Inter', sans-serif;
+      --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--c-cream);
+      color: var(--c-slate);
+      font-family: var(--font-body);
+      overflow: hidden;
+      cursor: none;
+    }
+
+    /* Custom Cursor */
+    #cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--c-slate);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s, background-color 0.3s;
+      mix-blend-mode: difference;
+    }
+
+    /* SVG Filters */
+    .svg-filters {
+      position: absolute;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    /* Carousel Container */
+    .carousel {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+    }
+
+    /* Slide General */
+    .slide {
+      flex: 0 0 100vw;
+      height: 100vh;
+      scroll-snap-align: start;
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+
+    /* Background Image styling */
+    .bg-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out, transform 10s ease-out;
+      filter: url(#grain) grayscale(20%) contrast(90%);
+    }
+
+    .slide.active .bg-img {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      background: linear-gradient(to bottom, rgba(249, 247, 242, 0.85), rgba(249, 247, 242, 0.95));
+    }
+
+    /* Content Layouts */
+    .content {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Typography Hierarchy */
+    .eyebrow {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 1.5rem;
+      color: var(--c-rose-dim);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s var(--ease-out) 0.2s;
+    }
+
+    h1,
+    h2 {
+      font-family: var(--font-hero);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 2rem;
+      color: var(--c-charcoal);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s var(--ease-out) 0.4s;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 6vw, 5rem);
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-style: italic;
+    }
+
+    p {
+      font-size: clamp(1rem, 1.2vw, 1.25rem);
+      line-height: 1.6;
+      color: var(--c-slate);
+      max-width: 60ch;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s var(--ease-out) 0.6s;
+    }
+
+    /* Active States for Text */
+    .slide.active .eyebrow,
+    .slide.active h1,
+    .slide.active h2,
+    .slide.active p,
+    .slide.active .feature-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Specific Slide Layouts */
+
+    /* SLIDE 1: INTRO */
+    #slide-1 .content {
+      align-items: center;
+      text-align: center;
+    }
+
+    #slide-1 .bg-img {
+      filter: url(#grain) sepia(20%) brightness(0.8);
+    }
+
+    /* SLIDE 2: MISSION (Split) */
+    #slide-2 .content {
+      flex-direction: row;
+      align-items: center;
+      gap: 4rem;
+    }
+
+    .split-text {
+      flex: 1;
+    }
+
+    .split-visual {
+      flex: 1;
+      height: 60vh;
+      position: relative;
+    }
+
+    .floating-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 4px;
+      box-shadow: 20px 20px 60px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transform: translateY(50px) scale(0.95);
+      transition: all 1.2s var(--ease-out) 0.8s;
+    }
+
+    .slide.active .floating-img {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* SLIDE 3: EXPERIENCE (Grid) */
+    #slide-3 .content {
+      justify-content: flex-start;
+      padding-top: 10vh;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .feature-item {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-left: 1px solid var(--c-rose);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s var(--ease-out);
+    }
+
+    .slide.active .feature-item:nth-child(1) {
+      transition-delay: 0.8s;
+    }
+
+    .slide.active .feature-item:nth-child(2) {
+      transition-delay: 1.0s;
+    }
+
+    .slide.active .feature-item:nth-child(3) {
+      transition-delay: 1.2s;
+    }
+
+    .feature-item h3 {
+      font-family: var(--font-hero);
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--c-charcoal);
+    }
+
+    .feature-item p {
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    /* SLIDE 4: CRAFT (Technical) */
+    #slide-4 .content {
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    #slide-4 .tech-badge {
+      display: inline-block;
+      border: 1px solid var(--c-slate);
+      padding: 0.5rem 1rem;
+      font-family: monospace;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      opacity: 0;
+      transition: opacity 1s 0.8s;
+    }
+
+    .slide.active .tech-badge {
+      opacity: 0.6;
+    }
+
+    /* SLIDE 5: GOAL (Emotional/Center) */
+    #slide-5 .overlay {
+      background: radial-gradient(circle, rgba(230, 230, 250, 0.4) 0%, rgba(249, 247, 242, 0.9) 70%);
+    }
+
+    #slide-5 .content {
+      align-items: center;
+      text-align: center;
+    }
+
+    #slide-5 h1 {
+      color: var(--c-rose-dim);
+      font-style: italic;
+    }
+
+    /* Progress Bar */
+    .progress {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1rem;
+      z-index: 10;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--c-rose);
+      border-radius: 50%;
+      opacity: 0.3;
+      transition: opacity 0.3s;
+    }
+
+    .dot.active {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+
+    /* Media Queries */
+    @media (max-width: 768px) {
+      #slide-2 .content {
+        flex-direction: column-reverse;
+        gap: 2rem;
+      }
+
+      .split-visual {
+        height: 30vh;
+        width: 100%;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+        max-height: 50vh;
+        padding-bottom: 2rem;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="cursor"></div>
+
+  <svg class="svg-filters">
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0" />
+      <feComposite operator="in" in2="SourceGraphic" result="grain" />
+      <feBlend mode="multiply" in="grain" in2="SourceGraphic" />
+    </filter>
+    <filter id="liquid">
+      <feTurbulence type="turbulence" baseFrequency="0.01 0.02" numOctaves="2" seed="2">
+        <animate attributeName="baseFrequency" dur="10s" values="0.01 0.02;0.02 0.04;0.01 0.02"
+          repeatCount="indefinite" />
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" scale="10" />
+    </filter>
+  </svg>
+
+  <div class="carousel">
+
+    <!-- SLIDE 1: PROBLEM -->
+    <section class="slide" id="slide-1">
+      <img src="./images/scene-1 (31).jpg" class="bg-img" alt="Stressful planning environment">
+      <div class="overlay"></div>
+      <div class="content">
+        <div class="eyebrow">The Story of Passy</div>
+        <h1>The Burden of Perfection</h1>
+        <p>A baby shower should be a sanctuary—a moment of soft lavender and shared joy. Instead, for most hosts, it is
+          a logistical nightmare. A blur of spreadsheet cells, unreturned texts, and the crushing pressure to create an
+          "Instagram-perfect" event on a real-world budget.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: MISSION -->
+    <section class="slide" id="slide-2">
+      <div class="overlay"></div>
+      <div class="content">
+        <div class="split-text">
+          <div class="eyebrow">The Intelligent Concierge</div>
+          <h2>We didn't just build an app; we built a bridge.</h2>
+          <p>Passy was born from a singular obsession: To kill the "mental load" of celebration. We believe that
+            technology should never feel "techy"—it should feel like a quiet, brilliant assistant who anticipates your
+            needs before you even speak them.</p>
+        </div>
+        <div class="split-visual">
+          <img src="./images/scene-2 (32).jpg" class="floating-img" alt="Holographic mood board">
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: EXPERIENCE -->
+    <section class="slide" id="slide-3">
+      <img src="./images/scene-3 (30).jpg" class="bg-img" alt="Family connection">
+      <div class="overlay" style="opacity: 0.95;"></div>
+      <div class="content">
+        <div class="eyebrow">From Friction to Flow</div>
+        <h2>While others see "features," we see "freedom"</h2>
+        <div class="features-grid">
+          <div class="feature-item">
+            <h3>The Theme Assistant</h3>
+            <p>Not just an image generator; it’s a dream-catcher. It takes vague feelings and turns them into visual
+              reality in seconds, ending the aimless scrolling.</p>
+          </div>
+          <div class="feature-item">
+            <h3>The Game Planner</h3>
+            <p>It doesn’t just list activities; it curates connection. Ensuring the room feels like a family before the
+              first gift is opened.</p>
+          </div>
+          <div class="feature-item">
+            <h3>Thank You Note Helper</h3>
+            <p>Solves the heavy chore of the weary host. Advanced intelligence ensures every guest feels seen, written
+              in the graceful script of a hand-penned letter.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: CRAFT -->
+    <section class="slide" id="slide-4">
+      <img src="./images/scene-4 (28).jpg" class="bg-img" alt="Passy App Interface">
+      <div class="overlay"
+        style="background: linear-gradient(to right, rgba(249,247,242,0.6), rgba(249,247,242,0.95));"></div>
+      <div class="content">
+        <div class="eyebrow">The Craft: Invisible Power</div>
+        <div class="tech-badge">Gemini 2.0 &nbsp;|&nbsp; Next.js 15</div>
+        <h2>Fast, secure, and reliable as a heartbeat.</h2>
+        <p>Under the hood, Passy is a masterpiece of modern engineering. We utilized the world's most advanced tech not
+          to show off, but to ensure your planning space is as calming as the nursery you’re preparing for. A palette of
+          Soft Lavender and Muted Rose designed for peace.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: GOAL -->
+    <section class="slide" id="slide-5">
+      <img src="./images/scene-5 (6).jpg" class="bg-img" alt="Celebration">
+      <div class="overlay"></div>
+      <div class="content">
+        <div class="eyebrow"></div>
+        <p style="margin-bottom: 2rem;">We aren't here to help you "manage an event." We are here to ensure that when
+          the mother-to-be walks into the room, you aren't checking your guest list—you are there to hold her hand and
+          see her smile.</p>
+        <h1 style="filter: url(#liquid);">Passy: Plan beautiful.<br>Be present.</h1>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="progress">
+    <div class="dot active"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <script>
+    // Cursor Logic
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.top = e.clientY + 'px';
+      cursor.style.left = e.clientX + 'px';
+    });
+
+    document.querySelectorAll('a, h3, h1, img').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '50px';
+        cursor.style.height = '50px';
+        cursor.style.backgroundColor = 'rgba(216, 161, 166, 0.2)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '20px';
+        cursor.style.height = '20px';
+        cursor.style.backgroundColor = 'transparent';
+      });
+    });
+
+    // Intersection Observer for Slide Animations
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+
+    const observerOptions = {
+      root: document.querySelector('.carousel'),
+      threshold: 0.5
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Add active class to slide
+          entry.target.classList.add('active');
+
+          // Update dots
+          const index = Array.from(slides).indexOf(entry.target);
+          dots.forEach(d => d.classList.remove('active'));
+          if (dots[index]) dots[index].classList.add('active');
+        } else {
+          entry.target.classList.remove('active');
+        }
+      });
+    }, observerOptions);
+
+    slides.forEach(slide => observer.observe(slide));
+
+    // Slow Autoscroll (Auto-advance slides)
+    const carouselEl = document.querySelector('.carousel');
+    let autoScrollTimer = setInterval(() => {
+      const activeIndex = Array.from(slides).findIndex(s => s.classList.contains('active'));
+      let nextIndex = activeIndex >= 0 ? activeIndex + 1 : 1;
+      if (nextIndex >= slides.length) nextIndex = 0;
+      carouselEl.scrollTo({ left: window.innerWidth * nextIndex, behavior: 'smooth' });
+    }, 7000);
+
+    // Pause autoscroll on user interaction
+    ['touchstart', 'wheel', 'mousedown'].forEach(evt => {
+      carouselEl.addEventListener(evt, () => clearInterval(autoScrollTimer), { passive: true });
+    });
+  </script>
+</body>
+
+</html>

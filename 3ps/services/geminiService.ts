@@ -94,7 +94,7 @@ export const generateStrategy = async (input: StrategistInput, apiKey?: string):
   Style: Clean, modern, professional business illustration. Abstract representation of the concept with symbolic imagery. High quality, sharp detail, cohesive color palette. No text in the image.`;
 
     const imageResponse = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
+      model: 'gemini-3.1-flash-image-preview',
       contents: {
         parts: [{ text: imagePrompt }]
       },

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Dwellingly Manifesto</title>
+<style>
+  /* RESET & BASE */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: #0A0A0A;
+    color: #9B9C9C;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    overflow-x: hidden;
+    line-height: 1.6;
+    font-size: 16px;
+  }
+
+  /* SVG FILTERS OVERLAY */
+  .noise-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.07;
+    filter: url(#static-noise);
+  }
+
+  /* TYPOGRAPHY */
+  h1, h2, h3, h4 {
+    color: #F0F0F0;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  
+  .accent-text {
+    color: #308976;
+  }
+  
+  strong {
+    color: #FFFFFF;
+    font-weight: 700;
+  }
+
+  /* LAYOUT CONTAINERS */
+  .scroll-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  section {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 0;
+    position: relative;
+    border-left: 1px solid rgba(77, 114, 107, 0.2);
+    padding-left: 2rem;
+  }
+
+  /* VISUAL ELEMENTS */
+  .image-frame {
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    margin: 2rem 0;
+    border: 1px solid #308976;
+    position: relative;
+    filter: grayscale(20%) sepia(10%) hue-rotate(130deg);
+    transition: filter 0.5s ease;
+  }
+  
+  .image-frame:hover {
+    filter: grayscale(0%);
+  }
+
+  .image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.1);
+    transition: transform 2s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .reveal-active .image-frame img {
+    transform: scale(1);
+  }
+
+  /* SCROLL ANIMATIONS */
+  .reveal-text {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .reveal-active .reveal-text {
+    opacity: 1;
+    transform: translateY(0);
+    filter: url(#glow-text-subtle);
+  }
+
+  .delay-1 { transition-delay: 0.1s; }
+  .delay-2 { transition-delay: 0.2s; }
+  .delay-3 { transition-delay: 0.3s; }
+
+  /* SPECIALIZED SECTIONS */
+  .hero {
+    text-align: left;
+    border-left: 4px solid #308976;
+  }
+
+  .list-block {
+    background: linear-gradient(90deg, #000000 0%, #0A0A0A 100%);
+    border: 1px solid #4D726B;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+  
+  .list-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(155, 156, 156, 0.2);
+    display: flex;
+    align-items: baseline;
+  }
+  
+  .list-num {
+    color: #308976;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-right: 1rem;
+    font-family: monospace;
+  }
+
+  /* DECORATIVE ELEMENTS */
+  .circuit-bg {
+    position: absolute;
+    top: 0; right: 0;
+    width: 300px;
+    height: 300px;
+    opacity: 0.3;
+    mix-blend-mode: screen;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* CLOCK PULSE EFFECT */
+  .pulse-text {
+    color: #308976;
+    text-shadow: 0 0 10px rgba(48, 137, 118, 0.8);
+    animation: heartbeat 2s infinite;
+  }
+
+  @keyframes heartbeat {
+    0% { opacity: 0.8; text-shadow: 0 0 5px rgba(48, 137, 118, 0.5); }
+    10% { opacity: 1; text-shadow: 0 0 20px rgba(48, 137, 118, 1); }
+    20% { opacity: 0.8; text-shadow: 0 0 5px rgba(48, 137, 118, 0.5); }
+    100% { opacity: 0.8; text-shadow: 0 0 5px rgba(48, 137, 118, 0.5); }
+  }
+
+  /* MEDIA QUERIES */
+  @media (max-width: 768px) {
+    h1 { font-size: 2rem; }
+    section { padding-left: 1rem; min-height: auto; padding-top: 3rem; padding-bottom: 3rem;}
+  }
+</style>
+</head>
+<body>
+
+<!-- SVG FILTERS DEFINITION -->
+<svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+  <defs>
+    <!-- 1. ANIMATED NOISE (Grain) -->
+    <filter id="static-noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch">
+        <animate attributeName="seed" from="0" to="100" dur="1s" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+          <feFuncA type="table" tableValues="0 0.3"/>
+      </feComponentTransfer>
+    </filter>
+
+    <!-- 2. DYNAMIC MOTION BLUR (Simulated via Glow) -->
+    <filter id="glow-text-subtle">
+      <feGaussianBlur stdDeviation="0.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- 3. LIQUID DISTORTION (For Headers) -->
+    <filter id="heat-haze">
+      <feTurbulence type="fractalNoise" baseFrequency="0.01 0.02" numOctaves="1" result="warp">
+          <animate attributeName="baseFrequency" values="0.01 0.02; 0.02 0.04; 0.01 0.02" dur="4s" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="3" in="SourceGraphic" in2="warp"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- VISUAL NOISE LAYER -->
+<div class="noise-overlay"></div>
+
+<div class="scroll-container">
+
+  <!-- HEADER -->
+  <section class="hero reveal-trigger">
+    <div class="reveal-text">
+      <h4 style="color: #4D726B;"></h4>
+      <h1 style="font-size: 3rem; margin-top: 1rem; border-bottom: 2px solid #308976; display:inline-block;">The Dwellingly Manifesto</h1>
+      <h2 style="margin-top: 1rem;">The Iron-Clad Path to Texas Property Sovereignty</h2>
+    </div>
+  </section>
+
+  <!-- SECTION I -->
+  <section class="reveal-trigger">
+    <div class="reveal-text">
+      <h3 class="accent-text">I. The Mission: Protecting the Texan Dream</h3>
+      <p>Real estate in Texas is not just a transaction; it is the transfer of a legacy. But for the FSBO (For Sale By Owner) seller, the process is a minefield of legal traps and "gotchas" designed to keep the gatekeepers in power.</p>
+      <br>
+      <p>Dwellingly exists to provide the <strong>Shield and the Compass.</strong> We aren't just building a "transaction manager"; we are building a <strong>Compliance Fortress.</strong> Our architecture is designed to remove the "Terror of the Unknown," ensuring that no Texan ever loses a deal—or their shirt—because they missed a TREC deadline.</p>
+    </div>
+    <div class="image-frame reveal-text delay-2">
+      <img src="public/images/scene-1 (1).jpg" alt="Futuristic Fortress in Texas Desert">
+    </div>
+  </section>
+
+  <!-- SECTION II -->
+  <section class="reveal-trigger">
+    <!-- AI Mood Image used as background watermark -->
+    <img src="https://fal.media/files/elephant/P-aG34Fq48dF2y4j8_2e5.png" class="circuit-bg" alt="Circuit Shield">
+    
+    <div class="reveal-text">
+      <h3 class="accent-text">II. The "Texas Contract Clock": Our Pulse</h3>
+      <p>In this system, time is the enemy. The "Texas Contract Clock" isn't a UI feature; it is the <strong class="pulse-text">System’s Heartbeat.</strong> By pinning the <code>executedDate</code> as the immutable North Star of the transaction, we eliminate the ambiguity that kills deals. When the Clock turns red, the system doesn't just "notify"—it protects.</p>
+    </div>
+    <div class="image-frame reveal-text delay-2">
+      <img src="public/images/scene-2 (1).jpg" alt="Digital Contract Clock Interface">
+    </div>
+  </section>
+
+  <!-- SECTION III -->
+  <section class="reveal-trigger">
+    <div class="reveal-text">
+      <h3 class="accent-text">III. The Architecture of Integrity (The "3 No's")</h3>
+      <p>We believe that by providing <strong>Total Procedural Clarity</strong>, we grant the user <strong>Total Legal Safety.</strong> Our stack is intentionally "opinionated" to prevent the user from wandering into the "Unauthorized Practice of Law" (UPL) abyss:</p>
+      
+      <div class="list-block">
+        <div class="list-item">
+          <span class="list-num">1.</span>
+          <div><strong>No Negotiation Logic:</strong> We provide the facts; the user provides the voice.</div>
+        </div>
+        <div class="list-item">
+          <span class="list-num">2.</span>
+          <div><strong>No Valuation Opinions:</strong> We provide the process; the user keeps the equity.</div>
+        </div>
+        <div class="list-item">
+          <span class="list-num">3.</span>
+          <div><strong>No Legal Advice:</strong> Our AI Guide is a <strong>Digital Librarian</strong>, not a lawyer. It doesn't tell you <em>what</em> to do; it shows you <em>where the map is.</em></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION IV -->
+  <section class="reveal-trigger">
+    <div class="reveal-text">
+      <h3 class="accent-text">IV. The Audit Trail: The Insurance of Truth</h3>
+      <p>In a world of "he-said, she-said," Dwellingly provides an <strong>Immutable Truth.</strong> Every document uploaded to our Vault and every milestone marked on our Roadmap is etched into an unchangeable Audit Trail. This is the seller’s ultimate defense—a timestamped, professional record that proves they did it right, by the book, every time.</p>
+    </div>
+    <div class="image-frame reveal-text delay-2">
+      <img src="public/images/scene-3 (1).jpg" alt="Digital Vault with Texas Outline">
+    </div>
+  </section>
+
+  <!-- SECTION V -->
+  <section class="reveal-trigger" style="border-left: none; padding-left: 0;">
+    <div class="reveal-text">
+      <h3 class="accent-text">V. The Developer’s Oath</h3>
+      <p>We don't just "scaffold an app." We build the <strong>Texas-Only Resale Flow</strong> with the realization that a bug in our "Contract Clock" logic could mean a family losing their earnest money. We use TypeScript and Type-Safe schemas not for "clean code," but for <strong>Error-Proof Living.</strong></p>
+    </div>
+    <div class="image-frame reveal-text delay-2" style="border-color: #4D726B;">
+      <img src="public/images/scene-4 (1).jpg" alt="Family Desk with Code on Screen">
+    </div>
+    <div style="margin-top: 2rem; text-align: center; color: #4D726B; font-size: 0.8rem;" class="reveal-text delay-3">
+      DWELLINGLY &copy; COMPLIANCE FORTRESS
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // LOGIC: INTERSECTION OBSERVER FOR SCROLLYTELLING ANIMATION
+  document.addEventListener('DOMContentLoaded', () => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.2 // Trigger when 20% of section is visible
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-active');
+          // Optional: Stop observing once revealed for a "play once" feel
+          // observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    const sections = document.querySelectorAll('.reveal-trigger');
+    sections.forEach(section => {
+      observer.observe(section);
+    });
+  });
+</script>
+
+</body>
+</html>

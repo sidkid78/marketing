@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            background-color: #050505;
+            color: #e5e5e5;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden
+        }
+
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent
+        }
+
+        .font-serif {
+            font-family: 'Cinzel', serif
+        }
+
+        .h-screen-dynamic {
+            height: 100vh;
+            height: 100svh
+        }
+
+        .text-shadow {
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8)
+        }
+
+        .blend-overlay {
+            mix-blend-mode: overlay
+        }
+
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 0.8s ease-in-out, filter 0.5s ease;
+            opacity: 0;
+            z-index: 0
+        }
+
+        .bg-layer.active {
+            opacity: 0.4;
+            transform: scale(1.05)
+        }
+
+        .content-block {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10
+        }
+
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.6);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5)
+        }
+
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1)
+        }
+
+        .reveal-text.visible {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        .title-blur {
+            animation: blurIn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards
+        }
+
+        @keyframes blurIn {
+            0% {
+                filter: blur(10px);
+                opacity: 0;
+                transform: scale(1.1)
+            }
+
+            100% {
+                filter: blur(0);
+                opacity: 1;
+                transform: scale(1)
+            }
+        }
+
+        .glitch-target {
+            filter: url(#distress)
+        }
+
+        .liquid-target {
+            filter: url(#liquid)
+        }
+
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.07;
+            filter: url(#noise)
+        }
+
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: #d4af37;
+            width: 0%;
+            z-index: 100;
+            transition: width 0.1s linear
+        }
+    </style>
+</head>
+
+<body><svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
+        <defs>
+            <filter id="noise">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch">
+                    <animate attributeName="seed" values="0;100" dur="1s" repeatCount="indefinite" />
+                </feTurbulence>
+                <feColorMatrix type="saturate" values="0" />
+            </filter>
+            <filter id="liquid">
+                <feTurbulence type="turbulence" baseFrequency="0.01 0.05" numOctaves="2" seed="2">
+                    <animate attributeName="baseFrequency" dur="10s" values="0.01 0.05;0.02 0.08;0.01 0.05"
+                        repeatCount="indefinite" />
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" scale="10" />
+            </filter>
+            <filter id="distress">
+                <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="1" result="noise" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" in="noise"
+                    result="coloredNoise" />
+                <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="composite" />
+            </filter>
+        </defs>
+    </svg>
+    <div class="grain"></div>
+    <div id="progress-bar"></div>
+    <div class="bg-layer active" id="bg-0" style="background-image:linear-gradient(to bottom,#000,#1a1a1a)"></div>
+    <div class="bg-layer" id="bg-1" style="background-image:url('public/images/scene-1%20(2).jpg')">
+    </div>
+    <div class="bg-layer" id="bg-2" style="background-image:url('public/images/scene-2%20(2).jpg')">
+    </div>
+    <div class="bg-layer" id="bg-3" style="background-image:linear-gradient(to bottom,#0f0f0f,#2a0a0a)"></div>
+    <div class="bg-layer" id="bg-4" style="background-image:url('public/images/scene-3%20(2).jpg')">
+    </div>
+    <div class="bg-layer" id="bg-5" style="background-image:url('public/images/scene-4%20(2).jpg')">
+    </div>
+    <main>
+        <section class="content-block" data-bg="0">
+            <div class="reveal-text">
+                <h4 class="text-yellow-500 tracking-widest text-xs uppercase mb-4 font-bold">The Alchemist’s Code</h4>
+                <h1 class="font-serif text-5xl md:text-7xl leading-tight mb-8 title-blur text-white">How to Force Ideas
+                    into Reality</h1>
+                <div class="glass-panel">
+                    <h2 class="text-2xl font-serif mb-4 text-gray-200">1. The Burden of the Creator</h2>
+                    <p class="text-lg leading-relaxed text-gray-300">Every great invention began as a chaotic whisper.
+                        But most whispers die in the noise. Why? Because ideas are easy; <span
+                            class="text-white font-bold">execution is a war.</span> Project management isn't a
+                        &quot;to-do list&quot;—it is the discipline of protecting a vision from the entropy of the real
+                        world.</p>
+                    <p class="mt-4 text-gray-400">The Project Lifecycle is your battle map. It is the difference between
+                        a team that burns out in the dark and a team that stands together at the finish line watching
+                        their creation change the world.</p>
+                </div>
+            </div>
+        </section>
+        <section class="content-block" data-bg="1">
+            <div class="reveal-text ml-auto max-w-lg">
+                <div class="glass-panel liquid-target">
+                    <h2 class="text-3xl font-serif mb-4 text-cyan-300">2. Phase I: The Spark</h2>
+                    <h3 class="text-sm uppercase tracking-widest mb-2 text-cyan-500">(Initiation)</h3>
+                    <p class="text-gray-200">Before you build, you must define the soul of the work. We call this
+                        <strong>Scope</strong>. A project without a clear Scope Score is a ghost ship—it moves, but it
+                        has no destination.
+                    </p>
+                    <ul class="mt-4 space-y-3">
+                        <li class="border-l-2 border-cyan-500 pl-4"><strong class="text-white">The Guardians
+                                (Stakeholders):</strong> You aren't just looking for &quot;Decision Makers.&quot; You
+                            are hunting for your <strong>Champions</strong> and your <strong>Architects</strong>. If you
+                            miss a &quot;Technical Lead&quot; now, you aren't just missing a &quot;role&quot;—you are
+                            inviting a catastrophic failure six months from today.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="content-block" data-bg="2">
+            <div class="reveal-text mr-auto max-w-lg">
+                <div class="glass-panel">
+                    <h2 class="text-3xl font-serif mb-4 text-blue-300">3. Phase II: The Blueprint</h2>
+                    <h3 class="text-sm uppercase tracking-widest mb-2 text-blue-500">(Planning the Critical Path)</h3>
+                    <p class="text-gray-200">Planning is the art of seeing the future. You are looking for the <strong
+                            class="text-white">Critical Path</strong>—the spine of your project. If the spine breaks,
+                        the project dies.</p>
+                    <div class="mt-6 p-4 bg-blue-900/30 border border-blue-500/30"><strong
+                            class="block text-blue-200 mb-2">The 20% Shield</strong>
+                        <p class="text-sm">We don't use &quot;buffers&quot; because we are lazy; we use them because the
+                            world is unpredictable. A 20% Risk Buffer is the oxygen mask for your team when the
+                            unexpected &quot;hiccup&quot; tries to suffocate your timeline.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content-block" data-bg="2">
+            <div class="reveal-text text-center mx-auto">
+                <h2 class="text-4xl font-serif mb-6 text-red-100">4. Phase III: The Human Heart</h2>
+                <h3 class="text-sm uppercase tracking-widest mb-8 text-red-400">(Resource Optimization)</h3>
+                <div class="glass-panel mx-auto max-w-2xl">
+                    <p class="text-xl mb-6">Stop treating your team as &quot;resources.&quot; They are your most
+                        precious, finite energy source.</p>
+                    <div class="border-l-4 border-red-500 pl-6 text-left"><strong
+                            class="text-2xl block text-white mb-2">The 95% Rule</strong>
+                        <p class="text-gray-300">A team member pushed past 95% isn't &quot;efficient&quot;—they are
+                            <strong class="text-red-400">breaking</strong>. Missionary leaders protect their people from
+                            burnout because they know a tired mind cannot innovate. You aren't &quot;assigning
+                            tasks&quot;; you are matching a human’s unique genius to the problem it was born to solve.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content-block" data-bg="4">
+            <div class="reveal-text max-w-xl">
+                <div class="glass-panel glitch-target border-red-500/50">
+                    <h2 class="text-4xl font-serif mb-4 text-red-500">5. Phase IV: The Storm</h2>
+                    <h3 class="text-sm uppercase tracking-widest mb-4 text-gray-400">(Monitoring & Blockers)</h3>
+                    <p class="text-gray-200 mb-4">Mid-project is where the &quot;Mercenaries&quot; quit and the
+                        &quot;Missionaries&quot; endure. When the <strong>Schedule Variance</strong> hits 5 days, it’s
+                        not a metric—it’s an alarm.</p>
+                    <div class="relative overflow-hidden bg-red-900/20 p-4"><strong
+                            class="text-red-300 block mb-2">Killing the Blockers</strong>
+                        <p class="text-sm text-gray-300">Technical Debt and Dependency Blocks are the predators of
+                            progress. You don't &quot;track&quot; them; you <strong
+                                class="text-white tracking-widest">HUNT</strong> them. You clear the path so your team
+                            can run.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content-block" data-bg="5">
+            <div class="reveal-text ml-auto max-w-xl">
+                <div class="glass-panel border-yellow-500/50">
+                    <h2 class="text-4xl font-serif mb-4 text-yellow-400">6. Phase V: The Glory</h2>
+                    <h3 class="text-sm uppercase tracking-widest mb-4 text-yellow-600">(Delivery & Closure)</h3>
+                    <p class="text-gray-100 mb-6">The &quot;Go-Live&quot; is your moment of truth. Whether you choose
+                        the <strong>Incremental MVP</strong> or the <strong>Big Bang</strong>, you are crossing the
+                        threshold from &quot;Plan&quot; to &quot;Reality.&quot;</p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start"><span class="text-yellow-500 text-2xl mr-3">❖</span>
+                            <div><strong class="text-white">The Quality Gates:</strong> These aren't
+                                &quot;checkpoints&quot;; they are your reputation. >80% Test Coverage is the vow you
+                                make to your users that what you built is worthy of their time.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="content-block" data-bg="5">
+            <div class="reveal-text text-center max-w-3xl mx-auto">
+                <h2 class="text-3xl font-serif mb-8 text-white">7. The Toolkit of the Architect</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+                    <div class="p-4 border border-gray-700 bg-black/50 text-center">
+                        <div class="text-yellow-500 text-2xl mb-2">✦</div>
+                        <h4 class="font-bold">Project Charter</h4>
+                        <p class="text-xs text-gray-400 uppercase mt-2">Compass</p>
+                    </div>
+                    <div class="p-4 border border-gray-700 bg-black/50 text-center">
+                        <div class="text-yellow-500 text-2xl mb-2">✦</div>
+                        <h4 class="font-bold">Critical Path</h4>
+                        <p class="text-xs text-gray-400 uppercase mt-2">Map</p>
+                    </div>
+                    <div class="p-4 border border-gray-700 bg-black/50 text-center">
+                        <div class="text-yellow-500 text-2xl mb-2">✦</div>
+                        <h4 class="font-bold">Predictive Analytics</h4>
+                        <p class="text-xs text-gray-400 uppercase mt-2">Crystal Ball</p>
+                    </div>
+                </div>
+                <div class="glass-panel bg-gradient-to-t from-yellow-900/40 to-black">
+                    <p class="text-xl md:text-2xl italic font-serif text-yellow-100">"Go forth. Don’t just manage a
+                        project. <span class="text-yellow-400">Lead a transformation.</span> Transform a 'spark' into a
+                        'legacy.' The roadmap is in your hands—now, make it real."</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>document.addEventListener("DOMContentLoaded", () => { const sections = document.querySelectorAll("section"); const bgs = document.querySelectorAll(".bg-layer"); const progressBar = document.getElementById("progress-bar"); const observerOptions = { threshold: 0.4 }; const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { const bgIndex = entry.target.getAttribute("data-bg"); bgs.forEach(bg => bg.classList.remove("active")); const activeBg = document.getElementById(`bg-${bgIndex}`); if (activeBg) activeBg.classList.add("active"); const reveal = entry.target.querySelector(".reveal-text"); if (reveal) reveal.classList.add("visible") } }) }, observerOptions); sections.forEach(section => { observer.observe(section) }); window.addEventListener("scroll", () => { const scrollTop = window.scrollY; const docHeight = document.body.scrollHeight - window.innerHeight; const scrollPercent = (scrollTop / docHeight) * 100; progressBar.style.width = `${scrollPercent}%` }) });</script>
+</body>
+
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Sovereign Seller</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Oswald:wght@300;500;700&display=swap');
+
+    :root {
+      --teal-dark: #308976;
+      --teal-muted: #4D726B;
+      --black: #000000;
+      --grey-light: #9B9C9C;
+      --grey-dark: #0A0A0A;
+    }
+
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      background-color: var(--grey-dark);
+      color: var(--grey-light);
+      font-family: 'JetBrains Mono', monospace;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Layout Container */
+    .briefing-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--black);
+      border-left: 1px solid var(--teal-muted);
+      border-right: 1px solid var(--teal-muted);
+      box-shadow: 0 0 50px rgba(48, 137, 118, 0.1);
+      position: relative;
+    }
+
+    /* Typography */
+    h1,
+    h2,
+    h3 {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      margin: 0;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      color: #fff;
+      line-height: 1;
+      filter: url(#noise-glitch);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      color: var(--teal-dark);
+      border-bottom: 2px solid var(--teal-muted);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .phase-marker {
+      background: var(--teal-dark);
+      color: var(--black);
+      padding: 0.2rem 0.6rem;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    strong {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* Tactical Elements */
+    .scanline {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.2));
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.3;
+    }
+
+    .path-line {
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--teal-dark);
+      filter: url(#liquid-heat);
+      opacity: 0.5;
+    }
+
+    /* Sections */
+    .section {
+      padding: 3rem 2rem 3rem 4rem;
+      position: relative;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    .intro-section {
+      position: relative;
+      height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    .img-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.4;
+      filter: grayscale(100%) contrast(120%) url(#grain-distress);
+      z-index: 0;
+      transition: transform 10s ease;
+    }
+
+    .intro-section:hover .img-bg {
+      transform: scale(1.05);
+    }
+
+    .content-overlay {
+      position: relative;
+      z-index: 2;
+      background: linear-gradient(to top, var(--black), transparent);
+      padding: 2rem;
+    }
+
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background: rgba(10, 10, 10, 0.95);
+      padding: 1rem 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--teal-muted);
+      backdrop-filter: blur(5px);
+      margin-left: -2rem;
+      padding-left: 2rem;
+    }
+
+    .hud-panel {
+      border: 1px solid var(--teal-muted);
+      background: rgba(48, 137, 118, 0.05);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      position: relative;
+    }
+
+    .hud-panel::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      width: 10px;
+      height: 10px;
+      border-top: 2px solid var(--teal-dark);
+      border-left: 2px solid var(--teal-dark);
+    }
+
+    .hud-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 10px;
+      height: 10px;
+      border-bottom: 2px solid var(--teal-dark);
+      border-right: 2px solid var(--teal-dark);
+    }
+
+    /* Image Containers */
+    .tactical-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: 2rem 0;
+      border: 1px solid var(--teal-muted);
+      filter: sepia(20%) hue-rotate(130deg) contrast(1.1);
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0.5;
+      }
+    }
+
+    .blink {
+      animation: pulse 2s infinite;
+      color: var(--teal-dark);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG Filters -->
+  <svg style="display: none;">
+    <defs>
+      <!-- Filter 1: Noise Glitch for Title -->
+      <filter id="noise-glitch">
+        <feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="1" result="warp">
+          <animate attributeName="baseFrequency" values="0.1;0.12;0.1" dur="3s" repeatCount="indefinite" />
+        </feTurbulence>
+        <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="5" in="SourceGraphic" in2="warp" />
+      </filter>
+
+      <!-- Filter 2: Grain Distress for Images -->
+      <filter id="grain-distress">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" result="noise" />
+        <feColorMatrix type="saturate" values="0" in="noise" result="monoNoise" />
+        <feBlend mode="multiply" in="monoNoise" in2="SourceGraphic" result="grained" />
+        <feComposite operator="in" in="grained" in2="SourceGraphic" />
+      </filter>
+
+      <!-- Filter 3: Liquid Heat for The Path Line -->
+      <filter id="liquid-heat" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence">
+          <animate attributeName="baseFrequency" values="0.05;0.08;0.05" dur="4s" repeatCount="indefinite" />
+        </feTurbulence>
+        <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="4" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="scanline"></div>
+
+  <div class="briefing-container">
+    <!-- The Path Graphic Line -->
+    <div class="path-line"></div>
+
+    <!-- HERO -->
+    <section class="intro-section">
+      <img src="public/images/scene-1.jpg" class="img-bg" alt="Sovereign Seller Agent">
+      <div class="content-overlay">
+        <div style="color: var(--teal-dark); font-size: 0.9rem; margin-bottom: 1rem;"></div>
+        <h1 class="hero-title">The Sovereign Seller</h1>
+        <h2 style="color: #fff; opacity: 0.8; font-weight: 300;">Defending Your Equity on the Golden Path</h2>
+      </div>
+    </section>
+
+    <!-- INTRO BODY -->
+    <section class="section">
+      <h3 class="section-title">1. The War for Your Equity</h3>
+      <p>Selling your home "For Sale By Owner" in Texas isn't just a financial decision; it’s an act of defiance. You’ve
+        spent years paying down a mortgage, fixing leaks, and building a life. That equity is your child’s college fund,
+        your retirement, or your next leap forward.</p>
+      <div class="hud-panel">
+        <p><strong>But the industry is betting on you to fail.</strong> They want you to feel the "Paperwork Paralysis."
+          They want you to miss one Texas-sized deadline so they can tell you, <em>"See? You should have paid us the
+            6%."</em></p>
+      </div>
+      <p>The <strong>Golden Path</strong> isn't a map; it’s your shield. It’s a tactical sequence designed to turn "What
+        if I mess up?" into "I am in total control." You aren't just selling a house; you are executing a high-stakes
+        transaction with the ice-cold precision of a pro.</p>
+    </section>
+
+    <!-- PHASE 1 -->
+    <section class="section">
+      <div class="sticky-header">
+        <span class="phase-marker">PHASE 01</span> Fortress of Disclosure
+      </div>
+      <img src="public/images/scene-2.jpg" class="tactical-image" alt="Blueprint Tablet">
+      <p>In Texas, an uneducated buyer is a dangerous buyer. If you aren't transparent, you’re vulnerable. We don't just
+        "prepare a packet"; we build a <strong>Fortress of Disclosure.</strong></p>
+      <p>By handing a buyer the "Essential Trio" (SDN, Survey, HOA) before they even ask, you strip them of their
+        ability to negotiate from a place of "surprise." You are signaling that you aren't a "hobbyist" seller they can
+        bully—you are a Professional Seller who knows exactly what their dirt is worth.</p>
+    </section>
+
+    <!-- PHASE 2 -->
+    <section class="section">
+      <div class="sticky-header">
+        <span class="phase-marker">PHASE 02</span> The Contract Clock
+      </div>
+      <img src="public/images/scene-3.jpg" class="tactical-image" alt="Command Center Clock">
+      <p>There is a moment in every deal where the air gets thin: The Executed Date. In the traditional world, agents
+        use this date to keep you in the dark. On the Golden Path, you <strong>Weaponize the Clock.</strong></p>
+      <p>The moment that last signature is communicated, the "Contract Clock" wakes up. It is a relentless, automatic
+        countdown. By logging this date into the system, you aren't just "tracking time"—you are seizing the high
+        ground. You see the traps before they trip.</p>
+    </section>
+
+    <!-- PHASE 3 -->
+    <section class="section">
+      <div class="sticky-header">
+        <span class="phase-marker">PHASE 03</span> The Kill Zone (Option Period)
+      </div>
+      <p>The Option Period is the "Kill Zone" for FSBO deals. It’s the few days where a buyer can walk away for the
+        price of a nice dinner, leaving you with a "Stale" listing and a bruised ego.</p>
+      <div class="hud-panel">
+        <p>This is your <strong>Command Center.</strong> You aren't just waiting for an inspection; you are managing
+          risk. You watch the "Option Fee" delivery like a hawk. If that fee isn't in your hand within 72 hours, the
+          buyer’s "unrestricted right to cancel" is dead. <strong>The Golden Path ensures you hold the leverage, not the
+            lender.</strong></p>
+      </div>
+    </section>
+
+    <!-- PHASE 4 -->
+    <section class="section">
+      <div class="sticky-header">
+        <span class="phase-marker">PHASE 04</span> The Appraisal (Truth Phase)
+      </div>
+      <p>The bank’s appraiser is the final judge. This is where the "Waiting Game" turns into a "Nerve Game." While the
+        buyer's bank scrutinizes your home’s value, the Golden Path keeps you tethered to reality. We monitor the "Clear
+        to Close" milestones so you aren't wondering if the money is coming—you’re watching it move toward the vault.
+      </p>
+    </section>
+
+    <!-- PHASE 5 -->
+    <section class="section">
+      <div class="sticky-header">
+        <span class="phase-marker">PHASE 05</span> The Safety Bridge
+      </div>
+      <p>The Title Company is the "Neutral Ground," but even here, there are predators. Wire fraud and "Title Clouds"
+        can evaporate a deal in hours. The Golden Path provides the <strong>Safety Bridge.</strong> You will audit the
+        Title Commitment and verify wire instructions via voice, not email. We don't hope for a clean closing; we audit
+        the record to ensure it.</p>
+    </section>
+
+    <!-- PHASE 6 -->
+    <section class="section">
+      <div class="sticky-header">
+        <span class="phase-marker">PHASE 06</span> The Finish Line
+      </div>
+      <img src="public/images/scene-4.jpg" class="tactical-image" alt="Finish Line">
+      <p>Closing day isn't just about the check—it’s about <strong>Finality.</strong></p>
+      <p>When you cross the Finish Line on the Golden Path, you don't just walk away with your equity intact (and that
+        6% commission in <em>your</em> pocket). You walk away with a <strong>Permanent Audit Trail.</strong></p>
+      <p>Six months from now, if a buyer has a question, you won't be digging through a junk drawer. You’ll point to
+        your professional, time-stamped archive. You didn't just sell a house; you mastered the system.</p>
+
+      <div style="margin-top: 3rem; text-align: center; border-top: 1px solid var(--teal-muted); padding-top: 2rem;">
+        <h2 style="color: var(--teal-dark); margin-bottom: 1rem;">SYSTEM SECURE</h2>
+        <p class="blink">Welcome to the Golden Path.<br>Your equity stays where it belongs: With you.</p>
+      </div>
+    </section>
+  </div>
+
+</body>
+
+</html>

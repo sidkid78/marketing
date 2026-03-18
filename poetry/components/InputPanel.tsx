@@ -12,7 +12,7 @@ const InputPanel: React.FC<InputPanelProps> = ({ onGenerate, status, currentResu
   const [text, setText] = useState('');
   const [images, setImages] = useState<(string | null)[]>([null, null, null, null, null]);
   const [enableAiImage, setEnableAiImage] = useState(false);
-  const [artType, setArtType] = useState<ArtType>('card');
+  const [artType, setArtType] = useState<ArtType>(null);
   const [activeTab, setActiveTab] = useState<'input' | 'rationale'>('input');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -70,7 +70,14 @@ const InputPanel: React.FC<InputPanelProps> = ({ onGenerate, status, currentResu
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Art Type Selector */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-stone-400 uppercase tracking-widest">Format</label>
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-stone-400 uppercase tracking-widest">Format</label>
+                {artType === null && (
+                  <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-wide bg-indigo-50 px-2 py-0.5 rounded-full">
+                    AI Decides
+                  </span>
+                )}
+              </div>
               <div className="flex p-1 bg-stone-100 rounded-xl">
                 {[
                   { id: 'card', icon: Layout, label: 'Card' },
@@ -80,8 +87,13 @@ const InputPanel: React.FC<InputPanelProps> = ({ onGenerate, status, currentResu
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => setArtType(item.id as ArtType)}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-lg transition-all ${artType === item.id ? 'bg-white text-rose-600 shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}
+                    onClick={() => setArtType(artType === item.id ? null : item.id as ArtType)}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-lg transition-all ${artType === item.id
+                        ? 'bg-white text-rose-600 shadow-sm'
+                        : artType === null
+                          ? 'text-stone-400 hover:text-stone-600 border border-dashed border-stone-300'
+                          : 'text-stone-400 hover:text-stone-600'
+                      }`}
                   >
                     <item.icon className="w-4 h-4" />
                     {item.label}
@@ -108,7 +120,7 @@ const InputPanel: React.FC<InputPanelProps> = ({ onGenerate, status, currentResu
                   <p className="text-[10px] text-indigo-700/70">Generate background based on tone</p>
                 </div>
               </div>
-              <input type="checkbox" checked={enableAiImage} onChange={(e) => setEnableAiImage(e.target.checked)} className="accent-indigo-500" />
+              <input title="AI Atmospheric Image" type="checkbox" checked={enableAiImage} onChange={(e) => setEnableAiImage(e.target.checked)} className="accent-indigo-500" />
             </div>
 
             <div className="space-y-3">
@@ -120,7 +132,7 @@ const InputPanel: React.FC<InputPanelProps> = ({ onGenerate, status, currentResu
                 {images.map((img, idx) => (
                   <div key={idx} className={`relative aspect-video rounded-lg border-2 border-dashed border-stone-200 bg-stone-50 overflow-hidden ${idx === 4 ? 'col-span-2 aspect-[3/1]' : ''}`}>
                     {img ? (
-                      <><img src={img} className="w-full h-full object-cover" /><button onClick={(e) => { e.preventDefault(); removeImage(idx); }} className="absolute top-1 right-1 p-1 bg-white rounded-full shadow-sm"><X className="w-3 h-3 text-stone-500 hover:text-rose-500" /></button></>
+                      <><img title="Remove Image" src={img} className="w-full h-full object-cover" /><button title="Remove Image" onClick={(e) => { e.preventDefault(); removeImage(idx); }} className="absolute top-1 right-1 p-1 bg-white rounded-full shadow-sm"><X className="w-3 h-3 text-stone-500 hover:text-rose-500" /></button></>
                     ) : (
                       <label className="flex flex-col items-center justify-center h-full cursor-pointer hover:bg-stone-100 transition-colors">
                         <Upload className="w-4 h-4 text-stone-400" />

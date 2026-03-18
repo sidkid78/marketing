@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Loading Test</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: monospace;
+            padding: 20px;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            border: 1px solid #333;
+            padding: 20px;
+        }
+
+        img {
+            display: block;
+            max-width: 400px;
+            margin: 10px 0;
+            border: 2px solid #0f0;
+        }
+
+        .error {
+            color: #f00;
+        }
+
+        .success {
+            color: #0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Image Loading Diagnostic Test</h1>
+
+    <div class="test-section">
+        <h2>Test 1: Absolute Paths (from public/)</h2>
+        <p>Path: /images/visual-111.png</p>
+        <img src="/images/visual-111.png" alt="Test 1"
+            onerror="this.parentElement.classList.add('error'); this.style.display='none';"
+            onload="this.parentElement.classList.add('success');">
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Relative Path (./)</h2>
+        <p>Path: ./images/visual-111.png</p>
+        <img src="./images/visual-111.png" alt="Test 2"
+            onerror="this.parentElement.classList.add('error'); this.style.display='none';"
+            onload="this.parentElement.classList.add('success');">
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Direct public path</h2>
+        <p>Path: public/images/visual-111.png</p>
+        <img src="public/images/visual-111.png" alt="Test 3"
+            onerror="this.parentElement.classList.add('error'); this.style.display='none';"
+            onload="this.parentElement.classList.add('success');">
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: All four images with absolute paths</h2>
+        <img src="/images/visual-111.png" alt="Image 1" style="max-width: 200px;">
+        <img src="/images/visual-211.png" alt="Image 2" style="max-width: 200px;">
+        <img src="/images/visual-311.png" alt="Image 3" style="max-width: 200px;">
+        <img src="/images/visual-411.png" alt="Image 4" style="max-width: 200px;">
+    </div>
+
+    <script>
+        // Log any image loading errors
+        document.querySelectorAll('img').forEach(img => {
+            img.addEventListener('error', function () {
+                console.error('Failed to load:', this.src);
+                const p = document.createElement('p');
+                p.className = 'error';
+                p.textContent = `❌ Failed to load: ${this.src}`;
+                this.parentElement.appendChild(p);
+            });
+            img.addEventListener('load', function () {
+                console.log('Successfully loaded:', this.src);
+                const p = document.createElement('p');
+                p.className = 'success';
+                p.textContent = `✅ Successfully loaded: ${this.src}`;
+                this.parentElement.appendChild(p);
+            });
+        });
+    </script>
+</body>
+
+</html>

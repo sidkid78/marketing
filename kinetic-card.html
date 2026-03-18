@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Digital Architect</title>
+  <style>
+    :root {
+      --bg-dark: #050a14;
+      --text-main: #e0e6ed;
+      --accent-blue: #00f0ff;
+      --accent-gold: #ffd700;
+      --glass: rgba(10, 20, 40, 0.7);
+      --border: rgba(255, 255, 255, 0.1);
+      --font-head: 'Courier New', Courier, monospace;
+      --font-body: system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* --- SVG FILTERS & ASSETS --- */
+    .svg-assets {
+      position: absolute;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    /* --- BACKGROUND LAYER --- */
+    .bg-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: -1;
+    }
+
+    .bg-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+      /* filter: url(#grain) brightness(0.4); */
+      filter: brightness(0.4);
+    }
+
+    .bg-image.active {
+      opacity: 1;
+      transform: scale(1.05);
+      animation: panImage 20s infinite alternate ease-in-out;
+    }
+
+    @keyframes panImage {
+      from {
+        transform: scale(1.05);
+      }
+
+      to {
+        transform: scale(1.15);
+      }
+    }
+
+    /* --- GRID OVERLAY --- */
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* --- SCROLL CONTAINER --- */
+    main {
+      position: relative;
+      z-index: 1;
+      padding-bottom: 20vh;
+    }
+
+    /* --- TYPOGRAPHY & CARDS --- */
+    section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent-blue);
+      padding: 2.5rem;
+      max-width: 800px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    h1,
+    h2 {
+      font-family: var(--font-head);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 1rem;
+      color: var(--accent-blue);
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      background: linear-gradient(90deg, #fff, var(--accent-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: url(#heat);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    .motion-title {
+      /* Applies the custom motion blur filter when class is added via JS */
+      filter: url(#motion-blur);
+      transition: filter 0.5s;
+    }
+
+    .motion-title.settled {
+      filter: none;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+      text-align: justify;
+    }
+
+    .highlight {
+      color: var(--accent-gold);
+      font-weight: bold;
+    }
+
+    .meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 2rem;
+      font-family: var(--font-head);
+      font-size: 0.8rem;
+      color: var(--accent-blue);
+    }
+
+    .tag {
+      border: 1px solid var(--accent-blue);
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    /* --- ANIMATIONS --- */
+    @keyframes scanline {
+      0% {
+        transform: translateY(-100%);
+      }
+
+      100% {
+        transform: translateY(100%);
+      }
+    }
+
+    .scan-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: rgba(0, 240, 255, 0.3);
+      box-shadow: 0 0 10px var(--accent-blue);
+      animation: scanline 3s infinite linear;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG FILTERS -->
+  <svg class="svg-assets">
+    <defs>
+      <!-- 1. ANIMATED NOISE (Grain) -->
+      <filter id="grain">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch">
+          <animate attributeName="seed" values="0;100" dur="1s" repeatCount="indefinite" />
+        </feTurbulence>
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="0.1" />
+        </feComponentTransfer>
+        <feComposite operator="over" in2="SourceGraphic" />
+      </filter>
+
+      <!-- 2. DYNAMIC MOTION BLUR -->
+      <filter id="motion-blur">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="0,0">
+          <animate attributeName="stdDeviation" values="20,0; 0,0" dur="0.8s" fill="freeze" begin="indefinite"
+            class="blur-anim" />
+        </feGaussianBlur>
+      </filter>
+
+      <!-- 3. LIQUID / HEAT DISTORTION -->
+      <filter id="heat">
+        <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence">
+          <animate attributeName="baseFrequency" values="0.05;0.02;0.05" dur="10s" repeatCount="indefinite" />
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="5" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- BACKGROUND IMAGES -->
+  <div class="bg-container">
+    <!-- Img 1: City/Foundation -->
+    <img src="/images/visual-111.png" class="bg-image active" data-index="0" alt="Digital City">
+    <!-- Img 2: Scale/Balance -->
+    <img src="/images/visual-211.png" class="bg-image" data-index="1" alt="Scale">
+    <!-- Img 3: Gears/Automation -->
+    <img src="/images/visual-311.png" class="bg-image" data-index="2" alt="Gears">
+    <!-- Img 4: AI Hologram -->
+    <img src="/images/visual-411.png" class="bg-image" data-index="3" alt="AI Hologram">
+    <div class="grid-overlay"></div>
+  </div>
+
+  <main>
+    <!-- INTRO -->
+    <section id="sec-intro">
+      <div class="card">
+        <div class="scan-line"></div>
+        <h1>The Digital Architect</h1>
+        <h2>How AI and Math Engineer Your Financial Freedom</h2>
+        <p>Remember the old-school financial advisor? The one with the mahogany desk, the dusty ledger, and a "gut
+          feeling" about the market? That era is fading into the rearview mirror. In today’s high-velocity fintech
+          landscape, managing your wealth has evolved from static spreadsheets into a dynamic engineering discipline.
+        </p>
+        <p>We are no longer just saving money; we are constructing it. Sophisticated platforms now act as digital
+          architects, utilizing rigorous mathematical constants and advanced artificial intelligence to build, protect,
+          and scale your financial future. This isn't just about "investing" in the vague sense; it’s about an internal
+          logic that treats your capital as data and your goals as a blueprint. By replacing guesswork with precision,
+          these systems allow you to move from hope to engineering.</p>
+        <div class="meta-tags">
+          <span class="tag">#Fintech</span>
+          <span class="tag">#AI Investing</span>
+          <span class="tag">#Wealth Management</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. Foundation -->
+    <section id="sec-1">
+      <div class="card">
+        <h2 class="motion-title">1. The Foundation: The Mathematical Pulse of Net Worth</h2>
+        <p>The primary metric of your financial health is your Net Worth—the "bottom line" of your economic life. Modern
+          wealth engines act like a master ledger, instantly syncing all your connected accounts into one unified view.
+          Instead of you manually typing in numbers, the system organizes your finances into two simple categories: what
+          you own (assets) and what you owe (liabilities).</p>
+        <p>Assets include your checking, savings, and investment accounts from institutions like Chase or Vanguard,
+          alongside crypto and real estate. Liabilities encompass your debts—mortgages, car loans, and credit card
+          balances. The core calculation is elegant:</p>
+        <p
+          style="text-align:center; font-family:var(--font-head); color:var(--accent-blue); border:1px solid var(--accent-blue); padding:1rem;">
+          Net Worth = Total Assets - Total Liabilities
+        </p>
+        <p>This isn't just a static number; it is a living pulse that updates as markets move and debts are paid down,
+          providing the essential baseline for every architectural decision that follows.</p>
+      </div>
+    </section>
+
+    <!-- 2. Blueprint -->
+    <section id="sec-2">
+      <div class="card">
+        <h2 class="motion-title">2. The Blueprint: Smart Mapping and Asset Classes</h2>
+        <p>To manage risk, the system creates a technical map of your balances. The engine identifies five core asset
+          classes: <span class="highlight">Equity, Bonds, Cash, Crypto, and Real Estate</span>. Rather than relying on
+          how you label your accounts, the system uses smart filters to ensure data integrity.</p>
+        <p>For example, if an investment account isn't explicitly identified as a stable bond, the system cautiously
+          defaults to "Equity" to ensure its growth volatility is accounted for. This automated categorization ensures
+          that your "Cash" (liquidity) and "Crypto" (high-volatility) are never confused, allowing the digital architect
+          to see exactly where your structural strengths and weaknesses lie.</p>
+      </div>
+    </section>
+
+    <!-- 3. Balancing Act -->
+    <section id="sec-3">
+      <div class="card">
+        <h2 class="motion-title">3. The Balancing Act: The Logic of Automated Maintenance</h2>
+        <p>Once the blueprint is set, the real work begins. Market movements inevitably lead to "portfolio drift," where
+          your assets shift away from their intended weights. To maintain the structural integrity of your plan, the
+          engine uses a "Check and Rebalance" logic. To keep things efficient and avoid unnecessary fees, it follows two
+          strict rules:</p>
+        <ul>
+          <li><strong class="highlight">The 3% Threshold Rule:</strong> Only execute a trade if an asset drifts more
+            than 3% from its target.</li>
+          <li><strong class="highlight">The $50 Minimum Trade:</strong> Suppress small, costly instructions that eat
+            into your returns.</li>
+        </ul>
+        <br>
+        <p>Furthermore, the system utilizes Dividend Reinvestment Processing (DRIP). When dividends hit your account,
+          the engine doesn't just spread them around; it identifies the most "underweight" asset class—the one that has
+          fallen furthest behind—and directs the capital there to passively correct the drift without you lifting a
+          finger.</p>
+      </div>
+    </section>
+
+    <!-- 4. Human Element -->
+    <section id="sec-4">
+      <div class="card">
+        <h2 class="motion-title">4. The Human Element: Managing the "Panic Score"</h2>
+        <p>Financial plans often fail due to human emotion, not math. To mitigate this, the engine employs a behavioral
+          safety valve. By monitoring how you react during market downturns, the system calculates a "Panic Score" from
+          0 to 10.</p>
+        <p>If you start selling off assets when the market dips, your score rises. A high Panic Score triggers an
+          automatic adjustment of your strategy. For example, a score of 9-10 might shift your profile from "Moderate"
+          to "Conservative," reducing your exposure to volatile stocks. By adjusting for your feelings in the present,
+          the AI ensures your strategy remains sustainable for the long haul.</p>
+      </div>
+    </section>
+
+    <!-- 5. Crystal Ball -->
+    <section id="sec-5">
+      <div class="card">
+        <h2 class="motion-title">5. The Crystal Ball: Stress-Testing Your Future</h2>
+        <p>To forecast your future, the system runs 500 "Monte Carlo" iterations. This isn't a simple straight-line
+          projection; it simulates 500 different "futures" with varying market volatility and inflation rates. It’s like
+          stress-testing a building against 500 different types of weather.</p>
+        <p>By processing inputs like your monthly savings, retirement age, and expected returns, the engine calculates a
+          "Success Probability." If you decide to save less, the AI instantly warns you that your "Wealth Trajectory" is
+          falling below the safety threshold. It’s a reality check powered by high-dimensional math.</p>
+      </div>
+    </section>
+
+    <!-- 6. Tax Shield -->
+    <section id="sec-6">
+      <div class="card">
+        <h2 class="motion-title">6. The Tax Shield: Plugging the Leaks</h2>
+        <p>Taxes are the "leakage" of any portfolio. The engine runs a rule-based scanner to find savings, assuming a
+          standard marginal tax bracket. It scans your transactions for specific keywords to identify potential business
+          deductions.</p>
+        <p>Additionally, it performs Tax-Loss Harvesting (TLH). This involves identifying investments where the current
+          price is lower than what you paid. By selling these at a loss to offset capital gains elsewhere, the system
+          can generate significant value. For instance, realizing a $1,333 loss can save you roughly $320 in taxes—money
+          that stays in your pocket rather than going to the IRS.</p>
+      </div>
+    </section>
+
+    <!-- 7. Financial Co-Pilot -->
+    <section id="sec-7">
+      <div class="card">
+        <h2 class="motion-title">7. The Financial Co-Pilot: Your AI Strategy Partner</h2>
+        <p>All this data is synthesized by an AI Coach. Using a process called Retrieval-Augmented Generation (RAG), the
+          coach provides advice grounded in your specific financial context. It checks your Net Worth, Risk Profile, and
+          recent transactions before offering insights.</p>
+        <p>However, it is important to remember that the AI Coach is an analytical tool, not a licensed human advisor.
+          It provides the data and the "why," but you remain the pilot. With this co-pilot, you are no longer just
+          guessing; you are engineering your way to wealth.</p>
+      </div>
+    </section>
+
+    <!-- Conclusion -->
+    <section id="sec-conclusion">
+      <div class="card" style="border-left: 4px solid var(--accent-gold);">
+        <h1>Conclusion: From Luck to Logic</h1>
+        <p>The transition from manual wealth management to an AI-driven "Digital Architect" model represents a
+          fundamental shift. We are moving away from the stress of constant monitoring and toward a system of rigorous,
+          rule-based growth.</p>
+        <p>Your first step toward this future is simple: Perform a structural audit. Look at your current accounts and
+          identify which ones are "drifting" or unmapped. By applying engineering principles to your capital today, you
+          ensure that your financial house is built to weather any storm. In this new era, your success is no longer a
+          matter of luck—it is the result of well-engineered logic.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Configuration for Intersection Observer
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.4
+    };
+
+    // Image Manager
+    const images = document.querySelectorAll('.bg-image');
+    const sections = document.querySelectorAll('section');
+    const blurAnim = document.querySelector('.blur-anim');
+
+    // Define which section uses which image index
+    const sectionImageMap = {
+      'sec-intro': 0, // City
+      'sec-1': 1,     // Scale
+      'sec-2': 1,     // Scale
+      'sec-3': 2,     // Gears
+      'sec-4': 0,     // City (as abstract)
+      'sec-5': 0,     // City (future/building)
+      'sec-6': 0,     // City
+      'sec-7': 3,     // AI Hologram
+      'sec-conclusion': 3 // AI Hologram
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // 1. Fade in the text section
+          entry.target.classList.add('visible');
+
+          // 2. Trigger SVG Motion Blur on Header
+          const header = entry.target.querySelector('.motion-title');
+          if (header) {
+            // Reset animation
+            blurAnim.beginElement();
+            // Remove class and re-add to re-trigger if needed, though SVG animate handles it nicely
+          }
+
+          // 3. Switch Background Image
+          const secId = entry.target.id;
+          const imgIndex = sectionImageMap[secId];
+
+          images.forEach((img, index) => {
+            if (index === imgIndex) {
+              img.classList.add('active');
+            } else {
+              img.classList.remove('active');
+            }
+          });
+        }
+      });
+    }, options);
+
+    sections.forEach(section => {
+      observer.observe(section);
+    });
+  </script>
+
+</body>
+
+</html>

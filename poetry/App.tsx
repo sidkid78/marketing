@@ -23,7 +23,7 @@ const App: React.FC<AppProps> = ({ apiKey: propApiKey }) => {
     }
   }, [propApiKey]);
 
-  const handleGenerate = async (text: string, images: string[] = [], enableAiImage: boolean = false, artType: ArtType = 'card') => {
+  const handleGenerate = async (text: string, images: string[] = [], enableAiImage: boolean = false, artType: ArtType = null) => {
     setStatus('generating');
     setError(null);
     try {

@@ -173,7 +173,7 @@ export async function generateAdImage(prompt: string, apiKey: string): Promise<s
   try {
     const ai = createAIClient(apiKey);
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-image",
+      model: "gemini-3.1-flash-image-preview",
       contents: {
         parts: [
           {

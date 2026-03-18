@@ -16,7 +16,7 @@ export const ContentGenerator: React.FC<ContentGeneratorProps> = ({ activeAccoun
   const [drafts, setDrafts] = useState<TweetDraft[]>([]);
   const [postingId, setPostingId] = useState<number | null>(null);
   const [postedIds, setPostedIds] = useState<number[]>([]);
-  
+
   // Scheduling states
   const [schedulingIdx, setSchedulingIdx] = useState<number | null>(null);
   const [scheduleDate, setScheduleDate] = useState('');
@@ -42,11 +42,11 @@ export const ContentGenerator: React.FC<ContentGeneratorProps> = ({ activeAccoun
 
   const handleConfirmSchedule = async (idx: number, content: string) => {
     if (!scheduleDate || !scheduleTime) return;
-    
+
     setPostingId(idx);
     const scheduledAt = `${scheduleDate}T${scheduleTime}`;
     const result = await scheduleTweet(content, activeAccount.handle, scheduledAt);
-    
+
     if (result.success) {
       onTweetScheduled({
         id: result.tweetId!,
@@ -72,7 +72,7 @@ export const ContentGenerator: React.FC<ContentGeneratorProps> = ({ activeAccoun
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      
+
       {/* Input Section */}
       <div className="bg-white p-8 rounded-xl shadow-sm border border-slate-100">
         <div className="mb-6 flex justify-between items-start">
@@ -81,8 +81,8 @@ export const ContentGenerator: React.FC<ContentGeneratorProps> = ({ activeAccoun
             <p className="text-slate-500">Generate thought leadership tweets optimized for the Austin AgeTech market.</p>
           </div>
           <div className="flex items-center space-x-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-             <img src={activeAccount.avatar} className="w-6 h-6 rounded-full" alt="Active" />
-             <span className="text-xs font-bold text-slate-700">{activeAccount.handle}</span>
+            <img src={activeAccount.avatar} className="w-6 h-6 rounded-full" alt="Active" />
+            <span className="text-xs font-bold text-slate-700">{activeAccount.handle}</span>
           </div>
         </div>
 
@@ -102,7 +102,7 @@ export const ContentGenerator: React.FC<ContentGeneratorProps> = ({ activeAccoun
             <span className="block text-sm font-medium text-slate-700 mb-2">Quick Select:</span>
             <div className="flex flex-wrap gap-2">
               {recommendedTopics.map(t => (
-                <button 
+                <button
                   key={t}
                   onClick={() => setTopic(t)}
                   className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm rounded-full transition"
@@ -115,18 +115,18 @@ export const ContentGenerator: React.FC<ContentGeneratorProps> = ({ activeAccoun
 
           <div className="flex items-center space-x-6 pt-2">
             <label className="flex items-center space-x-2 cursor-pointer">
-              <input 
-                type="radio" 
-                checked={format === 'single'} 
+              <input
+                type="radio"
+                checked={format === 'single'}
                 onChange={() => setFormat('single')}
                 className="w-4 h-4 text-blue-600"
               />
               <span className="text-slate-700">Single Tweet</span>
             </label>
             <label className="flex items-center space-x-2 cursor-pointer">
-              <input 
-                type="radio" 
-                checked={format === 'thread'} 
+              <input
+                type="radio"
+                checked={format === 'thread'}
                 onChange={() => setFormat('thread')}
                 className="w-4 h-4 text-blue-600"
               />
@@ -158,22 +158,22 @@ export const ContentGenerator: React.FC<ContentGeneratorProps> = ({ activeAccoun
               <RefreshCw size={14} className="mr-1" /> Regenerate
             </button>
           </div>
-          
+
           <div className="grid gap-6">
             {drafts.map((draft, idx) => (
               <div key={idx} className={`bg-white rounded-xl p-6 border transition-all ${postedIds.includes(idx) ? 'border-green-200 bg-green-50/20' : 'border-slate-200 shadow-sm'} relative group`}>
                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button 
+                  <button
                     onClick={() => {
-                        navigator.clipboard.writeText(draft.content + "\n" + draft.hashtags.join(" "));
+                      navigator.clipboard.writeText(draft.content + "\n" + draft.hashtags.join(" "));
                     }}
-                    className="p-2 text-slate-400 hover:text-blue-600" 
+                    className="p-2 text-slate-400 hover:text-blue-600"
                     title="Copy to clipboard"
                   >
                     <Copy size={18} />
                   </button>
                 </div>
-                
+
                 <div className="flex items-start space-x-4">
                   <div className="w-10 h-10 rounded-full bg-blue-100 flex-shrink-0 flex items-center justify-center text-blue-600 font-bold overflow-hidden">
                     <img src={activeAccount.avatar} alt="Profile" />
@@ -201,29 +201,31 @@ export const ContentGenerator: React.FC<ContentGeneratorProps> = ({ activeAccoun
                           <span className="text-sm font-bold text-slate-700 flex items-center">
                             <Calendar size={14} className="mr-1" /> Pick Post Date & Time
                           </span>
-                          <button onClick={() => setSchedulingIdx(null)} className="text-slate-400 hover:text-slate-600">
+                          <button title="Cancel" onClick={() => setSchedulingIdx(null)} className="text-slate-400 hover:text-slate-600">
                             <X size={16} />
                           </button>
                         </div>
                         <div className="flex space-x-4">
                           <div className="flex-1">
-                            <input 
-                              type="date" 
-                              value={scheduleDate} 
+                            <input
+                              title="Pick Post Date"
+                              type="date"
+                              value={scheduleDate}
                               onChange={(e) => setScheduleDate(e.target.value)}
-                              className="w-full p-2 border border-slate-300 rounded text-sm focus:ring-1 focus:ring-blue-500" 
+                              className="w-full p-2 border border-slate-300 rounded text-sm focus:ring-1 focus:ring-blue-500"
                             />
                           </div>
                           <div className="flex-1">
-                            <input 
-                              type="time" 
+                            <input
+                              title="Pick Post Time"
+                              type="time"
                               value={scheduleTime}
                               onChange={(e) => setScheduleTime(e.target.value)}
-                              className="w-full p-2 border border-slate-300 rounded text-sm focus:ring-1 focus:ring-blue-500" 
+                              className="w-full p-2 border border-slate-300 rounded text-sm focus:ring-1 focus:ring-blue-500"
                             />
                           </div>
                         </div>
-                        <button 
+                        <button
                           onClick={() => handleConfirmSchedule(idx, draft.content)}
                           disabled={!scheduleDate || postingId !== null}
                           className="mt-4 w-full py-2 bg-blue-600 text-white rounded font-bold text-sm hover:bg-blue-700 disabled:opacity-50"
@@ -235,7 +237,7 @@ export const ContentGenerator: React.FC<ContentGeneratorProps> = ({ activeAccoun
 
                     <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
                       <span className="text-slate-400 text-xs font-medium uppercase tracking-wider">{draft.type}</span>
-                      
+
                       <div className="flex items-center space-x-2">
                         {postedIds.includes(idx) ? (
                           <div className="flex items-center text-green-600 font-bold text-sm">
@@ -243,14 +245,14 @@ export const ContentGenerator: React.FC<ContentGeneratorProps> = ({ activeAccoun
                           </div>
                         ) : (
                           <>
-                            <button 
+                            <button
                               onClick={() => setSchedulingIdx(idx)}
                               className="px-4 py-2 border border-slate-300 rounded-full text-sm font-bold flex items-center space-x-2 hover:bg-slate-50 transition-colors"
                             >
                               <Clock size={14} />
                               <span>Schedule</span>
                             </button>
-                            <button 
+                            <button
                               onClick={() => handlePost(idx, draft.content)}
                               disabled={postingId !== null}
                               className="bg-black text-white px-4 py-2 rounded-full text-sm font-bold flex items-center space-x-2 hover:bg-slate-800 transition-colors disabled:opacity-50"

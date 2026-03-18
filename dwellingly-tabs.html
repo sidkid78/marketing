@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dwellingly Concepts</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --tab-bg: rgba(20, 20, 20, 0.8);
+            --tab-active: rgba(48, 137, 118, 0.2);
+            --accent: #308976;
+            --text-muted: #9B9C9C;
+            --text-bright: #FFFFFF;
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            /* Prevent body scroll, let iframes scroll */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* GLASSMORPHIC HEADER / TABS */
+        header {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            background: var(--tab-bg);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-bottom: var(--glass-border);
+            gap: 1rem;
+            flex-shrink: 0;
+            z-index: 1000;
+        }
+
+        .brand {
+            color: var(--text-bright);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-right: 20px;
+            font-size: 1.1rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding-right: 20px;
+        }
+
+        .brand span {
+            color: var(--accent);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-bright);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            background: rgba(48, 137, 118, 0.1);
+            box-shadow: 0 0 15px rgba(48, 137, 118, 0.1);
+            border: 1px solid rgba(48, 137, 118, 0.2);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        /* CONTENT AREA */
+        .content-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 60px);
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease-in-out;
+            background: var(--bg-color);
+            /* Prevent white flash */
+        }
+
+        iframe.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">Dwellingly <span>Concepts</span></div>
+        <div class="tabs">
+            <button class="tab-btn active" data-target="concept1">Concept 1: Sovereign Seller</button>
+            <button class="tab-btn" data-target="concept2">Concept 2: Manifesto</button>
+        </div>
+    </header>
+
+    <div class="content-container">
+        <iframe src="dwellingly1.html" id="concept1" class="active" title="Sovereign Seller Concept"></iframe>
+        <iframe src="dwellingly2.html" id="concept2" title="Manifesto Concept"></iframe>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const iframes = document.querySelectorAll('iframe');
+
+            function activateTab(targetId) {
+                // Deactivate all
+                tabs.forEach(t => t.classList.remove('active'));
+                iframes.forEach(i => i.classList.remove('active'));
+
+                // Activate target
+                const activeTab = document.querySelector(`.tab-btn[data-target="${targetId}"]`);
+                const activeIframe = document.getElementById(targetId);
+
+                if (activeTab && activeIframe) {
+                    activeTab.classList.add('active');
+                    activeIframe.classList.add('active');
+                }
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetId = tab.getAttribute('data-target');
+                    activateTab(targetId);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

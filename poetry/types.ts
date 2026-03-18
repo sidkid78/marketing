@@ -3,7 +3,7 @@ export interface ArtResult {
   html: string;
 }
 
-export type ArtType = 'card' | 'carousel' | 'reel';
+export type ArtType = 'card' | 'carousel' | 'reel' | null;
 
 export interface HistoryItem {
   id: string;

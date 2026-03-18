@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passy - Core Memory</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap');
+
+    :root {
+      --c-dark: #0a0a0a;
+      --c-light: #f4f1ea;
+      --c-accent: #d95d39;
+      --c-slate: #8da399;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--c-dark);
+      color: var(--c-light);
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* SVG Filters Layer */
+    .noise-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.07;
+      filter: url(#noise);
+    }
+
+    /* Carousel Container */
+    .carousel {
+      display: flex;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      height: 100vh;
+      width: 100vw;
+      scrollbar-width: none;
+      scroll-behavior: smooth;
+    }
+
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Panels */
+    section {
+      flex: 0 0 100vw;
+      height: 100vh;
+      scroll-snap-align: start;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    /* Background Images */
+    .bg-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      transition: transform 10s ease-out;
+    }
+
+    section:hover .bg-img {
+      transform: scale(1.05);
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8));
+    }
+
+    /* Typography */
+    .content {
+      position: relative;
+      z-index: 10;
+      max-width: 800px;
+      margin: 0 auto;
+      opacity: 0;
+      animation: fadeUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      animation-delay: 0.3s;
+    }
+
+    h1,
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      line-height: 1.1;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      color: var(--c-light);
+    }
+
+    p {
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      line-height: 1.6;
+      color: rgba(244, 241, 234, 0.9);
+      margin-bottom: 1.5rem;
+      max-width: 60ch;
+    }
+
+    .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 1rem;
+      display: block;
+      opacity: 0.7;
+    }
+
+    .highlight {
+      color: var(--c-accent);
+      font-style: italic;
+    }
+
+    /* Slide Specifics */
+    /* Slide 1: The Hook */
+    #slide-1 .bg-img {
+      filter: brightness(0.6) blur(2px);
+    }
+
+    /* Slide 2: The Problem */
+    #slide-2 .bg-img {
+      filter: grayscale(100%) contrast(1.2) brightness(0.5);
+    }
+
+    #slide-2 .waver {
+      display: inline-block;
+      filter: url(#turbulence);
+    }
+
+    /* Slide 3: The Refusal - Typographic */
+    #slide-3 {
+      background-color: var(--c-light);
+      color: var(--c-dark);
+      text-align: center;
+      align-items: center;
+    }
+
+    #slide-3 h2 {
+      color: var(--c-dark);
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 700;
+    }
+
+    #slide-3 p {
+      color: var(--c-dark);
+    }
+
+    /* Slide 4: The Solution */
+    #slide-4 .bg-img {
+      filter: sepia(0.3) brightness(0.6);
+    }
+
+    .card-quote {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      background: #fdfbf7;
+      color: #333;
+      padding: 2rem;
+      transform: rotate(-2deg);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      margin: 2rem 0;
+    }
+
+    /* Slide 5: The Payoff */
+    #slide-5 .bg-img {
+      filter: brightness(0.7);
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 1rem 2.5rem;
+      background: var(--c-light);
+      color: var(--c-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 1px solid var(--c-light);
+    }
+
+    .btn:hover {
+      background: transparent;
+      color: var(--c-light);
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Progress Indicator */
+    .progress {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.5rem;
+      z-index: 100;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    .active-dot {
+      background: var(--c-light);
+      transform: scale(1.5);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Filters -->
+  <svg style="display: none;">
+    <defs>
+      <filter id="noise">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+        <feColorMatrix type="saturate" values="0" />
+      </filter>
+      <filter id="turbulence">
+        <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="1" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="noise-overlay"></div>
+
+  <div class="carousel" id="carousel">
+
+    <!-- SLIDE 1: THE HOOK -->
+    <section id="slide-1">
+      <img src="./images/scene-1 (29).jpg?q=80&w=2969&auto=format&fit=crop" class="bg-img" alt="Party Atmosphere">
+      <div class="overlay"></div>
+      <div class="content">
+        <span class="label">The Reality</span>
+        <h1>The most expensive flower arrangements can’t hide a room full of <span class="highlight">strangers</span>.
+        </h1>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: THE PROBLEM -->
+    <section id="slide-2">
+      <img src="./images/scene-2 (30).jpg?q=80&w=2979&auto=format&fit=crop" class="bg-img" alt="Man looking at phone">
+      <div class="overlay"></div>
+      <div class="content">
+        <h2>You’ve seen it before.</h2>
+        <p>The <span class="waver">awkward small talk</span>. The polite smiles. The 'plus-ones' staring at their
+          phones, counting the minutes until they can leave.</p>
+        <p>To them, it’s just another Saturday. To her, it’s the only time these people will ever be in one room for
+          her.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: THE MANIFESTO -->
+    <section id="slide-3">
+      <div class="content">
+        <span class="label" style="color: var(--c-accent)">Our Promise</span>
+        <h2>We refuse to let that moment be wasted on generic trivia.</h2>
+        <p>We didn't build Passy to play games. We built it to dismantle the walls between 'the college friends,' 'the
+          in-laws,' and 'the coworkers.'</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: THE SOLUTION -->
+    <section id="slide-4">
+      <img src="./images/scene-3 (28).jpg?q=80&w=2787&auto=format&fit=crop" class="bg-img" alt="Holding Hands">
+      <div class="overlay" style="background: linear-gradient(to bottom, rgba(40,30,20,0.4), rgba(40,30,20,0.9));">
+      </div>
+      <div class="content">
+        <div class="card-quote">
+          "Who here has known the Mom-to-be since she believed in fairies?"
+        </div>
+        <p>We use your guest list to unearth the stories that matter—the ones that turn a table of acquaintances into a
+          <span class="highlight">lifelong tribe</span>.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: THE PAYOFF -->
+    <section id="slide-5">
+      <img src="./images/scene-4 (26).jpg?q=80&w=2970&auto=format&fit=crop" class="bg-img" alt="Group Laughing">
+      <div class="overlay"></div>
+      <div class="content">
+        <h2>Don't just host a shower.<br>Create the <span class="highlight">core memory</span>.</h2>
+        <p>By the end of the cake, they won't just know her. They'll know each other.</p>
+        <p style="font-family: 'Playfair Display'; font-style: italic; margin-top: 1rem;">Stop the Small Talk. Start the
+          Connection.</p>
+        <a href="#" class="btn">Curate the Room</a>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="progress">
+    <div class="dot active-dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <script>
+    // Intersection Observer for Progress Dots and Animations
+    const sections = document.querySelectorAll('section');
+    const dots = document.querySelectorAll('.dot');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Update Dots
+          const index = Array.from(sections).indexOf(entry.target);
+          dots.forEach(d => d.classList.remove('active-dot'));
+          dots[index].classList.add('active-dot');
+
+          // Re-trigger text animation
+          const content = entry.target.querySelector('.content');
+          content.style.animation = 'none';
+          content.offsetHeight; /* trigger reflow */
+          content.style.animation = 'fadeUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.3s';
+        }
+      });
+    }, { threshold: 0.5 });
+
+    sections.forEach(section => observer.observe(section));
+
+    // Subtle Parallax on Scroll
+    const carousel = document.getElementById('carousel');
+    carousel.addEventListener('scroll', () => {
+      sections.forEach(section => {
+        const img = section.querySelector('.bg-img');
+        if (img) {
+          const scrollLeft = carousel.scrollLeft;
+          const sectionLeft = section.offsetLeft;
+          const speed = 0.1;
+          // Only animate if visible
+          if (Math.abs(scrollLeft - sectionLeft) < window.innerWidth) {
+            const offset = (scrollLeft - sectionLeft) * speed;
+            img.style.transform = `translateX(${offset}px) scale(1.05)`;
+          }
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>
