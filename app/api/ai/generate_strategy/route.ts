@@ -1,58 +1,79 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI, Type } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 
-const client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+/**
+ * Resolve the Gemini key at request time, not module load.
+ *
+ * Constructing the client at module scope with an empty key made this route
+ * fail when the module was first imported, which surfaced as an opaque
+ * "API key not set" with no indication of which key or which route.
+ */
+function getClient() {
+    const apiKey =
+        process.env.GEMINI_API_KEY ||
+        process.env.NEXT_PUBLIC_GEMINI_API_KEY ||
+        '';
 
-// Define schema using SDK's Type enum
+    if (!apiKey) {
+        throw new Error(
+            'Gemini API key is not set. Add GEMINI_API_KEY (server-side) or ' +
+            'NEXT_PUBLIC_GEMINI_API_KEY to frontend/.env.local and restart the dev server.'
+        );
+    }
+
+    return new GoogleGenAI({ apiKey });
+}
+
+// Plain JSON Schema, as expected by the Interactions API `response_format`.
 const campaignStrategySchema = {
-    type: Type.OBJECT,
+    type: 'object',
     properties: {
-        name: { type: Type.STRING, description: 'Campaign name (concise, descriptive)' },
+        name: { type: 'string', description: 'Campaign name (concise, descriptive)' },
         objective: {
-            type: Type.STRING,
+            type: 'string',
             enum: ['awareness', 'traffic', 'engagement', 'leads', 'conversions', 'app_installs', 'video_views']
         },
         targetAudience: {
-            type: Type.OBJECT,
+            type: 'object',
             properties: {
-                demographics: { type: Type.STRING, description: 'Age range and gender description' },
-                interests: { type: Type.ARRAY, items: { type: Type.STRING } },
-                behaviors: { type: Type.ARRAY, items: { type: Type.STRING } },
+                demographics: { type: 'string', description: 'Age range and gender description' },
+                interests: { type: 'array', items: { type: 'string' } },
+                behaviors: { type: 'array', items: { type: 'string' } },
             },
             required: ['demographics', 'interests', 'behaviors'],
         },
-        channels: { type: Type.ARRAY, items: { type: Type.STRING } },
+        channels: { type: 'array', items: { type: 'string' } },
         budget: {
-            type: Type.OBJECT,
+            type: 'object',
             properties: {
-                total: { type: Type.NUMBER },
+                total: { type: 'number' },
                 allocation: {
-                    type: Type.OBJECT,
-                    additionalProperties: { type: Type.NUMBER },
+                    type: 'object',
+                    additionalProperties: { type: 'number' },
                 },
             },
             required: ['total', 'allocation'],
         },
         messaging: {
-            type: Type.OBJECT,
+            type: 'object',
             properties: {
-                headlines: { type: Type.ARRAY, items: { type: Type.STRING } },
-                bodyCopy: { type: Type.ARRAY, items: { type: Type.STRING } },
-                callToActions: { type: Type.ARRAY, items: { type: Type.STRING } },
+                headlines: { type: 'array', items: { type: 'string' } },
+                bodyCopy: { type: 'array', items: { type: 'string' } },
+                callToActions: { type: 'array', items: { type: 'string' } },
             },
             required: ['headlines', 'bodyCopy', 'callToActions'],
         },
         timeline: {
-            type: Type.OBJECT,
+            type: 'object',
             properties: {
-                duration: { type: Type.STRING },
+                duration: { type: 'string' },
                 phases: {
-                    type: Type.ARRAY,
+                    type: 'array',
                     items: {
-                        type: Type.OBJECT,
+                        type: 'object',
                         properties: {
-                            name: { type: Type.STRING },
-                            duration: { type: Type.STRING },
+                            name: { type: 'string' },
+                            duration: { type: 'string' },
                         },
                         required: ['name', 'duration'],
                     },
@@ -64,9 +85,77 @@ const campaignStrategySchema = {
     required: ['name', 'objective', 'targetAudience', 'channels', 'budget', 'messaging', 'timeline'],
 };
 
+/**
+ * Shape returned by the `parse` action. Mirrors the `ParsedStrategy` interface
+ * in ad-campaigns/components/AIStrategyImport.tsx exactly - if you change one,
+ * change the other.
+ */
+const parsedStrategySchema = {
+    type: 'object',
+    properties: {
+        name: { type: 'string', description: 'Campaign name (concise, descriptive)' },
+        objective: {
+            type: 'string',
+            enum: ['awareness', 'traffic', 'engagement', 'leads', 'conversions', 'app_installs', 'video_views', 'catalog_sales'],
+        },
+        targetAudience: { type: 'string', description: 'One-line description of the target audience' },
+        budget: {
+            type: 'object',
+            properties: {
+                amount: { type: 'number' },
+                type: { type: 'string', enum: ['daily', 'lifetime'] },
+            },
+            required: ['amount', 'type'],
+        },
+        platforms: {
+            type: 'array',
+            items: { type: 'string', enum: ['twitter', 'meta', 'google', 'linkedin', 'tiktok'] },
+        },
+        headlines: { type: 'array', items: { type: 'string' } },
+        adCopy: { type: 'array', items: { type: 'string' } },
+        keywords: { type: 'array', items: { type: 'string' } },
+    },
+    required: ['name', 'objective', 'targetAudience', 'budget', 'platforms', 'headlines', 'adCopy', 'keywords'],
+};
+
 export async function POST(request: NextRequest) {
     try {
-        const { prompt, platforms } = await request.json();
+        const { action, content, prompt, platforms } = await request.json();
+        const client = getClient();
+
+        // `parse` takes an existing strategy document (pasted from the marketing
+        // agent or written by hand) and normalises it into ParsedStrategy.
+        // `generate` (the default) writes a new strategy from a prompt.
+        if (action === 'parse') {
+            if (!content?.trim()) {
+                return NextResponse.json(
+                    { success: false, error: 'Strategy content is required' },
+                    { status: 400 }
+                );
+            }
+
+            const parseInteraction = await client.interactions.create({
+                model: 'gemini-3.6-flash',
+                input: content,
+                system_instruction:
+                    'You are a digital advertising strategist. Extract a structured ad campaign ' +
+                    'configuration from the marketing strategy the user provides. Use only the ' +
+                    'platforms twitter, meta, google, linkedin, tiktok. If the strategy does not ' +
+                    'state a budget, default to 50 daily. Preserve the original headline and ' +
+                    'ad copy wording wherever the strategy supplies it.',
+                response_format: {
+                    type: 'text',
+                    mime_type: 'application/json',
+                    schema: parsedStrategySchema,
+                },
+                store: false,
+            });
+
+            const parsed = JSON.parse(parseInteraction.output_text ?? '{}');
+
+            // AIStrategyImport reads these fields flat off the response body.
+            return NextResponse.json({ success: true, ...parsed });
+        }
 
         if (!prompt) {
             return NextResponse.json(
@@ -81,17 +170,19 @@ Available advertising platforms: ${platforms?.join(', ') || 'Twitter, Meta, Goog
 
 Make the strategy specific to the user's product/service and target audience. Be creative with headlines and copy.`;
 
-        const result = await client.models.generateContent({
-            model: 'gemini-3-flash-preview',
-            contents: `User request: ${prompt}`,
-            config: {
-                systemInstruction: systemPrompt,
-                responseMimeType: 'application/json',
-                responseSchema: campaignStrategySchema,
+        const interaction = await client.interactions.create({
+            model: 'gemini-3.6-flash',
+            input: `User request: ${prompt}`,
+            system_instruction: systemPrompt,
+            response_format: {
+                type: 'text',
+                mime_type: 'application/json',
+                schema: campaignStrategySchema,
             },
+            store: false,
         });
 
-        const responseText = result.text ?? '';
+        const responseText = interaction.output_text ?? '';
         const strategy = JSON.parse(responseText);
 
         return NextResponse.json({

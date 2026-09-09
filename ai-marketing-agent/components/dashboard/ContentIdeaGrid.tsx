@@ -30,6 +30,8 @@ export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, 
   const [connectedPlatforms, setConnectedPlatforms] = useState<Record<string, boolean>>({});
   const [connectingPlatform, setConnectingPlatform] = useState<string | null>(null);
   const [publishingStatus, setPublishingStatus] = useState<Record<string, 'idle' | 'publishing' | 'published' | 'error'>>({});
+  // Publish outcome per idea: the live tweet URL, whether it was a real send, and any failure message.
+  const [publishResult, setPublishResult] = useState<Record<string, { url?: string; simulated: boolean; error?: string }>>({});
 
   useEffect(() => {
     // Check initial connection status for platforms present in ideas
@@ -104,9 +106,15 @@ export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, 
     const fullText = `${idea.caption}\n\n${idea.hashtag_suggestions.map(t => `#${t}`).join(' ')}`;
 
     try {
-      await SocialMediaService.post(platform, fullText, mediaUrl, mediaType);
+      const result = await SocialMediaService.post(platform, fullText, mediaUrl, mediaType);
+      setPublishResult(prev => ({ ...prev, [id]: { url: result.url, simulated: result.simulated } }));
       setPublishingStatus(prev => ({ ...prev, [id]: 'published' }));
     } catch (e) {
+      console.error('Publish failed:', e);
+      setPublishResult(prev => ({
+        ...prev,
+        [id]: { simulated: false, error: e instanceof Error ? e.message : 'Publish failed' },
+      }));
       setPublishingStatus(prev => ({ ...prev, [id]: 'error' }));
     }
   };
@@ -236,11 +244,30 @@ export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, 
                             Connect Account
                           </button>
                         ) : publishingStatus[id] === 'published' ? (
-                          <button disabled className="px-3 py-1.5 bg-green-500 text-white text-xs font-bold rounded flex items-center gap-1 cursor-default">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                            Posted
+                          publishResult[id]?.url ? (
+                            <a
+                              href={publishResult[id].url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-3 py-1.5 bg-green-500 text-white text-xs font-bold rounded flex items-center gap-1 hover:bg-green-600"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                              View post
+                            </a>
+                          ) : (
+                            <button disabled className="px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded flex items-center gap-1 cursor-default" title="No backend integration for this platform - nothing was sent">
+                              Simulated
+                            </button>
+                          )
+                        ) : publishingStatus[id] === 'error' ? (
+                          <button
+                            onClick={() => handlePublish(id, ci.platform, idea, activeMediaUrl, mediaType)}
+                            className="px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded hover:bg-red-700"
+                            title={publishResult[id]?.error || 'Publish failed'}
+                          >
+                            Failed - retry
                           </button>
                         ) : publishingStatus[id] === 'publishing' ? (
                           <button disabled className="px-3 py-1.5 bg-gray-400 text-white text-xs font-bold rounded flex items-center gap-1 cursor-wait">

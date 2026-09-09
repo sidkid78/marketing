@@ -39,7 +39,6 @@
     "node_modules",
     "**/*.config.ts",
     "**/vite.config.ts",
-    "**/index.html",
-    "ad-campaigns"
+    "**/index.html"
   ]
 }

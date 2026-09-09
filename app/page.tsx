@@ -16,6 +16,7 @@ const Poetry = React.lazy(() => import("../poetry/App"));
 const ThreePs = React.lazy(() => import("../3ps/App"));
 const ArtifactToLife = React.lazy(() => import("../artifact-to-life/App"));
 const CampaignManager = React.lazy(() => import("../campaign-manager/App"));
+const AdCampaigns = React.lazy(() => import("../ad-campaigns/app"));
 const Dwellingly = React.lazy(() => import("../dwellingly/App"));
 const YoutubeExtractor = React.lazy(() => import("../youtube-extractor/App"));
 
@@ -37,6 +38,7 @@ const tabs = [
   { id: "3ps", label: "3Ps Strategist", icon: "💡" },
   { id: "artifact", label: "Artifact to Life", icon: "⚡" },
   { id: "campaign", label: "Campaign Manager", icon: "📊" },
+  { id: "ads", label: "Ad Campaigns", icon: "📣" },
   { id: "dwellingly", label: "Dwellingly", icon: "🏡" },
   { id: "youtube", label: "YT Extractor", icon: "📺" },
 ] as const;
@@ -250,6 +252,7 @@ export default function Home() {
               {activeTab === "3ps" && <ThreePs apiKey={apiKey} />}
               {activeTab === "artifact" && <ArtifactToLife apiKey={apiKey} />}
               {activeTab === "campaign" && <CampaignManager apiKey={apiKey} />}
+              {activeTab === "ads" && <AdCampaigns apiKey={apiKey} />}
               {activeTab === "dwellingly" && <Dwellingly apiKey={apiKey} />}
               {activeTab === "youtube" && <YoutubeExtractor />}
             </Suspense>
