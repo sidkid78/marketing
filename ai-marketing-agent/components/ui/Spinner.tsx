@@ -1,13 +1,14 @@
-
 import React from 'react';
 
-export const Spinner: React.FC = () => {
+/**
+ * Generation takes tens of seconds, so this reads as a job in progress rather
+ * than a momentary pause. Amber is the system's one "working" colour.
+ */
+export const Spinner: React.FC<{ label?: string }> = ({ label = 'Working' }) => {
   return (
-    <div className="relative">
-      <div className="border-4 border-[#00f0ff]/20 border-t-[#00f0ff] rounded-full w-12 h-12 animate-spin shadow-[0_0_15px_rgba(0,240,255,0.4)]"></div>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-2 h-2 bg-[#ff00ff] rounded-full animate-pulse"></div>
-      </div>
+    <div className="w-full max-w-sm" role="status" aria-live="polite">
+      <div className="working-bar h-[3px] w-full rounded-full" />
+      <p className="mt-3 text-[13px] text-ink-soft">{label}</p>
     </div>
   );
 };

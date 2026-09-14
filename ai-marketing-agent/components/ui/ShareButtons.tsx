@@ -62,7 +62,7 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ textToShare, anchorI
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <span className="text-xs font-bold text-[#ff00ff] font-mono tracking-wider">SHARE:</span>
+      <span className="text-xs font-semibold text-[#ff00ff] font-mono tracking-wider">SHARE:</span>
       <button
         onClick={shareOnTwitter}
         title="Share on Twitter"

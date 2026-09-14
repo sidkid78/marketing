@@ -77,7 +77,7 @@ export const PerformanceInput: React.FC<PerformanceInputProps> = ({ onSubmit, go
               <input 
                 type="number" 
                 id={metric.id} 
-                className="col-span-2 p-2 border border-gray-300 rounded-lg"
+                className="col-span-2 p-2 border border-rule rounded-sm"
                 placeholder={metric.description}
                 value={metrics[metric.id] || ''}
                 onChange={(e) => handleManualChange(metric.id, e.target.value)}

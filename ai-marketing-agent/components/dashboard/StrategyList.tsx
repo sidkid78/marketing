@@ -56,9 +56,9 @@ ${kpisText}
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <PlatformIcon platform={s.platform} />
-                <span className="text-sm font-semibold text-neutral uppercase tracking-wider">{s.platform.replace('_', ' ')}</span>
+                <span className="text-sm font-semibold text-ink-soft uppercase tracking-wider">{s.platform.replace('_', ' ')}</span>
               </div>
-              <p className="text-xs text-secondary font-bold">{MARKETING_GOALS.find(g => g.id === s.goal)?.label}</p>
+              <p className="text-xs text-secondary font-semibold">{MARKETING_GOALS.find(g => g.id === s.goal)?.label}</p>
             </div>
             <div className="text-right">
               <p className="text-sm font-semibold">KPIs to watch:</p>
@@ -69,12 +69,12 @@ ${kpisText}
               </div>
             </div>
           </div>
-          <h3 className="text-xl font-bold text-primary-dark mb-2">{s.strategy_title}</h3>
-          <p className="text-neutral mb-4">{s.summary}</p>
+          <h3 className="text-xl font-semibold text-ink mb-2">{s.strategy_title}</h3>
+          <p className="text-ink-soft mb-4">{s.summary}</p>
 
           <div className="mb-4">
-            <h4 className="font-semibold mb-2 text-neutral-dark">Recommendations:</h4>
-            <ul className="list-disc list-inside space-y-1 text-neutral">
+            <h4 className="font-semibold mb-2 text-ink">Recommendations:</h4>
+            <ul className="list-disc list-inside space-y-1 text-ink-soft">
               {s.recommendations.map((rec, j) => (
                 <li key={j}>{rec}</li>
               ))}
@@ -82,7 +82,7 @@ ${kpisText}
           </div>
           <div className="mb-4">
             <h4 className="font-semibold text-foreground">Rationale:</h4>
-            <p className="text-sm text-foreground bg-muted p-3 rounded-lg mt-2">{s.rationale}</p>
+            <p className="text-sm text-foreground bg-muted p-3 rounded-sm mt-2">{s.rationale}</p>
           </div>
           <div className="border-t pt-4 mt-4 flex justify-end items-center gap-4">
             <ClipboardCopyButton textToCopy={formatStrategyForClipboard(s)} />
