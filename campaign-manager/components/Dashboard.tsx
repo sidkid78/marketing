@@ -29,17 +29,17 @@ export const Dashboard: React.FC = () => {
       {/* Metrics Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {mockMetrics.map((metric, index) => (
-          <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+          <div key={index} className="bg-white p-6 rounded-xl border border-rule">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="text-slate-500 text-sm font-medium">{metric.name}</h3>
-              {index === 0 ? <Eye size={18} className="text-blue-500" /> :
-               index === 1 ? <Repeat size={18} className="text-purple-500" /> :
-               index === 2 ? <MousePointerClick size={18} className="text-green-500" /> :
-               <Users size={18} className="text-orange-500" />}
+              <h3 className="text-ink0 text-sm font-medium">{metric.name}</h3>
+              {index === 0 ? <Eye size={18} className="text-ink" /> :
+               index === 1 ? <Repeat size={18} className="text-ink" /> :
+               index === 2 ? <MousePointerClick size={18} className="text-positive" /> :
+               <Users size={18} className="text-working" />}
             </div>
             <div className="flex items-end justify-between">
-              <span className="text-3xl font-bold text-slate-800">{metric.value}</span>
-              <div className={`flex items-center text-sm font-medium ${metric.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+              <span className="text-3xl font-bold text-ink">{metric.value}</span>
+              <div className={`flex items-center text-sm font-medium ${metric.trend === 'up' ? 'text-positive' : 'text-destructive'}`}>
                 {metric.trend === 'up' ? <ArrowUpRight size={16} className="mr-1" /> : <ArrowDownRight size={16} className="mr-1" />}
                 {Math.abs(metric.change)}%
               </div>
@@ -50,8 +50,8 @@ export const Dashboard: React.FC = () => {
 
       {/* Main Chart Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-          <h3 className="text-lg font-bold text-slate-800 mb-6">Reach & Engagement Trends</h3>
+        <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-rule">
+          <h3 className="text-lg font-bold text-ink mb-6">Reach & Engagement Trends</h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data}>
@@ -74,8 +74,8 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-          <h3 className="text-lg font-bold text-slate-800 mb-6">Interaction Types</h3>
+        <div className="bg-white p-6 rounded-xl border border-rule">
+          <h3 className="text-lg font-bold text-ink mb-6">Interaction Types</h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data}>
@@ -91,9 +91,9 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-blue-50 border border-blue-100 rounded-lg p-6">
-        <h4 className="font-bold text-blue-900 mb-2">Campaign Insight</h4>
-        <p className="text-blue-800 text-sm">
+      <div className="bg-muted border border-rule rounded-lg p-6">
+        <h4 className="font-bold text-ink mb-2">Campaign Insight</h4>
+        <p className="text-ink text-sm">
           Retweets are up 15% following the "Preventative Home Safety" thread on Wednesday. 
           Focus on statistics-heavy content for next week's push in the Austin area.
         </p>

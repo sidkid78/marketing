@@ -200,10 +200,10 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                                 onClick={() => index < currentStep && setCurrentStep(index)}
                                 disabled={index > currentStep}
                                 className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${index === currentStep
-                                    ? 'bg-[#00f0ff]/20 text-[#00f0ff] border border-[#00f0ff]/30'
+                                    ? 'bg-signal/20 text-ink border border-rule'
                                     : index < currentStep
-                                        ? 'bg-[#39ff14]/10 text-[#39ff14] cursor-pointer hover:bg-[#39ff14]/20'
-                                        : 'bg-black/30 text-gray-600 cursor-not-allowed'
+                                        ? 'bg-positive/10 text-positive cursor-pointer hover:bg-positive/20'
+                                        : 'bg-sheet text-ink-soft cursor-not-allowed'
                                     }`}
                             >
                                 {index < currentStep ? (
@@ -211,10 +211,10 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                                 ) : (
                                     step.icon
                                 )}
-                                <span className="font-mono text-sm hidden md:inline">{step.title}</span>
+                                <span className="text-sm hidden md:inline">{step.title}</span>
                             </button>
                             {index < STEPS.length - 1 && (
-                                <div className={`flex-1 h-px mx-2 ${index < currentStep ? 'bg-[#39ff14]/50' : 'bg-gray-800'
+                                <div className={`flex-1 h-px mx-2 ${index < currentStep ? 'bg-positive/50' : 'bg-muted'
                                     }`} />
                             )}
                         </React.Fragment>
@@ -223,13 +223,13 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
             </div>
 
             {/* Step Content */}
-            <div className="bg-black/40 rounded-xl border border-[#00f0ff]/20 p-6">
+            <div className="bg-sheet rounded-xl border border-rule p-6">
                 {/* Platform Selection */}
                 {STEPS[currentStep].id === 'platform' && (
                     <div className="space-y-6">
                         <div>
-                            <h2 className="text-xl font-mono font-bold mb-2">Select Platforms</h2>
-                            <p className="text-gray-500 text-sm">Choose where to run your campaign</p>
+                            <h2 className="text-xl font-bold mb-2">Select Platforms</h2>
+                            <p className="text-ink-soft text-sm">Choose where to run your campaign</p>
                         </div>
 
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -248,26 +248,26 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                                             });
                                         }}
                                         className={`p-4 rounded-xl border transition-all text-left ${isSelected
-                                            ? 'bg-[#00f0ff]/10 border-[#00f0ff]/50 shadow-[0_0_20px_rgba(0,240,255,0.2)]'
-                                            : 'bg-black/30 border-gray-800 hover:border-gray-600'
+                                            ? 'bg-signal/10 border-rule'
+                                            : 'bg-sheet border-rule hover:border-rule'
                                             }`}
                                     >
                                         <div className="flex items-center gap-3 mb-2">
                                             <span className="text-3xl">{info.icon}</span>
-                                            {isSelected && <Check size={16} className="text-[#00f0ff]" />}
+                                            {isSelected && <Check size={16} className="text-ink" />}
                                         </div>
-                                        <p className="font-mono font-bold">{info.name}</p>
+                                        <p className="font-bold">{info.name}</p>
                                     </button>
                                 );
                             })}
                         </div>
 
                         {connectedPlatforms.size === 0 && (
-                            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 flex items-start gap-3">
-                                <AlertCircle size={20} className="text-yellow-500 flex-shrink-0 mt-0.5" />
+                            <div className="bg-working/10 border border-working/30 rounded-lg p-4 flex items-start gap-3">
+                                <AlertCircle size={20} className="text-working flex-shrink-0 mt-0.5" />
                                 <div>
-                                    <p className="font-mono text-yellow-500 font-bold">No platforms connected</p>
-                                    <p className="text-sm text-gray-400 mt-1">
+                                    <p className="text-working font-bold">No platforms connected</p>
+                                    <p className="text-sm text-ink-soft mt-1">
                                         Go to Settings to configure your ad platform credentials.
                                     </p>
                                 </div>
@@ -280,35 +280,35 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                 {STEPS[currentStep].id === 'basics' && (
                     <div className="space-y-6">
                         <div>
-                            <h2 className="text-xl font-mono font-bold mb-2">Campaign Basics</h2>
-                            <p className="text-gray-500 text-sm">Name your campaign and set your objective</p>
+                            <h2 className="text-xl font-bold mb-2">Campaign Basics</h2>
+                            <p className="text-ink-soft text-sm">Name your campaign and set your objective</p>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-mono text-gray-400 mb-2">Campaign Name</label>
+                            <label className="block text-sm text-ink-soft mb-2">Campaign Name</label>
                             <input
                                 type="text"
                                 value={data.name}
                                 onChange={(e) => updateData({ name: e.target.value })}
                                 placeholder="e.g., Holiday Sale 2024"
-                                className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-lg font-mono focus:border-[#00f0ff]/50 focus:outline-none transition-colors"
+                                className="w-full px-4 py-3 bg-sheet border border-rule rounded-lg focus:border-rule focus:outline-none transition-colors"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-mono text-gray-400 mb-2">Campaign Objective</label>
+                            <label className="block text-sm text-ink-soft mb-2">Campaign Objective</label>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 {OBJECTIVES.map((obj) => (
                                     <button
                                         key={obj.value}
                                         onClick={() => updateData({ objective: obj.value })}
                                         className={`p-4 rounded-lg border text-left transition-all ${data.objective === obj.value
-                                            ? 'bg-[#ff00ff]/10 border-[#ff00ff]/50'
-                                            : 'bg-black/30 border-gray-800 hover:border-gray-600'
+                                            ? 'bg-signal/10 border-rule'
+                                            : 'bg-sheet border-rule hover:border-rule'
                                             }`}
                                     >
-                                        <p className="font-mono font-bold">{obj.label}</p>
-                                        <p className="text-xs text-gray-500 mt-1">{obj.description}</p>
+                                        <p className="font-bold">{obj.label}</p>
+                                        <p className="text-xs text-ink-soft mt-1">{obj.description}</p>
                                     </button>
                                 ))}
                             </div>
@@ -320,28 +320,28 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                 {STEPS[currentStep].id === 'budget' && (
                     <div className="space-y-6">
                         <div>
-                            <h2 className="text-xl font-mono font-bold mb-2">Budget & Schedule</h2>
-                            <p className="text-gray-500 text-sm">Set your spending limits and campaign duration</p>
+                            <h2 className="text-xl font-bold mb-2">Budget & Schedule</h2>
+                            <p className="text-ink-soft text-sm">Set your spending limits and campaign duration</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-mono text-gray-400 mb-2">Budget Type</label>
+                                <label className="block text-sm text-ink-soft mb-2">Budget Type</label>
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => updateData({ budget: { ...data.budget, type: 'daily' } })}
-                                        className={`flex-1 py-2 px-4 rounded-lg font-mono text-sm transition-all ${data.budget.type === 'daily'
-                                            ? 'bg-[#00f0ff]/20 text-[#00f0ff] border border-[#00f0ff]/30'
-                                            : 'bg-black/30 border border-gray-800'
+                                        className={`flex-1 py-2 px-4 rounded-lg text-sm transition-all ${data.budget.type === 'daily'
+                                            ? 'bg-signal/20 text-ink border border-rule'
+                                            : 'bg-sheet border border-rule'
                                             }`}
                                     >
                                         Daily
                                     </button>
                                     <button
                                         onClick={() => updateData({ budget: { ...data.budget, type: 'lifetime' } })}
-                                        className={`flex-1 py-2 px-4 rounded-lg font-mono text-sm transition-all ${data.budget.type === 'lifetime'
-                                            ? 'bg-[#00f0ff]/20 text-[#00f0ff] border border-[#00f0ff]/30'
-                                            : 'bg-black/30 border border-gray-800'
+                                        className={`flex-1 py-2 px-4 rounded-lg text-sm transition-all ${data.budget.type === 'lifetime'
+                                            ? 'bg-signal/20 text-ink border border-rule'
+                                            : 'bg-sheet border border-rule'
                                             }`}
                                     >
                                         Lifetime
@@ -350,18 +350,18 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                             </div>
 
                             <div>
-                                <label className="block text-sm font-mono text-gray-400 mb-2">
+                                <label className="block text-sm text-ink-soft mb-2">
                                     {data.budget.type === 'daily' ? 'Daily Budget' : 'Total Budget'}
                                 </label>
                                 <div className="relative">
-                                    <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                                    <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
                                     <input
                                         type="number"
                                         value={data.budget.amount}
                                         onChange={(e) => updateData({ budget: { ...data.budget, amount: Number(e.target.value) } })}
                                         min={1}
                                         title="Budget Amount"
-                                        className="w-full pl-10 pr-4 py-3 bg-black/40 border border-gray-800 rounded-lg font-mono focus:border-[#00f0ff]/50 focus:outline-none"
+                                        className="w-full pl-10 pr-4 py-3 bg-sheet border border-rule rounded-lg focus:border-rule focus:outline-none"
                                     />
                                 </div>
                             </div>
@@ -369,38 +369,38 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-mono text-gray-400 mb-2">Start Date</label>
+                                <label className="block text-sm text-ink-soft mb-2">Start Date</label>
                                 <div className="relative">
-                                    <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                                    <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
                                     <input
                                         title="Start Date"
                                         type="date"
                                         value={data.schedule.start}
                                         onChange={(e) => updateData({ schedule: { ...data.schedule, start: e.target.value } })}
-                                        className="w-full pl-10 pr-4 py-3 bg-black/40 border border-gray-800 rounded-lg font-mono focus:border-[#00f0ff]/50 focus:outline-none"
+                                        className="w-full pl-10 pr-4 py-3 bg-sheet border border-rule rounded-lg focus:border-rule focus:outline-none"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-mono text-gray-400 mb-2">End Date</label>
+                                <label className="block text-sm text-ink-soft mb-2">End Date</label>
                                 <div className="relative">
-                                    <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                                    <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
                                     <input
                                         title="End Date"
                                         type="date"
                                         value={data.schedule.end}
                                         onChange={(e) => updateData({ schedule: { ...data.schedule, end: e.target.value } })}
-                                        className="w-full pl-10 pr-4 py-3 bg-black/40 border border-gray-800 rounded-lg font-mono focus:border-[#00f0ff]/50 focus:outline-none"
+                                        className="w-full pl-10 pr-4 py-3 bg-sheet border border-rule rounded-lg focus:border-rule focus:outline-none"
                                     />
                                 </div>
                             </div>
                         </div>
 
                         {/* Budget Estimate */}
-                        <div className="bg-[#00f0ff]/5 border border-[#00f0ff]/20 rounded-lg p-4">
-                            <p className="text-sm text-gray-400">
-                                Estimated total spend: <span className="text-[#00f0ff] font-mono font-bold">
+                        <div className="bg-signal/5 border border-rule rounded-lg p-4">
+                            <p className="text-sm text-ink-soft">
+                                Estimated total spend: <span className="text-ink font-bold">
                                     ${data.budget.type === 'daily'
                                         ? (data.budget.amount * Math.ceil((new Date(data.schedule.end).getTime() - new Date(data.schedule.start).getTime()) / (1000 * 60 * 60 * 24))).toLocaleString()
                                         : data.budget.amount.toLocaleString()
@@ -415,13 +415,13 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                 {STEPS[currentStep].id === 'targeting' && (
                     <div className="space-y-6">
                         <div>
-                            <h2 className="text-xl font-mono font-bold mb-2">Audience Targeting</h2>
-                            <p className="text-gray-500 text-sm">Define who should see your ads</p>
+                            <h2 className="text-xl font-bold mb-2">Audience Targeting</h2>
+                            <p className="text-ink-soft text-sm">Define who should see your ads</p>
                         </div>
 
                         {/* Age Range */}
                         <div>
-                            <label className="block text-sm font-mono text-gray-400 mb-2">Age Range</label>
+                            <label className="block text-sm text-ink-soft mb-2">Age Range</label>
                             <div className="flex items-center gap-4">
                                 <input
                                     title="Minimum Age"
@@ -432,9 +432,9 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                                     })}
                                     min={13}
                                     max={65}
-                                    className="w-24 px-4 py-2 bg-black/40 border border-gray-800 rounded-lg font-mono text-center focus:border-[#00f0ff]/50 focus:outline-none"
+                                    className="w-24 px-4 py-2 bg-sheet border border-rule rounded-lg text-center focus:border-rule focus:outline-none"
                                 />
-                                <span className="text-gray-500">to</span>
+                                <span className="text-ink-soft">to</span>
                                 <input
                                     title="Maximum Age"
                                     type="number"
@@ -444,14 +444,14 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                                     })}
                                     min={13}
                                     max={65}
-                                    className="w-24 px-4 py-2 bg-black/40 border border-gray-800 rounded-lg font-mono text-center focus:border-[#00f0ff]/50 focus:outline-none"
+                                    className="w-24 px-4 py-2 bg-sheet border border-rule rounded-lg text-center focus:border-rule focus:outline-none"
                                 />
                             </div>
                         </div>
 
                         {/* Gender */}
                         <div>
-                            <label className="block text-sm font-mono text-gray-400 mb-2">Gender</label>
+                            <label className="block text-sm text-ink-soft mb-2">Gender</label>
                             <div className="flex gap-2">
                                 {['all', 'male', 'female'].map((gender) => (
                                     <button
@@ -459,9 +459,9 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                                         onClick={() => updateData({
                                             targeting: { ...data.targeting, genders: [gender as 'all' | 'male' | 'female'] }
                                         })}
-                                        className={`px-4 py-2 rounded-lg font-mono text-sm capitalize transition-all ${data.targeting.genders?.includes(gender as any)
-                                            ? 'bg-[#00f0ff]/20 text-[#00f0ff] border border-[#00f0ff]/30'
-                                            : 'bg-black/30 border border-gray-800'
+                                        className={`px-4 py-2 rounded-lg text-sm capitalize transition-all ${data.targeting.genders?.includes(gender as any)
+                                            ? 'bg-signal/20 text-ink border border-rule'
+                                            : 'bg-sheet border border-rule'
                                             }`}
                                     >
                                         {gender}
@@ -472,14 +472,14 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
 
                         {/* Interests (Twitter Keywords) */}
                         <div>
-                            <label className="block text-sm font-mono text-gray-400 mb-2">
+                            <label className="block text-sm text-ink-soft mb-2">
                                 Interests / Keywords
                             </label>
                             <div className="flex flex-wrap gap-2 mb-2">
                                 {data.targeting.interests?.map((interest, i) => (
                                     <span
                                         key={i}
-                                        className="px-3 py-1 bg-[#ff00ff]/20 text-[#ff00ff] rounded-full text-sm font-mono flex items-center gap-2"
+                                        className="px-3 py-1 bg-signal/20 text-ink-soft rounded-full text-sm flex items-center gap-2"
                                     >
                                         {interest}
                                         <button
@@ -489,7 +489,7 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                                                     interests: data.targeting.interests?.filter((_, idx) => idx !== i)
                                                 }
                                             })}
-                                            className="hover:text-white"
+                                            className="hover:text-ink"
                                         >
                                             ×
                                         </button>
@@ -510,21 +510,21 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                                         e.currentTarget.value = '';
                                     }
                                 }}
-                                className="w-full px-4 py-2 bg-black/40 border border-gray-800 rounded-lg font-mono text-sm focus:border-[#00f0ff]/50 focus:outline-none"
+                                className="w-full px-4 py-2 bg-sheet border border-rule rounded-lg text-sm focus:border-rule focus:outline-none"
                             />
                         </div>
 
                         {/* Twitter-specific: Follower Lookalikes */}
                         {data.platforms.includes('twitter') && (
                             <div>
-                                <label className="block text-sm font-mono text-gray-400 mb-2">
+                                <label className="block text-sm text-ink-soft mb-2">
                                     Target followers similar to (Twitter handles)
                                 </label>
                                 <div className="flex flex-wrap gap-2 mb-2">
                                     {data.targeting.followerLookalikes?.map((handle, i) => (
                                         <span
                                             key={i}
-                                            className="px-3 py-1 bg-black/50 text-[#00f0ff] rounded-full text-sm font-mono flex items-center gap-2"
+                                            className="px-3 py-1 bg-sheet text-ink rounded-full text-sm flex items-center gap-2"
                                         >
                                             @{handle}
                                             <button
@@ -534,7 +534,7 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                                                         followerLookalikes: data.targeting.followerLookalikes?.filter((_, idx) => idx !== i)
                                                     }
                                                 })}
-                                                className="hover:text-white"
+                                                className="hover:text-ink"
                                             >
                                                 ×
                                             </button>
@@ -556,7 +556,7 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                                             e.currentTarget.value = '';
                                         }
                                     }}
-                                    className="w-full px-4 py-2 bg-black/40 border border-gray-800 rounded-lg font-mono text-sm focus:border-[#00f0ff]/50 focus:outline-none"
+                                    className="w-full px-4 py-2 bg-sheet border border-rule rounded-lg text-sm focus:border-rule focus:outline-none"
                                 />
                             </div>
                         )}
@@ -567,60 +567,60 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                 {STEPS[currentStep].id === 'creative' && (
                     <div className="space-y-6">
                         <div>
-                            <h2 className="text-xl font-mono font-bold mb-2">Ad Creative</h2>
-                            <p className="text-gray-500 text-sm">Create your ad content</p>
+                            <h2 className="text-xl font-bold mb-2">Ad Creative</h2>
+                            <p className="text-ink-soft text-sm">Create your ad content</p>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-mono text-gray-400 mb-2">Headline</label>
+                            <label className="block text-sm text-ink-soft mb-2">Headline</label>
                             <input
                                 type="text"
                                 value={data.creative.headline}
                                 onChange={(e) => updateData({ creative: { ...data.creative, headline: e.target.value } })}
                                 placeholder="Grab attention with a strong headline"
                                 maxLength={100}
-                                className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-lg font-mono focus:border-[#00f0ff]/50 focus:outline-none"
+                                className="w-full px-4 py-3 bg-sheet border border-rule rounded-lg focus:border-rule focus:outline-none"
                             />
-                            <p className="text-xs text-gray-600 mt-1">{data.creative.headline.length}/100</p>
+                            <p className="text-xs text-ink-soft mt-1">{data.creative.headline.length}/100</p>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-mono text-gray-400 mb-2">Primary Text</label>
+                            <label className="block text-sm text-ink-soft mb-2">Primary Text</label>
                             <textarea
                                 value={data.creative.primaryText}
                                 onChange={(e) => updateData({ creative: { ...data.creative, primaryText: e.target.value } })}
                                 placeholder="Tell your story..."
                                 rows={4}
                                 maxLength={280}
-                                className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-lg font-mono focus:border-[#00f0ff]/50 focus:outline-none resize-none"
+                                className="w-full px-4 py-3 bg-sheet border border-rule rounded-lg focus:border-rule focus:outline-none resize-none"
                             />
-                            <p className="text-xs text-gray-600 mt-1">{data.creative.primaryText.length}/280</p>
+                            <p className="text-xs text-ink-soft mt-1">{data.creative.primaryText.length}/280</p>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-mono text-gray-400 mb-2">Destination URL</label>
+                            <label className="block text-sm text-ink-soft mb-2">Destination URL</label>
                             <div className="relative">
-                                <Link size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                                <Link size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
                                 <input
                                     type="url"
                                     value={data.creative.destinationUrl}
                                     onChange={(e) => updateData({ creative: { ...data.creative, destinationUrl: e.target.value } })}
                                     placeholder="https://yourwebsite.com/landing-page"
-                                    className="w-full pl-10 pr-4 py-3 bg-black/40 border border-gray-800 rounded-lg font-mono focus:border-[#00f0ff]/50 focus:outline-none"
+                                    className="w-full pl-10 pr-4 py-3 bg-sheet border border-rule rounded-lg focus:border-rule focus:outline-none"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-mono text-gray-400 mb-2">Call to Action</label>
+                            <label className="block text-sm text-ink-soft mb-2">Call to Action</label>
                             <div className="flex flex-wrap gap-2">
                                 {CTA_OPTIONS.map((cta) => (
                                     <button
                                         key={cta}
                                         onClick={() => updateData({ creative: { ...data.creative, callToAction: cta } })}
-                                        className={`px-3 py-1.5 rounded-lg font-mono text-xs transition-all ${data.creative.callToAction === cta
-                                            ? 'bg-[#ff00ff]/20 text-[#ff00ff] border border-[#ff00ff]/30'
-                                            : 'bg-black/30 border border-gray-800 hover:border-gray-600'
+                                        className={`px-3 py-1.5 rounded-lg text-xs transition-all ${data.creative.callToAction === cta
+                                            ? 'bg-signal/20 text-ink-soft border border-rule'
+                                            : 'bg-sheet border border-rule hover:border-rule'
                                             }`}
                                     >
                                         {cta}
@@ -630,17 +630,17 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                         </div>
 
                         {/* Ad Preview */}
-                        <div className="bg-black/30 rounded-xl p-4 border border-gray-800">
-                            <h4 className="text-xs font-mono text-gray-500 mb-3">PREVIEW</h4>
-                            <div className="bg-white/5 rounded-lg p-4">
-                                <p className="font-bold text-white">{data.creative.headline || 'Your headline here'}</p>
-                                <p className="text-gray-400 text-sm mt-2 whitespace-pre-wrap">
+                        <div className="bg-sheet rounded-xl p-4 border border-rule">
+                            <h4 className="text-xs text-ink-soft mb-3">PREVIEW</h4>
+                            <div className="bg-muted rounded-lg p-4">
+                                <p className="font-bold text-ink">{data.creative.headline || 'Your headline here'}</p>
+                                <p className="text-ink-soft text-sm mt-2 whitespace-pre-wrap">
                                     {data.creative.primaryText || 'Your ad copy will appear here...'}
                                 </p>
                                 {data.creative.destinationUrl && (
-                                    <p className="text-[#00f0ff] text-xs mt-2 truncate">{data.creative.destinationUrl}</p>
+                                    <p className="text-ink text-xs mt-2 truncate">{data.creative.destinationUrl}</p>
                                 )}
-                                <button className="mt-3 px-4 py-1.5 bg-[#00f0ff] text-black font-mono text-sm rounded">
+                                <button className="mt-3 px-4 py-1.5 bg-signal text-black text-sm rounded">
                                     {data.creative.callToAction}
                                 </button>
                             </div>
@@ -652,14 +652,14 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                 {STEPS[currentStep].id === 'review' && (
                     <div className="space-y-6">
                         <div>
-                            <h2 className="text-xl font-mono font-bold mb-2">Review Campaign</h2>
-                            <p className="text-gray-500 text-sm">Check everything before launching</p>
+                            <h2 className="text-xl font-bold mb-2">Review Campaign</h2>
+                            <p className="text-ink-soft text-sm">Check everything before launching</p>
                         </div>
 
                         {error && (
-                            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-start gap-3">
-                                <AlertCircle size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
-                                <p className="text-red-400 text-sm">{error}</p>
+                            <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 flex items-start gap-3">
+                                <AlertCircle size={20} className="text-destructive flex-shrink-0 mt-0.5" />
+                                <p className="text-destructive text-sm">{error}</p>
                             </div>
                         )}
 
@@ -673,13 +673,13 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                             </ReviewSection>
 
                             <ReviewSection title="Campaign">
-                                <p className="font-mono">{data.name}</p>
-                                <p className="text-sm text-gray-500">{OBJECTIVES.find(o => o.value === data.objective)?.label}</p>
+                                <p className="">{data.name}</p>
+                                <p className="text-sm text-ink-soft">{OBJECTIVES.find(o => o.value === data.objective)?.label}</p>
                             </ReviewSection>
 
                             <ReviewSection title="Budget">
-                                <p className="font-mono">${data.budget.amount.toLocaleString()} / {data.budget.type}</p>
-                                <p className="text-sm text-gray-500">
+                                <p className="">${data.budget.amount.toLocaleString()} / {data.budget.type}</p>
+                                <p className="text-sm text-ink-soft">
                                     {data.schedule.start} to {data.schedule.end}
                                 </p>
                             </ReviewSection>
@@ -687,26 +687,26 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                             <ReviewSection title="Targeting">
                                 <p className="text-sm">Age: {data.targeting.ageMin}-{data.targeting.ageMax}</p>
                                 {(data.targeting.interests?.length ?? 0) > 0 && (
-                                    <p className="text-sm text-gray-500">
+                                    <p className="text-sm text-ink-soft">
                                         Interests: {data.targeting.interests?.join(', ')}
                                     </p>
                                 )}
                             </ReviewSection>
 
                             <ReviewSection title="Creative">
-                                <p className="font-mono">{data.creative.headline}</p>
-                                <p className="text-sm text-gray-500 line-clamp-2">{data.creative.primaryText}</p>
+                                <p className="">{data.creative.headline}</p>
+                                <p className="text-sm text-ink-soft line-clamp-2">{data.creative.primaryText}</p>
                             </ReviewSection>
                         </div>
                     </div>
                 )}
 
                 {/* Navigation */}
-                <div className="flex justify-between mt-8 pt-6 border-t border-gray-800">
+                <div className="flex justify-between mt-8 pt-6 border-t border-rule">
                     <button
                         onClick={() => setCurrentStep(prev => prev - 1)}
                         disabled={currentStep === 0}
-                        className="flex items-center gap-2 px-4 py-2 font-mono text-sm text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-ink-soft hover:text-ink disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                         <ChevronLeft size={16} />
                         Back
@@ -716,7 +716,7 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                         <button
                             onClick={() => setCurrentStep(prev => prev + 1)}
                             disabled={!canProceed()}
-                            className="flex items-center gap-2 px-6 py-2 bg-[#00f0ff] text-black font-mono text-sm font-bold rounded-lg hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                            className="flex items-center gap-2 px-6 py-2 bg-signal text-black text-sm font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                         >
                             Continue
                             <ChevronRight size={16} />
@@ -725,7 +725,7 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
                         <button
                             onClick={handleSubmit}
                             disabled={isSubmitting}
-                            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-[#ff00ff] to-[#00f0ff] text-black font-mono text-sm font-bold rounded-lg hover:shadow-[0_0_20px_rgba(255,0,255,0.4)] disabled:opacity-50 transition-all"
+                            className="flex items-center gap-2 px-6 py-2 bg-signal text-black text-sm font-bold rounded-lg disabled:opacity-50 transition-all"
                         >
                             {isSubmitting ? (
                                 <>
@@ -748,8 +748,8 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
 
 function ReviewSection({ title, children }: { title: string; children: React.ReactNode }) {
     return (
-        <div className="bg-black/30 rounded-lg p-4 border border-gray-800">
-            <h4 className="text-xs font-mono text-gray-500 mb-2">{title.toUpperCase()}</h4>
+        <div className="bg-sheet rounded-lg p-4 border border-rule">
+            <h4 className="text-xs text-ink-soft mb-2">{title.toUpperCase()}</h4>
             {children}
         </div>
     );

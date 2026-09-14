@@ -209,32 +209,32 @@ export function AIStrategyImport({ apiKey, connectedPlatforms, onClose, onImport
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                className="absolute inset-0 bg-sheet backdrop-"
                 onClick={onClose}
             />
 
             {/* Modal */}
-            <div className="relative bg-[#0a0a0a] border border-[#00f0ff]/30 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-[0_0_60px_rgba(0,240,255,0.15)]">
+            <div className="relative bg-[#0a0a0a] border border-rule rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-[#00f0ff]/20">
+                <div className="flex items-center justify-between p-6 border-b border-rule">
                     <div className="flex items-center gap-3">
                         <div className="relative">
-                            <div className="absolute inset-0 bg-[#ff00ff] blur-lg opacity-30"></div>
-                            <div className="relative bg-black/50 p-2 rounded-lg border border-[#ff00ff]/50">
-                                <Zap size={20} className="text-[#ff00ff]" />
+                            <div className="absolute inset-0 bg-signal opacity-30"></div>
+                            <div className="relative bg-sheet p-2 rounded-lg border border-rule">
+                                <Zap size={20} className="text-ink" />
                             </div>
                         </div>
                         <div>
-                            <h2 className="font-mono font-bold text-lg">AI Strategy Import</h2>
-                            <p className="text-xs text-gray-500">Convert AI strategies to live campaigns</p>
+                            <h2 className="font-bold text-lg">AI Strategy Import</h2>
+                            <p className="text-xs text-ink">Convert AI strategies to live campaigns</p>
                         </div>
                     </div>
                     <button
                         title="Close"
                         onClick={onClose}
-                        className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                        className="p-2 hover:bg-muted rounded-lg transition-colors"
                     >
-                        <X size={20} className="text-gray-400" />
+                        <X size={20} className="text-ink" />
                     </button>
                 </div>
 
@@ -244,9 +244,9 @@ export function AIStrategyImport({ apiKey, connectedPlatforms, onClose, onImport
                         local parser and advances to review, so the warning has to
                         stay visible there too. */}
                     {error && (
-                        <div className="mb-6 bg-red-500/10 border border-red-500/30 rounded-lg p-3 flex items-start gap-2">
-                            <AlertCircle size={16} className="text-red-500 shrink-0 mt-0.5" />
-                            <p className="text-sm text-red-400">{error}</p>
+                        <div className="mb-6 bg-destructive/10 border border-destructive/30 rounded-lg p-3 flex items-start gap-2">
+                            <AlertCircle size={16} className="text-destructive shrink-0 mt-0.5" />
+                            <p className="text-sm text-destructive">{error}</p>
                         </div>
                     )}
 
@@ -254,7 +254,7 @@ export function AIStrategyImport({ apiKey, connectedPlatforms, onClose, onImport
                     {step === 'input' && (
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-mono text-gray-400 mb-2">
+                                <label className="block text-sm text-ink mb-2">
                                     Paste your AI-generated marketing strategy
                                 </label>
                                 <textarea
@@ -270,15 +270,15 @@ Headlines:
 - Exclusive Deals Inside
 Ad Copy: Discover our curated collection..."
                                     rows={12}
-                                    className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-xl font-mono text-sm focus:border-[#00f0ff]/50 focus:outline-none resize-none placeholder:text-gray-600"
+                                    className="w-full px-4 py-3 bg-sheet border border-rule rounded-xl text-sm focus:border-rule focus:outline-none resize-none placeholder:text-ink"
                                 />
                             </div>
 
-                            <div className="flex items-center gap-4 p-4 bg-[#ff00ff]/5 border border-[#ff00ff]/20 rounded-xl">
-                                <FileText size={24} className="text-[#ff00ff]" />
+                            <div className="flex items-center gap-4 p-4 bg-signal/5 border border-rule rounded-xl">
+                                <FileText size={24} className="text-ink" />
                                 <div className="flex-1">
-                                    <p className="font-mono text-sm">Supported Formats</p>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-sm">Supported Formats</p>
+                                    <p className="text-xs text-ink">
                                         ChatGPT, Claude, Gemini outputs • Marketing plans • Campaign briefs
                                     </p>
                                 </div>
@@ -287,7 +287,7 @@ Ad Copy: Discover our curated collection..."
                             <button
                                 onClick={analyzeStrategy}
                                 disabled={isAnalyzing || !strategyText.trim()}
-                                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#ff00ff] to-[#00f0ff] text-black font-mono font-bold rounded-xl hover:shadow-[0_0_30px_rgba(255,0,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-signal text-black font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                             >
                                 {isAnalyzing ? (
                                     <>
@@ -307,28 +307,28 @@ Ad Copy: Discover our curated collection..."
                     {/* Review Step */}
                     {step === 'review' && parsedStrategy && (
                         <div className="space-y-6">
-                            <div className="bg-[#39ff14]/10 border border-[#39ff14]/30 rounded-xl p-4 flex items-center gap-3">
-                                <CheckCircle2 size={20} className="text-[#39ff14]" />
-                                <p className="font-mono text-sm text-[#39ff14]">
+                            <div className="bg-positive/10 border border-positive/30 rounded-xl p-4 flex items-center gap-3">
+                                <CheckCircle2 size={20} className="text-positive" />
+                                <p className="text-sm text-positive">
                                     {error ? 'Strategy parsed locally - please review' : 'Strategy analyzed successfully!'}
                                 </p>
                             </div>
 
                             {/* Campaign Name */}
                             <div>
-                                <label className="block text-xs font-mono text-gray-500 mb-1">CAMPAIGN NAME</label>
+                                <label className="block text-xs text-ink mb-1">CAMPAIGN NAME</label>
                                 <input
                                     title="Campaign Name"
                                     type="text"
                                     value={parsedStrategy.name}
                                     onChange={(e) => setParsedStrategy({ ...parsedStrategy, name: e.target.value })}
-                                    className="w-full px-4 py-2 bg-black/40 border border-gray-800 rounded-lg font-mono focus:border-[#00f0ff]/50 focus:outline-none"
+                                    className="w-full px-4 py-2 bg-sheet border border-rule rounded-lg focus:border-rule focus:outline-none"
                                 />
                             </div>
 
                             {/* Platform Selection */}
                             <div>
-                                <label className="block text-xs font-mono text-gray-500 mb-2">SELECT PLATFORMS</label>
+                                <label className="block text-xs text-ink mb-2">SELECT PLATFORMS</label>
                                 <div className="flex flex-wrap gap-2">
                                     {(Object.keys(platformInfo) as AdPlatform[]).map(platform => {
                                         const info = platformInfo[platform];
@@ -340,31 +340,31 @@ Ad Copy: Discover our curated collection..."
                                                 onClick={() => togglePlatform(platform)}
                                                 title={isConnected ? undefined : 'Not connected - campaign will be saved as a local draft'}
                                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${isSelected
-                                                        ? 'bg-[#00f0ff]/20 border-[#00f0ff]/50 text-[#00f0ff]'
-                                                        : 'bg-black/30 border-gray-800 text-gray-400 hover:border-gray-600'
+                                                        ? 'bg-signal/20 border-rule text-ink'
+                                                        : 'bg-sheet border-rule text-ink-soft hover:border-rule'
                                                     }`}
                                             >
                                                 <span className="text-lg">{info.icon}</span>
-                                                <span className="font-mono text-sm">{info.name}</span>
+                                                <span className="text-sm">{info.name}</span>
                                                 {!isConnected && (
-                                                    <span className="text-[10px] font-mono text-yellow-500/80 uppercase">draft</span>
+                                                    <span className="text-[10px] text-working uppercase">draft</span>
                                                 )}
                                             </button>
                                         );
                                     })}
                                 </div>
                                 {connectedPlatforms.size === 0 && (
-                                    <p className="text-sm text-yellow-500 mt-2">No platforms connected - campaigns will be imported as local drafts you can review here.</p>
+                                    <p className="text-sm text-working mt-2">No platforms connected - campaigns will be imported as local drafts you can review here.</p>
                                 )}
                             </div>
 
                             {/* Extracted Content */}
                             {parsedStrategy.headlines.length > 0 && (
                                 <div>
-                                    <label className="block text-xs font-mono text-gray-500 mb-2">EXTRACTED HEADLINES</label>
+                                    <label className="block text-xs text-ink-soft mb-2">EXTRACTED HEADLINES</label>
                                     <div className="space-y-2">
                                         {parsedStrategy.headlines.map((headline, i) => (
-                                            <div key={i} className="px-4 py-2 bg-black/30 border border-gray-800 rounded-lg font-mono text-sm">
+                                            <div key={i} className="px-4 py-2 bg-sheet border border-rule rounded-lg text-sm">
                                                 {headline}
                                             </div>
                                         ))}
@@ -374,10 +374,10 @@ Ad Copy: Discover our curated collection..."
 
                             {parsedStrategy.keywords.length > 0 && (
                                 <div>
-                                    <label className="block text-xs font-mono text-gray-500 mb-2">KEYWORDS</label>
+                                    <label className="block text-xs text-ink-soft mb-2">KEYWORDS</label>
                                     <div className="flex flex-wrap gap-2">
                                         {parsedStrategy.keywords.map((keyword, i) => (
-                                            <span key={i} className="px-3 py-1 bg-[#ff00ff]/20 text-[#ff00ff] rounded-full text-xs font-mono">
+                                            <span key={i} className="px-3 py-1 bg-signal/20 text-ink-soft rounded-full text-xs">
                                                 {keyword}
                                             </span>
                                         ))}
@@ -389,14 +389,14 @@ Ad Copy: Discover our curated collection..."
                             <div className="flex gap-3 pt-4">
                                 <button
                                     onClick={() => setStep('input')}
-                                    className="flex-1 px-4 py-3 border border-gray-800 text-gray-400 font-mono rounded-xl hover:bg-white/5 transition-colors"
+                                    className="flex-1 px-4 py-3 border border-rule text-ink-soft rounded-xl hover:bg-muted transition-colors"
                                 >
                                     Back
                                 </button>
                                 <button
                                     onClick={handleImport}
                                     disabled={selectedPlatforms.size === 0}
-                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#ff00ff] to-[#00f0ff] text-black font-mono font-bold rounded-xl hover:shadow-[0_0_30px_rgba(255,0,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-signal text-black font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                 >
                                     Create Campaigns
                                     <ChevronRight size={18} />
@@ -409,11 +409,11 @@ Ad Copy: Discover our curated collection..."
                     {step === 'complete' && (
                         <div className="text-center py-12">
                             <div className="relative inline-block mb-6">
-                                <div className="absolute inset-0 bg-[#39ff14] blur-xl opacity-30 animate-pulse"></div>
-                                <CheckCircle2 size={64} className="relative text-[#39ff14]" />
+                                <div className="absolute inset-0 bg-positive opacity-30 animate-pulse"></div>
+                                <CheckCircle2 size={64} className="relative text-positive" />
                             </div>
-                            <h3 className="font-mono font-bold text-xl mb-2">Campaigns Created!</h3>
-                            <p className="text-gray-500">
+                            <h3 className="font-bold text-xl mb-2">Campaigns Created!</h3>
+                            <p className="text-ink-soft">
                                 {selectedPlatforms.size} campaign draft{selectedPlatforms.size > 1 ? 's' : ''} ready for review
                             </p>
                         </div>

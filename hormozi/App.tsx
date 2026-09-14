@@ -16,10 +16,10 @@ interface AppProps {
 
 const Dashboard: React.FC<{ onNavigate: (s: AppSection) => void }> = ({ onNavigate }) => {
   const stats = [
-    { label: 'Mindset', value: 'Missionary', icon: ICONS.Fear, color: 'text-blue-400' },
-    { label: 'Asset', icon: ICONS.Mentor, value: 'Brand Mosaic', color: 'text-purple-400' },
-    { label: 'Edge', value: '3Ps Aligned', icon: ICONS.Idea, color: 'text-emerald-400' },
-    { label: 'Strategy', value: 'Compounding', icon: ICONS.Cycle, color: 'text-red-400' },
+    { label: 'Mindset', value: 'Missionary', icon: ICONS.Fear, color: 'text-ink' },
+    { label: 'Asset', icon: ICONS.Mentor, value: 'Brand Mosaic', color: 'text-ink' },
+    { label: 'Edge', value: '3Ps Aligned', icon: ICONS.Idea, color: 'text-positive' },
+    { label: 'Strategy', value: 'Compounding', icon: ICONS.Cycle, color: 'text-destructive' },
   ];
 
   const cards = [
@@ -34,16 +34,16 @@ const Dashboard: React.FC<{ onNavigate: (s: AppSection) => void }> = ({ onNaviga
       <header className="max-w-3xl">
         <h1 className="text-6xl font-black mb-6 tracking-tighter leading-none">MINDSET <span className="gradient-text">OS</span></h1>
         <h3 className="text-2xl font-bold mb-4">Features are commoditized. Narrative is defensible.</h3>
-        <p className="text-lg text-neutral-400 leading-relaxed">
-          The ultimate control center for building <span className="text-white font-bold">Enterprise Value</span> through authentic narrative and unwavering focus. Move from logic-driven mercenary to obsession-driven missionary.
+        <p className="text-lg text-ink-soft leading-relaxed">
+          The ultimate control center for building <span className="text-ink font-bold">Enterprise Value</span> through authentic narrative and unwavering focus. Move from logic-driven mercenary to obsession-driven missionary.
         </p>
       </header>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
-          <div key={i} className="glass p-6 rounded-3xl border border-white/5 flex flex-col items-center justify-center text-center group hover:border-white/20 transition-all cursor-default">
+          <div key={i} className="glass p-6 rounded-3xl border border-rule flex flex-col items-center justify-center text-center group hover:border-rule transition-all cursor-default">
             <stat.icon className={`w-8 h-8 mb-3 ${stat.color} group-hover:scale-110 transition-transform`} />
-            <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{stat.label}</div>
+            <div className="text-[10px] font-bold text-ink0 uppercase">{stat.label}</div>
             <div className="text-xl font-bold">{stat.value}</div>
           </div>
         ))}
@@ -54,31 +54,31 @@ const Dashboard: React.FC<{ onNavigate: (s: AppSection) => void }> = ({ onNaviga
           <button
             key={i}
             onClick={() => onNavigate(card.section)}
-            className="group glass p-10 rounded-[2.5rem] border border-white/5 text-left hover:border-white/20 hover:bg-white/5 transition-all duration-500 relative overflow-hidden"
+            className="group glass p-10 rounded-[2.5rem] border border-rule text-left hover:border-rule hover:bg-muted transition-all duration-500 relative overflow-hidden"
           >
-            <div className="absolute -right-4 -top-4 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-all"></div>
-            <div className="bg-neutral-800/80 w-12 h-12 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="absolute -right-4 -top-4 w-32 h-32 bg-muted rounded-full group-hover:bg-muted transition-all"></div>
+            <div className="bg-sheet w-12 h-12 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-signal transition-colors">
+              <svg className="w-5 h-5 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </div>
             <h3 className="text-2xl font-bold mb-2 group-hover:translate-x-1 transition-transform">{card.title}</h3>
-            <p className="text-neutral-500 group-hover:text-neutral-300 transition-colors">{card.desc}</p>
+            <p className="text-ink0 group-hover:text-ink transition-colors">{card.desc}</p>
           </button>
         ))}
       </div>
 
-      <div className="glass p-10 rounded-[3rem] border border-red-500/20 bg-gradient-to-br from-red-500/10 to-transparent doom-loop-glow">
+      <div className="glass p-10 rounded-[3rem] border border-destructive/30 bg-muted to-transparent doom-loop-glow">
         <div className="flex flex-col md:flex-row gap-8 items-center">
           <div className="flex-1">
-            <h3 className="text-3xl font-black text-white mb-4 italic">"Mercenaries time the market. Missionaries build the future."</h3>
-            <p className="text-neutral-300 leading-relaxed text-lg">
-              The goal is to build an audience interested in <span className="text-red-400 font-bold">you for being you</span>, who will buy your (often commoditized) products as a result of that affinity.
+            <h3 className="text-3xl font-black text-ink mb-4 italic">"Mercenaries time the market. Missionaries build the future."</h3>
+            <p className="text-ink leading-relaxed text-lg">
+              The goal is to build an audience interested in <span className="text-destructive font-bold">you for being you</span>, who will buy your (often commoditized) products as a result of that affinity.
             </p>
           </div>
           <button
             onClick={() => onNavigate(AppSection.BRAND_MOSAIC)}
-            className="px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black transition-all shadow-xl shadow-blue-900/40 uppercase tracking-tighter"
+            className="px-10 py-5 bg-signal hover:bg-signal text-primary-foreground rounded-2xl font-black transition-all uppercase tracking-tighter"
           >
             Audit Your Narrative
           </button>

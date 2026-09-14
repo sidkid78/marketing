@@ -22,12 +22,12 @@ const CodeBlock: React.FC<{ language: string, code: string }> = ({ language, cod
     };
 
     return (
-        <div className="my-8 rounded border border-[#00f0ff]/20 bg-black/50 group relative font-mono text-sm not-prose shadow-lg shadow-black/40">
+        <div className="my-8 rounded border border-rule bg-sheet group relative text-sm not-prose">
             {/* Header with technical look */}
-            <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/5">
+            <div className="flex items-center justify-between px-4 py-2 bg-muted border-b border-rule">
                 <div className="flex items-center gap-2">
-                    <Terminal size={14} className="text-[#00f0ff]" />
-                    <span className="text-[10px] font-bold text-[#00f0ff] uppercase tracking-wider">
+                    <Terminal size={14} className="text-ink" />
+                    <span className="text-[10px] font-bold text-ink uppercase">
                         {language || 'TEXT'}
                     </span>
                 </div>
@@ -35,8 +35,8 @@ const CodeBlock: React.FC<{ language: string, code: string }> = ({ language, cod
                     onClick={handleCopy}
                     className={`flex items-center gap-1.5 px-2 py-1 rounded transition-all duration-200 border border-transparent
                         ${copied
-                            ? 'text-[#39ff14]'
-                            : 'text-gray-400 hover:text-white'
+                            ? 'text-positive'
+                            : 'text-ink-soft hover:text-ink'
                         }`}
                 >
                     {copied ? <Check size={14} strokeWidth={3} /> : <Copy size={14} />}
@@ -45,7 +45,7 @@ const CodeBlock: React.FC<{ language: string, code: string }> = ({ language, cod
 
             {/* Code Content */}
             <div className="p-5 overflow-x-auto custom-scrollbar">
-                <pre className="text-slate-300 font-mono leading-relaxed text-[13px]">
+                <pre className="text-ink leading-relaxed text-[13px]">
                     <code>{code}</code>
                 </pre>
             </div>
@@ -58,10 +58,10 @@ const formatInline = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*|`.*?`)/g);
     return parts.map((part, index) => {
         if (part.startsWith('**') && part.endsWith('**')) {
-            return <strong key={index} className="font-bold text-white">{part.slice(2, -2)}</strong>;
+            return <strong key={index} className="font-bold text-ink">{part.slice(2, -2)}</strong>;
         }
         if (part.startsWith('`') && part.endsWith('`')) {
-            return <code key={index} className="bg-white/10 text-[#ff00ff] font-mono text-[0.9em] px-1.5 py-0.5 rounded border border-white/10 mx-0.5">{part.slice(1, -1)}</code>;
+            return <code key={index} className="bg-muted text-ink-soft text-[0.9em] px-1.5 py-0.5 rounded border border-rule mx-0.5">{part.slice(1, -1)}</code>;
         }
         return part;
     });
@@ -72,7 +72,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
     const parts = content.split(/(```(?:[\w-]*)\s*[\s\S]*?```)/g);
 
     return (
-        <div className="text-slate-300 leading-relaxed space-y-4">
+        <div className="text-ink leading-relaxed space-y-4">
             {parts.map((part, i) => {
                 // Check if this part is a code block
                 const codeMatch = part.match(/^```([\w-]*)\s*([\s\S]*?)```$/);
@@ -91,19 +91,19 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
 
                             // Headings
                             if (trimmed.startsWith('# ')) {
-                                return <h1 key={bIdx} className="text-3xl font-bold text-white mt-10 mb-6 pb-2 border-b border-white/10 tracking-tight">{formatInline(trimmed.replace('# ', ''))}</h1>;
+                                return <h1 key={bIdx} className="text-3xl font-bold text-ink mt-10 mb-6 pb-2 border-b border-rule tracking-tight">{formatInline(trimmed.replace('# ', ''))}</h1>;
                             }
                             if (trimmed.startsWith('## ')) {
-                                return <h2 key={bIdx} className="text-2xl font-bold text-white mt-8 mb-4 flex items-center gap-2"><span className="text-[#00f0ff] text-sm">##</span> {formatInline(trimmed.replace('## ', ''))}</h2>;
+                                return <h2 key={bIdx} className="text-2xl font-bold text-ink mt-8 mb-4 flex items-center gap-2"><span className="text-ink text-sm">##</span> {formatInline(trimmed.replace('## ', ''))}</h2>;
                             }
                             if (trimmed.startsWith('### ')) {
-                                return <h3 key={bIdx} className="text-xl font-bold text-slate-100 mt-6 mb-3">{formatInline(trimmed.replace('### ', ''))}</h3>;
+                                return <h3 key={bIdx} className="text-xl font-bold text-ink mt-6 mb-3">{formatInline(trimmed.replace('### ', ''))}</h3>;
                             }
 
                             // Blockquotes
                             if (trimmed.startsWith('> ')) {
                                 return (
-                                    <blockquote key={bIdx} className="border-l-4 border-[#00f0ff] pl-4 py-2 my-6 text-slate-400 italic bg-white/5 rounded-r shadow-sm">
+                                    <blockquote key={bIdx} className="border-l-4 border-rule pl-4 py-2 my-6 text-ink-soft italic bg-muted rounded-r">
                                         {formatInline(trimmed.replace(/^> /gm, ''))}
                                     </blockquote>
                                 );
@@ -112,9 +112,9 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
                             // Unordered List (- or *)
                             if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
                                 return (
-                                    <ul key={bIdx} className="list-disc pl-5 mb-4 space-y-2 marker:text-[#00f0ff]">
+                                    <ul key={bIdx} className="list-disc pl-5 mb-4 space-y-2 marker:text-ink">
                                         {trimmed.split('\n').map((line, lIdx) => (
-                                            <li key={lIdx} className="pl-1 text-slate-300">{formatInline(line.replace(/^[-*] /, ''))}</li>
+                                            <li key={lIdx} className="pl-1 text-ink">{formatInline(line.replace(/^[-*] /, ''))}</li>
                                         ))}
                                     </ul>
                                 );
@@ -123,7 +123,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
                             // Numbered List
                             if (/^\d+\./.test(trimmed)) {
                                 return (
-                                    <ol key={bIdx} className="list-decimal pl-5 mb-4 space-y-2 marker:text-[#00f0ff] text-slate-300">
+                                    <ol key={bIdx} className="list-decimal pl-5 mb-4 space-y-2 marker:text-ink text-ink">
                                         {trimmed.split('\n').map((line, lIdx) => (
                                             <li key={lIdx} className="pl-1">{formatInline(line.replace(/^\d+\.\s*/, ''))}</li>
                                         ))}
@@ -159,10 +159,10 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
 
     if (!research) {
         return (
-            <div className="h-full flex items-center justify-center text-gray-500 bg-black/40 rounded-xl border border-white/5 min-h-[400px]">
+            <div className="h-full flex items-center justify-center text-ink-soft bg-sheet rounded-xl border border-rule min-h-[400px]">
                 <div className="text-center">
-                    <Cpu className="w-16 h-16 mx-auto mb-4 opacity-20 animate-pulse text-[#00f0ff]" />
-                    <p className="font-mono text-sm tracking-widest uppercase text-[#00f0ff]">System Standby</p>
+                    <Cpu className="w-16 h-16 mx-auto mb-4 opacity-20 animate-pulse text-ink" />
+                    <p className="text-sm uppercase text-ink">System Standby</p>
                     <p className="text-xs mt-2 opacity-50">Initiate pipeline to generate output</p>
                 </div>
             </div>
@@ -178,12 +178,12 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
     ];
 
     return (
-        <div className="bg-black/40 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden flex flex-col h-full min-h-[600px] shadow-2xl relative">
+        <div className="bg-sheet backdrop- rounded-xl border border-rule overflow-hidden flex flex-col h-full min-h-[600px] relative">
             {/* Decorative Top Border */}
-            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#00f0ff]/50 to-transparent"></div>
+            <div className="h-px w-full bg-rule"></div>
 
             {/* Header / Tabs */}
-            <div className="flex border-b border-white/10 bg-black/20 overflow-x-auto">
+            <div className="flex border-b border-rule bg-sheet overflow-x-auto">
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
                     return (
@@ -191,12 +191,12 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                             key={tab.id}
                             onClick={() => !tab.disabled && setActiveTab(tab.id as any)}
                             disabled={tab.disabled}
-                            className={`flex items-center gap-2 px-6 py-4 text-xs font-bold font-mono transition-all whitespace-nowrap tracking-wider
+                            className={`flex items-center gap-2 px-6 py-4 text-xs font-bold transition-all whitespace-nowrap
                                 ${activeTab === tab.id
-                                    ? 'bg-[#00f0ff]/10 text-[#00f0ff] border-b-2 border-[#00f0ff]'
+                                    ? 'bg-signal/10 text-ink border-b-2 border-rule'
                                     : tab.disabled
-                                        ? 'text-gray-700 cursor-not-allowed'
-                                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        ? 'text-ink cursor-not-allowed'
+                                        : 'text-ink-soft hover:text-ink hover:bg-muted'
                                 }`}
                         >
                             <Icon size={14} />
@@ -210,44 +210,44 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
             <div className="p-8 overflow-y-auto flex-1 bg-transparent">
                 {activeTab === 'research' && research && (
                     <div className="space-y-6 animate-in fade-in duration-500">
-                        <div className="bg-[#00f0ff]/10 p-6 rounded border border-[#00f0ff]/20 shadow-[0_0_20px_rgba(0,240,255,0.1)]">
-                            <h3 className="text-xs font-bold text-[#00f0ff] uppercase tracking-widest mb-3 flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-[#00f0ff] animate-pulse"></span>
+                        <div className="bg-signal/10 p-6 rounded border border-rule">
+                            <h3 className="text-xs font-bold text-ink uppercase mb-3 flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-signal animate-pulse"></span>
                                 Target Audience Analysis
                             </h3>
-                            <p className="text-cyan-100 leading-relaxed font-mono text-sm">{research.target_audience_analysis}</p>
+                            <p className="text-ink leading-relaxed text-sm">{research.target_audience_analysis}</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="bg-black/50 p-6 rounded border border-white/5">
-                                <h3 className="font-bold text-white mb-4 flex items-center gap-2 font-mono text-sm tracking-wide">
+                            <div className="bg-sheet p-6 rounded border border-rule">
+                                <h3 className="font-bold text-ink mb-4 flex items-center gap-2 text-sm tracking-wide">
                                     KEY_POINTS
                                 </h3>
                                 <ul className="space-y-3">
                                     {research.key_points.map((pt, i) => (
-                                        <li key={i} className="text-slate-300 flex gap-3 text-sm leading-relaxed">
-                                            <span className="text-[#ff00ff] font-bold">›</span>
+                                        <li key={i} className="text-ink flex gap-3 text-sm leading-relaxed">
+                                            <span className="text-ink font-bold">›</span>
                                             {pt}
                                         </li>
                                     ))}
                                 </ul>
                             </div>
                             <div className="space-y-6">
-                                <div className="bg-[#39ff14]/5 p-6 rounded border border-[#39ff14]/20">
-                                    <h3 className="font-bold text-[#39ff14] mb-4 flex items-center gap-2 font-mono text-sm tracking-wide">
+                                <div className="bg-positive/5 p-6 rounded border border-positive/30">
+                                    <h3 className="font-bold text-positive mb-4 flex items-center gap-2 text-sm tracking-wide">
                                         SEO_STRATEGY
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
                                         {research.seo_keywords.map((kw, i) => (
-                                            <span key={i} className="px-2 py-1 bg-[#39ff14]/10 text-[#39ff14] rounded text-[10px] font-mono border border-[#39ff14]/20">
+                                            <span key={i} className="px-2 py-1 bg-positive/10 text-positive rounded text-[10px] border border-positive/30">
                                                 #{kw}
                                             </span>
                                         ))}
                                     </div>
                                 </div>
-                                <div className="bg-white/5 p-6 rounded border border-white/10">
-                                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Recommended Angle</h3>
-                                    <p className="text-sm text-slate-300 italic leading-relaxed border-l-2 border-[#ff00ff] pl-3">"{research.recommended_angle}"</p>
+                                <div className="bg-muted p-6 rounded border border-rule">
+                                    <h3 className="text-xs font-bold text-ink uppercase mb-2">Recommended Angle</h3>
+                                    <p className="text-sm text-ink italic leading-relaxed border-l-2 border-rule pl-3">"{research.recommended_angle}"</p>
                                 </div>
                             </div>
                         </div>
@@ -256,41 +256,41 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
 
                 {activeTab === 'draft' && draft && (
                     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-500">
-                        <div className="text-center pb-8 border-b border-white/10">
-                            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{draft.title}</h1>
-                            {draft.subtitle && <p className="text-xl text-[#00f0ff] font-light">{draft.subtitle}</p>}
-                            <div className="mt-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-slate-400 text-xs font-medium uppercase tracking-wide border border-white/10">
+                        <div className="text-center pb-8 border-b border-rule">
+                            <h1 className="text-3xl md:text-4xl font-bold text-ink mb-3 tracking-tight">{draft.title}</h1>
+                            {draft.subtitle && <p className="text-xl text-ink font-light">{draft.subtitle}</p>}
+                            <div className="mt-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted text-ink text-xs font-medium uppercase tracking-wide border border-rule">
                                 <span>{draft.estimated_reading_time} min read</span>
                             </div>
                         </div>
 
-                        <div className="text-lg leading-loose text-slate-300 font-light border-l-4 border-[#00f0ff] pl-6 my-8 italic opacity-90">
+                        <div className="text-lg leading-loose text-ink font-light border-l-4 border-rule pl-6 my-8 italic opacity-90">
                             {draft.introduction}
                         </div>
 
                         {draft.main_sections.map((section, idx) => (
                             <div key={idx} className="mt-10">
-                                <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
-                                    <span className="text-gray-600 text-base font-mono">0{idx + 1}.</span>
+                                <h2 className="text-2xl font-bold text-ink mb-4 flex items-center gap-3">
+                                    <span className="text-ink text-base">0{idx + 1}.</span>
                                     {section.heading}
                                 </h2>
                                 <MarkdownRenderer content={section.content} />
                             </div>
                         ))}
 
-                        <div className="mt-16 p-8 bg-white/5 rounded border border-white/10">
-                            <h3 className="text-sm font-bold text-white mb-3 uppercase tracking-wider opacity-80 font-mono">Conclusion</h3>
-                            <p className="text-slate-300 leading-relaxed">{draft.conclusion}</p>
+                        <div className="mt-16 p-8 bg-muted rounded border border-rule">
+                            <h3 className="text-sm font-bold text-ink mb-3 uppercase opacity-80">Conclusion</h3>
+                            <p className="text-ink leading-relaxed">{draft.conclusion}</p>
                         </div>
                     </div>
                 )}
 
                 {activeTab === 'edits' && edits && (
                     <div className="space-y-8 animate-in fade-in duration-500">
-                        <div className="flex flex-col md:flex-row items-center justify-between bg-black/50 p-8 rounded border border-white/10 shadow-lg gap-6">
+                        <div className="flex flex-col md:flex-row items-center justify-between bg-sheet p-8 rounded border border-rule gap-6">
                             <div>
-                                <h3 className="text-xl font-bold text-white font-mono uppercase tracking-wider">Quality Score</h3>
-                                <p className="text-slate-500 mt-1 text-sm">Automated heuristic analysis.</p>
+                                <h3 className="text-xl font-bold text-ink uppercase">Quality Score</h3>
+                                <p className="text-ink0 mt-1 text-sm">Automated heuristic analysis.</p>
                             </div>
                             <div className="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
                                 <svg className="w-full h-full transform -rotate-90">
@@ -298,42 +298,42 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                                     <circle
                                         cx="48" cy="48" r="40"
                                         fill="transparent"
-                                        stroke={edits.overall_score > 80 ? '#39ff14' : edits.overall_score > 60 ? '#eab308' : '#ef4444'}
+                                        stroke={edits.overall_score > 80 ? 'var(--positive)' : edits.overall_score > 60 ? 'var(--working)' : 'var(--destructive)'}
                                         strokeWidth="8"
                                         strokeDasharray={`${2 * Math.PI * 40}`}
                                         strokeDashoffset={`${2 * Math.PI * 40 * (1 - edits.overall_score / 100)}`}
                                         strokeLinecap="round"
-                                        className="transition-all duration-1000 ease-out shadow-[0_0_15px_currentColor]"
+                                        className="transition-all duration-1000 ease-out"
                                     />
                                 </svg>
-                                <span className="absolute text-2xl font-bold text-white font-mono">{edits.overall_score}</span>
+                                <span className="absolute text-2xl font-bold text-ink">{edits.overall_score}</span>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div className="space-y-4">
-                                <h3 className="font-bold text-white flex items-center gap-2 font-mono text-sm tracking-wider">
-                                    <span className="w-1.5 h-1.5 rounded-sm bg-orange-500"></span>
+                                <h3 className="font-bold text-ink flex items-center gap-2 text-sm">
+                                    <span className="w-1.5 h-1.5 rounded-sm bg-working"></span>
                                     DETECTED_ISSUES
                                 </h3>
                                 {edits.clarity_issues.length === 0 ? (
-                                    <div className="p-6 bg-[#39ff14]/10 rounded border border-[#39ff14]/20 text-[#39ff14] flex items-center gap-3">
+                                    <div className="p-6 bg-positive/10 rounded border border-positive/30 text-positive flex items-center gap-3">
                                         <CheckCircle size={20} />
-                                        <p className="font-medium font-mono text-sm">OPTIMAL CLARITY ACHIEVED</p>
+                                        <p className="font-medium text-sm">OPTIMAL CLARITY ACHIEVED</p>
                                     </div>
                                 ) : (
                                     edits.clarity_issues.map((issue, i) => (
-                                        <div key={i} className="bg-white/5 p-5 rounded border border-white/10 hover:border-orange-500/50 transition-colors">
+                                        <div key={i} className="bg-muted p-5 rounded border border-rule hover:border-working/30 transition-colors">
                                             <div className="flex gap-2 items-start mb-2">
-                                                <span className="bg-orange-500/20 text-orange-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase font-mono border border-orange-500/20">Warning</span>
-                                                <p className="font-medium text-white text-sm">{issue.issue}</p>
+                                                <span className="bg-working/10 text-working text-[10px] font-bold px-2 py-0.5 rounded uppercase border border-working/30">Warning</span>
+                                                <p className="font-medium text-ink text-sm">{issue.issue}</p>
                                             </div>
-                                            <div className="pl-4 border-l-2 border-white/10 my-3">
-                                                <p className="text-slate-400 text-xs italic font-mono bg-black/20 p-2 rounded">"{issue.relevant_text_snippet}"</p>
+                                            <div className="pl-4 border-l-2 border-rule my-3">
+                                                <p className="text-ink text-xs italic bg-sheet p-2 rounded">"{issue.relevant_text_snippet}"</p>
                                             </div>
-                                            <div className="flex gap-2 items-start pt-2 border-t border-white/5">
-                                                <Sparkles size={14} className="text-[#00f0ff] mt-0.5" />
-                                                <p className="text-slate-300 text-sm"><span className="font-medium text-[#00f0ff]">Fix:</span> {issue.suggestion}</p>
+                                            <div className="flex gap-2 items-start pt-2 border-t border-rule">
+                                                <Sparkles size={14} className="text-ink mt-0.5" />
+                                                <p className="text-ink text-sm"><span className="font-medium text-ink">Fix:</span> {issue.suggestion}</p>
                                             </div>
                                         </div>
                                     ))
@@ -341,17 +341,17 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                             </div>
 
                             <div className="space-y-6">
-                                <div className="bg-white/5 p-6 rounded border border-white/10">
-                                    <h4 className="font-bold text-white mb-3 font-mono text-sm tracking-wider">STRUCTURE_ANALYSIS</h4>
-                                    <p className="text-slate-400 text-sm leading-relaxed">{edits.structure_feedback}</p>
+                                <div className="bg-muted p-6 rounded border border-rule">
+                                    <h4 className="font-bold text-ink mb-3 text-sm">STRUCTURE_ANALYSIS</h4>
+                                    <p className="text-ink text-sm leading-relaxed">{edits.structure_feedback}</p>
                                 </div>
-                                <div className="bg-white/5 p-6 rounded border border-white/10">
-                                    <h4 className="font-bold text-white mb-3 font-mono text-sm tracking-wider">TONE_VERIFICATION</h4>
+                                <div className="bg-muted p-6 rounded border border-rule">
+                                    <h4 className="font-bold text-ink mb-3 text-sm">TONE_VERIFICATION</h4>
                                     <div className="flex items-start gap-3">
-                                        <div className="p-2 bg-[#00f0ff]/10 text-[#00f0ff] rounded border border-[#00f0ff]/20">
+                                        <div className="p-2 bg-signal/10 text-ink rounded border border-rule">
                                             <Search size={16} />
                                         </div>
-                                        <p className="text-slate-400 text-sm leading-relaxed">{edits.tone_consistency_check}</p>
+                                        <p className="text-ink text-sm leading-relaxed">{edits.tone_consistency_check}</p>
                                     </div>
                                 </div>
                             </div>
@@ -361,24 +361,24 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
 
                 {activeTab === 'final' && final && (
                     <div className="max-w-4xl mx-auto animate-in fade-in duration-500">
-                        <div className="bg-gradient-to-r from-black to-[#00f0ff]/20 border border-white/10 rounded-xl p-8 mb-10 shadow-2xl relative overflow-hidden">
+                        <div className="bg-muted border border-rule rounded-xl p-8 mb-10 relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-4 opacity-10">
-                                <Sparkles size={100} className="text-white" />
+                                <Sparkles size={100} className="text-ink" />
                             </div>
                             <div className="relative z-10">
                                 <div className="flex gap-4 mb-6">
                                     <div className="flex-1">
-                                        <span className="text-[10px] font-bold text-[#00f0ff] uppercase tracking-widest mb-2 block font-mono">Published Title</span>
-                                        <p className="text-2xl font-bold text-white tracking-tight">{final.title}</p>
+                                        <span className="text-[10px] font-bold text-ink uppercase mb-2 block">Published Title</span>
+                                        <p className="text-2xl font-bold text-ink tracking-tight">{final.title}</p>
                                     </div>
                                 </div>
                                 <div className="mb-6">
-                                    <span className="text-[10px] font-bold text-[#00f0ff] uppercase tracking-widest mb-2 block font-mono">Meta Description</span>
-                                    <p className="text-slate-300 text-sm leading-relaxed border-l-2 border-white/20 pl-3">{final.meta_description}</p>
+                                    <span className="text-[10px] font-bold text-ink uppercase mb-2 block">Meta Description</span>
+                                    <p className="text-ink text-sm leading-relaxed border-l-2 border-rule pl-3">{final.meta_description}</p>
                                 </div>
                                 <div className="flex gap-2 flex-wrap">
                                     {final.tags.map((tag, i) => (
-                                        <span key={i} className="px-3 py-1 bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 transition-colors text-xs rounded-sm font-mono border border-white/10">
+                                        <span key={i} className="px-3 py-1 bg-muted text-ink hover:text-ink hover:bg-muted transition-colors text-xs rounded-sm border border-rule">
                                             #{tag}
                                         </span>
                                     ))}
@@ -395,8 +395,8 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                 {activeTab === 'gallery' && images.length > 0 && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-500">
                         {images.map((img, idx) => (
-                            <div key={idx} className="group relative rounded-xl overflow-hidden border border-white/10 bg-black/50 hover:border-[#00f0ff]/50 transition-all duration-300 shadow-lg">
-                                <div className="aspect-video w-full overflow-hidden bg-black relative">
+                            <div key={idx} className="group relative rounded-xl overflow-hidden border border-rule bg-sheet hover:border-rule transition-all duration-300">
+                                <div className="aspect-video w-full overflow-hidden bg-sheet relative">
                                     <img
                                         src={img.url}
                                         alt={`Generated visual ${idx + 1}`}
@@ -406,17 +406,17 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                                         <a
                                             href={img.url}
                                             download={`visual-${idx + 1}.png`}
-                                            className="bg-[#00f0ff] text-black font-bold px-4 py-2 rounded flex items-center gap-2 hover:bg-white transition-colors"
+                                            className="bg-signal text-black font-bold px-4 py-2 rounded flex items-center gap-2 hover:bg-white transition-colors"
                                         >
                                             <Download size={16} />
                                             Download
                                         </a>
                                     </div>
                                 </div>
-                                <div className="p-4 border-t border-white/5">
+                                <div className="p-4 border-t border-rule">
                                     <div className="flex items-start gap-3">
-                                        <span className="text-[#00f0ff] font-mono text-xs font-bold pt-1">0{idx + 1}</span>
-                                        <p className="text-slate-400 text-xs leading-relaxed font-mono">{img.prompt}</p>
+                                        <span className="text-ink text-xs font-bold pt-1">0{idx + 1}</span>
+                                        <p className="text-ink-soft text-xs leading-relaxed">{img.prompt}</p>
                                     </div>
                                 </div>
                             </div>

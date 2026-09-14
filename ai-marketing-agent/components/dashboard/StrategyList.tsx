@@ -56,7 +56,7 @@ ${kpisText}
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <PlatformIcon platform={s.platform} />
-                <span className="text-sm font-semibold text-ink-soft uppercase tracking-wider">{s.platform.replace('_', ' ')}</span>
+                <span className="text-sm font-semibold text-ink-soft uppercase">{s.platform.replace('_', ' ')}</span>
               </div>
               <p className="text-xs text-secondary font-semibold">{MARKETING_GOALS.find(g => g.id === s.goal)?.label}</p>
             </div>

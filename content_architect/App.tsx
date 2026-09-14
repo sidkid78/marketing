@@ -111,31 +111,31 @@ const App: React.FC<{ apiKey?: string }> = ({ apiKey }) => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col relative overflow-hidden bg-transparent selection:bg-[#00f0ff]/30">
+        <div className="min-h-screen flex flex-col relative overflow-hidden bg-transparent selection:bg-signal/30">
             {/* Header */}
-            <header className="bg-black/40 backdrop-blur-sm border-b border-[#00f0ff]/20">
+            <header className="bg-sheet backdrop- border-b border-rule">
                 <div className="px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="relative">
-                            <div className="absolute inset-0 bg-[#00f0ff] blur-xl opacity-30"></div>
-                            <div className="relative bg-black/50 p-2 rounded-lg border border-[#00f0ff]/50">
-                                <Layers size={20} className="text-[#00f0ff]" />
+                            <div className="absolute inset-0 bg-signal opacity-30"></div>
+                            <div className="relative bg-sheet p-2 rounded-lg border border-rule">
+                                <Layers size={20} className="text-ink" />
                             </div>
                         </div>
                         <div>
-                            <h1 className="text-lg font-bold font-mono">
-                                <span className="text-[#00f0ff]">AUTO</span>
-                                <span className="text-white">_</span>
-                                <span className="text-[#ff00ff]">CONTENT</span>
-                                <span className="text-white">_</span>
-                                <span className="text-[#00f0ff]">ARCHITECT</span>
-                                <span className="text-[#ff00ff] animate-pulse">_</span>
+                            <h1 className="text-lg font-bold">
+                                <span className="text-ink">AUTO</span>
+                                <span className="text-ink">_</span>
+                                <span className="text-ink-soft">CONTENT</span>
+                                <span className="text-ink">_</span>
+                                <span className="text-ink">ARCHITECT</span>
+                                <span className="text-ink-soft animate-pulse">_</span>
                             </h1>
-                            <p className="text-xs text-gray-500 font-mono">MULTI-STAGE AI CONTENT PIPELINE</p>
+                            <p className="text-xs text-ink-soft">MULTI-STAGE AI CONTENT PIPELINE</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-mono text-gray-500 bg-black/40 px-3 py-1.5 rounded-full border border-[#00f0ff]/20">
-                        <Terminal size={14} className="text-[#00f0ff]" />
+                    <div className="flex items-center gap-2 text-xs text-ink-soft bg-sheet px-3 py-1.5 rounded-full border border-rule">
+                        <Terminal size={14} className="text-ink" />
                         <span>◈ SYS.VERSION: v2.5.0</span>
                     </div>
                 </div>
@@ -145,8 +145,8 @@ const App: React.FC<{ apiKey?: string }> = ({ apiKey }) => {
 
                 {/* Left Column: Configuration & Status */}
                 <div className="lg:col-span-4 space-y-6 flex flex-col h-full">
-                    <div className="bg-black/40 backdrop-blur-sm rounded-xl border border-[#00f0ff]/20 p-5 shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-8 h-8 border-r border-t border-[#00f0ff]/30"></div>
+                    <div className="bg-sheet backdrop- rounded-xl border border-rule p-5 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-8 h-8 border-r border-t border-rule"></div>
                         <StageStepper currentStage={currentStage} />
                     </div>
 

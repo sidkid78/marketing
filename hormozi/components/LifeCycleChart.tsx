@@ -8,10 +8,10 @@ const LifeCycleChart: React.FC = () => {
     <div className="space-y-8">
       <header>
         <h2 className="text-4xl font-extrabold mb-2">The Entrepreneur Life Cycle</h2>
-        <p className="text-neutral-400">Every journey follows this emotional arc. The split at Phase 4 determines your life.</p>
+        <p className="text-ink-soft">Every journey follows this emotional arc. The split at Phase 4 determines your life.</p>
       </header>
 
-      <div className="glass rounded-3xl p-8 border border-white/5 h-[450px]">
+      <div className="glass rounded-3xl p-8 border border-rule h-[450px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={LIFE_CYCLE_DATA} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
             <defs>
@@ -39,20 +39,20 @@ const LifeCycleChart: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl bg-neutral-900 border border-white/5">
-          <h4 className="text-blue-400 font-bold mb-1 uppercase text-[10px] tracking-widest">Phase 1 & 2</h4>
-          <h3 className="text-lg font-bold mb-2 text-white">The Dive</h3>
-          <p className="text-sm text-neutral-400">You start with Uninformed Optimism. You end with Informed Pessimism—realizing the task is significantly more difficult than you thought.</p>
+        <div className="p-6 rounded-2xl bg-bench border border-rule">
+          <h4 className="text-ink font-bold mb-1 uppercase text-[10px]">Phase 1 & 2</h4>
+          <h3 className="text-lg font-bold mb-2 text-ink">The Dive</h3>
+          <p className="text-sm text-ink-soft">You start with Uninformed Optimism. You end with Informed Pessimism—realizing the task is significantly more difficult than you thought.</p>
         </div>
-        <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20">
-          <h4 className="text-red-400 font-bold mb-1 uppercase text-[10px] tracking-widest">Phase 3 & 4</h4>
-          <h3 className="text-lg font-bold mb-2 text-white">The Doom Loop Split</h3>
-          <p className="text-sm text-neutral-400">In the Valley of Despair, the "Woman in the Red Dress" appears. If you jump ship, you live the same 6 months for 20 years.</p>
+        <div className="p-6 rounded-2xl bg-destructive/10 border border-destructive/30">
+          <h4 className="text-destructive font-bold mb-1 uppercase text-[10px]">Phase 3 & 4</h4>
+          <h3 className="text-lg font-bold mb-2 text-ink">The Doom Loop Split</h3>
+          <p className="text-sm text-ink-soft">In the Valley of Despair, the "Woman in the Red Dress" appears. If you jump ship, you live the same 6 months for 20 years.</p>
         </div>
-        <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-          <h4 className="text-emerald-400 font-bold mb-1 uppercase text-[10px] tracking-widest">Phase 5 & 6</h4>
-          <h3 className="text-lg font-bold mb-2 text-white">The Ascent</h3>
-          <p className="text-sm text-neutral-400">Informed Optimism is mastery. You understand the challenges AND the solutions. Compounding finally begins.</p>
+        <div className="p-6 rounded-2xl bg-positive/10 border border-positive/30">
+          <h4 className="text-positive font-bold mb-1 uppercase text-[10px]">Phase 5 & 6</h4>
+          <h3 className="text-lg font-bold mb-2 text-ink">The Ascent</h3>
+          <p className="text-sm text-ink-soft">Informed Optimism is mastery. You understand the challenges AND the solutions. Compounding finally begins.</p>
         </div>
       </div>
     </div>

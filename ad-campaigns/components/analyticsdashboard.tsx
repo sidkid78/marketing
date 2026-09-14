@@ -89,23 +89,23 @@ export function AnalyticsDashboard({ campaigns, metrics, connectedPlatforms }: A
             {/* Header with Controls */}
             <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
                 <div>
-                    <h2 className="text-xl font-mono font-bold flex items-center gap-2">
-                        <BarChart3 size={20} className="text-[#00f0ff]" />
+                    <h2 className="text-xl font-bold flex items-center gap-2">
+                        <BarChart3 size={20} className="text-ink" />
                         Performance Analytics
                     </h2>
-                    <p className="text-gray-500 text-sm mt-1">Cross-platform campaign insights</p>
+                    <p className="text-ink-soft text-sm mt-1">Cross-platform campaign insights</p>
                 </div>
 
                 <div className="flex items-center gap-3">
                     {/* Date Range Selector */}
-                    <div className="flex bg-black/40 rounded-lg border border-gray-800 p-1">
+                    <div className="flex bg-sheet rounded-lg border border-rule p-1">
                         {(['7d', '14d', '30d', '90d'] as DateRange[]).map((range) => (
                             <button
                                 key={range}
                                 onClick={() => setDateRange(range)}
-                                className={`px-3 py-1.5 rounded font-mono text-xs transition-all ${dateRange === range
-                                        ? 'bg-[#00f0ff]/20 text-[#00f0ff]'
-                                        : 'text-gray-500 hover:text-white'
+                                className={`px-3 py-1.5 rounded text-xs transition-all ${dateRange === range
+                                        ? 'bg-signal/20 text-ink'
+                                        : 'text-ink-soft hover:text-ink'
                                     }`}
                             >
                                 {range}
@@ -117,7 +117,7 @@ export function AnalyticsDashboard({ campaigns, metrics, connectedPlatforms }: A
                     <select
                         value={selectedPlatform}
                         onChange={(e) => setSelectedPlatform(e.target.value as AdPlatform | 'all')}
-                        className="bg-black/40 border border-gray-800 rounded-lg px-3 py-1.5 font-mono text-sm focus:border-[#00f0ff]/50 focus:outline-none"
+                        className="bg-sheet border border-rule rounded-lg px-3 py-1.5 text-sm focus:border-rule focus:outline-none"
                     >
                         <option value="all">All Platforms</option>
                         {Array.from(connectedPlatforms).map((platform) => (
@@ -128,7 +128,7 @@ export function AnalyticsDashboard({ campaigns, metrics, connectedPlatforms }: A
                     </select>
 
                     {/* Export Button */}
-                    <button className="flex items-center gap-2 px-3 py-1.5 bg-black/40 border border-gray-800 rounded-lg font-mono text-xs text-gray-400 hover:text-white hover:border-gray-600 transition-all">
+                    <button className="flex items-center gap-2 px-3 py-1.5 bg-sheet border border-rule rounded-lg text-xs text-ink-soft hover:text-ink hover:border-rule transition-all">
                         <Download size={14} />
                         Export
                     </button>
@@ -169,30 +169,30 @@ export function AnalyticsDashboard({ campaigns, metrics, connectedPlatforms }: A
 
             {/* Secondary Metrics */}
             <div className="grid grid-cols-3 gap-4">
-                <div className="bg-black/40 rounded-xl border border-gray-800 p-4">
-                    <p className="text-xs font-mono text-gray-500 mb-1">AVG CTR</p>
-                    <p className="text-2xl font-mono font-bold text-[#00f0ff]">
+                <div className="bg-sheet rounded-xl border border-rule p-4">
+                    <p className="text-xs text-ink mb-1">AVG CTR</p>
+                    <p className="text-2xl font-bold text-ink">
                         {aggregateMetrics.avgCtr.toFixed(2)}%
                     </p>
                 </div>
-                <div className="bg-black/40 rounded-xl border border-gray-800 p-4">
-                    <p className="text-xs font-mono text-gray-500 mb-1">AVG CPC</p>
-                    <p className="text-2xl font-mono font-bold text-[#ff00ff]">
+                <div className="bg-sheet rounded-xl border border-rule p-4">
+                    <p className="text-xs text-ink mb-1">AVG CPC</p>
+                    <p className="text-2xl font-bold text-ink">
                         ${aggregateMetrics.avgCpc.toFixed(2)}
                     </p>
                 </div>
-                <div className="bg-black/40 rounded-xl border border-gray-800 p-4">
-                    <p className="text-xs font-mono text-gray-500 mb-1">AVG CPM</p>
-                    <p className="text-2xl font-mono font-bold text-yellow-500">
+                <div className="bg-sheet rounded-xl border border-rule p-4">
+                    <p className="text-xs text-ink mb-1">AVG CPM</p>
+                    <p className="text-2xl font-bold text-working">
                         ${aggregateMetrics.avgCpm.toFixed(2)}
                     </p>
                 </div>
             </div>
 
             {/* Platform Breakdown */}
-            <div className="bg-black/40 rounded-xl border border-[#00f0ff]/20 p-6">
-                <h3 className="text-lg font-mono font-bold mb-4 flex items-center gap-2">
-                    <div className="w-1 h-5 bg-[#00f0ff]"></div>
+            <div className="bg-sheet rounded-xl border border-rule p-6">
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                    <div className="w-1 h-5 bg-signal"></div>
                     Platform Performance
                 </h3>
 
@@ -207,21 +207,21 @@ export function AnalyticsDashboard({ campaigns, metrics, connectedPlatforms }: A
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <span className="text-xl">{platformIcons[platform as AdPlatform]}</span>
-                                            <span className="font-mono text-sm">{platform}</span>
+                                            <span className="text-sm">{platform}</span>
                                         </div>
-                                        <div className="flex items-center gap-6 text-sm font-mono">
-                                            <span className="text-gray-400">
+                                        <div className="flex items-center gap-6 text-sm">
+                                            <span className="text-ink">
                                                 ${data.spend.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                                             </span>
-                                            <span className="text-gray-500">
+                                            <span className="text-ink">
                                                 {formatNumber(data.impressions)} imp
                                             </span>
-                                            <span className="text-gray-500">
+                                            <span className="text-ink">
                                                 {formatNumber(data.clicks)} clicks
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="h-2 bg-black/40 rounded-full overflow-hidden">
+                                    <div className="h-2 bg-sheet rounded-full overflow-hidden">
                                         <div
                                             className="h-full rounded-full transition-all duration-500"
                                             style={{
@@ -236,17 +236,17 @@ export function AnalyticsDashboard({ campaigns, metrics, connectedPlatforms }: A
                     </div>
                 ) : (
                     <div className="text-center py-8">
-                        <BarChart3 size={48} className="mx-auto text-gray-700 mb-4" />
-                        <p className="text-gray-500 font-mono">No performance data available</p>
-                        <p className="text-gray-600 text-sm mt-1">Create campaigns to see analytics</p>
+                        <BarChart3 size={48} className="mx-auto text-ink mb-4" />
+                        <p className="text-ink">No performance data available</p>
+                        <p className="text-ink text-sm mt-1">Create campaigns to see analytics</p>
                     </div>
                 )}
             </div>
 
             {/* Campaign Performance Table */}
-            <div className="bg-black/40 rounded-xl border border-[#00f0ff]/20 p-6">
-                <h3 className="text-lg font-mono font-bold mb-4 flex items-center gap-2">
-                    <div className="w-1 h-5 bg-[#ff00ff]"></div>
+            <div className="bg-sheet rounded-xl border border-rule p-6">
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                    <div className="w-1 h-5 bg-signal"></div>
                     Campaign Performance
                 </h3>
 
@@ -254,7 +254,7 @@ export function AnalyticsDashboard({ campaigns, metrics, connectedPlatforms }: A
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="text-left text-xs font-mono text-gray-500 border-b border-gray-800">
+                                <tr className="text-left text-xs text-ink border-b border-rule">
                                     <th className="pb-3 pr-4">Campaign</th>
                                     <th className="pb-3 px-4">Platform</th>
                                     <th className="pb-3 px-4 text-right">Spend</th>
@@ -270,30 +270,30 @@ export function AnalyticsDashboard({ campaigns, metrics, connectedPlatforms }: A
                                     return (
                                         <tr
                                             key={campaign.id}
-                                            className="border-b border-gray-800/50 hover:bg-white/5 transition-colors"
+                                            className="border-b border-rule/50 hover:bg-muted transition-colors"
                                         >
                                             <td className="py-3 pr-4">
-                                                <p className="font-mono text-sm truncate max-w-[200px]">{campaign.name}</p>
-                                                <p className="text-xs text-gray-600">{campaign.objective}</p>
+                                                <p className="text-sm truncate max-w-[200px]">{campaign.name}</p>
+                                                <p className="text-xs text-ink">{campaign.objective}</p>
                                             </td>
                                             <td className="py-3 px-4">
                                                 <span className="text-xl">{platformIcons[campaign.platform]}</span>
                                             </td>
-                                            <td className="py-3 px-4 text-right font-mono text-sm">
+                                            <td className="py-3 px-4 text-right text-sm">
                                                 ${campaignMetrics?.spend.toLocaleString(undefined, { maximumFractionDigits: 2 }) || '0.00'}
                                             </td>
-                                            <td className="py-3 px-4 text-right font-mono text-sm text-gray-400">
+                                            <td className="py-3 px-4 text-right text-sm text-ink">
                                                 {formatNumber(campaignMetrics?.impressions || 0)}
                                             </td>
-                                            <td className="py-3 px-4 text-right font-mono text-sm text-gray-400">
+                                            <td className="py-3 px-4 text-right text-sm text-ink">
                                                 {formatNumber(campaignMetrics?.clicks || 0)}
                                             </td>
-                                            <td className="py-3 px-4 text-right font-mono text-sm">
+                                            <td className="py-3 px-4 text-right text-sm">
                                                 <span className={getCtrColor(campaignMetrics?.ctr || 0)}>
                                                     {campaignMetrics?.ctr.toFixed(2) || '0.00'}%
                                                 </span>
                                             </td>
-                                            <td className="py-3 pl-4 text-right font-mono text-sm text-gray-400">
+                                            <td className="py-3 pl-4 text-right text-sm text-ink">
                                                 ${campaignMetrics?.cpc.toFixed(2) || '0.00'}
                                             </td>
                                         </tr>
@@ -304,17 +304,17 @@ export function AnalyticsDashboard({ campaigns, metrics, connectedPlatforms }: A
                     </div>
                 ) : (
                     <div className="text-center py-8">
-                        <p className="text-gray-500 font-mono">No campaigns to display</p>
+                        <p className="text-ink">No campaigns to display</p>
                     </div>
                 )}
             </div>
 
             {/* Insights Section */}
-            <div className="bg-black/40 rounded-xl border border-yellow-500/20 p-6">
-                <h3 className="text-lg font-mono font-bold mb-4 flex items-center gap-2">
-                    <div className="w-1 h-5 bg-yellow-500"></div>
+            <div className="bg-sheet rounded-xl border border-working/30 p-6">
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                    <div className="w-1 h-5 bg-working"></div>
                     AI Insights
-                    <span className="ml-auto text-xs text-gray-600 font-normal">Powered by Gemini</span>
+                    <span className="ml-auto text-xs text-ink font-normal">Powered by Gemini</span>
                 </h3>
 
                 <div className="space-y-3">
@@ -353,26 +353,26 @@ function KPICard({
     color: 'cyan' | 'magenta' | 'green' | 'yellow';
 }) {
     const colors = {
-        cyan: 'border-[#00f0ff]/30 text-[#00f0ff]',
-        magenta: 'border-[#ff00ff]/30 text-[#ff00ff]',
-        green: 'border-[#39ff14]/30 text-[#39ff14]',
-        yellow: 'border-yellow-500/30 text-yellow-500',
+        cyan: 'border-rule text-ink',
+        magenta: 'border-rule text-ink',
+        green: 'border-positive/30 text-positive',
+        yellow: 'border-working/30 text-working',
     };
 
     const isPositive = trend >= 0;
 
     return (
-        <div className={`bg-black/40 rounded-xl border ${colors[color]} p-4`}>
+        <div className={`bg-sheet rounded-xl border ${colors[color]} p-4`}>
             <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-500 text-xs font-mono">{label}</span>
+                <span className="text-ink-soft text-xs">{label}</span>
                 {icon}
             </div>
-            <p className="text-2xl font-bold font-mono">{value}</p>
-            <div className={`flex items-center gap-1 mt-2 text-xs font-mono ${isPositive ? 'text-[#39ff14]' : 'text-red-500'
+            <p className="text-2xl font-bold">{value}</p>
+            <div className={`flex items-center gap-1 mt-2 text-xs ${isPositive ? 'text-positive' : 'text-destructive'
                 }`}>
                 {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                 <span>{isPositive ? '+' : ''}{trend.toFixed(1)}%</span>
-                <span className="text-gray-600">vs last period</span>
+                <span className="text-ink-soft">vs last period</span>
             </div>
         </div>
     );
@@ -388,15 +388,15 @@ function InsightCard({
     description: string;
 }) {
     const styles = {
-        success: 'border-[#39ff14]/30 bg-[#39ff14]/5',
-        warning: 'border-yellow-500/30 bg-yellow-500/5',
-        info: 'border-[#00f0ff]/30 bg-[#00f0ff]/5',
+        success: 'border-positive/30 bg-positive/5',
+        warning: 'border-working/30 bg-working/10',
+        info: 'border-rule bg-signal/5',
     };
 
     const iconColors = {
-        success: 'text-[#39ff14]',
-        warning: 'text-yellow-500',
-        info: 'text-[#00f0ff]',
+        success: 'text-positive',
+        warning: 'text-working',
+        info: 'text-ink',
     };
 
     return (
@@ -404,8 +404,8 @@ function InsightCard({
             <div className="flex items-start gap-3">
                 <TrendingUp size={16} className={`flex-shrink-0 mt-0.5 ${iconColors[type]}`} />
                 <div>
-                    <p className="font-mono font-bold text-sm">{title}</p>
-                    <p className="text-gray-400 text-sm mt-1">{description}</p>
+                    <p className="font-bold text-sm">{title}</p>
+                    <p className="text-ink-soft text-sm mt-1">{description}</p>
                 </div>
             </div>
         </div>
@@ -423,7 +423,7 @@ function formatNumber(num: number): string {
 }
 
 function getCtrColor(ctr: number): string {
-    if (ctr >= 2) return 'text-[#39ff14]';
-    if (ctr >= 1) return 'text-yellow-500';
-    return 'text-gray-400';
+    if (ctr >= 2) return 'text-positive';
+    if (ctr >= 1) return 'text-working';
+    return 'text-ink-soft';
 }

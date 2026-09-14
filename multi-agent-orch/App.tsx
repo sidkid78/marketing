@@ -165,32 +165,32 @@ export default function App({ apiKey }: { apiKey?: string } = {}) {
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-white p-4 md:p-8 font-sans selection:bg-[#00f0ff]/30">
+    <div className="min-h-screen bg-transparent text-ink p-4 md:p-8 font-sans selection:bg-signal/30">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Header */}
-        <header className="flex items-center justify-between pb-6 border-b border-[#00f0ff]/20">
+        <header className="flex items-center justify-between pb-6 border-b border-rule">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="absolute inset-0 bg-[#00f0ff] blur-xl opacity-30 animate-pulse"></div>
-              <div className="relative p-3 bg-black/50 rounded-xl border border-[#00f0ff]/30">
-                <BrainCircuit className="w-8 h-8 text-[#00f0ff]" />
+              <div className="absolute inset-0 bg-signal opacity-30 animate-pulse"></div>
+              <div className="relative p-3 bg-sheet rounded-xl border border-rule">
+                <BrainCircuit className="w-8 h-8 text-ink" />
               </div>
             </div>
             <div>
-              <h1 className="text-2xl font-bold font-mono">
-                <span className="text-[#00f0ff]">GEMINI</span>
-                <span className="text-white">_</span>
-                <span className="text-[#ff00ff]">ORCHESTRATOR</span>
-                <span className="text-[#00f0ff] animate-pulse">_</span>
+              <h1 className="text-2xl font-bold">
+                <span className="text-ink">GEMINI</span>
+                <span className="text-ink">_</span>
+                <span className="text-ink">ORCHESTRATOR</span>
+                <span className="text-ink animate-pulse">_</span>
               </h1>
-              <p className="text-sm text-gray-500 font-mono">MULTI-AGENT TASK DECOMPOSITION</p>
+              <p className="text-sm text-ink">MULTI-AGENT TASK DECOMPOSITION</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`px-4 py-1.5 rounded-full text-xs font-mono font-medium border ${currentPhase === 'idle' ? 'bg-gray-900 border-gray-700 text-gray-400' :
-                currentPhase === 'completed' ? 'bg-[#39ff14]/10 border-[#39ff14]/30 text-[#39ff14]' :
-                  'bg-[#00f0ff]/10 border-[#00f0ff]/30 text-[#00f0ff] animate-pulse'
+            <span className={`px-4 py-1.5 rounded-full text-xs font-medium border ${currentPhase === 'idle' ? 'bg-muted border-rule text-ink-soft' :
+                currentPhase === 'completed' ? 'bg-positive/10 border-positive/30 text-positive' :
+                  'bg-signal/10 border-rule text-ink animate-pulse'
               }`}>
               ◈ {currentPhase.toUpperCase()}
             </span>
@@ -198,9 +198,9 @@ export default function App({ apiKey }: { apiKey?: string } = {}) {
         </header>
 
         {/* Input Section */}
-        <section className="bg-black/40 backdrop-blur-sm rounded-2xl border border-[#00f0ff]/20 p-1 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-16 h-16 border-l border-t border-[#00f0ff]/30"></div>
-          <div className="absolute bottom-0 right-0 w-16 h-16 border-r border-b border-[#ff00ff]/30"></div>
+        <section className="bg-sheet backdrop- rounded-2xl border border-rule p-1 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-16 h-16 border-l border-t border-rule"></div>
+          <div className="absolute bottom-0 right-0 w-16 h-16 border-r border-b border-rule"></div>
 
           <div className="relative">
             <textarea
@@ -208,13 +208,13 @@ export default function App({ apiKey }: { apiKey?: string } = {}) {
               onChange={(e) => setGoal(e.target.value)}
               disabled={isProcessing}
               placeholder="Describe a complex task... (e.g., 'Research the current state of Quantum Computing, write a technical summary, and generate 3 LinkedIn post drafts about it.')"
-              className="w-full bg-black/50 text-white p-4 min-h-[120px] rounded-xl border-none focus:ring-2 focus:ring-[#00f0ff]/50 resize-none placeholder:text-gray-600 outline-none transition-all font-mono"
+              className="w-full bg-sheet text-ink p-4 min-h-[120px] rounded-xl border-none focus:ring-2 focus:ring-signal resize-none placeholder:text-ink-soft outline-none transition-all"
             />
             <div className="absolute bottom-4 right-4 flex gap-2">
               {currentPhase === 'completed' && (
                 <button
                   onClick={handleReset}
-                  className="flex items-center gap-2 px-4 py-2 bg-black/50 border border-[#ff00ff]/50 hover:bg-[#ff00ff]/10 text-[#ff00ff] rounded-lg transition-colors font-mono text-sm"
+                  className="flex items-center gap-2 px-4 py-2 bg-sheet border border-rule hover:bg-signal/10 text-ink-soft rounded-lg transition-colors text-sm"
                 >
                   <RotateCcw className="w-4 h-4" />
                   RESET
@@ -223,9 +223,9 @@ export default function App({ apiKey }: { apiKey?: string } = {}) {
               <button
                 onClick={handleStart}
                 disabled={isProcessing || !goal.trim()}
-                className={`flex items-center gap-2 px-6 py-2 rounded-lg font-mono font-medium text-sm transition-all ${isProcessing || !goal.trim()
-                    ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-[#00f0ff] to-[#00a0ff] text-black hover:shadow-[0_0_20px_rgba(0,240,255,0.4)]'
+                className={`flex items-center gap-2 px-6 py-2 rounded-lg font-medium text-sm transition-all ${isProcessing || !goal.trim()
+                    ? 'bg-muted text-ink cursor-not-allowed'
+                    : 'bg-signal text-black'
                   }`}
               >
                 {isProcessing ? (
@@ -250,20 +250,20 @@ export default function App({ apiKey }: { apiKey?: string } = {}) {
           {/* Left Column: Task Board */}
           <div className="lg:col-span-2 space-y-6">
             {error && (
-              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3 text-red-400">
+              <div className="bg-destructive/10 border border-destructive/30 rounded-xl p-4 flex items-start gap-3 text-destructive">
                 <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-                <p className="text-sm font-mono">◈ ERROR: {error}</p>
+                <p className="text-sm">◈ ERROR: {error}</p>
               </div>
             )}
 
             {plan ? (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-mono font-bold text-white flex items-center gap-3">
-                    <div className="w-1 h-6 bg-[#00f0ff]"></div>
+                  <h2 className="text-lg font-bold text-ink flex items-center gap-3">
+                    <div className="w-1 h-6 bg-signal"></div>
                     EXECUTION PLAN
                   </h2>
-                  <span className="text-xs font-mono text-gray-500">
+                  <span className="text-xs text-ink-soft">
                     {results.filter(r => r.status === 'completed').length} / {plan.tasks.length} TASKS COMPLETED
                   </span>
                 </div>
@@ -302,9 +302,9 @@ export default function App({ apiKey }: { apiKey?: string } = {}) {
                 </div>
               </div>
             ) : (
-              <div className="h-64 flex flex-col items-center justify-center text-gray-600 border-2 border-dashed border-gray-800 rounded-2xl bg-black/20">
+              <div className="h-64 flex flex-col items-center justify-center text-ink-soft border-2 border-dashed border-rule rounded-2xl bg-sheet">
                 <Layout className="w-12 h-12 mb-3 opacity-30" />
-                <p className="font-mono text-sm">TASKS WILL APPEAR HERE AFTER PLANNING</p>
+                <p className="text-sm">TASKS WILL APPEAR HERE AFTER PLANNING</p>
               </div>
             )}
 
@@ -315,12 +315,12 @@ export default function App({ apiKey }: { apiKey?: string } = {}) {
 
           {/* Right Column: Logs */}
           <div className="lg:col-span-1">
-            <div className="bg-black/40 backdrop-blur-sm rounded-2xl border border-[#ff00ff]/20 shadow-xl overflow-hidden flex flex-col h-[600px] sticky top-6">
-              <div className="p-4 border-b border-[#ff00ff]/20 bg-black/30 backdrop-blur flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-[#ff00ff]" />
-                <h3 className="text-sm font-mono font-bold text-[#ff00ff]">◈ SYSTEM LOGS</h3>
+            <div className="bg-sheet backdrop- rounded-2xl border border-rule overflow-hidden flex flex-col h-[600px] sticky top-6">
+              <div className="p-4 border-b border-rule bg-sheet backdrop-blur flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-ink-soft" />
+                <h3 className="text-sm font-bold text-ink-soft">◈ SYSTEM LOGS</h3>
               </div>
-              <div ref={logsEndRef} className="flex-1 overflow-y-auto p-4 space-y-3 font-mono text-xs">
+              <div ref={logsEndRef} className="flex-1 overflow-y-auto p-4 space-y-3 text-xs">
                 <LogViewer logs={logs} />
               </div>
             </div>

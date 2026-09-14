@@ -25,7 +25,7 @@ const CopyLinkIcon = () => (
 );
 
 const CheckIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[#39ff14]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-positive" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
   </svg>
 );
@@ -58,11 +58,11 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ textToShare, anchorI
     }
   };
 
-  const buttonClass = "p-2 rounded bg-black/50 border border-[#00f0ff]/30 text-[#00f0ff] hover:bg-[#00f0ff] hover:text-black hover:shadow-[0_0_10px_rgba(0,240,255,0.4)] transition-all";
+  const buttonClass = "p-2 rounded bg-sheet border border-rule text-primary-foreground hover:bg-signal hover:text-black transition-all";
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <span className="text-xs font-semibold text-[#ff00ff] font-mono tracking-wider">SHARE:</span>
+      <span className="text-xs font-semibold text-ink-soft">SHARE:</span>
       <button
         onClick={shareOnTwitter}
         title="Share on Twitter"
@@ -83,7 +83,7 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ textToShare, anchorI
         onClick={copyLink}
         title={copied ? "Link Copied!" : "Copy Link"}
         aria-label={copied ? "Link Copied!" : "Copy Link"}
-        className={`${buttonClass} ${copied ? 'border-[#39ff14] text-[#39ff14]' : ''} disabled:opacity-50`}
+        className={`${buttonClass} ${copied ? 'border-positive/30 text-positive' : ''} disabled:opacity-50`}
         disabled={typeof navigator === 'undefined' || !navigator.clipboard}
       >
         {copied ? <CheckIcon /> : <CopyLinkIcon />}

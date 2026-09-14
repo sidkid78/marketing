@@ -123,41 +123,41 @@ export default function App({ apiKey }: AppProps) {
     ];
 
     return (
-        <div className="min-h-[600px] bg-transparent text-white">
+        <div className="min-h-[600px] bg-transparent text-ink">
             {/* Header */}
-            <div className="border-b border-[#00f0ff]/20 bg-black/40 backdrop-blur-sm">
+            <div className="border-b border-rule bg-sheet backdrop-">
                 <div className="px-6 py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="relative">
-                                <div className="absolute inset-0 bg-[#ff00ff] blur-lg opacity-30"></div>
-                                <div className="relative bg-black/50 p-2 rounded-lg border border-[#ff00ff]/50">
-                                    <Megaphone size={20} className="text-[#ff00ff]" />
+                                <div className="absolute inset-0 bg-signal opacity-30"></div>
+                                <div className="relative bg-sheet p-2 rounded-lg border border-rule">
+                                    <Megaphone size={20} className="text-ink" />
                                 </div>
                             </div>
                             <div>
-                                <h1 className="font-bold text-lg font-mono">
-                                    <span className="text-[#ff00ff]">AD</span>
-                                    <span className="text-white">_</span>
-                                    <span className="text-[#00f0ff]">COMMAND</span>
-                                    <span className="text-[#ff00ff] animate-pulse">_</span>
+                                <h1 className="font-bold text-lg">
+                                    <span className="text-ink">AD</span>
+                                    <span className="text-ink">_</span>
+                                    <span className="text-ink">COMMAND</span>
+                                    <span className="text-ink animate-pulse">_</span>
                                 </h1>
-                                <p className="text-xs text-gray-500 font-mono">MULTI-PLATFORM CAMPAIGN CONTROL</p>
+                                <p className="text-xs text-ink">MULTI-PLATFORM CAMPAIGN CONTROL</p>
                             </div>
                         </div>
 
                         <div className="flex items-center gap-3">
                             {/* Connected platforms indicator */}
-                            <div className="flex items-center gap-2 bg-black/40 px-3 py-1.5 rounded-lg border border-[#00f0ff]/20">
-                                <Globe size={14} className="text-[#00f0ff]" />
-                                <span className="text-xs font-mono text-gray-400">
+                            <div className="flex items-center gap-2 bg-sheet px-3 py-1.5 rounded-lg border border-rule">
+                                <Globe size={14} className="text-ink" />
+                                <span className="text-xs text-ink">
                                     {connectedPlatforms.size} PLATFORMS
                                 </span>
                             </div>
 
                             <button
                                 onClick={() => setShowAIImport(true)}
-                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#ff00ff] to-[#00f0ff] text-black font-mono text-sm font-medium rounded-lg hover:shadow-[0_0_20px_rgba(255,0,255,0.4)] transition-all"
+                                className="flex items-center gap-2 px-4 py-2 bg-signal text-black text-sm font-medium rounded-lg transition-all"
                             >
                                 <Zap size={14} />
                                 AI IMPORT
@@ -171,9 +171,9 @@ export default function App({ apiKey }: AppProps) {
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-t-lg font-mono text-sm transition-all ${activeTab === tab.id
-                                    ? 'bg-[#00f0ff]/10 text-[#00f0ff] border-t border-x border-[#00f0ff]/30'
-                                    : 'text-gray-500 hover:text-white hover:bg-white/5'
+                                className={`flex items-center gap-2 px-4 py-2 rounded-t-lg text-sm transition-all ${activeTab === tab.id
+                                    ? 'bg-signal/10 text-ink border-t border-x border-rule'
+                                    : 'text-ink-soft hover:text-ink hover:bg-muted'
                                     }`}
                             >
                                 {tab.icon}
@@ -218,9 +218,9 @@ export default function App({ apiKey }: AppProps) {
                         </div>
 
                         {/* Platform Status */}
-                        <div className="bg-black/40 rounded-xl border border-[#00f0ff]/20 p-6">
-                            <h2 className="text-lg font-mono font-bold mb-4 flex items-center gap-2">
-                                <div className="w-1 h-5 bg-[#00f0ff]"></div>
+                        <div className="bg-sheet rounded-xl border border-rule p-6">
+                            <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                                <div className="w-1 h-5 bg-signal"></div>
                                 PLATFORM STATUS
                             </h2>
                             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -230,20 +230,20 @@ export default function App({ apiKey }: AppProps) {
                                         <div
                                             key={platform.id}
                                             className={`p-4 rounded-lg border transition-all ${isConnected
-                                                ? 'bg-[#39ff14]/10 border-[#39ff14]/30'
-                                                : 'bg-black/30 border-gray-800 opacity-50'
+                                                ? 'bg-positive/10 border-positive/30'
+                                                : 'bg-sheet border-rule opacity-50'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-2 mb-2">
                                                 <span className="text-2xl">{platform.icon}</span>
                                                 {isConnected ? (
-                                                    <CheckCircle2 size={16} className="text-[#39ff14]" />
+                                                    <CheckCircle2 size={16} className="text-positive" />
                                                 ) : (
-                                                    <AlertCircle size={16} className="text-gray-600" />
+                                                    <AlertCircle size={16} className="text-ink" />
                                                 )}
                                             </div>
-                                            <p className="font-mono text-sm">{platform.name}</p>
-                                            <p className="text-xs text-gray-500 mt-1">
+                                            <p className="text-sm">{platform.name}</p>
+                                            <p className="text-xs text-ink mt-1">
                                                 {isConnected ? 'Connected' : 'Not configured'}
                                             </p>
                                         </div>
@@ -279,15 +279,15 @@ export default function App({ apiKey }: AppProps) {
 
                         {/* Recent Campaigns */}
                         {campaigns.length > 0 && (
-                            <div className="bg-black/40 rounded-xl border border-[#00f0ff]/20 p-6">
+                            <div className="bg-sheet rounded-xl border border-rule p-6">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h2 className="text-lg font-mono font-bold flex items-center gap-2">
-                                        <div className="w-1 h-5 bg-[#ff00ff]"></div>
+                                    <h2 className="text-lg font-bold flex items-center gap-2">
+                                        <div className="w-1 h-5 bg-signal"></div>
                                         RECENT CAMPAIGNS
                                     </h2>
                                     <button
                                         onClick={() => setActiveTab('campaigns')}
-                                        className="text-sm font-mono text-[#00f0ff] hover:underline flex items-center gap-1"
+                                        className="text-sm text-ink hover:underline flex items-center gap-1"
                                     >
                                         View All <ExternalLink size={12} />
                                     </button>
@@ -301,22 +301,22 @@ export default function App({ apiKey }: AppProps) {
                         )}
 
                         {campaigns.length === 0 && connectedPlatforms.size > 0 && (
-                            <div className="bg-black/40 rounded-xl border border-[#00f0ff]/20 p-12 text-center">
-                                <Megaphone size={48} className="mx-auto text-gray-600 mb-4" />
-                                <h3 className="font-mono text-lg mb-2">No Campaigns Yet</h3>
-                                <p className="text-gray-500 text-sm mb-4">
+                            <div className="bg-sheet rounded-xl border border-rule p-12 text-center">
+                                <Megaphone size={48} className="mx-auto text-ink mb-4" />
+                                <h3 className="text-lg mb-2">No Campaigns Yet</h3>
+                                <p className="text-ink text-sm mb-4">
                                     Create your first campaign or import from AI Strategy
                                 </p>
                                 <div className="flex justify-center gap-3">
                                     <button
                                         onClick={() => setActiveTab('create')}
-                                        className="px-4 py-2 bg-[#00f0ff] text-black font-mono text-sm rounded-lg hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all"
+                                        className="px-4 py-2 bg-signal text-black text-sm rounded-lg transition-all"
                                     >
                                         Create Campaign
                                     </button>
                                     <button
                                         onClick={() => setShowAIImport(true)}
-                                        className="px-4 py-2 border border-[#ff00ff]/50 text-[#ff00ff] font-mono text-sm rounded-lg hover:bg-[#ff00ff]/10 transition-all"
+                                        className="px-4 py-2 border border-rule text-ink text-sm rounded-lg hover:bg-signal/10 transition-all"
                                     >
                                         AI Import
                                     </button>
@@ -325,18 +325,18 @@ export default function App({ apiKey }: AppProps) {
                         )}
 
                         {connectedPlatforms.size === 0 && (
-                            <div className="bg-black/40 rounded-xl border border-yellow-500/30 p-6">
+                            <div className="bg-sheet rounded-xl border border-working/30 p-6">
                                 <div className="flex items-start gap-4">
-                                    <AlertCircle size={24} className="text-yellow-500 flex-shrink-0 mt-1" />
+                                    <AlertCircle size={24} className="text-working flex-shrink-0 mt-1" />
                                     <div>
-                                        <h3 className="font-mono font-bold text-yellow-500 mb-2">No Platforms Connected</h3>
-                                        <p className="text-gray-400 text-sm mb-4">
+                                        <h3 className="font-bold text-working mb-2">No Platforms Connected</h3>
+                                        <p className="text-ink text-sm mb-4">
                                             Connect at least one advertising platform to start creating campaigns.
                                             Go to Settings to configure your API credentials.
                                         </p>
                                         <button
                                             onClick={() => setActiveTab('settings')}
-                                            className="px-4 py-2 border border-yellow-500/50 text-yellow-500 font-mono text-sm rounded-lg hover:bg-yellow-500/10 transition-all"
+                                            className="px-4 py-2 border border-working/30 text-working text-sm rounded-lg hover:bg-working/10 transition-all"
                                         >
                                             Configure Platforms
                                         </button>
@@ -421,19 +421,19 @@ function StatCard({ label, value, icon, color }: {
     color: 'cyan' | 'magenta' | 'green' | 'yellow'
 }) {
     const colors = {
-        cyan: 'border-[#00f0ff]/30 text-[#00f0ff]',
-        magenta: 'border-[#ff00ff]/30 text-[#ff00ff]',
-        green: 'border-[#39ff14]/30 text-[#39ff14]',
-        yellow: 'border-yellow-500/30 text-yellow-500',
+        cyan: 'border-rule text-ink',
+        magenta: 'border-rule text-ink',
+        green: 'border-positive/30 text-positive',
+        yellow: 'border-working/30 text-working',
     };
 
     return (
-        <div className={`bg-black/40 rounded-xl border ${colors[color]} p-4`}>
+        <div className={`bg-sheet rounded-xl border ${colors[color]} p-4`}>
             <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-500 text-xs font-mono">{label}</span>
+                <span className="text-ink-soft text-xs">{label}</span>
                 {icon}
             </div>
-            <p className="text-2xl font-bold font-mono">{value}</p>
+            <p className="text-2xl font-bold">{value}</p>
         </div>
     );
 }
@@ -446,33 +446,33 @@ function QuickActionCard({ title, description, icon, onClick, color }: {
     color: 'cyan' | 'magenta' | 'yellow';
 }) {
     const colors = {
-        cyan: 'border-[#00f0ff]/30 hover:border-[#00f0ff]/60 hover:shadow-[0_0_20px_rgba(0,240,255,0.2)]',
-        magenta: 'border-[#ff00ff]/30 hover:border-[#ff00ff]/60 hover:shadow-[0_0_20px_rgba(255,0,255,0.2)]',
-        yellow: 'border-yellow-500/30 hover:border-yellow-500/60 hover:shadow-[0_0_20px_rgba(234,179,8,0.2)]',
+        cyan: 'border-rule hover:border-rule',
+        magenta: 'border-rule hover:border-rule',
+        yellow: 'border-working/30 hover:border-working/30',
     };
 
     return (
         <button
             onClick={onClick}
-            className={`bg-black/40 rounded-xl border ${colors[color]} p-6 text-left transition-all group`}
+            className={`bg-sheet rounded-xl border ${colors[color]} p-6 text-left transition-all group`}
         >
-            <div className="mb-3 text-gray-400 group-hover:text-white transition-colors">
+            <div className="mb-3 text-ink-soft group-hover:text-ink transition-colors">
                 {icon}
             </div>
-            <h3 className="font-mono font-bold mb-1">{title}</h3>
-            <p className="text-sm text-gray-500">{description}</p>
+            <h3 className="font-bold mb-1">{title}</h3>
+            <p className="text-sm text-ink-soft">{description}</p>
         </button>
     );
 }
 
 function CampaignRow({ campaign }: { campaign: UnifiedCampaign }) {
     const statusColors = {
-        active: 'bg-[#39ff14]/20 text-[#39ff14]',
-        paused: 'bg-yellow-500/20 text-yellow-500',
-        draft: 'bg-gray-500/20 text-gray-400',
-        completed: 'bg-blue-500/20 text-blue-400',
-        rejected: 'bg-red-500/20 text-red-400',
-        pending_review: 'bg-orange-500/20 text-orange-400',
+        active: 'bg-positive/20 text-positive',
+        paused: 'bg-working/10 text-working',
+        draft: 'bg-muted text-ink-soft',
+        completed: 'bg-muted text-ink',
+        rejected: 'bg-destructive/10 text-destructive',
+        pending_review: 'bg-working/10 text-working',
     };
 
     const platformIcons: Record<AdPlatform, string> = {
@@ -484,19 +484,19 @@ function CampaignRow({ campaign }: { campaign: UnifiedCampaign }) {
     };
 
     return (
-        <div className="flex items-center justify-between p-3 bg-black/30 rounded-lg border border-gray-800 hover:border-[#00f0ff]/30 transition-all">
+        <div className="flex items-center justify-between p-3 bg-sheet rounded-lg border border-rule hover:border-rule transition-all">
             <div className="flex items-center gap-3">
                 <span className="text-xl">{platformIcons[campaign.platform]}</span>
                 <div>
-                    <p className="font-mono text-sm">{campaign.name}</p>
-                    <p className="text-xs text-gray-500">{campaign.objective}</p>
+                    <p className="text-sm">{campaign.name}</p>
+                    <p className="text-xs text-ink-soft">{campaign.objective}</p>
                 </div>
             </div>
             <div className="flex items-center gap-4">
-                <span className={`px-2 py-1 rounded text-xs font-mono ${statusColors[campaign.status]}`}>
+                <span className={`px-2 py-1 rounded text-xs ${statusColors[campaign.status]}`}>
                     {campaign.status.toUpperCase()}
                 </span>
-                <span className="text-sm font-mono text-gray-400">
+                <span className="text-sm text-ink-soft">
                     ${campaign.budget.amount.toLocaleString()}/{campaign.budget.type === 'daily' ? 'day' : 'total'}
                 </span>
             </div>

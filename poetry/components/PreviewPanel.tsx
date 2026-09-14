@@ -64,13 +64,13 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ htmlContent, isLoading, err
   return (
     <div className="flex flex-col h-full bg-[#e7e5e4] relative transition-colors" id="preview-container">
       {/* Toolbar */}
-      <div className={`flex items-center justify-between px-6 py-3 bg-white border-b border-stone-200 shadow-sm ${isFullscreen ? 'hidden group-hover:flex absolute top-0 left-0 right-0 z-50 opacity-0 hover:opacity-100 transition-opacity' : ''}`}>
+      <div className={`flex items-center justify-between px-6 py-3 bg-white border-b border-rule ${isFullscreen ? 'hidden group-hover:flex absolute top-0 left-0 right-0 z-50 opacity-0 hover:opacity-100 transition-opacity' : ''}`}>
         <div className="flex items-center space-x-2">
-          <span className="text-xs font-bold text-stone-400 uppercase tracking-widest mr-4">Preview Canvas</span>
+          <span className="text-xs font-bold text-ink-soft uppercase mr-4">Preview Canvas</span>
           <button
             onClick={() => setViewMode('desktop')}
             className={`p-2 rounded-md transition-all ${
-              viewMode === 'desktop' ? 'bg-stone-100 text-stone-800 shadow-sm' : 'text-stone-400 hover:text-stone-600'
+              viewMode === 'desktop' ? 'bg-muted text-ink' : 'text-ink-soft hover:text-ink-soft'
             }`}
             title="Desktop View"
           >
@@ -79,7 +79,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ htmlContent, isLoading, err
           <button
             onClick={() => setViewMode('mobile')}
             className={`p-2 rounded-md transition-all ${
-              viewMode === 'mobile' ? 'bg-stone-100 text-stone-800 shadow-sm' : 'text-stone-400 hover:text-stone-600'
+              viewMode === 'mobile' ? 'bg-muted text-ink' : 'text-ink-soft hover:text-ink-soft'
             }`}
             title="Mobile View"
           >
@@ -91,7 +91,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ htmlContent, isLoading, err
            <button
             onClick={handleDownload}
             disabled={!htmlContent}
-            className="flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wide text-stone-500 hover:text-rose-600 hover:bg-stone-50 rounded-md transition-colors disabled:opacity-30"
+            className="flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wide text-ink0 hover:text-destructive hover:bg-muted rounded-md transition-colors disabled:opacity-30"
           >
             <Download className="w-4 h-4" />
             Save HTML
@@ -99,7 +99,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ htmlContent, isLoading, err
           <button
             onClick={toggleFullscreen}
             disabled={!htmlContent}
-            className="p-2 text-stone-500 hover:text-rose-600 hover:bg-stone-50 rounded-md transition-colors disabled:opacity-30"
+            className="p-2 text-ink0 hover:text-destructive hover:bg-muted rounded-md transition-colors disabled:opacity-30"
             title="Fullscreen"
           >
             <Maximize2 className="w-4 h-4" />
@@ -113,36 +113,36 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ htmlContent, isLoading, err
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#444 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
         {isLoading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/60 backdrop-blur-md">
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-muted backdrop-">
             <div className="relative">
-                <div className="w-16 h-16 border-4 border-rose-200 border-t-rose-500 rounded-full animate-spin"></div>
+                <div className="w-16 h-16 border-4 border-destructive/30 border-t-rose-500 rounded-full animate-spin"></div>
             </div>
-            <p className="mt-6 text-stone-500 font-serif text-lg animate-pulse italic">Weaving words into motion...</p>
+            <p className="mt-6 text-ink0 font-serif text-lg animate-pulse italic">Weaving words into motion...</p>
           </div>
         )}
         
         {error && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/90 p-8 text-center">
-                <AlertCircle className="w-12 h-12 text-rose-400 mb-4" />
-                <h3 className="text-xl font-bold text-stone-800 mb-2 font-serif">Something went wrong</h3>
-                <p className="text-stone-500 max-w-md">{error}</p>
+            <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-muted p-8 text-center">
+                <AlertCircle className="w-12 h-12 text-destructive mb-4" />
+                <h3 className="text-xl font-bold text-ink mb-2 font-serif">Something went wrong</h3>
+                <p className="text-ink0 max-w-md">{error}</p>
             </div>
         )}
 
         {!htmlContent && !isLoading && !error && (
           <div className="text-center p-8 select-none">
-             <div className="inline-block p-6 rounded-full bg-white shadow-sm mb-6">
-                <Eye className="w-12 h-12 text-stone-300" />
+             <div className="inline-block p-6 rounded-full bg-white mb-6">
+                <Eye className="w-12 h-12 text-ink" />
              </div>
-             <h2 className="text-4xl font-serif text-stone-400 mb-2 font-light italic">Your Canvas Awaits</h2>
-             <p className="text-stone-400 text-sm uppercase tracking-widest">Enter text to begin</p>
+             <h2 className="text-4xl font-serif text-ink-soft mb-2 font-light italic">Your Canvas Awaits</h2>
+             <p className="text-ink-soft text-sm uppercase">Enter text to begin</p>
           </div>
         )}
 
         <div
-          className={`transition-all duration-700 ease-in-out shadow-2xl bg-white relative z-20 ${
+          className={`transition-all duration-700 ease-in-out bg-white relative z-20 ${
             viewMode === 'mobile'
-              ? 'w-[375px] h-[667px] rounded-[3rem] border-[12px] border-white ring-1 ring-stone-200 shadow-xl overflow-hidden'
+              ? 'w-[375px] h-[667px] rounded-[3rem] border-[12px] border-white ring-1 ring-rule overflow-hidden'
               : 'w-full h-full shadow-none'
           }`}
         >

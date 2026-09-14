@@ -17,7 +17,7 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props 
 }) => {
-  const baseStyles = "inline-flex items-center justify-center rounded-none skew-x-[-10deg] font-bold tracking-wider transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed uppercase font-cyber border active:scale-95 hover:-translate-y-1";
+  const baseStyles = "inline-flex items-center justify-center rounded-none skew-x-[-10deg] font-bold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed uppercase border active:scale-95 hover:-translate-y-1";
   
   const sizes = {
     sm: "px-4 py-1.5 text-xs",
@@ -26,10 +26,10 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const variants = {
-    primary: "bg-cyan-500 hover:bg-cyan-400 text-black border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.5)] hover:shadow-[0_0_30px_rgba(6,182,212,0.8)] focus:ring-cyan-500",
-    secondary: "bg-transparent hover:bg-fuchsia-500/10 text-fuchsia-500 border-fuchsia-500 shadow-[0_0_10px_rgba(217,70,239,0.2)] hover:shadow-[0_0_20px_rgba(217,70,239,0.6)] focus:ring-fuchsia-500",
-    ghost: "bg-transparent hover:bg-slate-900 border-transparent text-slate-400 hover:text-cyan-400 focus:ring-slate-500",
-    danger: "bg-red-500/10 hover:bg-red-500/20 text-red-500 border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.2)] focus:ring-red-500"
+    primary: "bg-signal hover:bg-muted text-black border-rule focus:ring-rule",
+    secondary: "bg-transparent hover:bg-muted text-ink border-rule focus:ring-rule",
+    ghost: "bg-transparent hover:bg-bench border-transparent text-ink-soft hover:text-ink focus:ring-rule",
+    danger: "bg-destructive/10 hover:bg-destructive/10 text-destructive border-destructive/30 focus:ring-destructive/30"
   };
 
   return (

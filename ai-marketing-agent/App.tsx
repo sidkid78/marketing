@@ -97,7 +97,7 @@ export default function App({ apiKey }: AppProps) {
           <p className="text-[14px] text-ink">{error}</p>
           <button
             onClick={handleReset}
-            className="mt-4 rounded-sm bg-signal px-4 py-2 text-[13.5px] font-medium text-white transition-opacity hover:opacity-90"
+            className="mt-4 rounded-sm bg-signal px-4 py-2 text-[13.5px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
           >
             Start over
           </button>

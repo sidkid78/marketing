@@ -64,6 +64,7 @@
   --color-rule: var(--rule);
   --color-signal: var(--signal);
   --color-working: var(--working);
+  --color-positive: var(--positive);
 }
 
 :root {
@@ -76,9 +77,10 @@
   --ink-soft: #6a706a;
   --rule: #d2cfc6;
 
-  /* The only two saturated values in the system. */
-  --signal: #1b3fd8;   /* active, primary action */
-  --working: #b5730a;  /* in progress */
+  /* The only saturated values in the system, one per state. */
+  --signal: #1b3fd8;    /* active, primary action */
+  --working: #b5730a;   /* in progress */
+  --positive: #2f6f4e;  /* connected, completed */
 
   --background: var(--bench);
   --foreground: var(--ink);
@@ -128,6 +130,7 @@
 
   --signal: #8ea4ff;
   --working: #e0a437;
+  --positive: #6fbf95;
 
   --background: var(--bench);
   --foreground: var(--ink);

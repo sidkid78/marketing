@@ -110,7 +110,7 @@ export const Wizard: React.FC<WizardProps> = ({ onSubmit }) => {
                 {PLATFORMS.map((platform) => (
                     <button key={platform.id}
                             type="button"
-                            className={`rounded-full border px-3.5 py-1.5 text-[13.5px] transition-colors ${formData.platforms?.includes(platform.id) ? 'border-signal bg-signal text-white' : 'border-rule text-ink hover:border-ink-soft'}`}
+                            className={`rounded-full border px-3.5 py-1.5 text-[13.5px] transition-colors ${formData.platforms?.includes(platform.id) ? 'border-signal bg-signal text-primary-foreground' : 'border-rule text-ink hover:border-ink-soft'}`}
                             onClick={() => {
                                 const newPlatforms = formData.platforms?.includes(platform.id) ? formData.platforms.filter(p => p !== platform.id) : [...(formData.platforms || []), platform.id];
                                 setFormData({ ...formData, platforms: newPlatforms as Platform[] });
@@ -206,7 +206,7 @@ export const Wizard: React.FC<WizardProps> = ({ onSubmit }) => {
             <div className="flex justify-between mb-2">
                 {steps.map(step => (
                      <div key={step.id} className="text-center w-1/3">
-                        <div className={`mx-auto flex h-7 w-7 items-center justify-center rounded-full text-[13px] font-medium ${currentStep >= step.id ? 'bg-signal text-white' : 'bg-muted text-ink-soft'}`}>
+                        <div className={`mx-auto flex h-7 w-7 items-center justify-center rounded-full text-[13px] font-medium ${currentStep >= step.id ? 'bg-signal text-primary-foreground' : 'bg-muted text-ink'}`}>
                             {step.id}
                         </div>
                         <p className={`mt-2 text-[12.5px] ${currentStep >= step.id ? 'text-ink' : 'text-ink-soft'}`}>{step.title}</p>

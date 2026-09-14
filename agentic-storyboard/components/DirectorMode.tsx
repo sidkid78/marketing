@@ -93,12 +93,12 @@ const DirectorMode: React.FC<DirectorModeProps> = ({ scenes, onUpdateScene }) =>
 
             {/* Sidebar: Timeline / Sequencer */}
             <div className="lg:w-1/3 flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar">
-                <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-widest sticky top-0 bg-black/90 backdrop-blur z-10 py-2 border-b border-zinc-800">
+                <h3 className="text-sm font-bold text-ink0 uppercase sticky top-0 bg-sheet backdrop-blur z-10 py-2 border-b border-rule">
                     Sequence Editor
                 </h3>
 
                 {scenes.length === 0 && (
-                    <div className="text-zinc-600 text-sm italic text-center py-10 border border-dashed border-zinc-800 rounded-xl">
+                    <div className="text-ink-soft text-sm italic text-center py-10 border border-dashed border-rule rounded-xl">
                         No scenes generated yet. <br /> Switch to Studio to create scenes.
                     </div>
                 )}
@@ -107,27 +107,27 @@ const DirectorMode: React.FC<DirectorModeProps> = ({ scenes, onUpdateScene }) =>
                     <div
                         key={scene.id}
                         className={`p-4 rounded-xl border transition-all ${idx === activeSceneIndex
-                                ? 'bg-zinc-900 border-purple-500/50 shadow-lg shadow-purple-900/10'
-                                : 'bg-black border-zinc-800 hover:border-zinc-700'
+                                ? 'bg-bench border-rule'
+                                : 'bg-sheet border-rule hover:border-rule'
                             }`}
                         onClick={() => { setActiveSceneIndex(idx); setIsPlaying(false); }}
                     >
                         <div className="flex gap-4">
                             {/* Thumbnail */}
-                            <div className="w-24 h-16 bg-zinc-900 rounded-lg overflow-hidden shrink-0 relative group">
+                            <div className="w-24 h-16 bg-bench rounded-lg overflow-hidden shrink-0 relative group">
                                 {scene.videoUrl ? (
                                     <video src={scene.videoUrl} className="w-full h-full object-cover" />
                                 ) : scene.imageUrl ? (
                                     <img src={scene.imageUrl} alt="" className="w-full h-full object-cover" />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-zinc-700">
+                                    <div className="w-full h-full flex items-center justify-center text-ink">
                                         <VideoIcon className="w-6 h-6" />
                                     </div>
                                 )}
 
                                 {/* Visual Upload Overlay */}
-                                <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
-                                    <UploadIcon className="w-5 h-5 text-white" />
+                                <label className="absolute inset-0 bg-sheet opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
+                                    <UploadIcon className="w-5 h-5 text-ink" />
                                     <input type="file" className="hidden" accept="video/*,image/*" title="Upload Visual" onChange={(e) => handleFileUpload(scene.id, 'video', e)} />
                                 </label>
                             </div>
@@ -136,15 +136,15 @@ const DirectorMode: React.FC<DirectorModeProps> = ({ scenes, onUpdateScene }) =>
                             <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                                 <div>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Scene {idx + 1}</span>
-                                        {scene.audioUrl && <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>}
+                                        <span className="text-xs font-bold text-ink0 uppercase">Scene {idx + 1}</span>
+                                        {scene.audioUrl && <span className="w-1.5 h-1.5 bg-positive rounded-full"></span>}
                                     </div>
-                                    <p className="text-zinc-300 text-sm truncate mt-1">{scene.text}</p>
+                                    <p className="text-ink text-sm truncate mt-1">{scene.text}</p>
                                 </div>
 
                                 {/* Audio Upload */}
                                 <div className="flex items-center gap-2 mt-2">
-                                    <label className="flex items-center gap-1.5 px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 cursor-pointer text-[10px] text-zinc-400 hover:text-white transition-colors">
+                                    <label className="flex items-center gap-1.5 px-2 py-1 rounded bg-sheet hover:bg-muted cursor-pointer text-[10px] text-ink-soft hover:text-ink transition-colors">
                                         <MusicIcon className="w-3 h-3" />
                                         <span>{scene.audioUrl ? 'Replace Audio' : 'Add Audio'}</span>
                                         <input type="file" className="hidden" accept="audio/*" onChange={(e) => handleFileUpload(scene.id, 'audio', e)} />
@@ -157,10 +157,10 @@ const DirectorMode: React.FC<DirectorModeProps> = ({ scenes, onUpdateScene }) =>
             </div>
 
             {/* Main Stage: Player */}
-            <div className="flex-1 flex flex-col bg-[#0c0c0e] rounded-3xl border border-zinc-800 overflow-hidden relative">
+            <div className="flex-1 flex flex-col bg-[#0c0c0e] rounded-3xl border border-rule overflow-hidden relative">
 
                 {/* Screen */}
-                <div className="flex-1 relative flex items-center justify-center bg-black overflow-hidden">
+                <div className="flex-1 relative flex items-center justify-center bg-sheet overflow-hidden">
                     {activeScene ? (
                         <>
                             {/* Visual Layer */}
@@ -178,9 +178,9 @@ const DirectorMode: React.FC<DirectorModeProps> = ({ scenes, onUpdateScene }) =>
                                 ) : activeScene.imageUrl ? (
                                     <img src={activeScene.imageUrl} className="w-full h-full object-contain animate-kenBurns" alt="Scene" />
                                 ) : (
-                                    <div className="text-zinc-600 flex flex-col items-center gap-4">
+                                    <div className="text-ink-soft flex flex-col items-center gap-4">
                                         <FilmIcon className="w-12 h-12 opacity-50" />
-                                        <p className="uppercase tracking-widest text-sm">No Visual Asset</p>
+                                        <p className="uppercase text-sm">No Visual Asset</p>
                                     </div>
                                 )}
                             </div>
@@ -191,7 +191,7 @@ const DirectorMode: React.FC<DirectorModeProps> = ({ scenes, onUpdateScene }) =>
                             )}
                         </>
                     ) : (
-                        <div className="text-zinc-700 uppercase tracking-[0.2em] font-black text-2xl">
+                        <div className="text-ink uppercase tracking-[0.2em] font-black text-2xl">
                             Director Mode
                         </div>
                     )}
@@ -201,34 +201,34 @@ const DirectorMode: React.FC<DirectorModeProps> = ({ scenes, onUpdateScene }) =>
                         <button
                             title="Play"
                             onClick={togglePlay}
-                            className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/20 transition-colors group"
+                            className="absolute inset-0 flex items-center justify-center bg-sheet hover:bg-sheet transition-colors group"
                         >
-                            <div className="p-6 bg-white/10 backdrop-blur-md rounded-full group-hover:scale-110 transition-transform">
-                                <PlayIcon className="w-12 h-12 text-white fill-white" />
+                            <div className="p-6 bg-muted backdrop- rounded-full group-hover:scale-110 transition-transform">
+                                <PlayIcon className="w-12 h-12 text-ink fill-white" />
                             </div>
                         </button>
                     )}
                 </div>
 
                 {/* Controls Bar */}
-                <div className="h-20 bg-zinc-900 border-t border-zinc-800 flex items-center justify-between px-8">
-                    <div className="text-xs font-mono text-zinc-500">
-                        {activeSceneIndex + 1} <span className="text-zinc-700">/</span> {scenes.length}
+                <div className="h-20 bg-bench border-t border-rule flex items-center justify-between px-8">
+                    <div className="text-xs text-ink0">
+                        {activeSceneIndex + 1} <span className="text-ink">/</span> {scenes.length}
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <button className="text-zinc-400 hover:text-white" title="Previous Scene" onClick={() => setActiveSceneIndex(Math.max(0, activeSceneIndex - 1))}>
+                        <button className="text-ink-soft hover:text-ink" title="Previous Scene" onClick={() => setActiveSceneIndex(Math.max(0, activeSceneIndex - 1))}>
                             <svg className="w-5 h-5 rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3" /></svg>
                         </button>
 
                         <button
                             onClick={togglePlay}
-                            className="p-4 bg-white text-black rounded-full hover:bg-purple-100 hover:text-purple-900 transition-colors shadow-lg shadow-white/10"
+                            className="p-4 bg-white text-black rounded-full hover:bg-muted hover:text-ink transition-colors shadow-white/10"
                         >
                             {isPlaying ? <PauseIcon className="w-6 h-6 fill-current" /> : <PlayIcon className="w-6 h-6 fill-current" />}
                         </button>
 
-                        <button className="text-zinc-400 hover:text-white" title="Next Scene" onClick={() => setActiveSceneIndex(Math.min(scenes.length - 1, activeSceneIndex + 1))}>
+                        <button className="text-ink-soft hover:text-ink" title="Next Scene" onClick={() => setActiveSceneIndex(Math.min(scenes.length - 1, activeSceneIndex + 1))}>
                             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3" /></svg>
                         </button>
                     </div>

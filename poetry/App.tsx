@@ -41,7 +41,7 @@ const App: React.FC<AppProps> = ({ apiKey: propApiKey }) => {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#fdfbf7] text-stone-800 font-sans selection:bg-rose-200">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#fdfbf7] text-ink font-sans selection:bg-destructive/10">
       <div className="flex flex-col md:flex-row w-full h-full">
         <div className="w-full md:w-[400px] lg:w-[480px] h-1/2 md:h-full z-10 shrink-0">
           <InputPanel

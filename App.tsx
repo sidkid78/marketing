@@ -108,24 +108,24 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col relative overflow-hidden bg-cyber-black selection:bg-cyber-primary selection:text-black">
+        <div className="min-h-screen flex flex-col relative overflow-hidden bg-bench selection:bg-signal selection:text-black">
             {/* Background Grid */}
-            <div className="absolute inset-0 cyber-grid z-0"></div>
+            <div className="absolute inset-0 z-0"></div>
 
             {/* Header */}
-            <header className="bg-cyber-black/80 backdrop-blur-md border-b border-cyber-primary/20 sticky top-0 z-50">
+            <header className="bg-bench backdrop- border-b border-rule sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="bg-cyber-primary/10 p-2 rounded border border-cyber-primary/30 shadow-[0_0_10px_rgba(6,182,212,0.2)]">
-                            <Layers size={20} className="text-cyber-primary" />
+                        <div className="bg-muted p-2 rounded border border-rule shadow-[0_0_10px_rgba(6,182,212,0.2)]">
+                            <Layers size={20} className="text-ink" />
                         </div>
-                        <h1 className="text-xl font-bold text-white tracking-tight font-mono">
-                            AutoContent <span className="text-cyber-primary">Architect</span>
-                            <span className="text-cyber-primary animate-pulse">_</span>
+                        <h1 className="text-xl font-bold text-white tracking-tight">
+                            AutoContent <span className="text-ink">Architect</span>
+                            <span className="text-ink animate-pulse">_</span>
                         </h1>
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-mono text-cyber-text bg-cyber-panel/50 px-3 py-1.5 rounded border border-white/5">
-                        <Terminal size={14} className="text-cyber-accent" />
+                    <div className="flex items-center gap-2 text-xs text-ink bg-sheet px-3 py-1.5 rounded border border-white/5">
+                        <Terminal size={14} className="text-ink-soft" />
                         <span>SYS.VERSION: v2.5.0</span>
                     </div>
                 </div>
@@ -135,7 +135,7 @@ const App: React.FC = () => {
                 
                 {/* Left Column: Configuration & Status */}
                 <div className="lg:col-span-4 space-y-6 flex flex-col h-full">
-                    <div className="bg-cyber-panel/40 backdrop-blur-sm rounded-xl border border-white/5 p-5 shadow-2xl">
+                    <div className="bg-sheet backdrop- rounded-xl border border-white/5 p-5">
                         <StageStepper currentStage={currentStage} />
                     </div>
 

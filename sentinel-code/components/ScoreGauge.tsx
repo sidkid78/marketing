@@ -8,13 +8,19 @@ interface ScoreGaugeProps {
 const ScoreGauge: React.FC<ScoreGaugeProps> = ({ score }) => {
   const data = [{ name: 'Score', value: score }];
 
-  let fill = '#00f0ff'; // low (cyan)
-  if (score >= 80) fill = '#39ff14'; // high (green)
-  else if (score >= 50) fill = '#fcee0a'; // med (yellow)
-  else fill = '#ff00ff'; // critical (magenta/red)
+  // Read the state tokens so the gauge follows the active theme.
+  const token = (name: string, fallback: string) =>
+    typeof window === 'undefined'
+      ? fallback
+      : getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+
+  const fill =
+    score >= 80 ? token('--positive', '#2f6f4e')
+    : score >= 50 ? token('--working', '#b5730a')
+    : token('--destructive', '#a32f1e');
 
   return (
-    <div className="relative w-48 h-48 mx-auto filter drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]">
+    <div className="relative w-48 h-48 mx-auto">
       <ResponsiveContainer width="100%" height="100%">
         <RadialBarChart
           innerRadius="70%"
@@ -35,13 +41,13 @@ const ScoreGauge: React.FC<ScoreGaugeProps> = ({ score }) => {
             dataKey="value"
             cornerRadius={30}
             fill={fill}
-            className="filter drop-shadow-[0_0_5px_currentColor]"
+            className="filter"
           />
         </RadialBarChart>
       </ResponsiveContainer>
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <span className="text-5xl font-bold font-mono text-white drop-shadow-md">{score}</span>
-        <span className="text-[10px] text-[#00f0ff] uppercase tracking-[0.2em] mt-1 font-mono">System Score</span>
+        <span className="text-5xl font-bold text-ink drop-">{score}</span>
+        <span className="text-[10px] text-ink uppercase tracking-[0.2em] mt-1">System Score</span>
       </div>
     </div>
   );

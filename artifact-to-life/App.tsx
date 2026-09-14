@@ -19,23 +19,23 @@ const BackgroundEffect = () => (
         opacity: 0.2
       }}>
     </div>
-    <div className="fixed top-0 left-1/4 w-1/2 h-96 bg-cyan-500/10 rounded-full blur-[128px] pointer-events-none z-0"></div>
+    <div className="fixed top-0 left-1/4 w-1/2 h-96 bg-muted rounded-full blur-[128px] pointer-events-none z-0"></div>
   </>
 );
 
 const Header = ({ showReset, onReset }: { showReset: boolean; onReset: () => void }) => (
-  <header className="border-b border-cyan-900/30 bg-black/80 backdrop-blur-md sticky top-0 z-50">
+  <header className="border-b border-rule bg-sheet backdrop- sticky top-0 z-50">
     <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
       <div className="flex items-center space-x-3 group cursor-default">
         <div className="w-10 h-10 relative flex items-center justify-center">
-          <div className="absolute inset-0 bg-cyan-500 rounded-sm skew-x-[-10deg] opacity-20 group-hover:opacity-40 transition-opacity animate-pulse"></div>
-          <Cpu className="w-6 h-6 text-cyan-400 relative z-10" />
+          <div className="absolute inset-0 bg-signal rounded-sm skew-x-[-10deg] opacity-20 group-hover:opacity-40 transition-opacity animate-pulse"></div>
+          <Cpu className="w-6 h-6 text-ink relative z-10" />
         </div>
         <div className="flex flex-col">
-          <span className="text-xl font-bold font-cyber tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-neon-pulse">
+          <span className="text-xl font-bold text-ink">
             ARTIFACT_TO_LIFE
           </span>
-          <span className="text-[10px] text-cyan-700 font-mono tracking-[0.2em] uppercase">System v2.5 Online</span>
+          <span className="text-[10px] text-ink tracking-[0.2em] uppercase">System v2.5 Online</span>
         </div>
       </div>
 
@@ -73,13 +73,13 @@ const WelcomeView: React.FC<WelcomeViewProps> = ({
   return (
     <div className="w-full max-w-3xl mx-auto flex flex-col space-y-8 animate-fade-in-up">
       <div className="space-y-4 text-center md:text-left">
-        <h1 className="text-4xl md:text-6xl font-black font-cyber leading-tight">
+        <h1 className="text-4xl md:text-6xl font-black leading-tight">
           INITIATE <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-500 drop-shadow-[0_0_15px_rgba(217,70,239,0.5)]">
+          <span className="text-ink">
             MATERIALIZATION
           </span>
         </h1>
-        <p className="text-slate-400 font-mono text-sm leading-relaxed border-l-2 border-cyan-900 pl-4 max-w-2xl">
+        <p className="text-ink-soft text-sm leading-relaxed border-l-2 border-rule pl-4 max-w-2xl">
           // Upload visual data (sketch, photo, schematic).<br />
           // Neural network will compile functional interface.<br />
           // Execute build protocol.
@@ -89,24 +89,24 @@ const WelcomeView: React.FC<WelcomeViewProps> = ({
       {/* Upload Area */}
       <div
         className={`relative border-2 border-dashed rounded-sm p-8 transition-all duration-300 group ${fileData
-          ? 'border-cyan-500 bg-cyan-900/10 shadow-[0_0_20px_rgba(6,182,212,0.2)]'
-          : 'border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900/80 hover:shadow-[0_0_15px_rgba(6,182,212,0.1)]'
+          ? 'border-rule bg-muted'
+          : 'border-rule hover:border-rule hover:bg-bench'
           }`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
         {/* Corner Accents */}
-        <div className={`absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 transition-colors ${fileData ? 'border-cyan-400' : 'border-slate-600 group-hover:border-cyan-400'}`}></div>
-        <div className={`absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 transition-colors ${fileData ? 'border-cyan-400' : 'border-slate-600 group-hover:border-cyan-400'}`}></div>
-        <div className={`absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 transition-colors ${fileData ? 'border-cyan-400' : 'border-slate-600 group-hover:border-cyan-400'}`}></div>
-        <div className={`absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 transition-colors ${fileData ? 'border-cyan-400' : 'border-slate-600 group-hover:border-cyan-400'}`}></div>
+        <div className={`absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 transition-colors ${fileData ? 'border-rule' : 'border-rule group-hover:border-rule'}`}></div>
+        <div className={`absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 transition-colors ${fileData ? 'border-rule' : 'border-rule group-hover:border-rule'}`}></div>
+        <div className={`absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 transition-colors ${fileData ? 'border-rule' : 'border-rule group-hover:border-rule'}`}></div>
+        <div className={`absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 transition-colors ${fileData ? 'border-rule' : 'border-rule group-hover:border-rule'}`}></div>
 
         {fileData ? (
           <div className="relative w-full h-64 group-image">
             <img
               src={fileData.previewUrl}
               alt="Preview"
-              className="w-full h-full object-contain bg-black/40 border border-cyan-900/50"
+              className="w-full h-full object-contain bg-sheet border border-rule"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-image-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
               <button
@@ -114,7 +114,7 @@ const WelcomeView: React.FC<WelcomeViewProps> = ({
                   e.stopPropagation();
                   setFileData(null);
                 }}
-                className="p-2 bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500 hover:text-white transition-colors uppercase text-xs font-bold tracking-wider"
+                className="p-2 bg-destructive/10 text-destructive border border-destructive/30 hover:bg-destructive hover:text-primary-foreground transition-colors uppercase text-xs font-bold"
               >
                 Purge Data
               </button>
@@ -125,11 +125,11 @@ const WelcomeView: React.FC<WelcomeViewProps> = ({
             className="flex flex-col items-center justify-center h-64 cursor-pointer"
             onClick={() => fileInputRef.current?.click()}
           >
-            <div className="w-20 h-20 bg-slate-900/50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-slate-800 group-hover:border-cyan-500/50 shadow-[0_0_0_1px_rgba(0,0,0,0)] group-hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]">
-              <Upload className="w-8 h-8 text-slate-500 group-hover:text-cyan-400 transition-colors" />
+            <div className="w-20 h-20 bg-bench rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-rule group-hover:border-rule">
+              <Upload className="w-8 h-8 text-ink0 group-hover:text-ink transition-colors" />
             </div>
-            <p className="text-lg font-cyber text-slate-300 group-hover:text-cyan-200 transition-colors">INITIATE UPLOAD</p>
-            <p className="text-xs text-slate-500 mt-2 font-mono">DRAG & DROP OR CLICK [MAX 5MB]</p>
+            <p className="text-lg text-ink group-hover:text-ink transition-colors">INITIATE UPLOAD</p>
+            <p className="text-xs text-ink0 mt-2">DRAG & DROP OR CLICK [MAX 5MB]</p>
           </div>
         )}
         <input
@@ -144,7 +144,7 @@ const WelcomeView: React.FC<WelcomeViewProps> = ({
 
       {/* Text Input */}
       <div className="space-y-2 group">
-        <label className="text-xs font-bold text-cyan-700 uppercase tracking-widest flex items-center">
+        <label className="text-xs font-bold text-ink uppercase flex items-center">
           <Terminal className="w-3 h-3 mr-2" />
           Additional Parameters
         </label>
@@ -152,13 +152,13 @@ const WelcomeView: React.FC<WelcomeViewProps> = ({
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Enter custom directives..."
-          className="w-full bg-slate-900/50 border border-slate-800 text-cyan-100 p-4 font-mono text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:shadow-[0_0_20px_rgba(6,182,212,0.2)] outline-none resize-none h-32 transition-all placeholder:text-slate-600"
+          className="w-full bg-bench border border-rule text-ink p-4 text-sm focus:border-rule focus:ring-1 focus:ring-rule outline-none resize-none h-32 transition-all placeholder:text-ink"
         />
       </div>
 
       {/* Error Display */}
       {errorMsg && (
-        <div className="p-4 bg-red-950/30 border border-red-500/50 text-red-400 text-sm font-mono flex items-center animate-pulse">
+        <div className="p-4 bg-destructive/10 border border-destructive/30 text-destructive text-sm flex items-center animate-pulse">
           <span className="mr-2">⚠</span> {errorMsg}
         </div>
       )}
@@ -166,7 +166,7 @@ const WelcomeView: React.FC<WelcomeViewProps> = ({
       {/* Action Button */}
       <Button
         size="lg"
-        className="w-full py-6 text-lg tracking-widest"
+        className="w-full py-6 text-lg"
         onClick={handleGenerate}
         disabled={status === AppStatus.ANALYZING || status === AppStatus.GENERATING}
         isLoading={status === AppStatus.ANALYZING || status === AppStatus.GENERATING}
@@ -193,19 +193,19 @@ const GeneratedAppView: React.FC<GeneratedAppViewProps> = ({ status, generatedCo
   return (
     <div className="flex-1 flex flex-col h-full min-h-[600px] animate-fade-in-up">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold font-cyber text-cyan-50 flex items-center">
-          <span className="w-2 h-2 bg-cyan-500 shadow-[0_0_10px_#06b6d4] mr-3 animate-pulse"></span>
+        <h2 className="text-xl font-bold text-ink flex items-center">
+          <span className="w-2 h-2 bg-signal mr-3 animate-pulse"></span>
           OUTPUT_STREAM
         </h2>
         {status === AppStatus.COMPLETE && (
-          <div className="text-[10px] text-cyan-800 font-mono border border-cyan-900/30 px-2 py-1">
+          <div className="text-[10px] text-ink border border-rule px-2 py-1">
             GEMINI_2.5_FLASH // RENDER_COMPLETE
           </div>
         )}
       </div>
 
       {status === AppStatus.GENERATING || status === AppStatus.ANALYZING ? (
-        <div className="flex-1 bg-black border border-cyan-900/50 rounded-sm flex flex-col items-center justify-center p-8 text-center space-y-8 relative overflow-hidden">
+        <div className="flex-1 bg-sheet border border-rule rounded-sm flex flex-col items-center justify-center p-8 text-center space-y-8 relative overflow-hidden">
           {/* Scanning Grid Background */}
           <div className="absolute inset-0 z-0 opacity-10" style={{
             backgroundImage: 'linear-gradient(0deg, transparent 24%, rgba(6, 182, 212, .3) 25%, rgba(6, 182, 212, .3) 26%, transparent 27%, transparent 74%, rgba(6, 182, 212, .3) 75%, rgba(6, 182, 212, .3) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(6, 182, 212, .3) 25%, rgba(6, 182, 212, .3) 26%, transparent 27%, transparent 74%, rgba(6, 182, 212, .3) 75%, rgba(6, 182, 212, .3) 76%, transparent 77%, transparent)',
@@ -213,16 +213,16 @@ const GeneratedAppView: React.FC<GeneratedAppViewProps> = ({ status, generatedCo
           }}></div>
 
           <div className="relative z-10">
-            <div className="absolute inset-0 bg-cyan-500 blur-2xl opacity-20 rounded-full animate-pulse"></div>
-            <Loader2 className="w-20 h-20 text-cyan-400 animate-spin relative z-10" />
+            <div className="absolute inset-0 bg-signal opacity-20 rounded-full animate-pulse"></div>
+            <Loader2 className="w-20 h-20 text-ink animate-spin relative z-10" />
           </div>
 
           <div className="space-y-3 z-10 max-w-md">
-            <h3 className="text-2xl font-cyber text-white tracking-wider animate-pulse">PROCESSING...</h3>
-            <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
-              <div className="h-full bg-cyan-500 animate-progress"></div>
+            <h3 className="text-2xl text-ink animate-pulse">PROCESSING...</h3>
+            <div className="h-1 w-full bg-bench rounded-full overflow-hidden">
+              <div className="h-full bg-signal animate-progress"></div>
             </div>
-            <p className="text-cyan-700 font-mono text-xs mt-2">
+            <p className="text-ink text-xs mt-2">
               {'>'} Parsing Visual Data...<br />
               {'>'} Generating Component Logic...<br />
               {'>'} Applying Styles...
@@ -348,7 +348,7 @@ const AppContent: React.FC<AppContentProps> = ({ apiKey }) => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-cyan-50 flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200 overflow-x-hidden">
+    <div className="min-h-screen bg-sheet text-ink flex flex-col font-sans selection:bg-muted selection:text-ink overflow-x-hidden">
       <BackgroundEffect />
       <Header showReset={status === AppStatus.COMPLETE} onReset={handleReset} />
 
@@ -408,7 +408,7 @@ const AppContent: React.FC<AppContentProps> = ({ apiKey }) => {
             filter: drop-shadow(0 0 20px rgba(6,182,212,0.9)) drop-shadow(0 0 10px rgba(168,85,247,0.5));
           }
         }
-        .animate-neon-pulse {
+        . {
           animation: neon-pulse 3s ease-in-out infinite;
         }
         .animate-fade-in-up {

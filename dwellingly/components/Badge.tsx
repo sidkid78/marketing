@@ -7,11 +7,11 @@ interface BadgeProps {
 
 const Badge: React.FC<BadgeProps> = ({ children, variant = 'neutral' }) => {
   const styles = {
-    default: "bg-blue-100 text-blue-800",
-    success: "bg-green-100 text-green-800",
-    warning: "bg-yellow-100 text-yellow-800",
-    error: "bg-red-100 text-red-800",
-    neutral: "bg-slate-100 text-slate-800",
+    default: "bg-muted text-ink",
+    success: "bg-positive/10 text-positive",
+    warning: "bg-working/10 text-working",
+    error: "bg-destructive/10 text-destructive",
+    neutral: "bg-muted text-ink",
   };
 
   return (

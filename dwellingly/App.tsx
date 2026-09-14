@@ -161,7 +161,7 @@ function App({ apiKey = '' }: AppProps) {
       case 'ai':
         return (
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Your Transaction Assistant</h2>
+            <h2 className="text-2xl font-bold text-ink mb-6 text-center">Your Transaction Assistant</h2>
             <AIGuide apiKey={apiKey} />
           </div>
         );

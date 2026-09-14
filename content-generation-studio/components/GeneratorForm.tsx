@@ -19,25 +19,25 @@ const SelectInput: React.FC<{
   name: keyof GeneratorFormState;
 }> = ({ label, value, onChange, options, name }) => (
   <div className="flex flex-col space-y-2">
-    <label htmlFor={name} className="text-sm font-medium text-[#00f0ff] font-mono tracking-wider">
+    <label htmlFor={name} className="text-sm font-medium text-ink">
       {label}
     </label>
     <div className="relative group">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#00f0ff]/30 to-[#ff00ff]/30 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+      <div className="absolute -inset-0.5 bg-signal rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
       <select
         id={name}
         name={name}
         value={value}
         onChange={onChange}
-        className="relative w-full px-3 py-2 bg-black/80 text-white border border-[#00f0ff]/30 rounded-lg focus:outline-none focus:border-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] transition-all font-mono shadow-md appearance-none"
+        className="relative w-full px-3 py-2 bg-sheet text-ink border border-rule rounded-lg focus:outline-none focus:border-rule focus:ring-1 focus:ring-signal transition-all appearance-none"
       >
         {options.map((option) => (
-          <option key={option} value={option} className="bg-black text-white">
+          <option key={option} value={option} className="bg-sheet text-ink">
             {option}
           </option>
         ))}
       </select>
-      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#00f0ff]">
+      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-ink">
         ▼
       </div>
     </div>
@@ -78,11 +78,11 @@ const GeneratorForm: React.FC<GeneratorFormProps> = ({ formData, setFormData, on
         options={FORMAT_PREFERENCES}
       />
       <div className="flex flex-col space-y-2">
-        <label htmlFor="topic" className="text-sm font-medium text-[#00f0ff] font-mono tracking-wider">
+        <label htmlFor="topic" className="text-sm font-medium text-ink">
           TOPIC OR SUBJECT
         </label>
         <div className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#00f0ff]/30 to-[#ff00ff]/30 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+          <div className="absolute -inset-0.5 bg-signal rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
           <textarea
             id="topic"
             name="topic"
@@ -91,22 +91,22 @@ const GeneratorForm: React.FC<GeneratorFormProps> = ({ formData, setFormData, on
             placeholder="e.g., 'Introduction to Quantum Computing'"
             rows={4}
             required
-            className="relative w-full px-3 py-2 bg-black/80 text-white border border-[#00f0ff]/30 rounded-lg focus:outline-none focus:border-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] transition-all font-mono shadow-md placeholder-gray-600"
+            className="relative w-full px-3 py-2 bg-sheet text-ink border border-rule rounded-lg focus:outline-none focus:border-rule focus:ring-1 focus:ring-signal transition-all placeholder:text-ink-soft"
           />
         </div>
       </div>
       <button
         type="submit"
         disabled={isLoading}
-        className={`w-full flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-black transition-all duration-200 font-mono
+        className={`w-full flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-black transition-all duration-200
             ${isLoading
-            ? 'bg-gray-800 text-gray-500 cursor-not-allowed border-gray-700'
-            : 'bg-gradient-to-r from-[#00f0ff] to-[#00a0ff] hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] hover:scale-[1.02]'
+            ? 'bg-muted text-ink cursor-not-allowed border-rule'
+            : 'bg-signal hover:scale-[1.02]'
           }`}
       >
         {isLoading ? (
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 border-2 border-gray-600 border-t-black rounded-full animate-spin"></div>
+            <div className="w-4 h-4 border-2 border-rule border-t-black rounded-full animate-spin"></div>
             GENERATING...
           </div>
         ) : (

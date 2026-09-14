@@ -54,8 +54,8 @@ const Dashboard: React.FC<DashboardProps> = ({ transaction, onNavigate }) => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">{transaction.address}</h1>
-          <p className="text-slate-500">Transaction Dashboard</p>
+          <h1 className="text-2xl font-bold text-ink">{transaction.address}</h1>
+          <p className="text-ink0">Transaction Dashboard</p>
         </div>
         <div className="flex items-center gap-2">
            <Badge variant="default">{transaction.status.replace('_', ' ')}</Badge>
@@ -74,20 +74,20 @@ const Dashboard: React.FC<DashboardProps> = ({ transaction, onNavigate }) => {
         <div className="md:col-span-2 space-y-6">
           
           {/* PRD 4.1: Next Step Module */}
-          <Card className="border-l-4 border-l-slate-900 shadow-md">
+          <Card className="border-l-4 border-l-slate-900">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-semibold text-slate-500 mb-1 uppercase tracking-wide">Next Recommended Step</p>
-                <h2 className="text-xl font-bold text-slate-900 mb-2">{nextTask ? nextTask.title : "All Set!"}</h2>
-                <div className="bg-slate-50 p-4 rounded-lg mb-4 border border-slate-100">
-                    <p className="text-sm font-medium text-slate-700 mb-2">Why it matters:</p>
-                    <p className="text-slate-600 text-sm">{nextTask ? nextTask.description : "You are up to date."}</p>
+                <p className="text-sm font-semibold text-ink0 mb-1 uppercase tracking-wide">Next Recommended Step</p>
+                <h2 className="text-xl font-bold text-ink mb-2">{nextTask ? nextTask.title : "All Set!"}</h2>
+                <div className="bg-muted p-4 rounded-lg mb-4 border border-rule">
+                    <p className="text-sm font-medium text-ink mb-2">Why it matters:</p>
+                    <p className="text-ink-soft text-sm">{nextTask ? nextTask.description : "You are up to date."}</p>
                     {nextTask?.whatToPrepare && (
                       <div className="mt-3">
-                         <p className="text-xs font-semibold text-slate-500 uppercase">Prepare:</p>
+                         <p className="text-xs font-semibold text-ink0 uppercase">Prepare:</p>
                          <div className="flex flex-wrap gap-2 mt-1">
                             {nextTask.whatToPrepare.map((item, idx) => (
-                               <span key={idx} className="text-xs bg-white border border-slate-200 px-2 py-1 rounded text-slate-600">{item}</span>
+                               <span key={idx} className="text-xs bg-white border border-rule px-2 py-1 rounded text-ink-soft">{item}</span>
                             ))}
                          </div>
                       </div>
@@ -98,7 +98,7 @@ const Dashboard: React.FC<DashboardProps> = ({ transaction, onNavigate }) => {
                 </Button>
               </div>
               <div className="hidden sm:block">
-                 <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-900">
+                 <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center text-ink">
                     <ArrowUpRight className="w-6 h-6" />
                  </div>
               </div>
@@ -110,19 +110,19 @@ const Dashboard: React.FC<DashboardProps> = ({ transaction, onNavigate }) => {
             <Card title="Documents Status">
               <div className="flex items-center justify-between mb-4">
                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-slate-100 rounded-lg">
-                       <FileText className="w-5 h-5 text-slate-600" />
+                    <div className="p-2 bg-muted rounded-lg">
+                       <FileText className="w-5 h-5 text-ink-soft" />
                     </div>
                     <div>
-                        <p className="text-2xl font-bold text-slate-900">{missingDocs}</p>
-                        <p className="text-xs text-slate-500">Missing required docs</p>
+                        <p className="text-2xl font-bold text-ink">{missingDocs}</p>
+                        <p className="text-xs text-ink0">Missing required docs</p>
                     </div>
                  </div>
                  <Button variant="outline" size="sm" onClick={() => onNavigate('docs')}>View Vault</Button>
               </div>
-              <div className="w-full bg-slate-100 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div 
-                  className="bg-slate-900 h-2 rounded-full transition-all duration-500" 
+                  className="bg-bench h-2 rounded-full transition-all duration-500" 
                   style={{ width: `${((transaction.documents.length - missingDocs) / transaction.documents.length) * 100}%` }}
                 ></div>
               </div>
@@ -132,19 +132,19 @@ const Dashboard: React.FC<DashboardProps> = ({ transaction, onNavigate }) => {
             <Card title="Deal Health">
                <div className="flex items-center justify-between mb-4">
                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-green-100 rounded-lg">
-                       <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    <div className="p-2 bg-positive/10 rounded-lg">
+                       <CheckCircle2 className="w-5 h-5 text-positive" />
                     </div>
                     <div>
-                        <p className="text-lg font-bold text-slate-900">On Track</p>
-                        <p className="text-xs text-slate-500">{progress}% Complete</p>
+                        <p className="text-lg font-bold text-ink">On Track</p>
+                        <p className="text-xs text-ink0">{progress}% Complete</p>
                     </div>
                  </div>
                  <Button variant="outline" size="sm" onClick={() => onNavigate('roadmap')}>Timeline</Button>
               </div>
-              <div className="w-full bg-slate-100 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div 
-                  className="bg-green-500 h-2 rounded-full transition-all duration-500" 
+                  className="bg-positive h-2 rounded-full transition-all duration-500" 
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>
@@ -159,12 +159,12 @@ const Dashboard: React.FC<DashboardProps> = ({ transaction, onNavigate }) => {
           <Card title="Critical Dates">
              <div className="space-y-4">
                {criticalDates.map((cd, idx) => (
-                 <div key={idx} className="flex items-center justify-between border-b border-slate-50 pb-2 last:border-0 last:pb-0">
+                 <div key={idx} className="flex items-center justify-between border-b border-rule pb-2 last:border-0 last:pb-0">
                     <div className="flex items-center gap-3">
-                       <Calendar className={`w-4 h-4 ${cd.risk === 'High' ? 'text-red-500' : 'text-slate-400'}`} />
+                       <Calendar className={`w-4 h-4 ${cd.risk === 'High' ? 'text-destructive' : 'text-ink-soft'}`} />
                        <div>
-                          <p className="text-sm font-medium text-slate-900">{cd.label}</p>
-                          <p className="text-xs text-slate-500">{cd.isEstimated ? 'Estimated' : format(cd.date, 'MMM d, yyyy')}</p>
+                          <p className="text-sm font-medium text-ink">{cd.label}</p>
+                          <p className="text-xs text-ink0">{cd.isEstimated ? 'Estimated' : format(cd.date, 'MMM d, yyyy')}</p>
                        </div>
                     </div>
                     {cd.risk === 'High' && <Badge variant="error">Urgent</Badge>}
@@ -176,15 +176,15 @@ const Dashboard: React.FC<DashboardProps> = ({ transaction, onNavigate }) => {
           <Card title="Critical Warnings">
             <div className="space-y-4">
               {missingDocs > 0 ? (
-                <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-100">
-                  <AlertOctagon className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3 p-3 bg-destructive/10 rounded-lg border border-destructive/30">
+                  <AlertOctagon className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-red-800">Missing Disclosures</p>
-                    <p className="text-xs text-red-600 mt-1">You must upload the SDN before accepting offers.</p>
+                    <p className="text-sm font-medium text-destructive">Missing Disclosures</p>
+                    <p className="text-xs text-destructive mt-1">You must upload the SDN before accepting offers.</p>
                   </div>
                 </div>
               ) : (
-                <div className="text-sm text-slate-500 italic text-center py-4">No critical warnings.</div>
+                <div className="text-sm text-ink0 italic text-center py-4">No critical warnings.</div>
               )}
             </div>
           </Card>

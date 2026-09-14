@@ -147,7 +147,7 @@ export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, 
                 <button
                   onClick={() => handleConnectPlatform(ci.platform)}
                   disabled={!!connectingPlatform}
-                  className="text-xs bg-ink text-white px-3 py-1.5 rounded-full hover:opacity-90 transition-colors flex items-center gap-1"
+                  className="text-xs bg-ink text-ink px-3 py-1.5 rounded-full hover:opacity-90 transition-colors flex items-center gap-1"
                 >
                   {connectingPlatform === ci.platform ? (
                     <>Connecting...</>
@@ -191,7 +191,7 @@ export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, 
                       {isVideoSuggested && !videoUrls[id] && !loadingVideos[id] && (
                         <button
                           onClick={() => handleGenerateVideo(id, idea.visual_direction)}
-                          className="flex items-center gap-2 text-xs font-semibold text-white bg-signal px-4 py-2 rounded-sm hover:opacity-90 transition-opacity"
+                          className="flex items-center gap-2 text-xs font-semibold text-primary-foreground bg-signal px-4 py-2 rounded-sm hover:opacity-90 transition-opacity"
                         >
                           Generate Video
                         </button>
@@ -208,7 +208,7 @@ export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, 
                         </div>
                       )}
                       {imageUrls[id] && (
-                        <div className="rounded-sm overflow-hidden  border border-rule relative group">
+                        <div className="rounded-sm overflow-hidden border border-rule relative group">
                           <img src={imageUrls[id]} alt="Generated content visual" className="w-full h-auto object-cover" />
                         </div>
                       )}
@@ -222,26 +222,26 @@ export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, 
                         </div>
                       )}
                       {videoUrls[id] && (
-                        <div className="rounded-sm overflow-hidden bg-black shadow-md">
+                        <div className="rounded-sm overflow-hidden bg-sheet">
                           <video controls className="w-full h-auto max-h-[240px]" src={videoUrls[id]} />
                         </div>
                       )}
                     </div>
 
-                    <p className="text-sm italic bg-muted p-3 rounded-md text-gray-700 mb-3">"{idea.caption}"</p>
+                    <p className="text-sm italic bg-muted p-3 rounded-md text-ink mb-3">"{idea.caption}"</p>
                     <div className="flex justify-between items-center mb-4">
-                      <span className="text-white bg-accent font-semibold text-xs px-3 py-1 rounded-full">{idea.cta}</span>
+                      <span className="text-ink bg-accent font-semibold text-xs px-3 py-1 rounded-full">{idea.cta}</span>
                       <div className="flex flex-wrap gap-1">
                         {idea.hashtag_suggestions.map(tag => (
-                          <span key={tag} className="text-xs text-blue-600">#{tag}</span>
+                          <span key={tag} className="text-xs text-ink">#{tag}</span>
                         ))}
                       </div>
                     </div>
 
                     {/* Publishing Action */}
                     {hasMedia && (
-                      <div className="mt-2 p-3 bg-accent border border-blue-100 rounded-sm flex items-center justify-between">
-                        <div className="text-xs text-blue-800">
+                      <div className="mt-2 p-3 bg-accent border border-rule rounded-sm flex items-center justify-between">
+                        <div className="text-xs text-ink">
                           <strong>Ready to post?</strong>
                           <p>Publish directly to {ci.platform.replace('_', ' ')}.</p>
                         </div>
@@ -249,7 +249,7 @@ export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, 
                         {!connectedPlatforms[ci.platform] ? (
                           <button
                             onClick={() => handleConnectPlatform(ci.platform)}
-                            className="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded shadow hover:bg-blue-700"
+                            className="px-3 py-1.5 bg-signal text-primary-foreground text-xs font-semibold rounded shadow hover:bg-signal"
                           >
                             Connect Account
                           </button>
@@ -259,7 +259,7 @@ export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, 
                               href={publishResult[id].url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="px-3 py-1.5 bg-accent0 text-white text-xs font-semibold rounded flex items-center gap-1 hover:bg-green-600"
+                              className="px-3 py-1.5 bg-accent0 text-primary-foreground text-xs font-semibold rounded flex items-center gap-1 hover:bg-positive"
                             >
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -267,27 +267,27 @@ export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, 
                               View post
                             </a>
                           ) : (
-                            <button disabled className="px-3 py-1.5 bg-amber-500 text-white text-xs font-semibold rounded flex items-center gap-1 cursor-default" title="No backend integration for this platform - nothing was sent">
+                            <button disabled className="px-3 py-1.5 bg-working text-primary-foreground text-xs font-semibold rounded flex items-center gap-1 cursor-default" title="No backend integration for this platform - nothing was sent">
                               Simulated
                             </button>
                           )
                         ) : publishingStatus[id] === 'error' ? (
                           <button
                             onClick={() => handlePublish(id, ci.platform, idea, activeMediaUrl, mediaType)}
-                            className="px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded hover:bg-red-700"
+                            className="px-3 py-1.5 bg-destructive text-primary-foreground text-xs font-semibold rounded hover:bg-destructive"
                             title={publishResult[id]?.error || 'Publish failed'}
                           >
                             Failed - retry
                           </button>
                         ) : publishingStatus[id] === 'publishing' ? (
-                          <button disabled className="px-3 py-1.5 bg-gray-400 text-white text-xs font-semibold rounded flex items-center gap-1 cursor-wait">
+                          <button disabled className="px-3 py-1.5 bg-muted text-ink text-xs font-semibold rounded flex items-center gap-1 cursor-wait">
                             <span className="animate-spin h-3 w-3 border-2 border-white border-t-transparent rounded-full"></span>
                             Posting...
                           </button>
                         ) : (
                           <button
                             onClick={() => handlePublish(id, ci.platform, idea, activeMediaUrl, mediaType)}
-                            className="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded shadow hover:bg-blue-700 flex items-center gap-1"
+                            className="px-3 py-1.5 bg-signal text-primary-foreground text-xs font-semibold rounded shadow hover:bg-signal flex items-center gap-1"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                               <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />

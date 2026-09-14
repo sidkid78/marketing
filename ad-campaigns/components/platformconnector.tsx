@@ -154,12 +154,12 @@ export function PlatformConnector({
 
     return (
         <div className="space-y-6">
-            <div className="bg-black/40 rounded-xl border border-[#00f0ff]/20 p-6">
-                <h2 className="text-xl font-mono font-bold mb-2 flex items-center gap-2">
-                    <Shield size={20} className="text-[#00f0ff]" />
+            <div className="bg-sheet rounded-xl border border-rule p-6">
+                <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+                    <Shield size={20} className="text-ink" />
                     Platform Connections
                 </h2>
-                <p className="text-gray-500 text-sm mb-6">
+                <p className="text-ink-soft text-sm mb-6">
                     Configure API credentials for each advertising platform. Credentials are stored securely in environment variables.
                 </p>
 
@@ -174,29 +174,29 @@ export function PlatformConnector({
                             <div
                                 key={platform.id}
                                 className={`border rounded-xl overflow-hidden transition-all ${isConnected
-                                        ? 'border-[#39ff14]/30 bg-[#39ff14]/5'
-                                        : 'border-gray-800 bg-black/30'
+                                        ? 'border-positive/30 bg-positive/5'
+                                        : 'border-rule bg-sheet'
                                     }`}
                             >
                                 {/* Platform Header */}
                                 <div
-                                    className="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors"
+                                    className="p-4 flex items-center justify-between cursor-pointer hover:bg-muted transition-colors"
                                     onClick={() => setExpandedPlatform(isExpanded ? null : platform.id)}
                                 >
                                     <div className="flex items-center gap-4">
                                         <span className="text-3xl">{platform.icon}</span>
                                         <div>
-                                            <h3 className="font-mono font-bold">{platform.name}</h3>
+                                            <h3 className="font-bold">{platform.name}</h3>
                                             <div className="flex items-center gap-2 mt-1">
                                                 {isConnected ? (
                                                     <>
-                                                        <CheckCircle2 size={14} className="text-[#39ff14]" />
-                                                        <span className="text-xs text-[#39ff14]">Connected</span>
+                                                        <CheckCircle2 size={14} className="text-positive" />
+                                                        <span className="text-xs text-positive">Connected</span>
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <AlertCircle size={14} className="text-gray-500" />
-                                                        <span className="text-xs text-gray-500">Not configured</span>
+                                                        <AlertCircle size={14} className="text-ink-soft" />
+                                                        <span className="text-xs text-ink-soft">Not configured</span>
                                                     </>
                                                 )}
                                             </div>
@@ -210,9 +210,9 @@ export function PlatformConnector({
                                                 testConnection(platform.id);
                                             }}
                                             disabled={isTesting}
-                                            className={`px-3 py-1.5 rounded-lg font-mono text-xs flex items-center gap-2 transition-all ${isConnected
-                                                    ? 'bg-[#39ff14]/20 text-[#39ff14] hover:bg-[#39ff14]/30'
-                                                    : 'bg-[#00f0ff]/20 text-[#00f0ff] hover:bg-[#00f0ff]/30'
+                                            className={`px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 transition-all ${isConnected
+                                                    ? 'bg-positive/20 text-positive hover:bg-positive/30'
+                                                    : 'bg-signal/20 text-ink hover:bg-signal/30'
                                                 }`}
                                         >
                                             {isTesting ? (
@@ -228,47 +228,47 @@ export function PlatformConnector({
                                             )}
                                         </button>
                                         {isExpanded ? (
-                                            <ChevronUp size={20} className="text-gray-500" />
+                                            <ChevronUp size={20} className="text-ink-soft" />
                                         ) : (
-                                            <ChevronDown size={20} className="text-gray-500" />
+                                            <ChevronDown size={20} className="text-ink-soft" />
                                         )}
                                     </div>
                                 </div>
 
                                 {/* Expanded Setup Instructions */}
                                 {isExpanded && (
-                                    <div className="border-t border-gray-800 p-4 bg-black/20">
+                                    <div className="border-t border-rule p-4 bg-sheet">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             {/* Environment Variables */}
                                             <div>
-                                                <h4 className="font-mono text-sm font-bold mb-3 flex items-center gap-2">
-                                                    <Key size={14} className="text-[#ff00ff]" />
+                                                <h4 className="text-sm font-bold mb-3 flex items-center gap-2">
+                                                    <Key size={14} className="text-ink-soft" />
                                                     Required Environment Variables
                                                 </h4>
-                                                <div className="bg-black/40 rounded-lg p-3 font-mono text-xs space-y-1">
+                                                <div className="bg-sheet rounded-lg p-3 text-xs space-y-1">
                                                     {docs.envVars.map((envVar) => (
                                                         <div key={envVar} className="flex items-center gap-2">
-                                                            <span className="text-gray-500">#</span>
-                                                            <span className="text-[#00f0ff]">{envVar}</span>
-                                                            <span className="text-gray-600">=your_value_here</span>
+                                                            <span className="text-ink-soft">#</span>
+                                                            <span className="text-ink">{envVar}</span>
+                                                            <span className="text-ink-soft">=your_value_here</span>
                                                         </div>
                                                     ))}
                                                 </div>
-                                                <p className="text-xs text-gray-500 mt-2">
-                                                    Add these to your <code className="text-[#ff00ff]">.env.local</code> file
+                                                <p className="text-xs text-ink-soft mt-2">
+                                                    Add these to your <code className="text-ink-soft">.env.local</code> file
                                                 </p>
                                             </div>
 
                                             {/* Setup Instructions */}
                                             <div>
-                                                <h4 className="font-mono text-sm font-bold mb-3">Setup Steps</h4>
+                                                <h4 className="text-sm font-bold mb-3">Setup Steps</h4>
                                                 <ol className="space-y-2">
                                                     {docs.instructions.map((instruction, index) => (
                                                         <li key={index} className="flex items-start gap-2 text-sm">
-                                                            <span className="text-[#00f0ff] font-mono text-xs mt-0.5">
+                                                            <span className="text-ink text-xs mt-0.5">
                                                                 {(index + 1).toString().padStart(2, '0')}
                                                             </span>
-                                                            <span className="text-gray-400">{instruction}</span>
+                                                            <span className="text-ink-soft">{instruction}</span>
                                                         </li>
                                                     ))}
                                                 </ol>
@@ -276,7 +276,7 @@ export function PlatformConnector({
                                                     href={docs.docsUrl}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-1 text-sm text-[#00f0ff] hover:underline mt-4"
+                                                    className="inline-flex items-center gap-1 text-sm text-ink hover:underline mt-4"
                                                 >
                                                     View Documentation <ExternalLink size={12} />
                                                 </a>
@@ -291,12 +291,12 @@ export function PlatformConnector({
             </div>
 
             {/* Security Notice */}
-            <div className="bg-black/40 rounded-xl border border-yellow-500/30 p-4">
+            <div className="bg-sheet rounded-xl border border-working/30 p-4">
                 <div className="flex items-start gap-3">
-                    <Shield size={20} className="text-yellow-500 flex-shrink-0 mt-0.5" />
+                    <Shield size={20} className="text-working flex-shrink-0 mt-0.5" />
                     <div>
-                        <h4 className="font-mono font-bold text-yellow-500 mb-1">Security Notice</h4>
-                        <p className="text-sm text-gray-400">
+                        <h4 className="font-bold text-working mb-1">Security Notice</h4>
+                        <p className="text-sm text-ink-soft">
                             API credentials are stored in server-side environment variables and never exposed to the browser.
                             All API calls are proxied through Next.js API routes to keep your credentials secure.
                         </p>

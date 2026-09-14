@@ -74,37 +74,37 @@ const AIGuide: React.FC<AIGuideProps> = ({ apiKey = '' }) => {
   };
 
   return (
-    <div className="flex flex-col h-[600px] bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+    <div className="flex flex-col h-[600px] bg-white rounded-xl border border-rule overflow-hidden">
       {/* Header */}
-      <div className="bg-slate-900 p-4 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-white">
-          <div className="p-1.5 bg-blue-600 rounded-lg">
+      <div className="bg-bench p-4 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-ink">
+          <div className="p-1.5 bg-signal rounded-lg">
             <MessageSquare className="w-4 h-4" />
           </div>
           <h2 className="font-semibold">Dwellingly AI Guide</h2>
         </div>
-        <div className="text-xs text-slate-400 bg-slate-800 px-2 py-1 rounded">
+        <div className="text-xs text-ink-soft bg-sheet px-2 py-1 rounded">
           Educational Only
         </div>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50" ref={scrollRef}>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted" ref={scrollRef}>
         {messages.map((msg) => (
           <div
             key={msg.id}
             className={`flex items-start gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
           >
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-slate-200' : 'bg-blue-100'}`}>
-              {msg.role === 'user' ? <User className="w-5 h-5 text-slate-600" /> : <Bot className="w-5 h-5 text-blue-600" />}
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-muted' : 'bg-muted'}`}>
+              {msg.role === 'user' ? <User className="w-5 h-5 text-ink-soft" /> : <Bot className="w-5 h-5 text-ink" />}
             </div>
             <div className={`
               max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed
               ${msg.role === 'user'
-                ? 'bg-slate-900 text-white rounded-tr-none'
-                : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-sm'
+                ? 'bg-bench text-ink rounded-tr-none'
+                : 'bg-white border border-rule text-ink rounded-tl-none'
               }
-              ${msg.isError ? 'bg-red-50 border-red-200 text-red-800' : ''}
+              ${msg.isError ? 'bg-destructive/10 border-destructive/30 text-destructive' : ''}
             `}>
               <ReactMarkdown
                 components={{
@@ -116,8 +116,8 @@ const AIGuide: React.FC<AIGuideProps> = ({ apiKey = '' }) => {
                   h1: ({ node, ...props }) => <h1 className="text-lg font-bold mb-2" {...props} />,
                   h2: ({ node, ...props }) => <h2 className="text-base font-bold mb-2" {...props} />,
                   h3: ({ node, ...props }) => <h3 className="text-sm font-bold mb-1" {...props} />,
-                  a: ({ node, ...props }) => <a className="text-blue-600 underline hover:text-blue-800" target="_blank" rel="noopener noreferrer" {...props} />,
-                  blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-slate-300 pl-4 italic my-2 text-slate-600" {...props} />,
+                  a: ({ node, ...props }) => <a className="text-ink underline hover:text-ink" target="_blank" rel="noopener noreferrer" {...props} />,
+                  blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-rule pl-4 italic my-2 text-ink-soft" {...props} />,
                 }}
               >
                 {msg.text}
@@ -127,14 +127,14 @@ const AIGuide: React.FC<AIGuideProps> = ({ apiKey = '' }) => {
         ))}
         {isLoading && (
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-              <Bot className="w-5 h-5 text-blue-600" />
+            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+              <Bot className="w-5 h-5 text-ink" />
             </div>
-            <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-tl-none shadow-sm">
+            <div className="bg-white border border-rule px-4 py-3 rounded-2xl rounded-tl-none">
               <div className="flex gap-1">
-                <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></span>
-                <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-75"></span>
-                <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-150"></span>
+                <span className="w-2 h-2 bg-muted rounded-full animate-bounce"></span>
+                <span className="w-2 h-2 bg-muted rounded-full animate-bounce delay-75"></span>
+                <span className="w-2 h-2 bg-muted rounded-full animate-bounce delay-150"></span>
               </div>
             </div>
           </div>
@@ -142,13 +142,13 @@ const AIGuide: React.FC<AIGuideProps> = ({ apiKey = '' }) => {
       </div>
 
       {/* Input Area */}
-      <div className="p-4 bg-white border-t border-slate-100">
+      <div className="p-4 bg-white border-t border-rule">
         <div className="flex gap-2 mb-3 overflow-x-auto pb-2 scrollbar-hide">
           {SUGGESTED_QUESTIONS.map((q, idx) => (
             <button
               key={idx}
               onClick={() => handleSend(q)}
-              className="whitespace-nowrap px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-600 hover:bg-slate-100 transition-colors"
+              className="whitespace-nowrap px-3 py-1.5 bg-muted border border-rule rounded-full text-xs text-ink-soft hover:bg-muted transition-colors"
             >
               {q}
             </button>
@@ -161,13 +161,13 @@ const AIGuide: React.FC<AIGuideProps> = ({ apiKey = '' }) => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend(input)}
             placeholder="Ask about terms, deadlines, or docs..."
-            className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+            className="flex-1 px-4 py-2 border border-rule rounded-lg focus:outline-none focus:ring-2 focus:ring-rule focus:border-transparent text-sm"
           />
           <Button onClick={() => handleSend(input)} disabled={isLoading || !input.trim()}>
             <Send className="w-4 h-4" />
           </Button>
         </div>
-        <p className="text-[10px] text-slate-400 mt-2 text-center flex items-center justify-center gap-1">
+        <p className="text-[10px] text-ink-soft mt-2 text-center flex items-center justify-center gap-1">
           <AlertCircle className="w-3 h-3" />
           AI can make mistakes. Verify important info with a pro.
         </p>

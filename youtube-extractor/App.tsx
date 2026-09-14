@@ -86,40 +86,40 @@ export default function YoutubeExtractor() {
     };
 
     return (
-        <div className="flex flex-col h-full cyber-panel bg-black/40 text-white p-6 overflow-y-auto">
+        <div className="flex flex-col h-full bg-sheet text-ink p-6 overflow-y-auto">
             {/* Header */}
             <div className="flex items-center gap-3 mb-6">
                 <div className="relative">
-                    <div className="absolute inset-0 bg-[#ff0000] blur-xl opacity-30 animate-pulse"></div>
-                    <div className="relative bg-black/50 p-3 rounded-xl border border-[#ff0000]/50 backdrop-blur-sm">
+                    <div className="absolute inset-0 bg-[#ff0000] opacity-30 animate-pulse"></div>
+                    <div className="relative bg-sheet p-3 rounded-xl border border-[#ff0000]/50 backdrop-">
                         <Youtube size={28} className="text-[#ff0000]" />
                     </div>
                 </div>
                 <div>
-                    <h2 className="text-2xl font-bold font-mono tracking-tight flex items-center gap-2">
-                        <span className="text-[#ff0000] neon-text">YT</span>
-                        <span className="text-white">_</span>
-                        <span className="text-[#00f0ff] neon-text">EXTRACTOR</span>
+                    <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                        <span className="text-[#ff0000]">YT</span>
+                        <span className="text-ink">_</span>
+                        <span className="text-ink">EXTRACTOR</span>
                     </h2>
-                    <p className="text-sm text-gray-400 font-mono tracking-widest mt-1">
+                    <p className="text-sm text-ink-soft mt-1">
                         TRANSCRIPT RETRIEVAL SYSTEM
                     </p>
                 </div>
             </div>
 
             {/* Input Section */}
-            <div className="bg-black/40 backdrop-blur-sm rounded-xl border border-[#ff0000]/30 p-6 relative overflow-hidden shrink-0">
+            <div className="bg-sheet backdrop- rounded-xl border border-[#ff0000]/30 p-6 relative overflow-hidden shrink-0">
                 <div className="absolute top-0 right-0 w-16 h-16 border-r border-t border-[#ff0000]/30"></div>
-                <div className="absolute bottom-0 left-0 w-16 h-16 border-l border-b border-[#00f0ff]/30"></div>
+                <div className="absolute bottom-0 left-0 w-16 h-16 border-l border-b border-rule"></div>
 
                 <div className="relative z-10 flex flex-col md:flex-row gap-4 items-end">
                     <div className="flex-1 w-full">
-                        <label className="text-xs font-mono text-[#00f0ff] mb-2 block tracking-wider">
+                        <label className="text-xs text-ink mb-2 block">
                             TARGET URL OR VIDEO ID
                         </label>
                         <input
                             type="text"
-                            className="w-full bg-black/60 border border-[#ff0000]/40 rounded-lg px-4 py-3 text-white font-mono focus:border-[#ff0000] focus:ring-1 focus:ring-[#ff0000] focus:outline-none transition-all placeholder:text-gray-600"
+                            className="w-full bg-sheet border border-[#ff0000]/40 rounded-lg px-4 py-3 text-ink focus:border-[#ff0000] focus:ring-1 focus:ring-[#ff0000] focus:outline-none transition-all placeholder:text-ink-soft"
                             placeholder="e.g., https://youtube.com/watch?v=... or RpUTF_U4kiw"
                             value={urlOrId}
                             onChange={(e) => setUrlOrId(e.target.value)}
@@ -129,7 +129,7 @@ export default function YoutubeExtractor() {
                     <button
                         onClick={handleExtract}
                         disabled={loading || !urlOrId}
-                        className="w-full md:w-auto px-8 py-3 rounded-lg font-mono text-sm font-bold bg-gradient-to-r from-[#ff0000] to-[#aa0000] text-white hover:shadow-[0_0_20px_rgba(255,0,0,0.4)] disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase whitespace-nowrap"
+                        className="w-full md:w-auto px-8 py-3 rounded-lg text-sm font-bold bg-signal text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase whitespace-nowrap"
                     >
                         {loading ? (
                             <span className="flex items-center gap-2">
@@ -143,32 +143,32 @@ export default function YoutubeExtractor() {
                 </div>
 
                 {error && (
-                    <div className="mt-4 p-3 bg-red-900/30 border border-red-500/50 rounded-lg flex items-start gap-3">
-                        <AlertCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
-                        <p className="text-sm font-mono text-red-200">{error}</p>
+                    <div className="mt-4 p-3 bg-destructive/10 border border-destructive/30 rounded-lg flex items-start gap-3">
+                        <AlertCircle size={18} className="text-destructive shrink-0 mt-0.5" />
+                        <p className="text-sm text-destructive">{error}</p>
                     </div>
                 )}
             </div>
 
             {/* Results Section */}
             {transcript && (
-                <div className="mt-6 flexflex-col flex-1 h-0 overflow-hidden bg-black/40 backdrop-blur-sm rounded-xl border border-[#00f0ff]/30 relative flex flex-col">
-                    <div className="flex items-center justify-between p-4 border-b border-[#00f0ff]/20 bg-black/60 shrink-0">
+                <div className="mt-6 flexflex-col flex-1 h-0 overflow-hidden bg-sheet backdrop- rounded-xl border border-rule relative flex flex-col">
+                    <div className="flex items-center justify-between p-4 border-b border-rule bg-sheet shrink-0">
                         <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-[#39ff14] shadow-[0_0_10px_#39ff14]"></div>
-                            <span className="text-xs font-mono tracking-widest text-[#00f0ff]">TRANSCRIPT INJECTED</span>
+                            <div className="w-2 h-2 rounded-full bg-positive"></div>
+                            <span className="text-xs text-ink">TRANSCRIPT INJECTED</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={handleCopy}
-                                className="flex items-center gap-2 px-3 py-1.5 rounded bg-black/50 border border-[#00f0ff]/50 text-[#00f0ff] hover:bg-[#00f0ff]/20 transition-all font-mono text-xs"
+                                className="flex items-center gap-2 px-3 py-1.5 rounded bg-sheet border border-rule text-ink hover:bg-signal/20 transition-all text-xs"
                             >
                                 {copied ? <Check size={14} /> : <Copy size={14} />}
                                 {copied ? 'COPIED' : 'COPY'}
                             </button>
                             <button
                                 onClick={handleDownload}
-                                className="flex items-center gap-2 px-3 py-1.5 rounded bg-black/50 border border-[#ff00ff]/50 text-[#ff00ff] hover:bg-[#ff00ff]/20 transition-all font-mono text-xs"
+                                className="flex items-center gap-2 px-3 py-1.5 rounded bg-sheet border border-rule text-ink-soft hover:bg-signal/20 transition-all text-xs"
                             >
                                 <Download size={14} />
                                 SAVE
@@ -177,7 +177,7 @@ export default function YoutubeExtractor() {
                     </div>
 
                     <div className="p-4 overflow-y-auto flex-1 custom-scrollbar">
-                        <pre className="font-mono text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">
+                        <pre className="text-sm text-ink whitespace-pre-wrap leading-relaxed">
                             {transcript}
                         </pre>
                     </div>

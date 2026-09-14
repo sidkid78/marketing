@@ -184,14 +184,14 @@ export default function Home() {
                         aria-current={isActive ? "page" : undefined}
                         title={tool.blurb}
                         className={`group flex w-full items-center gap-2.5 rounded-sm px-2.5 py-[7px] text-left text-[13.5px] transition-colors ${isActive
-                          ? "bg-signal text-white"
+                          ? "bg-signal text-primary-foreground"
                           : "text-ink hover:bg-sidebar-accent"
                           }`}
                       >
                         <Icon
                           size={15}
                           strokeWidth={1.75}
-                          className={isActive ? "text-white" : "text-ink-soft group-hover:text-ink"}
+                          className={isActive ? "text-ink" : "text-ink-soft group-hover:text-ink"}
                         />
                         <span className="truncate">{tool.label}</span>
                       </button>
@@ -269,7 +269,7 @@ export default function Home() {
                 <div className="flex gap-2">
                   <button
                     onClick={handleSave}
-                    className="rounded-sm bg-signal px-4 py-2 text-[13.5px] font-medium text-white transition-opacity hover:opacity-90"
+                    className="rounded-sm bg-signal px-4 py-2 text-[13.5px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
                   >
                     Save key
                   </button>

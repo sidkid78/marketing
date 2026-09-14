@@ -80,13 +80,13 @@ export const EngagementHub: React.FC<EngagementHubProps> = ({ activeAccount }) =
     <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Feed Column */}
       <div className="space-y-4">
-        <h2 className="text-xl font-bold text-slate-900 mb-4">Community Feed (Austin, TX)</h2>
+        <h2 className="text-xl font-bold text-ink mb-4">Community Feed (Austin, TX)</h2>
         {FEED.map((tweet) => (
           <div 
             key={tweet.id} 
             className={`
               bg-white p-6 rounded-xl border cursor-pointer transition-all
-              ${selectedTweet?.id === tweet.id ? 'border-blue-500 ring-1 ring-blue-500 shadow-md' : 'border-slate-200 shadow-sm hover:border-blue-300'}
+              ${selectedTweet?.id === tweet.id ? 'border-rule ring-1 ring-rule' : 'border-rule hover:border-rule'}
             `}
             onClick={() => handleDraftReply(tweet)}
           >
@@ -95,18 +95,18 @@ export const EngagementHub: React.FC<EngagementHubProps> = ({ activeAccount }) =
               <div className="flex-1">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-2">
-                    <span className="font-bold text-slate-900">{tweet.user}</span>
-                    <span className="text-slate-500 text-sm">{tweet.handle}</span>
+                    <span className="font-bold text-ink">{tweet.user}</span>
+                    <span className="text-ink0 text-sm">{tweet.handle}</span>
                   </div>
-                  <span className="text-slate-400 text-sm">{tweet.time}</span>
+                  <span className="text-ink text-sm">{tweet.time}</span>
                 </div>
-                <p className="text-slate-800 mt-2">{tweet.content}</p>
+                <p className="text-ink mt-2">{tweet.content}</p>
               </div>
             </div>
-            <div className="flex items-center space-x-6 mt-4 ml-13 pl-12 text-slate-400 text-sm">
-               <button className="hover:text-blue-500 flex items-center space-x-1"><MessageSquare size={16}/> <span>Reply</span></button>
-               <button className="hover:text-green-500 flex items-center space-x-1"><Share2 size={16}/> <span>Retweet</span></button>
-               <button className="hover:text-red-500 flex items-center space-x-1"><ThumbsUp size={16}/> <span>Like</span></button>
+            <div className="flex items-center space-x-6 mt-4 ml-13 pl-12 text-ink text-sm">
+               <button className="hover:text-ink flex items-center space-x-1"><MessageSquare size={16}/> <span>Reply</span></button>
+               <button className="hover:text-positive flex items-center space-x-1"><Share2 size={16}/> <span>Retweet</span></button>
+               <button className="hover:text-destructive flex items-center space-x-1"><ThumbsUp size={16}/> <span>Like</span></button>
             </div>
           </div>
         ))}
@@ -115,15 +115,15 @@ export const EngagementHub: React.FC<EngagementHubProps> = ({ activeAccount }) =
       {/* Action Column */}
       <div className="lg:sticky lg:top-8 h-fit">
         {selectedTweet ? (
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-lg">
+          <div className="bg-white p-6 rounded-xl border border-rule">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-slate-800 flex items-center">
-                <span className="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
+              <h3 className="font-bold text-ink flex items-center">
+                <span className="w-2 h-2 rounded-full bg-signal mr-2"></span>
                 Drafting Reply
               </h3>
-              <div className="flex items-center space-x-2 bg-slate-50 px-2 py-1 rounded border border-slate-200">
+              <div className="flex items-center space-x-2 bg-muted px-2 py-1 rounded border border-rule">
                 <img src={activeAccount.avatar} className="w-4 h-4 rounded-full" />
-                <span className="text-[10px] font-bold text-slate-500 uppercase">{activeAccount.handle}</span>
+                <span className="text-[10px] font-bold text-ink0 uppercase">{activeAccount.handle}</span>
               </div>
             </div>
             
@@ -131,19 +131,19 @@ export const EngagementHub: React.FC<EngagementHubProps> = ({ activeAccount }) =
               <textarea
                 value={replyDraft}
                 onChange={(e) => setReplyDraft(e.target.value)}
-                className="w-full h-40 p-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none text-slate-800"
+                className="w-full h-40 p-4 border border-rule rounded-lg focus:ring-2 focus:ring-rule outline-none resize-none text-ink"
                 placeholder="Drafting response..."
                 disabled={generating || posting || postedSuccess}
               />
               <div className="flex justify-between items-center mt-2">
-                 <span className={`text-xs ${replyDraft.length > 280 ? 'text-red-500 font-bold' : 'text-slate-400'}`}>
+                 <span className={`text-xs ${replyDraft.length > 280 ? 'text-destructive font-bold' : 'text-ink-soft'}`}>
                     {replyDraft.length}/280
                  </span>
                  <div className="flex space-x-2">
                     <button 
                         onClick={() => handleDraftReply(selectedTweet)}
                         disabled={generating || posting || postedSuccess}
-                        className="text-sm text-blue-600 hover:text-blue-800 font-medium px-3 py-1 disabled:opacity-50"
+                        className="text-sm text-ink hover:text-ink font-medium px-3 py-1 disabled:opacity-50"
                     >
                         Regenerate AI
                     </button>
@@ -156,7 +156,7 @@ export const EngagementHub: React.FC<EngagementHubProps> = ({ activeAccount }) =
                 disabled={generating || posting || postedSuccess || !replyDraft}
                 className={`
                     w-full font-bold py-3 rounded-lg flex items-center justify-center space-x-2 transition-all
-                    ${postedSuccess ? 'bg-green-600 text-white' : 'bg-black text-white hover:bg-slate-800'}
+                    ${postedSuccess ? 'bg-positive text-primary-foreground' : 'bg-sheet text-ink hover:bg-sheet'}
                     disabled:opacity-50
                 `}
             >
@@ -165,10 +165,10 @@ export const EngagementHub: React.FC<EngagementHubProps> = ({ activeAccount }) =
             </button>
           </div>
         ) : (
-          <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-8 flex flex-col items-center justify-center text-center h-64">
-            <MessageSquare size={40} className="text-slate-300 mb-4" />
-            <h3 className="text-slate-500 font-medium">Select a tweet to engage</h3>
-            <p className="text-slate-400 text-sm mt-2">AI will suggest a professional response based on your brand voice.</p>
+          <div className="bg-muted border-2 border-dashed border-rule rounded-xl p-8 flex flex-col items-center justify-center text-center h-64">
+            <MessageSquare size={40} className="text-ink mb-4" />
+            <h3 className="text-ink0 font-medium">Select a tweet to engage</h3>
+            <p className="text-ink-soft text-sm mt-2">AI will suggest a professional response based on your brand voice.</p>
           </div>
         )}
       </div>
