@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { ResearchBrief, ContentDraft, EditSuggestions, FinalContent, GeneratedImage } from '../types';
-import { Search, FileText, CheckCircle, Sparkles, Copy, Check, Terminal, Cpu, Image as ImageIcon, Download } from 'lucide-react';
+import { Search, FileText, CheckCircle, Sparkles, Copy, Check, Terminal, Cpu, Image as ImageIcon, Download, FileCode } from 'lucide-react';
+import { ContentConfig } from '../types';
+import { buildDocumentHtml, documentFilename, downloadDocument } from '../services/documentExport';
 
 interface ResultViewerProps {
     research: ResearchBrief | null;
@@ -8,6 +10,7 @@ interface ResultViewerProps {
     edits: EditSuggestions | null;
     final: FinalContent | null;
     images: GeneratedImage[];
+    config: ContentConfig | null;
 }
 
 // --- Specialized Components ---
@@ -141,20 +144,27 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
     );
 }
 
-const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, final, images }) => {
-    const [activeTab, setActiveTab] = useState<'research' | 'draft' | 'edits' | 'final' | 'gallery'>('final');
+const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, final, images, config }) => {
+    const [activeTab, setActiveTab] = useState<'research' | 'draft' | 'edits' | 'final' | 'gallery' | 'document'>('final');
+
+    const documentHtml = React.useMemo(
+        () => (final && config ? buildDocumentHtml(config, final, images) : null),
+        [config, final, images],
+    );
 
     // Auto-switch tabs if data isn't available for current tab
     React.useEffect(() => {
+        if (activeTab === 'document' && !documentHtml) setActiveTab('final');
         if (activeTab === 'gallery' && images.length === 0) setActiveTab('final');
         if (activeTab === 'final' && !final) setActiveTab('edits');
         if (activeTab === 'edits' && !edits) setActiveTab('draft');
         if (activeTab === 'draft' && !draft) setActiveTab('research');
-    }, [research, draft, edits, final, images, activeTab]);
+    }, [research, draft, edits, final, images, activeTab, documentHtml]);
 
-    // Force switch to Gallery when images arrive
+    // The assembled document is the deliverable, so land on it once the
+    // visuals are in rather than dropping the reader in the gallery.
     React.useEffect(() => {
-        if (images.length > 0) setActiveTab('gallery');
+        if (images.length > 0) setActiveTab('document');
     }, [images]);
 
     if (!research) {
@@ -175,6 +185,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
         { id: 'edits', label: 'REVIEW', icon: CheckCircle, disabled: !edits },
         { id: 'final', label: 'ARTIFACT', icon: Sparkles, disabled: !final },
         { id: 'gallery', label: 'GALLERY', icon: ImageIcon, disabled: images.length === 0 },
+        { id: 'document', label: 'DOCUMENT', icon: FileCode, disabled: !documentHtml },
     ];
 
     return (
@@ -389,6 +400,34 @@ const ResultViewer: React.FC<ResultViewerProps> = ({ research, draft, edits, fin
                         <div className="mt-8 space-y-6">
                             <MarkdownRenderer content={final.full_markdown} />
                         </div>
+                    </div>
+                )}
+
+                {activeTab === 'document' && documentHtml && final && (
+                    <div className="flex h-full flex-col">
+                        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                            <div>
+                                <h3 className="text-[15px] font-semibold">{final.title}</h3>
+                                <p className="mt-0.5 text-[13px] text-ink-soft">
+                                    {images.length > 0
+                                        ? `Article and ${images.length} ${images.length === 1 ? 'image' : 'images'} in one HTML file. Images are embedded, so it works offline.`
+                                        : 'Article as a single HTML file.'}
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => downloadDocument(documentHtml, documentFilename(final.title))}
+                                className="flex items-center gap-2 rounded-sm bg-signal px-4 py-2 text-[13.5px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
+                            >
+                                <Download size={15} strokeWidth={1.75} />
+                                Download HTML
+                            </button>
+                        </div>
+                        <iframe
+                            title="Document preview"
+                            srcDoc={documentHtml}
+                            className="min-h-[520px] w-full flex-1 rounded-sm border border-rule bg-white"
+                            sandbox=""
+                        />
                     </div>
                 )}
 

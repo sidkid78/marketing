@@ -29,6 +29,7 @@ const App: React.FC<{ apiKey?: string }> = ({ apiKey }) => {
     const [editData, setEditData] = useState<EditSuggestions | null>(null);
     const [finalData, setFinalData] = useState<FinalContent | null>(null);
     const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
+    const [runConfig, setRunConfig] = useState<ContentConfig | null>(null);
 
     const addLog = useCallback((stage: PipelineStage, message: string) => {
         setLogs(prev => [...prev, {
@@ -40,6 +41,7 @@ const App: React.FC<{ apiKey?: string }> = ({ apiKey }) => {
     }, []);
 
     const runPipeline = async (config: ContentConfig) => {
+        setRunConfig(config);
         if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
             alert("Missing NEXT_PUBLIC_GEMINI_API_KEY in environment variables. Please check your .env.local file.");
             return;
@@ -89,17 +91,22 @@ const App: React.FC<{ apiKey?: string }> = ({ apiKey }) => {
             addLog(PipelineStage.PUBLISH, `Content published. Generating visual concepts...`);
 
             // --- Stage 5: Visualize (New) ---
+            let images: GeneratedImage[] = [];
             if (final.image_prompts && final.image_prompts.length > 0) {
                 setCurrentStage(PipelineStage.VISUALIZE);
                 addLog(PipelineStage.VISUALIZE, `Agent 'Artist' received ${final.image_prompts.length} prompts. Rendering...`);
 
-                const images = await agentGenerateImages(final.image_prompts);
+                images = await agentGenerateImages(final.image_prompts);
                 setGeneratedImages(images);
                 addLog(PipelineStage.VISUALIZE, `Rendering complete. ${images.length} visuals generated.`);
             } else {
                 addLog(PipelineStage.VISUALIZE, `No image prompts found. Skipping visualization.`);
             }
 
+            addLog(
+                PipelineStage.COMPLETE,
+                `Assembling document: article${images.length > 0 ? ` and ${images.length} image${images.length === 1 ? '' : 's'}` : ''} into a single HTML file.`,
+            );
             addLog(PipelineStage.COMPLETE, `Pipeline finished successfully. All artifacts ready.`);
             setCurrentStage(PipelineStage.COMPLETE);
 
@@ -168,6 +175,7 @@ const App: React.FC<{ apiKey?: string }> = ({ apiKey }) => {
                         edits={editData}
                         final={finalData}
                         images={generatedImages}
+                        config={runConfig}
                     />
                 </div>
             </main>
