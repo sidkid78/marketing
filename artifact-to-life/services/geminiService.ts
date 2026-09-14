@@ -47,7 +47,7 @@ export const generateArtifact = async (
   apiKey?: string
 ): Promise<string> => {
   try {
-    const key = apiKey || process.env.API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const key = apiKey || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     if (!key) {
       throw new Error("API Key not found. Please enter your Gemini API key in the settings.");
     }

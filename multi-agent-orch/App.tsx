@@ -25,7 +25,7 @@ const useScrollToBottom = (dep: any) => {
   return ref;
 };
 
-export default function App() {
+export default function App({ apiKey }: { apiKey?: string } = {}) {
   const [goal, setGoal] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentPhase, setCurrentPhase] = useState<'idle' | 'planning' | 'executing' | 'synthesizing' | 'completed'>('idle');
@@ -59,7 +59,7 @@ export default function App() {
     setHoveredTaskId(null);
     addLog(`Starting orchestration for goal: "${goal}"`, 'info');
 
-    const orchestrator = new OrchestratorService();
+    const orchestrator = new OrchestratorService(apiKey);
 
     try {
       // 1. Planning

@@ -8,10 +8,14 @@ import {
     GeneratedImage
 } from "../types";
 
-// Ensure API Key is present
-const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+// A runtime key (entered in the UI) wins over the build-time public var.
+let overrideKey = '';
+export const setApiKey = (key: string) => { overrideKey = key; };
 
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const getClient = () =>
+  new GoogleGenAI({
+    apiKey: overrideKey || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '',
+  });
 const MODEL_NAME = 'gemini-3.8-flash';
 const IMAGE_MODEL_NAME = 'gemini-3.1-flash-image';
 
@@ -130,7 +134,7 @@ export const agentResearch = async (config: ContentConfig): Promise<ResearchBrie
         Create a comprehensive research brief. Focus on actionable insights.
     `;
 
-    const interaction = await ai.interactions.create({
+    const interaction = await getClient().interactions.create({
         model: MODEL_NAME,
         input: prompt,
         response_format: jsonFormat(researchSchema),
@@ -160,7 +164,7 @@ export const agentDraft = async (config: ContentConfig, brief: ResearchBrief): P
         - IMPORTANT: If the content requires code examples, commands, or technical configuration, use Markdown code blocks with a valid language identifier (e.g. \`\`\`python ... \`\`\`).
     `;
 
-    const interaction = await ai.interactions.create({
+    const interaction = await getClient().interactions.create({
         model: MODEL_NAME,
         input: prompt,
         response_format: jsonFormat(draftSchema),
@@ -188,7 +192,7 @@ export const agentEdit = async (config: ContentConfig, draft: ContentDraft): Pro
         ${draft.conclusion}
     `;
 
-    const interaction = await ai.interactions.create({
+    const interaction = await getClient().interactions.create({
         model: MODEL_NAME,
         input: prompt,
         response_format: jsonFormat(editSchema),
@@ -222,7 +226,7 @@ export const agentPublish = async (config: ContentConfig, draft: ContentDraft, e
            - Style: ${config.tone} / Cyberpunk / Technical / Minimalist (Choose what fits best).
     `;
 
-    const interaction = await ai.interactions.create({
+    const interaction = await getClient().interactions.create({
         model: MODEL_NAME,
         input: prompt,
         response_format: jsonFormat(publishSchema),
@@ -242,7 +246,7 @@ export const agentGenerateImages = async (prompts: string[]): Promise<GeneratedI
         if (!promptText || promptText.trim().length === 0) continue;
 
         try {
-            const interaction = await ai.interactions.create({
+            const interaction = await getClient().interactions.create({
                 model: IMAGE_MODEL_NAME,
                 input: promptText,
                 response_format: {

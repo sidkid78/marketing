@@ -1,10 +1,13 @@
 import { GoogleGenAI } from "@google/genai";
 import { StoryScene } from "../types";
 
+let overrideKey = '';
+export const setApiKey = (key: string) => { overrideKey = key; };
+
 const getClient = () => {
-  // Try to get key from environment variable (standard Next.js public var)
-  // or fallback to process.env.API_KEY if defined (e.g. build time)
-  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.NEXT_PUBLIC_API_KEY || '';
+  // A runtime key (entered in the UI) wins over the build-time public var.
+  // Only NEXT_PUBLIC_-prefixed vars are inlined into the browser bundle.
+  const apiKey = overrideKey || process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.NEXT_PUBLIC_API_KEY || '';
   if (!apiKey) {
     console.warn("API Key is missing in environment variables.");
     // throw new Error("API Key is missing. Please check your environment variables.");

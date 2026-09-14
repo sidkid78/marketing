@@ -9,14 +9,17 @@ import {
     FinalContent,
     GeneratedImage
 } from './types';
-import { agentResearch, agentDraft, agentEdit, agentPublish, agentGenerateImages } from './services/gemini';
+import { agentResearch, agentDraft, agentEdit, agentPublish, agentGenerateImages, setApiKey } from './services/gemini';
 import StageStepper from './components/StageStepper';
 import AgentTerminal from './components/AgentTerminal';
 import PipelineForm from './components/PipelineForm';
 import ResultViewer from './components/ResultViewer';
 import { Layers, Terminal } from 'lucide-react';
 
-const App: React.FC = () => {
+const App: React.FC<{ apiKey?: string }> = ({ apiKey }) => {
+    // A key entered in the UI overrides the build-time NEXT_PUBLIC_ value.
+    React.useEffect(() => { if (apiKey) setApiKey(apiKey); }, [apiKey]);
+
     const [currentStage, setCurrentStage] = useState<PipelineStage>(PipelineStage.IDLE);
     const [logs, setLogs] = useState<AgentLog[]>([]);
 

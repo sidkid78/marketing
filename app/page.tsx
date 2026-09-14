@@ -242,10 +242,10 @@ export default function Home() {
               {activeTab === "agent" && <MarketingAgent apiKey={apiKey} />}
               {activeTab === "studio" && <ContentStudio apiKey={apiKey} />}
               {activeTab === "image" && <ImageStudio apiKey={apiKey} />}
-              {activeTab === "orchestrator" && <MultiAgentOrch />}
-              {activeTab === "architect" && <ContentArchitect />}
-              {activeTab === "sentinel" && <SentinelCode />}
-              {activeTab === "storyboard" && <AgenticStoryboard />}
+              {activeTab === "orchestrator" && <MultiAgentOrch apiKey={apiKey} />}
+              {activeTab === "architect" && <ContentArchitect apiKey={apiKey} />}
+              {activeTab === "sentinel" && <SentinelCode apiKey={apiKey} />}
+              {activeTab === "storyboard" && <AgenticStoryboard apiKey={apiKey} />}
               {activeTab === "promptarch" && <PromptArch apiKey={apiKey} />}
               {activeTab === "hormozi" && <Hormozi apiKey={apiKey} />}
               {activeTab === "poetry" && <Poetry apiKey={apiKey} />}

@@ -1,12 +1,15 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { analyzeStory, generateSceneImages, generateSpeech, decodeAudioData, animateScene, generateVideoPrompt, createWavUrl } from './services/genaiService';
+import { analyzeStory, generateSceneImages, generateSpeech, decodeAudioData, animateScene, generateVideoPrompt, createWavUrl, setApiKey } from './services/genaiService';
 import WorkflowVisualizer from './components/WorkflowVisualizer';
 import ImageGallery from './components/ImageGallery';
 import DirectorMode from './components/DirectorMode';
 import { SparklesIcon, ArrowRightIcon, FilmIcon, BrainIcon } from './components/Icons';
 import { WorkflowState, WorkflowStatus, StoryScene } from './types';
 
-const App: React.FC = () => {
+const App: React.FC<{ apiKey?: string }> = ({ apiKey }) => {
+  // A key entered in the UI overrides the build-time NEXT_PUBLIC_ value.
+  useEffect(() => { if (apiKey) setApiKey(apiKey); }, [apiKey]);
+
   const [activeTab, setActiveTab] = useState<'studio' | 'director'>('studio');
   const [state, setState] = useState<WorkflowState>({
     status: WorkflowStatus.IDLE,

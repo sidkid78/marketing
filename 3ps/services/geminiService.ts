@@ -3,7 +3,7 @@ import { GoogleGenAI } from "@google/genai";
 import { StrategistInput, StrategistOutput } from "../types";
 
 export const generateStrategy = async (input: StrategistInput, apiKey?: string): Promise<StrategistOutput> => {
-  const ai = new GoogleGenAI({ apiKey: apiKey || process.env.API_KEY || '' });
+  const ai = new GoogleGenAI({ apiKey: apiKey || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '' });
 
   // 1. Generate the text-based strategy analysis
   const textPrompt = `

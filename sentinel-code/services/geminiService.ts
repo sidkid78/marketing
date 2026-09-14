@@ -1,9 +1,15 @@
 import { GoogleGenAI } from "@google/genai";
 import { SecurityFinding, PerformanceIssue, QualityIssue, CodeReviewReport } from "../types";
 
-// Initialize the client
-// NOTE: Ideally, process.env.API_KEY is populated.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// Initialize the client lazily. Only NEXT_PUBLIC_-prefixed vars are inlined
+// into the browser bundle, so a bare API_KEY is always undefined here.
+let overrideKey = '';
+export const setApiKey = (key: string) => { overrideKey = key; };
+
+const getClient = () =>
+  new GoogleGenAI({
+    apiKey: overrideKey || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '',
+  });
 
 const MODEL_NAME = 'gemini-3.6-flash';
 const SYNTHESIS_MODEL_NAME = 'gemini-3.6-flash'; // Using flash for speed in demo, Pro is better for synthesis
@@ -104,7 +110,7 @@ export const analyzeSecurity = async (code: string, language: string): Promise<S
   `;
 
   try {
-    const interaction = await ai.interactions.create({
+    const interaction = await getClient().interactions.create({
       model: MODEL_NAME,
       input: prompt,
       system_instruction: "You are a security expert specializing in code security analysis.",
@@ -150,7 +156,7 @@ export const analyzePerformance = async (code: string, language: string): Promis
   `;
 
   try {
-    const interaction = await ai.interactions.create({
+    const interaction = await getClient().interactions.create({
       model: MODEL_NAME,
       input: prompt,
       system_instruction: "You are a performance optimization expert.",
@@ -194,7 +200,7 @@ export const analyzeQuality = async (code: string, language: string): Promise<Qu
   `;
 
   try {
-    const interaction = await ai.interactions.create({
+    const interaction = await getClient().interactions.create({
       model: MODEL_NAME,
       input: prompt,
       system_instruction: "You are a code quality expert.",
@@ -247,7 +253,7 @@ export const synthesizeReport = async (
   `;
 
   try {
-    const interaction = await ai.interactions.create({
+    const interaction = await getClient().interactions.create({
       model: SYNTHESIS_MODEL_NAME,
       input: prompt,
       system_instruction: "You are a senior code reviewer synthesizing findings.",

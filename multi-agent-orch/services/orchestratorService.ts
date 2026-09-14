@@ -12,14 +12,15 @@ import { TaskPlan, TaskResult, OrchestratorResult, SubTask } from "../types";
 export class OrchestratorService {
   private client: GoogleGenAI;
 
-  constructor() {
-    // Note: In a production app, never expose API keys on the client side. 
+  constructor(apiKey?: string) {
+    // Note: In a production app, never expose API keys on the client side.
     // This is for demonstration using the user's provided environment key.
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-      throw new Error("API_KEY is not defined in the environment.");
+    // Only NEXT_PUBLIC_-prefixed vars are inlined into the browser bundle.
+    const key = apiKey || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    if (!key) {
+      throw new Error("NEXT_PUBLIC_GEMINI_API_KEY is not defined in the environment.");
     }
-    this.client = new GoogleGenAI({ apiKey });
+    this.client = new GoogleGenAI({ apiKey: key });
   }
 
   async plan(goal: string, logCb: (msg: string) => void): Promise<TaskPlan> {

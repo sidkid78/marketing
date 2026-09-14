@@ -50,7 +50,7 @@ const detectLanguage = (filename: string): string | null => {
   }
 };
 
-export default function App() {
+export default function App({ apiKey }: { apiKey?: string } = {}) {
   const [code, setCode] = useState(DEFAULT_CODE);
   const [language, setLanguage] = useState('python');
   const [agents, setAgents] = useState<AgentState[]>(INITIAL_AGENTS);
@@ -89,10 +89,12 @@ export default function App() {
   };
 
   const handleReview = useCallback(async () => {
-    if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+    const activeKey = apiKey || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    if (!activeKey) {
       alert("Please set the NEXT_PUBLIC_GEMINI_API_KEY environment variable to run this application.");
       return;
     }
+    geminiService.setApiKey(activeKey);
 
     setIsAnalyzing(true);
     setReport(null);
