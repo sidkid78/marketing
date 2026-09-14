@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill-Barter Local</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;600&display=swap');
+
+:root {
+  --bg-color: #f7ede2;
+  --text-main: #2b2b2b;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #ef4444;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: 'Space Grotesk', sans-serif;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+h1, h2, h3, .serif {
+  font-family: 'Playfair Display', serif;
+}
+
+/* The Digital Loom Background */
+.loom-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('./images/skill-barter-loom.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.15;
+  z-index: -2;
+  pointer-events: none;
+  filter: saturate(0.5) contrast(1.2);
+}
+
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.4;
+}
+
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+  opacity: 0.6;
+}
+
+/* Typography & Layout */
+.hero-title {
+  font-size: clamp(4rem, 10vw, 8rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  mix-blend-mode: exclusion;
+  color: #fff;
+}
+
+.mask-image-arch {
+  clip-path: polygon(50% 0%, 100% 0, 100% 80%, 50% 100%, 0 80%, 0 0);
+}
+
+.mask-image-blob {
+  clip-path: path('M45.7,-76.4C58.9,-69.3,69,-55.1,75.4,-40.1C81.8,-25.1,84.4,-9.4,81.4,5C78.4,19.3,69.9,32.3,59.3,42.8C48.7,53.3,36,61.4,21.8,67.6C7.6,73.8,-8.1,78.2,-23.5,75.3C-38.8,72.4,-53.8,62.2,-64.7,49.1C-75.7,36,-82.6,20,-83.9,3.7C-85.3,-12.6,-81.1,-29.2,-71.4,-42.6C-61.7,-56.1,-46.5,-66.3,-31.6,-72.6C-16.7,-78.9,-2,-81.2,12.5,-79.8C27,-78.3,45.7,-76.4,45.7,-76.4Z');
+  transform: scale(1.2);
+}
+
+/* Animations */
+.reveal-text { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal-text.active { opacity: 1; transform: translateY(0); }
+
+.reveal-image { opacity: 0; transform: scale(0.95); transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal-image.active { opacity: 1; transform: scale(1); }
+
+@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+.floating { animation: float 6s ease-in-out infinite; }
+
+@keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); } 70% { box-shadow: 0 0 0 20px rgba(255,255,255,0); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } }
+
+.color-code-emerald { color: var(--accent-emerald); text-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+.color-code-amber { color: var(--accent-amber); text-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+.color-code-rose { color: var(--accent-rose); text-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+
+/* Custom Tags */
+.tag-pill {
+  border: 1px solid rgba(0,0,0,0.2);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+.tag-pill:hover {
+  background: var(--text-main);
+  color: var(--bg-color);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+</style>
+</head>
+<body class="antialiased">
+
+<!-- Ambient Backgrounds -->
+<div class="loom-bg" id="parallax-bg"></div>
+<div class="noise-overlay"></div>
+
+<!-- SVG Filters definition for inline use -->
+<svg style="display:none;">
+  <filter id="warm-glow">
+    <feColorMatrix type="matrix" values="1.2 0 0 0 0  0 1.1 0 0 0  0 0 0.9 0 0  0 0 0 1 0"/>
+  </filter>
+</svg>
+
+<main class="relative z-10">
+
+  <!-- HEADER / HERO -->
+  <header class="min-h-screen flex flex-col justify-center px-6 md:px-16 py-24 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="z-20">
+        <p class="text-sm uppercase tracking-widest mb-4 font-semibold reveal-text"></p>
+        <h1 class="hero-title serif mb-6 reveal-text" style="transition-delay: 0.1s;">Skill-Barter <br><span class="italic font-light">Local</span></h1>
+        <h2 class="text-2xl md:text-3xl font-light mb-8 reveal-text" style="transition-delay: 0.2s;">
+          How AI is Reviving the <br>Ancient Art of the Swap
+        </h2>
+        <p class="text-lg md:text-xl max-w-lg mb-8 opacity-80 leading-relaxed reveal-text" style="transition-delay: 0.3s;">
+          Let's face it: inflation is pinching our pockets, and the cost of everyday services—from home repairs to language tutoring—is skyrocketing. But what if you could bypass money altogether?
+        </p>
+        <div class="flex flex-wrap gap-3 mb-8 reveal-text" style="transition-delay: 0.4s;">
+          <span class="tag-pill px-4 py-1.5 rounded-full text-sm">#AI</span>
+          <span class="tag-pill px-4 py-1.5 rounded-full text-sm">#Barter Economy</span>
+          <span class="tag-pill px-4 py-1.5 rounded-full text-sm">#Community Building</span>
+          <span class="tag-pill px-4 py-1.5 rounded-full text-sm">#Local Networking</span>
+          <span class="tag-pill px-4 py-1.5 rounded-full text-sm">#Tech for Good</span>
+        </div>
+      </div>
+      
+      <div class="relative z-10 h-full min-h-[50vh] reveal-image">
+        <div class="absolute inset-0 bg-[#d4a373] mix-blend-multiply rounded-3xl transform rotate-3"></div>
+        <img src="./images/skill-1.png" alt="Community Bartering" class="absolute inset-0 w-full h-full object-cover rounded-3xl mask-image-arch shadow-2xl filter brightness-90 saturate-110">
+        <div class="absolute -bottom-10 -left-10 glass-panel p-6 rounded-2xl max-w-xs transform -rotate-3 floating">
+          <p class="font-bold text-sm mb-2"></p>
+          <p class="text-xs opacity-80">Discover how Skill-Barter Local uses a friendly AI referee to take the awkwardness out of trading skills with neighbors. Save money and build community!</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- INTRO TRANSITION -->
+  <section class="py-24 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-2xl md:text-4xl serif leading-tight reveal-text">
+        Enter Skill-Barter Local, a hyper-local networking application designed to help neighbors trade their talents directly. The platform's rallying cry is simple: <br><br>
+        <strong class="italic text-[#b5651d]">"Trade Skills. Save Money. Build Community."</strong>
+      </p>
+      <p class="mt-12 text-lg max-w-2xl mx-auto opacity-70 reveal-text">
+        While bartering is as old as humanity itself, it has always suffered from one major pain point: the sheer awkwardness of negotiating value. How many hours of organic vegetable gardening help equal a Python automation script? Is a custom portrait illustration worth three hours of French tutoring?
+      </p>
+    </div>
+  </section>
+
+  <!-- SECTION 1: AI VALUE MATCHER -->
+  <section class="py-32 px-6 bg-[#2b2b2b] text-[#f7ede2] relative">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div class="order-2 lg:order-1 relative reveal-image">
+         <div class="absolute inset-0 bg-white opacity-5 blur-3xl rounded-full"></div>
+         <img src="./images/skill-2.png" alt="AI App Interface" class="relative z-10 w-[80%] mx-auto rounded-[3rem] shadow-2xl floating border border-white/10" style="filter: drop-shadow(0 20px 50px rgba(0,0,0,0.5));">
+      </div>
+      <div class="order-1 lg:order-2 space-y-8">
+        <h3 class="text-sm uppercase tracking-[0.3em] text-[#b5651d] font-bold reveal-text"></h3>
+        <h2 class="text-4xl md:text-6xl serif reveal-text">The AI Value Matcher™:<br><span class="italic text-white/50">Your Friendly, Unbiased Referee</span></h2>
+        <p class="text-lg opacity-80 leading-relaxed reveal-text">
+          Skill-Barter Local solves this age-old dilemma by introducing a neutral, unbiased referee: an AI Barter Arbitrator powered by Google's smart gemini-3.5-flash model. By taking cash out of the equation and replacing it with an intelligent, friendly value matcher, this app turns stressful negotiations into a fun, collaborative, and highly equitable community experience.
+        </p>
+        <p class="text-lg opacity-80 leading-relaxed reveal-text">
+          At the heart of Skill-Barter Local is the AI Value Matcher™, a friendly digital referee designed to take the awkwardness out of neighborly trades. When you want to swap services, figuring out a fair deal can feel a bit uncomfortable. That’s where our AI assistant steps in to help.
+        </p>
+        <div class="p-6 border border-[#b5651d]/30 bg-[#b5651d]/5 rounded-xl reveal-text">
+          <p class="italic opacity-90">Instead of focusing on cold, hard cash or strict market prices, the AI looks at the bigger picture. It thinks about things like how much effort a task takes, how long it lasts, and how rare a specific skill might be. For instance, if you offer to swap an hour of basic weeding for an hour of expert computer programming, the AI gently points out the difference in training and specialized skill.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: BEHIND THE SCENES & USER JOURNEY -->
+  <section class="py-32 px-6 relative">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-24">
+        <h2 class="text-4xl md:text-6xl serif mb-6 reveal-text">Behind the Scenes: <br>Simple, Clear Insights</h2>
+        <p class="max-w-2xl mx-auto text-lg opacity-80 reveal-text">
+          Behind the scenes, this clever AI works like a charm to keep things simple for you. Instead of dumping a massive, confusing wall of text onto your screen, the AI organizes its thoughts into neat, bite-sized pieces of information.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+        
+        <div class="sticky top-24 reveal-image">
+          <img src="./images/skill-3.png" alt="App Steps" class="w-full rounded-2xl shadow-xl filter saturate-110">
+        </div>
+
+        <div class="space-y-12">
+          <div class="glass-panel p-8 rounded-2xl reveal-text">
+            <h4 class="text-xl font-bold mb-4 border-b border-black/10 pb-2">Quick Breakdown</h4>
+            <ul class="space-y-4">
+              <li><strong>Fairness Score:</strong> 45/100 <i class="opacity-60">(A bit lopsided!)</i></li>
+              <li><strong>Suggested Match:</strong> 3 hours of Gardening &approx; 1 hour of Coding</li>
+              <li><strong>The Why:</strong> Coding requires specialized technical skills, while basic gardening is physically demanding but easier to pick up.</li>
+              <li><strong>Friendly Tip:</strong> To balance things out, try offering 2 more hours of gardening, or ask for a shorter coding session.</li>
+            </ul>
+            <p class="mt-6 text-sm opacity-70 border-t border-black/10 pt-4">Even if the main AI system takes a quick nap, a built-in backup immediately steps in to keep your trade negotiations running smoothly.</p>
+          </div>
+
+          <div class="space-y-6 reveal-text">
+            <h3 class="text-3xl serif">A Seamless, Two-Stage User Journey</h3>
+            <p class="opacity-80">Users start on a main feed where they can browse local skills, filtering by friendly categories like Manual Labor, Tech, Education, Creative, and Professional. Each listing is displayed as a card showing the skill level.</p>
+            <p class="opacity-80">When you click "Propose Trade," you enter an interactive guide:</p>
+            
+            <div class="pl-6 border-l-2 border-black/20 space-y-4">
+              <p><strong>The Offer Stage:</strong> Define your counter-offer. Clicking "Analyze Fairness" triggers the AI.</p>
+              <p><strong>The Analysis Stage:</strong> Visual breakdown using an intuitive scale:</p>
+              <ul class="space-y-2 mt-2 font-medium">
+                <li class="flex items-center gap-3"><span class="text-2xl">🟢</span> <span class="color-code-emerald">Emerald Green for highly fair trades (Score 80+)</span></li>
+                <li class="flex items-center gap-3"><span class="text-2xl">🟡</span> <span class="color-code-amber">Amber Yellow for okay trades (Score 60-79)</span></li>
+                <li class="flex items-center gap-3"><span class="text-2xl">🔴</span> <span class="color-code-rose">Rose Red for unfair trades (Score under 60)</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: TRUST -->
+  <section class="py-32 px-6 bg-[#1a1a1a] text-white relative overflow-hidden">
+    <!-- Abstract SVG Background for Trust Section -->
+    <svg class="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path d="M0 100 C 20 0 50 0 100 100 Z" fill="#f59e0b"/>
+    </svg>
+
+    <div class="max-w-7xl mx-auto text-center relative z-10">
+      <h2 class="text-4xl md:text-6xl serif mb-8 reveal-text">Fostering Trust in a <br><span class="text-[#f59e0b] italic">Hyper-Local Ecosystem</span></h2>
+      <p class="max-w-3xl mx-auto text-lg opacity-80 mb-16 reveal-text">
+        For a non-monetary economy to thrive, trust is just as important as fairness. Skill-Barter Local builds this trust through several hyper-local community features. User proximity is displayed in relative terms (such as <em>"0.5 miles away"</em>) to maintain privacy.
+      </p>
+
+      <div class="relative inline-block reveal-image mb-16">
+        <img src="./images/skill-4.png" alt="Neighborhood Community" class="w-full max-w-4xl mx-auto rounded-xl shadow-2xl" style="clip-path: polygon(2% 2%, 98% 0%, 100% 98%, 0% 100%);">
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-left">
+        <div class="glass-panel p-6 rounded-xl reveal-text">
+          <div class="text-4xl mb-4">🛡️</div>
+          <h4 class="text-xl font-bold mb-2">Verified ID</h4>
+          <p class="opacity-70 text-sm">To confirm identity and build safety within the neighborhood network.</p>
+        </div>
+        <div class="glass-panel p-6 rounded-xl reveal-text" style="transition-delay: 0.1s;">
+          <div class="text-4xl mb-4">❤️</div>
+          <h4 class="text-xl font-bold mb-2">Community Helper</h4>
+          <p class="opacity-70 text-sm">For active participants who consistently love to pitch in and assist others.</p>
+        </div>
+        <div class="glass-panel p-6 rounded-xl reveal-text" style="transition-delay: 0.2s;">
+          <div class="text-4xl mb-4">⭐</div>
+          <h4 class="text-xl font-bold mb-2">Top Rated</h4>
+          <p class="opacity-70 text-sm">For consistently excellent, reliable feedback from your neighbors.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONCLUSION -->
+  <footer class="py-40 px-6 relative flex items-center justify-center min-h-[70vh]">
+    <!-- The background loom-bg handles the texture here -->
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+      <h2 class="text-5xl md:text-7xl serif mb-12 mix-blend-exclusion text-white reveal-text">The Modern Mutual Aid</h2>
+      <p class="text-xl md:text-2xl font-light leading-relaxed opacity-90 mb-8 reveal-text">
+        Skill-Barter Local is more than just a clever utility app; it represents a modern reimagining of community mutual aid. By leveraging the power of friendly AI, the platform successfully strips the anxiety and awkwardness out of traditional bartering.
+      </p>
+      <p class="text-lg md:text-xl font-medium leading-relaxed opacity-100 reveal-text">
+        It empowers everyday folks to weather economic inflation, acquire new skills, and forge meaningful, trust-based relationships with their neighbors. In a world increasingly dominated by cold, transactional monetary exchanges, this platform reminds us that our most valuable assets aren't sitting in a bank account—<br>
+        <span class="block mt-6 text-2xl md:text-3xl serif italic text-[#b5651d]">they are right in our hands, our minds, and our neighborhoods.</span>
+      </p>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  // Scroll Animation Observer
+  document.addEventListener('DOMContentLoaded', () => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.15
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal-text, .reveal-image').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Simple Parallax for the abstract woven background
+    const bg = document.getElementById('parallax-bg');
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      bg.style.transform = `translateY(${scrolled * 0.15}px)`;
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,6 +1,8 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import type { UserInput, Strategy, ContentIdea, PerformanceData, PerformanceAnalysis } from '../types';
+
+const MODEL_NAME = 'gemini-3.8-flash';
 
 // Create AI client with provided API key
 function createAIClient(apiKey: string) {
@@ -10,40 +12,42 @@ function createAIClient(apiKey: string) {
   return new GoogleGenAI({ apiKey });
 }
 
+// The Interactions API takes plain JSON Schema (lowercase type names) rather
+// than the SDK's `Type` enum.
 const strategySchema = {
-  type: Type.ARRAY,
+  type: 'array',
   items: {
-    type: Type.OBJECT,
+    type: 'object',
     properties: {
-      goal: { type: Type.STRING },
-      platform: { type: Type.STRING },
-      strategy_title: { type: Type.STRING },
-      summary: { type: Type.STRING },
-      recommendations: { type: Type.ARRAY, items: { type: Type.STRING } },
-      rationale: { type: Type.STRING },
-      kpis: { type: Type.ARRAY, items: { type: Type.STRING } },
+      goal: { type: 'string' },
+      platform: { type: 'string' },
+      strategy_title: { type: 'string' },
+      summary: { type: 'string' },
+      recommendations: { type: 'array', items: { type: 'string' } },
+      rationale: { type: 'string' },
+      kpis: { type: 'array', items: { type: 'string' } },
     },
     required: ['goal', 'platform', 'strategy_title', 'summary', 'recommendations', 'rationale', 'kpis'],
   },
 };
 
 const contentIdeaSchema = {
-  type: Type.ARRAY,
+  type: 'array',
   items: {
-    type: Type.OBJECT,
+    type: 'object',
     properties: {
-      platform: { type: Type.STRING },
-      goal: { type: Type.STRING },
+      platform: { type: 'string' },
+      goal: { type: 'string' },
       ideas: {
-        type: Type.ARRAY,
+        type: 'array',
         items: {
-          type: Type.OBJECT,
+          type: 'object',
           properties: {
-            headline: { type: Type.STRING },
-            visual_direction: { type: Type.STRING },
-            caption: { type: Type.STRING },
-            cta: { type: Type.STRING },
-            hashtag_suggestions: { type: Type.ARRAY, items: { type: Type.STRING } },
+            headline: { type: 'string' },
+            visual_direction: { type: 'string' },
+            caption: { type: 'string' },
+            cta: { type: 'string' },
+            hashtag_suggestions: { type: 'array', items: { type: 'string' } },
           },
           required: ['headline', 'visual_direction', 'caption', 'cta', 'hashtag_suggestions'],
         },
@@ -54,30 +58,37 @@ const contentIdeaSchema = {
 };
 
 const performanceAnalysisSchema = {
-  type: Type.OBJECT,
+  type: 'object',
   properties: {
-    goal: { type: Type.STRING },
-    platform: { type: Type.STRING },
-    summary: { type: Type.STRING },
+    goal: { type: 'string' },
+    platform: { type: 'string' },
+    summary: { type: 'string' },
     analysis: {
-      type: Type.ARRAY,
+      type: 'array',
       items: {
-        type: Type.OBJECT,
+        type: 'object',
         properties: {
-          metric: { type: Type.STRING },
-          label: { type: Type.STRING },
-          value: { type: Type.NUMBER },
-          status: { type: Type.STRING },
-          flag: { type: Type.STRING },
-          message: { type: Type.STRING },
+          metric: { type: 'string' },
+          label: { type: 'string' },
+          value: { type: 'number' },
+          status: { type: 'string' },
+          flag: { type: 'string' },
+          message: { type: 'string' },
         },
         required: ['metric', 'label', 'value', 'status', 'flag', 'message'],
       },
     },
-    adjustment_recommendations: { type: Type.ARRAY, items: { type: Type.STRING } },
+    adjustment_recommendations: { type: 'array', items: { type: 'string' } },
   },
   required: ['goal', 'platform', 'summary', 'analysis', 'adjustment_recommendations'],
 };
+
+/** Shared JSON-mode response format. */
+const jsonFormat = (schema: Record<string, unknown>) => ({
+  type: 'text' as const,
+  mime_type: 'application/json' as const,
+  schema,
+});
 
 function buildPrompt(userInput: UserInput, task: 'strategy' | 'content' | 'analysis', performanceData?: PerformanceData): string {
   const { goals, platforms, demographics, brand_offer_details, audience_interests, campaign_budget } = userInput;
@@ -121,30 +132,26 @@ function buildPrompt(userInput: UserInput, task: 'strategy' | 'content' | 'analy
 export async function generateStrategy(userInput: UserInput, apiKey: string): Promise<Strategy[]> {
   const ai = createAIClient(apiKey);
   const prompt = buildPrompt(userInput, 'strategy');
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      responseSchema: strategySchema,
-    },
+  const interaction = await ai.interactions.create({
+    model: MODEL_NAME,
+    input: prompt,
+    response_format: jsonFormat(strategySchema),
+    store: false,
   });
-  const jsonText = response.text?.trim() || '[]';
+  const jsonText = interaction.output_text?.trim() || '[]';
   return JSON.parse(jsonText);
 }
 
 export async function generateContentIdeas(userInput: UserInput, apiKey: string): Promise<ContentIdea[]> {
   const ai = createAIClient(apiKey);
   const prompt = buildPrompt(userInput, 'content');
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      responseSchema: contentIdeaSchema,
-    },
+  const interaction = await ai.interactions.create({
+    model: MODEL_NAME,
+    input: prompt,
+    response_format: jsonFormat(contentIdeaSchema),
+    store: false,
   });
-  const jsonText = response.text?.trim() || '[]';
+  const jsonText = interaction.output_text?.trim() || '[]';
   return JSON.parse(jsonText);
 }
 
@@ -157,37 +164,28 @@ export async function analyzePerformance(performanceData: PerformanceData, goal:
     brand_offer_details: 'general campaign'
   };
   const prompt = buildPrompt(mockUserInput, 'analysis', performanceData);
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      responseSchema: performanceAnalysisSchema,
-    },
+  const interaction = await ai.interactions.create({
+    model: MODEL_NAME,
+    input: prompt,
+    response_format: jsonFormat(performanceAnalysisSchema),
+    store: false,
   });
-  const jsonText = response.text?.trim() || '{}';
+  const jsonText = interaction.output_text?.trim() || '{}';
   return JSON.parse(jsonText);
 }
 
 export async function generateAdImage(prompt: string, apiKey: string): Promise<string | null> {
   try {
     const ai = createAIClient(apiKey);
-    const response = await ai.models.generateContent({
-      model: "gemini-3.1-flash-image-preview",
-      contents: {
-        parts: [
-          {
-            text: prompt
-          }
-        ],
-      },
+    const interaction = await ai.interactions.create({
+      model: "gemini-3.1-flash-lite-image",
+      input: prompt,
+      store: false,
     });
 
-    for (const part of response.candidates?.[0]?.content?.parts || []) {
-      if (part.inlineData) {
-        const base64EncodingString = part.inlineData.data;
-        return `data:${part.inlineData.mimeType};base64,${base64EncodingString}`;
-      }
+    const image = interaction.output_image;
+    if (image?.data) {
+      return `data:${image.mime_type ?? 'image/png'};base64,${image.data}`;
     }
     return null;
   } catch (error) {
@@ -201,13 +199,17 @@ export async function generateAdImage(prompt: string, apiKey: string): Promise<s
  * as the source for a <video> element in the browser.
  *
  * Note: Video generation can be slow (may take 1-2 minutes) and may incur additional costs.
+ *
+ * Still on the legacy `models.generateVideos` + operations-polling API. Video
+ * generation is not covered by the public Interactions API docs, so this path
+ * was left as-is rather than migrated on guesswork.
  */
 export async function generateAdVideo(prompt: string, apiKey: string): Promise<string | null> {
   try {
     const ai = createAIClient(apiKey);
 
     let operation = await ai.models.generateVideos({
-      model: "veo-3.1-fast-generate-preview",
+      model: "veo-3.1-lite-generate-preview",
       prompt: prompt,
       config: {
         numberOfVideos: 1,

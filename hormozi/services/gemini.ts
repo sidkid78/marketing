@@ -13,13 +13,9 @@ export class GeminiService {
   }
 
   async getMentorship(history: ChatMessage[], prompt: string) {
-    const response = await this.ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
-      contents: [
-        {
-          role: 'user',
-          parts: [{
-            text: `You are an expert entrepreneurial mentor based on Alex Hormozi's philosophies. Your advice is blunt, high-leverage, and narrative-driven.
+    const interaction = await this.ai.interactions.create({
+      model: 'gemini-3.1-pro-preview',
+      input: `You are an expert entrepreneurial mentor based on Alex Hormozi's philosophies. Your advice is blunt, high-leverage, and narrative-driven.
 
           Core Frameworks to use:
           1. MERCENARY VS MISSIONARY: Features are commoditized. Mercenaries use logic/features. Missionaries use narrative/obsession. Aim for the Missionary approach to build trust and a brand premium.
@@ -33,45 +29,45 @@ export class GeminiService {
           5. FOCUS: Reject the "Woman in the Red Dress." Commitment is the elimination of alternatives.
 
           Context History: ${JSON.stringify(history)}
-          
-          Current user question: ${prompt}`
-          }]
-        }
-      ],
-      config: {
-        thinkingConfig: { thinkingBudget: 4000 }
-      }
+
+          Current user question: ${prompt}`,
+      // thinkingBudget is replaced by the coarser thinking_level in the
+      // Interactions API.
+      generation_config: { thinking_level: 'medium' },
+      store: false,
     });
 
-    return response.text;
+    return interaction.output_text;
   }
 
   async auditBrandStory(story: string) {
-    const response = await this.ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: `Audit this brand story for the "Missionary vs Mercenary" distinction.
+    const interaction = await this.ai.interactions.create({
+      model: 'gemini-3.1-pro-preview',
+      input: `Audit this brand story for the "Missionary vs Mercenary" distinction.
       Story: "${story}"
-      
+
       Analysis requirements:
       1. Is it logic-driven (mercenary) or obsession-driven (missionary)?
       2. Suggest how to lean into the "3Ps" (Pain, Profession, Passion) more effectively.
-      3. Rewrite it to be 10x more compelling by targeting the emotional centers (amygdala) rather than just functional specs.`
+      3. Rewrite it to be 10x more compelling by targeting the emotional centers (amygdala) rather than just functional specs.`,
+      store: false,
     });
-    return response.text;
+    return interaction.output_text;
   }
 
   async auditCultureFeedback(feedback: string) {
-    const response = await this.ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: `You are an expert leadership coach. Audit this employee feedback for the "Kind vs Nice" distinction based on Alex Hormozi's management principles.
-      
+    const interaction = await this.ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: `You are an expert leadership coach. Audit this employee feedback for the "Kind vs Nice" distinction based on Alex Hormozi's management principles.
+
       Feedback to audit: "${feedback}"
-      
+
       Requirements:
       1. Distinguish if it's "Nice" (hiding the truth to save feelings) or "Kind" (telling the truth to save the person's growth).
       2. Identify any emotional "insults" (non-actionable labels like 'lazy') versus objective "criticism" (gap between targets and reality).
-      3. Rewrite the feedback to be 100% "Kind", direct, and actionable.`
+      3. Rewrite the feedback to be 100% "Kind", direct, and actionable.`,
+      store: false,
     });
-    return response.text;
+    return interaction.output_text;
   }
 }

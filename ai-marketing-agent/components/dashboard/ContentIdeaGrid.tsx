@@ -7,6 +7,7 @@ import { ShareButtons } from '../ui/ShareButtons';
 import { generateAdImage, generateAdVideo } from '../../services/geminiService';
 import { ClipboardCopyButton } from '../ui/ClipboardCopyButton';
 import { SocialMediaService } from '../../services/socialMediaService';
+import { BRAND_URL } from '../../../lib/brand';
 import { Spinner } from '../ui/Spinner';
 
 interface ContentIdeaGridProps {
@@ -102,8 +103,17 @@ export const ContentIdeaGrid: React.FC<ContentIdeaGridProps> = ({ contentIdeas, 
   const handlePublish = async (id: string, platform: string, idea: ContentIdeaItem, mediaUrl?: string, mediaType?: 'image' | 'video') => {
     setPublishingStatus(prev => ({ ...prev, [id]: 'publishing' }));
 
-    // Construct the full post text
-    const fullText = `${idea.caption}\n\n${idea.hashtag_suggestions.map(t => `#${t}`).join(' ')}`;
+    // Build the post text: caption, then the CTA link, then hashtags.
+    // X counts every URL as 23 characters regardless of length, so budget for
+    // that and drop the hashtags rather than let the post exceed the limit.
+    const POST_LIMIT = 280;
+    const URL_WEIGHT = 23;
+    const hashtags = idea.hashtag_suggestions.map(t => `#${t}`).join(' ');
+    const base = `${idea.caption}\n\n${BRAND_URL}`;
+    const baseLength = idea.caption.length + 2 + URL_WEIGHT;
+    const fullText = hashtags && baseLength + 2 + hashtags.length <= POST_LIMIT
+      ? `${base}\n\n${hashtags}`
+      : base;
 
     try {
       const result = await SocialMediaService.post(platform, fullText, mediaUrl, mediaType);

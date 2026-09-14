@@ -9,28 +9,27 @@ const getClient = (apiKey: string) => {
 
 /**
  * Step 1: Agentic Prompt Optimization
- * Uses Gemini-2.5-Flash to expand a simple user request into a detailed image prompt.
+ * Expands a simple user request into a detailed image prompt.
  */
-export const optimizePrompt = async (userUnput: string, apiKey: string): Promise<string> => {
+export const optimizePrompt = async (userInput: string, apiKey: string): Promise<string> => {
   const client = getClient(apiKey);
 
-  const systemInstruction = `You are an expert AI artist and prompt engineer. 
-  Your task is to take a basic user idea and transform it into a highly detailed, 
+  const systemInstruction = `You are an expert AI artist and prompt engineer.
+  Your task is to take a basic user idea and transform it into a highly detailed,
   vivid, and effective image generation prompt suitable for a high-end diffusion model.
-  Focus on lighting, texture, composition, camera angles, and artistic style. 
+  Focus on lighting, texture, composition, camera angles, and artistic style.
   Do not include preamble like "Here is the prompt:". Just output the prompt text directly.`;
 
   try {
-    const response = await client.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: userUnput,
-      config: {
-        systemInstruction: systemInstruction,
-        temperature: 0.7,
-      }
+    const interaction = await client.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: userInput,
+      system_instruction: systemInstruction,
+      // Each call is self-contained, so opt out of server-side retention.
+      store: false,
     });
 
-    const text = response.text;
+    const text = interaction.output_text;
     if (!text) throw new Error("Failed to generate optimized prompt.");
 
     return text.trim();
@@ -42,31 +41,46 @@ export const optimizePrompt = async (userUnput: string, apiKey: string): Promise
 
 /**
  * Step 2: Image Generation
- * Uses Imagen-4.0 to generate images based on the optimized prompt.
+ * Generates an image from the optimized prompt and returns it as a data URL.
  */
 export const generateImages = async (prompt: string, apiKey: string): Promise<string[]> => {
   const client = getClient(apiKey);
 
   try {
-    const response = await client.models.generateImages({
-      model: 'imagen-4.0-generate-001',
-      prompt: prompt,
-      config: {
-        numberOfImages: 4,
-        outputMimeType: 'image/jpeg',
-        aspectRatio: '16:9',
+    const interaction = await client.interactions.create({
+      model: 'gemini-3.1-flash-image',
+      input: prompt,
+      response_format: {
+        type: 'image',
+        mime_type: 'image/jpeg',
+        aspect_ratio: '16:9',
+        image_size: '2K',
       },
+      store: false,
     });
 
-    if (!response.generatedImages || response.generatedImages.length === 0) {
+    // Image data arrives as inline base64 blocks on the model_output steps.
+    const images: string[] = [];
+    for (const step of interaction.steps ?? []) {
+      if (step.type !== 'model_output') continue;
+      for (const block of step.content ?? []) {
+        if (block.type === 'image' && block.data) {
+          images.push(`data:${block.mime_type ?? 'image/jpeg'};base64,${block.data}`);
+        }
+      }
+    }
+
+    // Fall back to the convenience accessor if the steps were not returned.
+    if (images.length === 0 && interaction.output_image?.data) {
+      const { data, mime_type } = interaction.output_image;
+      images.push(`data:${mime_type ?? 'image/jpeg'};base64,${data}`);
+    }
+
+    if (images.length === 0) {
       throw new Error("No images generated.");
     }
 
-    // Convert raw bytes to base64 data URLs
-    return response.generatedImages.map((img) => {
-      return `data:image/jpeg;base64,${img.image?.imageBytes || ''}`;
-    });
-
+    return images;
   } catch (error) {
     console.error("Error generating images:", error);
     throw error;

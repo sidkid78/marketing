@@ -1,5 +1,5 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { StrategistInput, StrategistOutput } from "../types";
 
 export const generateStrategy = async (input: StrategistInput, apiKey?: string): Promise<StrategistOutput> => {
@@ -26,57 +26,60 @@ export const generateStrategy = async (input: StrategistInput, apiKey?: string):
     5. Synthesis: Combine all elements into a unified concept.
   `;
 
-  const textResponse = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
-    contents: [{ parts: [{ text: textPrompt }] }],
-    config: {
-      temperature: 0.8,
-      thinkingConfig: { thinkingBudget: 8000 },
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
+  // Note: `propertyOrdering` was a Gemini schema extension and has no plain
+  // JSON Schema equivalent, so it is dropped here.
+  const interaction = await ai.interactions.create({
+    model: 'gemini-3.6-flash',
+    input: textPrompt,
+    generation_config: { thinking_level: 'high' },
+    response_format: {
+      type: 'text',
+      mime_type: 'application/json',
+      schema: {
+        type: 'object',
         properties: {
-          thinkingProcess: { type: Type.STRING },
+          thinkingProcess: { type: 'string' },
           painAnalysis: {
-            type: Type.OBJECT,
+            type: 'object',
             properties: {
-              frustration: { type: Type.STRING },
-              storyAdvantage: { type: Type.STRING }
+              frustration: { type: 'string' },
+              storyAdvantage: { type: 'string' }
             },
-            propertyOrdering: ["frustration", "storyAdvantage"]
+            required: ["frustration", "storyAdvantage"]
           },
           professionAnalysis: {
-            type: Type.OBJECT,
+            type: 'object',
             properties: {
-              provenEconomy: { type: Type.STRING },
-              fractionalizationStrategy: { type: Type.STRING }
+              provenEconomy: { type: 'string' },
+              fractionalizationStrategy: { type: 'string' }
             },
-            propertyOrdering: ["provenEconomy", "fractionalizationStrategy"]
+            required: ["provenEconomy", "fractionalizationStrategy"]
           },
           passionAnalysis: {
-            type: Type.OBJECT,
+            type: 'object',
             properties: {
-              obsessiveEdge: { type: Type.STRING },
-              selfCorrection: { type: Type.STRING }
+              obsessiveEdge: { type: 'string' },
+              selfCorrection: { type: 'string' }
             },
-            propertyOrdering: ["obsessiveEdge", "selfCorrection"]
+            required: ["obsessiveEdge", "selfCorrection"]
           },
           synthesis: {
-            type: Type.OBJECT,
+            type: 'object',
             properties: {
-              concept: { type: Type.STRING },
-              markdown: { type: Type.STRING }
+              concept: { type: 'string' },
+              markdown: { type: 'string' }
             },
-            propertyOrdering: ["concept", "markdown"]
+            required: ["concept", "markdown"]
           },
-          unfairAdvantage: { type: Type.STRING }
+          unfairAdvantage: { type: 'string' }
         },
         required: ["thinkingProcess", "painAnalysis", "professionAnalysis", "passionAnalysis", "synthesis", "unfairAdvantage"]
       }
-    }
+    },
+    store: false,
   });
 
-  const textOutput = textResponse.text;
+  const textOutput = interaction.output_text;
   if (!textOutput) throw new Error("No text response from AI");
   const resultData = JSON.parse(textOutput) as StrategistOutput;
 
@@ -93,25 +96,20 @@ export const generateStrategy = async (input: StrategistInput, apiKey?: string):
   
   Style: Clean, modern, professional business illustration. Abstract representation of the concept with symbolic imagery. High quality, sharp detail, cohesive color palette. No text in the image.`;
 
-    const imageResponse = await ai.models.generateContent({
-      model: 'gemini-3.1-flash-image-preview',
-      contents: {
-        parts: [{ text: imagePrompt }]
+    const imageInteraction = await ai.interactions.create({
+      model: 'gemini-3.1-flash-image',
+      input: imagePrompt,
+      response_format: {
+        type: 'image',
+        mime_type: 'image/jpeg',
+        aspect_ratio: '16:9',
       },
-      config: {
-        imageConfig: {
-          aspectRatio: "16:9"
-        }
-      }
+      store: false,
     });
 
-    if (imageResponse.candidates && imageResponse.candidates[0]?.content?.parts) {
-      for (const part of imageResponse.candidates[0].content.parts) {
-        if (part.inlineData) {
-          resultData.imageUrl = `data:image/png;base64,${part.inlineData.data}`;
-          break;
-        }
-      }
+    const image = imageInteraction.output_image;
+    if (image?.data) {
+      resultData.imageUrl = `data:${image.mime_type ?? 'image/jpeg'};base64,${image.data}`;
     }
   } catch (imageErr) {
     console.warn("Visual Core Failed: Visual synthesis bypassed.", imageErr);

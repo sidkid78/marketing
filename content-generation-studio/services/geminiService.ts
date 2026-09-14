@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import type { GeneratorFormState } from "../types";
 
 export function createContentStudioService(apiKey: string) {
@@ -24,19 +24,24 @@ export function createContentStudioService(apiKey: string) {
     2.  **Tone & Language:** Adjust the tone and complexity of the language to suit the '${targetAudience}'.
     3.  **Formatting:** Use Markdown extensively for clarity (e.g., headings, lists, bold text, code blocks).
     4.  **Content Details:** Flesh out the content with explanations, examples, and relevant details.
-    5.  **Format-Specific Suggestions:**
-        - If the format is 'Visual', 'Interactive', or 'Multimedia', explicitly suggest where to place elements like \`[Image: description]\`, \`[Video: description]\`, or \`[Quiz: question]\` within the content.
-        - For 'Text-based' format, focus purely on high-quality written content.
+    5.  **Interactive Elements (CRITICAL):** 
+        You MUST suggest where to place multimedia elements by using the following exact placeholder format:
+        - For images: \`[Image: description of the image to generate]\`
+        - For videos: \`[Video: description of the video sequence to generate]\`
+        - For quizzes: \`[Quiz: the core topic or concept for a question]\`
+        
+        Even if the format isn't strictly 'Visual', integrate at least 2-3 of these placeholders where they add pedagogical value.
 
     Begin generating the content now.
   `;
 
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt,
+      const interaction = await ai.interactions.create({
+        model: "gemini-3.1-pro-preview",
+        input: prompt,
+        store: false,
       });
-      return response.text || "No content generated";
+      return interaction.output_text || "No content generated";
     } catch (error) {
       console.error("Error generating content:", error);
       if (error instanceof Error) {
@@ -47,47 +52,57 @@ export function createContentStudioService(apiKey: string) {
   };
 
   const generateImagePreview = async (prompt: string): Promise<string> => {
-    const response = await ai.models.generateImages({
-      model: "imagen-4.0-generate-001",
-      prompt,
-      config: {
-        numberOfImages: 1,
-        outputMimeType: "image/jpeg",
-        aspectRatio: "16:9",
-      },
-    });
+    try {
+      const interaction = await ai.interactions.create({
+        model: "gemini-3.5-lite-image",
+        input: prompt,
+        response_format: { type: 'image', mime_type: 'image/jpeg' },
+        store: false,
+      });
 
-    const base64ImageBytes = response.generatedImages?.[0]?.image?.imageBytes || "";
-    return `data:image/jpeg;base64,${base64ImageBytes}`;
+      const image = interaction.output_image;
+      if (!image?.data) {
+        throw new Error("No image data returned from Gemini");
+      }
+
+      return `data:${image.mime_type ?? 'image/jpeg'};base64,${image.data}`;
+    } catch (error) {
+      console.error("Error generating image:", error);
+      throw error instanceof Error
+        ? error
+        : new Error("An unknown error occurred while generating the image.");
+    }
   };
 
   const generateQuizPreview = async (
     topic: string,
   ): Promise<{ question: string; options: string[]; answer: string }> => {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `Generate a single, clear multiple-choice question about "${topic}". Provide one correct answer and three plausible incorrect distractors.`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+    const interaction = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Generate a single, clear multiple-choice question about "${topic}". Provide one correct answer and three plausible incorrect distractors.`,
+      response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: 'object',
           properties: {
-            question: { type: Type.STRING },
+            question: { type: 'string' },
             options: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: 'array',
+              items: { type: 'string' },
             },
             answer: {
-              type: Type.STRING,
+              type: 'string',
               description: "The correct option from the options array.",
             },
           },
           required: ["question", "options", "answer"],
         },
       },
+      store: false,
     });
 
-    return JSON.parse(response.text || '{"question":"","options":[],"answer":""}');
+    return JSON.parse(interaction.output_text || '{"question":"","options":[],"answer":""}');
   };
 
   /**
@@ -96,11 +111,15 @@ export function createContentStudioService(apiKey: string) {
    *
    * Note: Video generation can be slow and may incur additional costs. Check
    * pricing and quotas before heavy use.
+   *
+   * Still on the legacy `models.generateVideos` + operations-polling API. Video
+   * generation is not covered by the public Interactions API docs, so this path
+   * was left as-is rather than migrated on guesswork.
    */
   const generateVideoPreview = async (prompt: string): Promise<string> => {
     try {
       let operation = await ai.models.generateVideos({
-        model: "veo-3.1-generate-preview",
+        model: "veo-3.1-lite-generate-preview",
         prompt,
       });
 

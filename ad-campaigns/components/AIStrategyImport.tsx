@@ -11,6 +11,7 @@ import {
     ChevronRight
 } from 'lucide-react';
 import type { AdPlatform, UnifiedCampaign, CampaignObjective } from '../../services/ads/types';
+import { BRAND_URL } from '../../lib/brand';
 
 interface AIStrategyImportProps {
     apiKey: string;
@@ -180,6 +181,8 @@ export function AIStrategyImport({ apiKey, connectedPlatforms, onClose, onImport
                 format: 'single_image' as const,
                 headline,
                 primaryText: parsedStrategy.adCopy[i] || parsedStrategy.adCopy[0] || '',
+                ctaType: 'LEARN_MORE',
+                ctaLink: BRAND_URL,
             })),
         }));
 

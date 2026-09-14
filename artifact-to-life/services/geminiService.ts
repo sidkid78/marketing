@@ -54,19 +54,16 @@ export const generateArtifact = async (
 
     const ai = new GoogleGenAI({ apiKey: key });
 
-    // We use gemini-2.5-flash for a good balance of vision reasoning and code generation speed.
-    // Ideally gemini-3-pro-preview is better for complex vision, but 2.5 is very capable.
-    const modelId = "gemini-3-pro-preview";
+    const modelId = "gemini-3.1-pro-preview";
 
-    const parts: any[] = [];
+    const input: Array<Record<string, string>> = [];
 
     // Add image if present
     if (imageBase64 && mimeType) {
-      parts.push({
-        inlineData: {
-          data: imageBase64,
-          mimeType: mimeType
-        }
+      input.push({
+        type: 'image',
+        mime_type: mimeType,
+        data: imageBase64,
       });
     }
 
@@ -75,21 +72,16 @@ export const generateArtifact = async (
       ? "Analyze this image. Detect functionality. Build a fully interactive web app based on it. Remember: NO external image URLs. Use CSS/SVG/Emojis."
       : "Create a demo app that shows off your capabilities.");
 
-    parts.push({ text: finalUserPrompt });
+    input.push({ type: 'text', text: finalUserPrompt });
 
-    const response = await ai.models.generateContent({
+    const interaction = await ai.interactions.create({
       model: modelId,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.7, // A bit of creativity
-      },
-      contents: {
-        role: 'user',
-        parts: parts
-      }
+      system_instruction: SYSTEM_INSTRUCTION,
+      input,
+      store: false,
     });
 
-    const text = response.text;
+    const text = interaction.output_text;
     if (!text) {
       throw new Error("No response generated from Gemini.");
     }

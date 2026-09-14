@@ -3,7 +3,13 @@ export interface ArtResult {
   html: string;
 }
 
-export type ArtType = 'card' | 'carousel' | 'reel' | null;
+export type ArtType = 'card' | 'carousel' | 'reel';
+
+export interface BrandConfiguration {
+  enabled: boolean;
+  primaryColor: string;
+  secondaryColor: string;
+}
 
 export interface HistoryItem {
   id: string;

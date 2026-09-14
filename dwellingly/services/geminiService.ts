@@ -8,7 +8,7 @@ export const generateAIResponse = async (userMessage: string, apiKey: string): P
   const ai = new GoogleGenAI({ apiKey });
 
   try {
-    const modelId = "gemini-3-flash-preview";
+    const modelId = "gemini-3.6-flash";
     const systemInstruction = `
       You are Dwellingly AI, a helpful assistant for Texas FSBO (For Sale By Owner) real estate transactions.
       
@@ -28,15 +28,14 @@ export const generateAIResponse = async (userMessage: string, apiKey: string): P
       Keep answers specific to Texas Real Estate (TREC) contracts and forms.
     `;
 
-    const response = await ai.models.generateContent({
+    const interaction = await ai.interactions.create({
       model: modelId,
-      contents: userMessage,
-      config: {
-        systemInstruction: systemInstruction,
-      }
+      input: userMessage,
+      system_instruction: systemInstruction,
+      store: false,
     });
 
-    return response.text || "I'm sorry, I couldn't generate a response at this time.";
+    return interaction.output_text || "I'm sorry, I couldn't generate a response at this time.";
   } catch (error) {
     console.error("Gemini API Error:", error);
     return "I'm having trouble connecting to the assistance service right now. Please try again later.";

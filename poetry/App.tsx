@@ -13,6 +13,9 @@ const App: React.FC<AppProps> = ({ apiKey: propApiKey }) => {
   const [status, setStatus] = useState<GenerationStatus>('idle');
   const [currentResult, setCurrentResult] = useState<ArtResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const toggleDarkMode = () => setIsDarkMode((prev) => !prev);
 
   useEffect(() => {
     if (!propApiKey) {
@@ -23,7 +26,7 @@ const App: React.FC<AppProps> = ({ apiKey: propApiKey }) => {
     }
   }, [propApiKey]);
 
-  const handleGenerate = async (text: string, images: string[] = [], enableAiImage: boolean = false, artType: ArtType = null) => {
+  const handleGenerate = async (text: string, images: string[] = [], enableAiImage: boolean = false, artType: ArtType = 'card') => {
     setStatus('generating');
     setError(null);
     try {
@@ -45,6 +48,8 @@ const App: React.FC<AppProps> = ({ apiKey: propApiKey }) => {
             onGenerate={handleGenerate}
             status={status}
             currentResult={currentResult}
+            isDarkMode={isDarkMode}
+            toggleDarkMode={toggleDarkMode}
           />
         </div>
         <div className="flex-1 h-1/2 md:h-full relative z-0">

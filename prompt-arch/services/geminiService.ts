@@ -1,5 +1,5 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import {
   PromptLevel,
   PromptAnalysis,
@@ -7,19 +7,33 @@ import {
   GroundingSource
 } from "../types";
 
-const PRO_MODEL = 'gemini-3-pro-preview';
-const FLASH_MODEL = 'gemini-3-flash-preview';
+const PRO_MODEL = 'gemini-3.1-pro-preview';
+const FLASH_MODEL = 'gemini-3.6-flash';
 
 const getAI = (apiKey: string) => new GoogleGenAI({ apiKey });
+
+const safeJsonParse = <T>(text: string | undefined | null, fallback: T): T => {
+  if (!text || !text.trim()) return fallback;
+  try {
+    // Remove markdown blocks if present
+    const cleanText = text.replace(/```json\n?|```/g, "").trim();
+    if (!cleanText) return fallback;
+    return JSON.parse(cleanText) as T;
+  } catch (err) {
+    console.error("NEURAL_PARSE_ERROR:", err);
+    console.error("RAW_BUFFER_DUMP:", text);
+    return fallback;
+  }
+};
 
 export const analyzeTask = async (apiKey: string, query: string, complexityHint?: string): Promise<PromptAnalysis> => {
   if (!apiKey) throw new Error('API key is missing. Please provide a valid API key.');
   const ai = getAI(apiKey);
   const isAuto = !complexityHint || complexityHint === 'auto';
 
-  const response = await ai.models.generateContent({
+  const interaction = await ai.interactions.create({
     model: PRO_MODEL,
-    contents: `Analyze the following task description for prompt generation:
+    input: `Analyze the following task description for prompt generation:
       
       TASK DESCRIPTION:
       ${query}
@@ -30,43 +44,54 @@ export const analyzeTask = async (apiKey: string, query: string, complexityHint?
       If this task involves specific technologies (e.g., Next.js, Tailwind, specialized databases, APIs, or modern coding patterns), use Google Search to find the latest official documentation or best practices (2024-2025). 
       
       Provide a thorough analysis according to the schema. 
-      Also recommend which Gemini model this specific prompt should be optimized for (e.g., 'gemini-3-flash-preview' for speed/simple logic or 'gemini-3-pro-preview' for deep reasoning/complex research).`,
-    config: {
-      thinkingConfig: { thinkingBudget: 1024 },
-      tools: [{ googleSearch: {} }],
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
+      Also recommend which Gemini model this specific prompt should be optimized for (e.g., 'gemini3.1-flash-lite-preview- 'gemini-3.5-flash' for speed/simple logic or 'gemini-3.1-pro-preview' for deep reasoning/complex research).`,
+    tools: [{ type: 'google_search' }],
+    generation_config: { thinking_level: 'low' },
+    response_format: {
+      type: 'text',
+      mime_type: 'application/json',
+      schema: {
+        type: 'object',
         properties: {
-          task_summary: { type: Type.STRING },
-          identified_requirements: { type: Type.ARRAY, items: { type: Type.STRING } },
-          recommended_level: { type: Type.STRING, enum: Object.values(PromptLevel) },
-          recommended_target_model: { type: Type.STRING, description: "The specific model name like gemini-3-flash-preview or gemini-3-pro-preview" },
-          suggested_tools: { type: Type.ARRAY, items: { type: Type.STRING } },
-          complexity_factors: { type: Type.ARRAY, items: { type: Type.STRING } },
-          potential_challenges: { type: Type.ARRAY, items: { type: Type.STRING } },
+          task_summary: { type: 'string' },
+          identified_requirements: { type: 'array', items: { type: 'string' } },
+          recommended_level: { type: 'string', enum: Object.values(PromptLevel) },
+          recommended_target_model: { type: 'string', description: "The specific model name like gemini-3.6-flash or gemini-3.1-pro-preview" },
+          suggested_tools: { type: 'array', items: { type: 'string' } },
+          complexity_factors: { type: 'array', items: { type: 'string' } },
+          potential_challenges: { type: 'array', items: { type: 'string' } },
         },
         required: ["task_summary", "identified_requirements", "recommended_level", "recommended_target_model", "complexity_factors", "potential_challenges"]
       }
-    }
+    },
+    store: false,
   });
 
-  const analysis: PromptAnalysis = JSON.parse(response.text || "{}");
+  const analysis = safeJsonParse<PromptAnalysis>(interaction.output_text, {
+    task_summary: "Parsing failed",
+    identified_requirements: [],
+    recommended_level: PromptLevel.SIMPLE,
+    recommended_target_model: FLASH_MODEL,
+    complexity_factors: [],
+    potential_challenges: []
+  });
 
-  // Extract grounding sources
-  const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-  if (chunks) {
-    const sources: GroundingSource[] = [];
-    chunks.forEach((chunk: any) => {
-      if (chunk.web?.uri && chunk.web?.title) {
-        if (!sources.some(s => s.uri === chunk.web.uri)) {
-          sources.push({
-            title: chunk.web.title,
-            uri: chunk.web.uri
-          });
+  // Grounding sources now arrive as `url_citation` annotations on the model's
+  // text output rather than as groundingMetadata on a candidate.
+  const sources: GroundingSource[] = [];
+  for (const step of interaction.steps ?? []) {
+    if (step.type !== 'model_output') continue;
+    for (const block of step.content ?? []) {
+      if (block.type !== 'text') continue;
+      for (const annotation of block.annotations ?? []) {
+        if (annotation.type !== 'url_citation') continue;
+        if (annotation.url && annotation.title && !sources.some(s => s.uri === annotation.url)) {
+          sources.push({ title: annotation.title, uri: annotation.url });
         }
       }
-    });
+    }
+  }
+  if (sources.length > 0) {
     analysis.grounding_sources = sources;
   }
 
@@ -88,9 +113,9 @@ export const generatePrompt = async (
     ? `RESEARCH DATA FOUND: ${JSON.stringify(analysis.grounding_sources)}`
     : "No external search data found.";
 
-  const response = await ai.models.generateContent({
+  const interaction = await ai.interactions.create({
     model: PRO_MODEL,
-    contents: `Generate an optimized agentic prompt based on this analysis and research:
+    input: `Generate an optimized agentic prompt based on this analysis and research:
       
       ORIGINAL TASK:
       ${query}
@@ -108,66 +133,68 @@ export const generatePrompt = async (
       - Optimize for: Clarity, completeness, and robustness
       
       Generate a complete, production-ready prompt.`,
-    config: {
-      thinkingConfig: { thinkingBudget: 2048 },
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
+    generation_config: { thinking_level: 'low' },
+    response_format: {
+      type: 'text',
+      mime_type: 'application/json',
+      schema: {
+        type: 'object',
         properties: {
-          title: { type: Type.STRING },
-          level: { type: Type.STRING, enum: Object.values(PromptLevel) },
-          purpose: { type: Type.STRING },
+          title: { type: 'string' },
+          level: { type: 'string', enum: Object.values(PromptLevel) },
+          purpose: { type: 'string' },
           variables: {
-            type: Type.ARRAY,
+            type: 'array',
             items: {
-              type: Type.OBJECT,
+              type: 'object',
               properties: {
-                name: { type: Type.STRING },
-                variable_type: { type: Type.STRING },
-                description: { type: Type.STRING },
-                required: { type: Type.BOOLEAN },
+                name: { type: 'string' },
+                variable_type: { type: 'string' },
+                description: { type: 'string' },
+                required: { type: 'boolean' },
               },
               required: ["name", "variable_type", "description", "required"]
             }
           },
           workflow: {
-            type: Type.ARRAY,
+            type: 'array',
             items: {
-              type: Type.OBJECT,
+              type: 'object',
               properties: {
-                step_number: { type: Type.NUMBER },
-                title: { type: Type.STRING },
-                description: { type: Type.STRING },
+                step_number: { type: 'number' },
+                title: { type: 'string' },
+                description: { type: 'string' },
               },
               required: ["step_number", "title", "description"]
             }
           },
-          design_rationale: { type: Type.STRING },
-          rendered_prompt: { type: Type.STRING },
+          design_rationale: { type: 'string' },
+          rendered_prompt: { type: 'string' },
           metadata: {
-            type: Type.OBJECT,
+            type: 'object',
             properties: {
-              recommended_model: { type: Type.STRING },
-              temperature: { type: Type.NUMBER },
-              thinking_budget: { type: Type.NUMBER },
+              recommended_model: { type: 'string' },
+              temperature: { type: 'number' },
+              thinking_budget: { type: 'number' },
             },
             required: ["recommended_model", "temperature"]
           }
         },
         required: ["title", "level", "purpose", "variables", "workflow", "design_rationale", "rendered_prompt", "metadata"]
       }
-    }
+    },
+    store: false,
   });
 
-  return JSON.parse(response.text || "{}");
+  return safeJsonParse<GeneratedPrompt>(interaction.output_text, {} as GeneratedPrompt);
 };
 
 export const reviewPrompt = async (apiKey: string, query: string, prompt: GeneratedPrompt): Promise<string> => {
   if (!apiKey) throw new Error('API key is missing. Please provide a valid API key.');
   const ai = getAI(apiKey);
-  const response = await ai.models.generateContent({
+  const interaction = await ai.interactions.create({
     model: FLASH_MODEL,
-    contents: `Review this generated prompt for quality and completeness:
+    input: `Review this generated prompt for quality and completeness:
       
       ORIGINAL TASK:
       ${query}
@@ -179,10 +206,9 @@ export const reviewPrompt = async (apiKey: string, query: string, prompt: Genera
       
       Review against: Completeness, Clarity, Variables, Workflow, Error Handling, Output Format.
       Provide: Quality assessment (1-10), issues found, suggested improvements, and final recommendation.`,
-    config: {
-      thinkingConfig: { thinkingBudget: 0 }
-    }
+    generation_config: { thinking_level: 'minimal' },
+    store: false,
   });
 
-  return response.text || "Review unavailable.";
+  return interaction.output_text || "Review unavailable.";
 };

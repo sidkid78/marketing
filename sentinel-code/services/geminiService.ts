@@ -1,70 +1,79 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { SecurityFinding, PerformanceIssue, QualityIssue, CodeReviewReport } from "../types";
 
 // Initialize the client
-// NOTE: Ideally, process.env.API_KEY is populated. 
+// NOTE: Ideally, process.env.API_KEY is populated.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
-const MODEL_NAME = 'gemini-3-flash-preview';
-const SYNTHESIS_MODEL_NAME = 'gemini-3-flash-preview'; // Using flash for speed in demo, Pro is better for synthesis
+const MODEL_NAME = 'gemini-3.6-flash';
+const SYNTHESIS_MODEL_NAME = 'gemini-3.6-flash'; // Using flash for speed in demo, Pro is better for synthesis
 
 // Schemas
-const securitySchema: Schema = {
-  type: Type.ARRAY,
+// The Interactions API takes plain JSON Schema (lowercase type names) rather
+// than the SDK's `Type` enum.
+const securitySchema = {
+  type: 'array',
   items: {
-    type: Type.OBJECT,
+    type: 'object',
     properties: {
-      severity: { type: Type.STRING, enum: ["HIGH", "MEDIUM", "LOW"] },
-      issue_type: { type: Type.STRING },
-      location: { type: Type.STRING },
-      description: { type: Type.STRING },
-      recommendation: { type: Type.STRING },
+      severity: { type: 'string', enum: ["HIGH", "MEDIUM", "LOW"] },
+      issue_type: { type: 'string' },
+      location: { type: 'string' },
+      description: { type: 'string' },
+      recommendation: { type: 'string' },
     },
     required: ["severity", "issue_type", "location", "description", "recommendation"],
   },
 };
 
-const performanceSchema: Schema = {
-  type: Type.ARRAY,
+const performanceSchema = {
+  type: 'array',
   items: {
-    type: Type.OBJECT,
+    type: 'object',
     properties: {
-      severity: { type: Type.STRING, enum: ["HIGH", "MEDIUM", "LOW"] },
-      issue_type: { type: Type.STRING },
-      location: { type: Type.STRING },
-      description: { type: Type.STRING },
-      improvement: { type: Type.STRING },
+      severity: { type: 'string', enum: ["HIGH", "MEDIUM", "LOW"] },
+      issue_type: { type: 'string' },
+      location: { type: 'string' },
+      description: { type: 'string' },
+      improvement: { type: 'string' },
     },
     required: ["severity", "issue_type", "location", "description", "improvement"],
   },
 };
 
-const qualitySchema: Schema = {
-  type: Type.ARRAY,
+const qualitySchema = {
+  type: 'array',
   items: {
-    type: Type.OBJECT,
+    type: 'object',
     properties: {
-      category: { type: Type.STRING, enum: ["readability", "maintainability", "documentation"] },
-      location: { type: Type.STRING },
-      description: { type: Type.STRING },
-      suggestion: { type: Type.STRING },
+      category: { type: 'string', enum: ["readability", "maintainability", "documentation"] },
+      location: { type: 'string' },
+      description: { type: 'string' },
+      suggestion: { type: 'string' },
     },
     required: ["category", "location", "description", "suggestion"],
   },
 };
 
-const reportSchema: Schema = {
-  type: Type.OBJECT,
+const reportSchema = {
+  type: 'object',
   properties: {
-    overall_score: { type: Type.INTEGER },
+    overall_score: { type: 'integer' },
     security_findings: securitySchema,
     performance_issues: performanceSchema,
     quality_issues: qualitySchema,
-    summary: { type: Type.STRING },
-    approved: { type: Type.BOOLEAN },
+    summary: { type: 'string' },
+    approved: { type: 'boolean' },
   },
   required: ["overall_score", "security_findings", "performance_issues", "quality_issues", "summary", "approved"],
 };
+
+/** Shared JSON-mode response format. */
+const jsonFormat = (schema: Record<string, unknown>) => ({
+  type: 'text' as const,
+  mime_type: 'application/json' as const,
+  schema,
+});
 
 
 export const analyzeSecurity = async (code: string, language: string): Promise<SecurityFinding[]> => {
@@ -95,19 +104,17 @@ export const analyzeSecurity = async (code: string, language: string): Promise<S
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const interaction = await ai.interactions.create({
       model: MODEL_NAME,
-      contents: prompt,
-      config: {
-        systemInstruction: "You are a security expert specializing in code security analysis.",
-        responseMimeType: "application/json",
-        responseSchema: securitySchema,
-        temperature: 0.3,
-      }
+      input: prompt,
+      system_instruction: "You are a security expert specializing in code security analysis.",
+      response_format: jsonFormat(securitySchema),
+      generation_config: { thinking_level: 'high' },
+      store: false,
     });
-    
-    if (response.text) {
-        return JSON.parse(response.text) as SecurityFinding[];
+
+    if (interaction.output_text) {
+        return JSON.parse(interaction.output_text) as SecurityFinding[];
     }
     return [];
   } catch (error) {
@@ -143,18 +150,16 @@ export const analyzePerformance = async (code: string, language: string): Promis
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const interaction = await ai.interactions.create({
       model: MODEL_NAME,
-      contents: prompt,
-      config: {
-        systemInstruction: "You are a performance optimization expert.",
-        responseMimeType: "application/json",
-        responseSchema: performanceSchema,
-        temperature: 0.3,
-      }
+      input: prompt,
+      system_instruction: "You are a performance optimization expert.",
+      response_format: jsonFormat(performanceSchema),
+      generation_config: { thinking_level: 'high' },
+      store: false,
     });
-    if (response.text) {
-        return JSON.parse(response.text) as PerformanceIssue[];
+    if (interaction.output_text) {
+        return JSON.parse(interaction.output_text) as PerformanceIssue[];
     }
     return [];
   } catch (error) {
@@ -189,18 +194,15 @@ export const analyzeQuality = async (code: string, language: string): Promise<Qu
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const interaction = await ai.interactions.create({
       model: MODEL_NAME,
-      contents: prompt,
-      config: {
-        systemInstruction: "You are a code quality expert.",
-        responseMimeType: "application/json",
-        responseSchema: qualitySchema,
-        temperature: 0.4,
-      }
+      input: prompt,
+      system_instruction: "You are a code quality expert.",
+      response_format: jsonFormat(qualitySchema),
+      store: false,
     });
-    if (response.text) {
-        return JSON.parse(response.text) as QualityIssue[];
+    if (interaction.output_text) {
+        return JSON.parse(interaction.output_text) as QualityIssue[];
     }
     return [];
   } catch (error) {
@@ -245,19 +247,16 @@ export const synthesizeReport = async (
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const interaction = await ai.interactions.create({
       model: SYNTHESIS_MODEL_NAME,
-      contents: prompt,
-      config: {
-        systemInstruction: "You are a senior code reviewer synthesizing findings.",
-        responseMimeType: "application/json",
-        responseSchema: reportSchema,
-        temperature: 0.5,
-      }
+      input: prompt,
+      system_instruction: "You are a senior code reviewer synthesizing findings.",
+      response_format: jsonFormat(reportSchema),
+      store: false,
     });
 
-    if (response.text) {
-        return JSON.parse(response.text) as CodeReviewReport;
+    if (interaction.output_text) {
+        return JSON.parse(interaction.output_text) as CodeReviewReport;
     }
     return null;
   } catch (error) {

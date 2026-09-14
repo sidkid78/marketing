@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { TweetDraft, VisualConcept } from "../types";
 
 // Helper to get client with correct key
@@ -27,29 +27,29 @@ export const generateTweetContent = async (topic: string, format: 'single' | 'th
 
   try {
     const ai = getClient();
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview', // Updated model
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
+    const interaction = await ai.interactions.create({
+      model: 'gemini-3.6-flash',
+      input: prompt,
+      system_instruction: SYSTEM_INSTRUCTION,
+      response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: 'array',
           items: {
-            type: Type.OBJECT,
+            type: 'object',
             properties: {
-              content: { type: Type.STRING },
-              hashtags: { type: Type.ARRAY, items: { type: Type.STRING } },
-              type: { type: Type.STRING, enum: ['statistic', 'infographic_caption', 'reply', 'thread'] }
+              content: { type: 'string' },
+              hashtags: { type: 'array', items: { type: 'string' } },
+              type: { type: 'string', enum: ['statistic', 'infographic_caption', 'reply', 'thread'] }
             }
           }
         }
-      }
+      },
+      store: false,
     });
 
-    // FIX: Access text as property, not function, based on observed SDK behavior/error
-    // If response.text is undefined, fallback to parsing candidates manually or empty string
-    const text = response.text || "";
+    const text = interaction.output_text || "";
 
     if (!text) return [];
     return JSON.parse(text) as TweetDraft[];
@@ -65,26 +65,23 @@ export const generateVisualConcept = async (concept: string): Promise<VisualConc
     // Step 1: Generate the image description and actual image
     const imagePrompt = `A clean, modern, minimalist infographic style illustration suitable for a tech company called HOMEase | AI. The subject is: ${concept}. Use a color palette of blues, whites, and soft grays. High quality, professional vector art style.`;
 
-    // Note: Python SDK uses imagen-3.0-generate-001, verifying JS SDK support
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.1-flash-image-preview', // Fallback to text model if image not supported directly in this SDK version or use specific image model
-      contents: {
-        parts: [{ text: imagePrompt }]
-      }
+    const interaction = await ai.interactions.create({
+      model: 'gemini-3.1-flash-image',
+      input: imagePrompt,
+      store: false,
     });
 
     let imageBase64: string | undefined;
     let description = "Generated visual concept for " + concept;
 
-    // Extract image if available - API structure varies by model
-    // This is a placeholder for actual image generation logic if available in JS SDK similar to Python
-    // For now, ensuring no crash.
-    if (response.candidates?.[0]?.content?.parts) {
-      for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData) {
-          imageBase64 = part.inlineData.data;
-        } else if (part.text) {
-          description = part.text;
+    // The model may emit both an image and accompanying text.
+    for (const step of interaction.steps ?? []) {
+      if (step.type !== 'model_output') continue;
+      for (const block of step.content ?? []) {
+        if (block.type === 'image' && block.data) {
+          imageBase64 = block.data;
+        } else if (block.type === 'text' && block.text) {
+          description = block.text;
         }
       }
     }
@@ -110,16 +107,14 @@ export const analyzeAndReply = async (incomingTweet: string): Promise<string> =>
       Keep it under 280 characters.
     `;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-      }
+    const interaction = await ai.interactions.create({
+      model: 'gemini-3.6-flash',
+      input: prompt,
+      system_instruction: SYSTEM_INSTRUCTION,
+      store: false,
     });
 
-    // FIX: Access text as property
-    return response.text || "Could not generate reply.";
+    return interaction.output_text || "Could not generate reply.";
   } catch (error) {
     console.error("Error generating reply:", error);
     return "Error generating reply.";

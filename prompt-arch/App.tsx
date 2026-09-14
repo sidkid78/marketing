@@ -142,8 +142,8 @@ const App: React.FC<AppProps> = ({ apiKey: propApiKey }) => {
                   disabled={state.isProcessing}
                 >
                   <option value="auto">🎯 AUTO_ROUTING</option>
-                  <option value="gemini-3-pro-preview">GEMINI_3_PRO_MAX</option>
-                  <option value="gemini-3-flash-preview">GEMINI_3_FLASH_FAST</option>
+                  <option value="gemini-3.1-pro-preview">GEMINI_3_PRO_MAX</option>
+                  <option value="gemini-3.5-flash">GEMINI_3_FLASH_FAST</option>
                 </select>
               </div>
 

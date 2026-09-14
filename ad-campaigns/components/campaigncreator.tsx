@@ -24,6 +24,7 @@ import type {
     AdCreative,
     BidStrategy
 } from '../../services/ads/types';
+import { BRAND_URL } from '../../lib/brand';
 import * as twitter from '../../services/ads/twitter';
 
 interface CampaignCreatorProps {
@@ -103,7 +104,7 @@ export function CampaignCreator({ connectedPlatforms, onCampaignCreated, prefill
         creative: prefillData?.creative || {
             headline: '',
             primaryText: '',
-            destinationUrl: '',
+            destinationUrl: BRAND_URL,
             callToAction: 'Learn More',
         },
     });

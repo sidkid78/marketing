@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { 
   ORCHESTRATOR_SYSTEM_INSTRUCTION, 
   WORKER_SYSTEM_INSTRUCTION, 
@@ -25,38 +25,39 @@ export class OrchestratorService {
   async plan(goal: string, logCb: (msg: string) => void): Promise<TaskPlan> {
     logCb("Analyzing goal and generating execution plan...");
     
-    // Schema definition for Structured Output
-    const planSchema: Schema = {
-      type: Type.OBJECT,
+    // Schema definition for Structured Output (plain JSON Schema for the
+    // Interactions API, rather than the SDK's `Type` enum).
+    const planSchema = {
+      type: 'object',
       properties: {
-        goal: { type: Type.STRING },
-        strategy: { type: Type.STRING },
-        successCriteria: { type: Type.STRING },
+        goal: { type: 'string' },
+        strategy: { type: 'string' },
+        successCriteria: { type: 'string' },
         tasks: {
-          type: Type.ARRAY,
+          type: 'array',
           items: {
-            type: Type.OBJECT,
+            type: 'object',
             properties: {
-              id: { type: Type.STRING },
-              name: { type: Type.STRING },
-              prompt: { type: Type.STRING },
-              dependencies: { 
-                type: Type.ARRAY, 
-                items: { type: Type.STRING } 
+              id: { type: 'string' },
+              name: { type: 'string' },
+              prompt: { type: 'string' },
+              dependencies: {
+                type: 'array',
+                items: { type: 'string' }
               },
-              priority: { type: Type.STRING, enum: ["high", "medium", "low"] },
-              model: { type: Type.STRING },
-              tools: { type: Type.ARRAY, items: { type: Type.STRING } },
-              estimatedTokens: { type: Type.INTEGER }
+              priority: { type: 'string', enum: ["high", "medium", "low"] },
+              model: { type: 'string' },
+              tools: { type: 'array', items: { type: 'string' } },
+              estimatedTokens: { type: 'integer' }
             },
             required: ["id", "name", "prompt", "dependencies", "priority", "model"]
           }
         },
         parallelGroups: {
-          type: Type.ARRAY,
+          type: 'array',
           items: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING }
+            type: 'array',
+            items: { type: 'string' }
           },
           description: "List of groups, where each group contains task IDs that can be executed in parallel."
         }
@@ -77,21 +78,23 @@ Create a TaskPlan that:
 4. Assigns appropriate models to each task`;
 
     try {
-      const response = await this.client.models.generateContent({
+      const interaction = await this.client.interactions.create({
         model: PLANNING_MODEL,
-        contents: planningPrompt,
-        config: {
-          systemInstruction: ORCHESTRATOR_SYSTEM_INSTRUCTION,
-          responseMimeType: "application/json",
-          responseSchema: planSchema,
+        input: planningPrompt,
+        system_instruction: ORCHESTRATOR_SYSTEM_INSTRUCTION,
+        response_format: {
+          type: 'text',
+          mime_type: 'application/json',
+          schema: planSchema,
         },
+        store: false,
       });
 
-      if (!response.text) {
+      if (!interaction.output_text) {
         throw new Error("Empty response from planning model");
       }
 
-      const plan: TaskPlan = JSON.parse(response.text);
+      const plan: TaskPlan = JSON.parse(interaction.output_text);
       return plan;
     } catch (error) {
       console.error("Planning failed:", error);
@@ -127,28 +130,27 @@ Create a TaskPlan that:
       const modelName = task.model || EXECUTION_MODEL;
       
       // Ensure we don't use a deprecated model name if the planner hallucinates one
-      const safeModel = modelName.includes("pro") ? "gemini-3-flash-preview" : EXECUTION_MODEL;
+      const safeModel = modelName.includes("pro") ? "gemini-3.5-flash" : EXECUTION_MODEL;
 
-      const response = await this.client.models.generateContent({
+      const interaction = await this.client.interactions.create({
         model: EXECUTION_MODEL, // Forcing flash for speed/quota in this demo app
-        contents: finalPrompt,
-        config: {
-          systemInstruction: WORKER_SYSTEM_INSTRUCTION,
-        },
+        input: finalPrompt,
+        system_instruction: WORKER_SYSTEM_INSTRUCTION,
+        store: false,
       });
 
       const durationMs = Date.now() - startTime;
 
       const tokenUsage = {
-        promptTokens: response.usageMetadata?.promptTokenCount,
-        completionTokens: response.usageMetadata?.candidatesTokenCount,
-        totalTokens: response.usageMetadata?.totalTokenCount,
+        promptTokens: interaction.usage?.total_input_tokens,
+        completionTokens: interaction.usage?.total_output_tokens,
+        totalTokens: interaction.usage?.total_tokens,
       };
 
       return {
         taskId: task.id,
         status: 'completed',
-        output: response.text || "No output generated.",
+        output: interaction.output_text || "No output generated.",
         durationMs,
         tokenUsage
       };
@@ -200,12 +202,11 @@ Provide:
 4. Any incomplete items or failures`;
 
     try {
-      const response = await this.client.models.generateContent({
+      const interaction = await this.client.interactions.create({
         model: SYNTHESIS_MODEL,
-        contents: synthesisPrompt,
-        config: {
-            systemInstruction: SYNTHESIZER_SYSTEM_INSTRUCTION,
-        }
+        input: synthesisPrompt,
+        system_instruction: SYNTHESIZER_SYSTEM_INSTRUCTION,
+        store: false,
       });
 
       const totalTokens = results.reduce((acc, r) => acc + (r.tokenUsage.totalTokens || 0), 0);
@@ -213,7 +214,7 @@ Provide:
 
       return {
         success: !results.some(r => r.status === 'failed'),
-        summary: response.text || "Failed to generate summary.",
+        summary: interaction.output_text || "Failed to generate summary.",
         taskResults: results,
         totalTokens,
         totalDurationMs: totalDuration

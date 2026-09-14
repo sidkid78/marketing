@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill-Barter Local</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+        :root {
+            --brand-green: #10b981;
+            --brand-cyan: #06b6d4;
+            --bg-dark: #020617;
+        }
+
+        body, html {
+            margin: 0; padding: 0; 
+            width: 100vw; height: 100vh; 
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        /* SVG Noise Overlay */
+        .noise {
+            position: fixed; inset: 0; z-index: 999; pointer-events: none;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.08"/></svg>');
+            mix-blend-mode: overlay;
+        }
+
+        /* Animated Background Gradients */
+        .ambient-light {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            animation: drift 10s infinite alternate ease-in-out;
+        }
+
+        .light-1 { width: 60vw; height: 60vw; background: rgba(16, 185, 129, 0.2); top: -20%; left: -10%; }
+        .light-2 { width: 50vw; height: 50vw; background: rgba(6, 182, 212, 0.2); bottom: -10%; right: -10%; animation-delay: -5s; }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 5%) scale(1.1); }
+        }
+
+        /* Layout Elements */
+        .header-bar {
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 0.1em;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #34d399, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Image Masking & Scanning Effect */
+        .hero-image-container {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        .hero-image-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.5), rgba(6, 182, 212, 0.5));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 150px;
+            background: linear-gradient(to bottom, transparent, rgba(52, 211, 153, 0.2), transparent);
+            border-bottom: 2px solid rgba(52, 211, 153, 0.8);
+            box-shadow: 0 5px 20px rgba(52, 211, 153, 0.5);
+            animation: scan 4s cubic-bezier(0.53, 0.02, 0.46, 0.99) infinite alternate;
+            z-index: 5;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(500%); }
+        }
+
+        /* Typographic Background */
+        .bg-text {
+            position: absolute;
+            font-size: 15vw;
+            font-weight: 900;
+            line-height: 0.8;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.03);
+            white-space: nowrap;
+            z-index: 0;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .tag {
+            font-family: 'Space Mono', monospace;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        .tag:hover {
+            background: rgba(52, 211, 153, 0.2);
+            border-color: rgba(52, 211, 153, 0.5);
+            transform: translateY(-2px);
+            color: #34d399;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white">
+
+    <div class="noise"></div>
+    
+    <div class="ambient-light light-1"></div>
+    <div class="ambient-light light-2"></div>
+
+    <!-- Background Image (Image 2 - Networks) -->
+    <div class="absolute inset-0 z-0 opacity-15 pointer-events-none flex items-center justify-center">
+        <img src="./images/skill4.jpg" alt="Network" class="min-w-full min-h-full object-cover mix-blend-screen filter blur-[2px]" />
+    </div>
+
+    <!-- Huge Background Text -->
+    <div class="bg-text top-10 left-[-5%] rotate-[-5deg]">KILLEEN</div>
+    <div class="bg-text bottom-10 right-[-5%] rotate-[-5deg]">ARBITRATOR</div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 w-full h-full flex flex-col p-6 lg:p-12">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-center w-full header-bar text-xs md:text-sm text-slate-400 uppercase">
+            <div class="flex items-center gap-4">
+                <span class="text-white font-bold tracking-widest lowercase"></span>
+                <span class="w-1 h-1 bg-slate-500 rounded-full"></span>
+                <span></span>
+            </div>
+            <button class="px-5 py-2 rounded-full border border-slate-600 hover:border-emerald-400 hover:text-emerald-400 transition-colors duration-300">
+                Connect Account
+            </button>
+        </header>
+
+        <!-- Content Grid -->
+        <main class="flex-grow flex flex-col lg:flex-row items-center justify-center gap-12 mt-8">
+            
+            <!-- Left Text Column -->
+            <div class="w-full lg:w-5/12 flex flex-col gap-6 z-20">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight">
+                    Inflation hitting your wallet in <span class="gradient-text italic pr-2">Killeen?</span>
+                </h1>
+                <h2 class="text-2xl md:text-3xl text-emerald-400 font-light">
+                    Trade your talents instead!
+                </h2>
+                
+                <div class="glass-card p-6 lg:p-8 rounded-3xl mt-4 relative group shadow-2xl">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-emerald-400 to-cyan-400 rounded-l-3xl"></div>
+                    <p class="text-sm md:text-base text-slate-300 leading-relaxed font-light mb-6">
+                        "Why spend cash when your skills are worth real value? 💸 Meet <strong class="text-white font-bold">Skill-Barter Local</strong>—the hyper-local networking platform designed for Killeen and Bell County. Swap your passion for what you need, from gardening to programming, verified by our Google Gemini-powered AI Value Matcher to ensure every swap is perfectly equitable. Save money, meet your neighbors, and build a stronger community!"
+                    </p>
+                    
+                    <button class="group relative px-8 py-3 bg-white text-black font-bold rounded-full overflow-hidden w-fit">
+                        <span class="relative z-10 group-hover:text-white transition-colors duration-300">Learn More</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out z-0"></div>
+                    </button>
+                </div>
+
+                <!-- Hashtags -->
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <span class="tag px-3 py-1 text-xs rounded-full cursor-pointer">##KilleenTX</span>
+                    <span class="tag px-3 py-1 text-xs rounded-full cursor-pointer">##BellCounty</span>
+                    <span class="tag px-3 py-1 text-xs rounded-full cursor-pointer">##SkillBarter</span>
+                    <span class="tag px-3 py-1 text-xs rounded-full cursor-pointer">##SaveMoney</span>
+                    <span class="tag px-3 py-1 text-xs rounded-full cursor-pointer">##CommunityFirst</span>
+                </div>
+            </div>
+
+            <!-- Right Visual Column (Interactive 3D Card) -->
+            <div class="w-full lg:w-6/12 relative flex justify-center perspective-container">
+                <div class="hero-image-container w-full max-w-2xl shadow-2xl" id="tilt-card">
+                    <img src="./images/skill2.jpg" alt="Coding vs Gardening" class="w-full h-auto object-cover opacity-90 transition-opacity duration-500 hover:opacity-100" />
+                    
+                    <!-- Scan line effect -->
+                    <div class="scan-line"></div>
+
+                    <!-- Floating UI Element -->
+                    <div class="absolute top-6 right-6 glass-card px-4 py-2 rounded-full flex items-center gap-3 border border-emerald-500/30 transform translate-z-10 shadow-lg">
+                        <div class="relative flex h-3 w-3">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        </div>
+                        <span class="text-xs font-bold text-emerald-300 tracking-wider font-mono">100% Balanced</span>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Vanilla JS 3D Tilt Effect for Desktop
+        const card = document.getElementById('tilt-card');
+        const container = document.querySelector('.perspective-container');
+
+        if (window.matchMedia("(min-width: 1024px)").matches) {
+            container.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -8; 
+                const rotateY = ((x - centerX) / centerX) * 8;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+                card.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            });
+
+            container.addEventListener('mouseenter', () => {
+                card.style.transition = 'transform 0.1s ease-out';
+            });
+        }
+    </script>
+</body>
+</html>

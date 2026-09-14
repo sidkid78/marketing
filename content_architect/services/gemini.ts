@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import {
     ContentConfig,
     ResearchBrief,
@@ -12,101 +12,110 @@ import {
 const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
-const MODEL_NAME = 'gemini-3-flash-preview';
-const IMAGE_MODEL_NAME = 'gemini-3.1-flash-image-preview';
+const MODEL_NAME = 'gemini-3.8-flash';
+const IMAGE_MODEL_NAME = 'gemini-3.1-flash-image';
 
 // --- Schemas ---
+// The Interactions API takes plain JSON Schema (lowercase type names) rather
+// than the SDK's `Type` enum.
 
-const researchSchema: Schema = {
-    type: Type.OBJECT,
+const researchSchema = {
+    type: "object",
     properties: {
         key_points: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
+            type: "array",
+            items: { type: "string" },
             description: "5-7 key points that must be covered"
         },
         target_audience_analysis: {
-            type: Type.STRING,
+            type: "string",
             description: "Analysis of who the audience is and what they need"
         },
         recommended_angle: {
-            type: Type.STRING,
+            type: "string",
             description: "Unique perspective or approach for the content"
         },
         seo_keywords: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
+            type: "array",
+            items: { type: "string" },
             description: "8-12 SEO keywords"
         },
         sources_type: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
+            type: "array",
+            items: { type: "string" },
             description: "Types of sources that would be credible for this topic"
         }
     },
     required: ["key_points", "target_audience_analysis", "recommended_angle", "seo_keywords", "sources_type"]
 };
 
-const draftSchema: Schema = {
-    type: Type.OBJECT,
+const draftSchema = {
+    type: "object",
     properties: {
-        title: { type: Type.STRING },
-        subtitle: { type: Type.STRING },
-        introduction: { type: Type.STRING, description: "Engaging hook and context (150-200 words)" },
+        title: { type: "string" },
+        subtitle: { type: "string" },
+        introduction: { type: "string", description: "Engaging hook and context (150-200 words)" },
         main_sections: {
-            type: Type.ARRAY,
+            type: "array",
             items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                    heading: { type: Type.STRING },
-                    content: { type: Type.STRING, description: "Substantive content for this section" }
+                    heading: { type: "string" },
+                    content: { type: "string", description: "Substantive content for this section" }
                 },
                 required: ["heading", "content"]
             }
         },
-        conclusion: { type: Type.STRING },
-        estimated_reading_time: { type: Type.NUMBER }
+        conclusion: { type: "string" },
+        estimated_reading_time: { type: "number" }
     },
     required: ["title", "introduction", "main_sections", "conclusion", "estimated_reading_time"]
 };
 
-const editSchema: Schema = {
-    type: Type.OBJECT,
+const editSchema = {
+    type: "object",
     properties: {
-        overall_score: { type: Type.NUMBER, description: "Score out of 100" },
-        structure_feedback: { type: Type.STRING },
+        overall_score: { type: "number", description: "Score out of 100" },
+        structure_feedback: { type: "string" },
         clarity_issues: {
-            type: Type.ARRAY,
+            type: "array",
             items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                    issue: { type: Type.STRING },
-                    suggestion: { type: Type.STRING },
-                    relevant_text_snippet: { type: Type.STRING }
+                    issue: { type: "string" },
+                    suggestion: { type: "string" },
+                    relevant_text_snippet: { type: "string" }
                 },
                 required: ["issue", "suggestion", "relevant_text_snippet"]
             }
         },
-        tone_consistency_check: { type: Type.STRING }
+        tone_consistency_check: { type: "string" }
     },
     required: ["overall_score", "structure_feedback", "clarity_issues", "tone_consistency_check"]
 };
 
-const publishSchema: Schema = {
-    type: Type.OBJECT,
+const publishSchema = {
+    type: "object",
     properties: {
-        title: { type: Type.STRING, description: "Final optimized title" },
-        meta_description: { type: Type.STRING, description: "SEO meta description (150-160 chars)" },
-        tags: { type: Type.ARRAY, items: { type: Type.STRING } },
-        full_markdown: { type: Type.STRING, description: "The complete, polished content in Markdown format." },
+        title: { type: "string", description: "Final optimized title" },
+        meta_description: { type: "string", description: "SEO meta description (150-160 chars)" },
+        tags: { type: "array", items: { type: "string" } },
+        full_markdown: { type: "string", description: "The complete, polished content in Markdown format." },
         image_prompts: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
+            type: "array",
+            items: { type: "string" },
             description: "4 distinct, detailed image generation prompts relevant to the article sections. First prompt must be a Hero Image."
         }
     },
     required: ["title", "meta_description", "tags", "full_markdown", "image_prompts"]
 };
+
+/** Shared JSON-mode response format for the agent pipeline. */
+const jsonFormat = (schema: Record<string, unknown>) => ({
+    type: 'text' as const,
+    mime_type: 'application/json' as const,
+    schema,
+});
 
 // --- Agent Functions ---
 
@@ -121,17 +130,14 @@ export const agentResearch = async (config: ContentConfig): Promise<ResearchBrie
         Create a comprehensive research brief. Focus on actionable insights.
     `;
 
-    const response = await ai.models.generateContent({
+    const interaction = await ai.interactions.create({
         model: MODEL_NAME,
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: researchSchema,
-            temperature: 0.7
-        }
+        input: prompt,
+        response_format: jsonFormat(researchSchema),
+        store: false,
     });
 
-    const text = response.text;
+    const text = interaction.output_text;
     if (!text) throw new Error("No text returned from Gemini");
     return JSON.parse(text);
 };
@@ -154,17 +160,14 @@ export const agentDraft = async (config: ContentConfig, brief: ResearchBrief): P
         - IMPORTANT: If the content requires code examples, commands, or technical configuration, use Markdown code blocks with a valid language identifier (e.g. \`\`\`python ... \`\`\`).
     `;
 
-    const response = await ai.models.generateContent({
+    const interaction = await ai.interactions.create({
         model: MODEL_NAME,
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: draftSchema,
-            temperature: 0.7
-        }
+        input: prompt,
+        response_format: jsonFormat(draftSchema),
+        store: false,
     });
 
-    const text = response.text;
+    const text = interaction.output_text;
     if (!text) throw new Error("No text returned from Gemini");
     return JSON.parse(text);
 };
@@ -185,17 +188,17 @@ export const agentEdit = async (config: ContentConfig, draft: ContentDraft): Pro
         ${draft.conclusion}
     `;
 
-    const response = await ai.models.generateContent({
+    const interaction = await ai.interactions.create({
         model: MODEL_NAME,
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: editSchema,
-            temperature: 0.2 // Lower temp for more critical/analytical mode
-        }
+        input: prompt,
+        response_format: jsonFormat(editSchema),
+        // Was temperature 0.2 for a more critical/analytical pass; the Interactions
+        // API drops temperature, so lean on thinking instead.
+        generation_config: { thinking_level: 'high' },
+        store: false,
     });
 
-    const text = response.text;
+    const text = interaction.output_text;
     if (!text) throw new Error("No text returned from Gemini");
     return JSON.parse(text);
 };
@@ -219,17 +222,14 @@ export const agentPublish = async (config: ContentConfig, draft: ContentDraft, e
            - Style: ${config.tone} / Cyberpunk / Technical / Minimalist (Choose what fits best).
     `;
 
-    const response = await ai.models.generateContent({
+    const interaction = await ai.interactions.create({
         model: MODEL_NAME,
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: publishSchema,
-            temperature: 0.5
-        }
+        input: prompt,
+        response_format: jsonFormat(publishSchema),
+        store: false,
     });
 
-    const text = response.text;
+    const text = interaction.output_text;
     if (!text) throw new Error("No text returned from Gemini");
     return JSON.parse(text);
 };
@@ -242,28 +242,21 @@ export const agentGenerateImages = async (prompts: string[]): Promise<GeneratedI
         if (!promptText || promptText.trim().length === 0) continue;
 
         try {
-            // Using gemini-3.1-flash-image-preview for efficient image generation
-            const response = await ai.models.generateContent({
+            const interaction = await ai.interactions.create({
                 model: IMAGE_MODEL_NAME,
-                contents: { parts: [{ text: promptText }] },
-                config: {
-                    imageConfig: {
-                        aspectRatio: "16:9" // Cinematic aspect ratio suitable for blog headers
-                    }
-                }
+                input: promptText,
+                response_format: {
+                    type: 'image',
+                    mime_type: 'image/jpeg',
+                    aspect_ratio: '16:9', // Cinematic aspect ratio suitable for blog headers
+                },
+                store: false,
             });
 
-            // Extract the image from the response parts
-            if (response.candidates?.[0]?.content?.parts) {
-                for (const part of response.candidates[0].content.parts) {
-                    if (part.inlineData && part.inlineData.data) {
-                        const base64Data = part.inlineData.data;
-                        const mimeType = part.inlineData.mimeType || 'image/png';
-                        const url = `data:${mimeType};base64,${base64Data}`;
-                        images.push({ prompt: promptText, url });
-                        break; // Found the image, move to next prompt
-                    }
-                }
+            const image = interaction.output_image;
+            if (image?.data) {
+                const url = `data:${image.mime_type ?? 'image/jpeg'};base64,${image.data}`;
+                images.push({ prompt: promptText, url });
             }
         } catch (error) {
             console.error(`Failed to generate image for prompt: "${promptText}"`, error);
