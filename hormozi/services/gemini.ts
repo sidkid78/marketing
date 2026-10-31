@@ -14,7 +14,7 @@ export class GeminiService {
 
   async getMentorship(history: ChatMessage[], prompt: string) {
     const interaction = await this.ai.interactions.create({
-      model: 'gemini-3.1-pro-preview',
+      model: 'gemini-3.8-flash',
       input: `You are an expert entrepreneurial mentor based on Alex Hormozi's philosophies. Your advice is blunt, high-leverage, and narrative-driven.
 
           Core Frameworks to use:
@@ -42,7 +42,7 @@ export class GeminiService {
 
   async auditBrandStory(story: string) {
     const interaction = await this.ai.interactions.create({
-      model: 'gemini-3.1-pro-preview',
+      model: 'gemini-3.8-flash',
       input: `Audit this brand story for the "Missionary vs Mercenary" distinction.
       Story: "${story}"
 

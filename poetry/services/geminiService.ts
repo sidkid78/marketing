@@ -76,7 +76,7 @@ const substituteImagePlaceholders = (html: string, sources: Map<string, string>)
 
 async function generateImagePrompt(ai: GoogleGenAI, text: string): Promise<string> {
   const interaction = await ai.interactions.create({
-    model: "gemini-3.7-flash",
+    model: "gemini-3.8-flash",
     input: `Analyze the following text and write a short, vivid, artistic image generation prompt for a background texture. Mood: "${text}"`,
     store: false,
   });
@@ -86,7 +86,7 @@ async function generateImagePrompt(ai: GoogleGenAI, text: string): Promise<strin
 async function generateMoodImage(ai: GoogleGenAI, prompt: string): Promise<string | null> {
   try {
     const interaction = await ai.interactions.create({
-      model: "gemini-3.1-flash-image",
+      model: "gemini-nano-banana-2.1",
       input: prompt,
       store: false,
     });
@@ -155,7 +155,7 @@ export const generateKineticArt = async (
 
   try {
     const interaction = await ai.interactions.create({
-      model: "gemini-3.1-pro-preview",
+      model: "gemini-3.8-flash",
       input,
       system_instruction: SYSTEM_INSTRUCTION,
       response_format: {

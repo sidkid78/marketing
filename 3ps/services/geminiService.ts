@@ -29,7 +29,7 @@ export const generateStrategy = async (input: StrategistInput, apiKey?: string):
   // Note: `propertyOrdering` was a Gemini schema extension and has no plain
   // JSON Schema equivalent, so it is dropped here.
   const interaction = await ai.interactions.create({
-    model: 'gemini-3.6-flash',
+    model: 'gemini-3.8-flash',
     input: textPrompt,
     generation_config: { thinking_level: 'high' },
     response_format: {
@@ -97,7 +97,7 @@ export const generateStrategy = async (input: StrategistInput, apiKey?: string):
   Style: Clean, modern, professional business illustration. Abstract representation of the concept with symbolic imagery. High quality, sharp detail, cohesive color palette. No text in the image.`;
 
     const imageInteraction = await ai.interactions.create({
-      model: 'gemini-3.1-flash-image',
+      model: 'gemini-nano-banana-2.1',
       input: imagePrompt,
       response_format: {
         type: 'image',

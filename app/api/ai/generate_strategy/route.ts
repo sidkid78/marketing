@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
             }
 
             const parseInteraction = await client.interactions.create({
-                model: 'gemini-3.6-flash',
+                model: 'gemini-3.8-flash',
                 input: content,
                 system_instruction:
                     'You are a digital advertising strategist. Extract a structured ad campaign ' +
@@ -171,7 +171,7 @@ Available advertising platforms: ${platforms?.join(', ') || 'Twitter, Meta, Goog
 Make the strategy specific to the user's product/service and target audience. Be creative with headlines and copy.`;
 
         const interaction = await client.interactions.create({
-            model: 'gemini-3.6-flash',
+            model: 'gemini-3.8-flash',
             input: `User request: ${prompt}`,
             system_instruction: systemPrompt,
             response_format: {

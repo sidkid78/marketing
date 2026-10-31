@@ -28,7 +28,7 @@ export const generateTweetContent = async (topic: string, format: 'single' | 'th
   try {
     const ai = getClient();
     const interaction = await ai.interactions.create({
-      model: 'gemini-3.6-flash',
+      model: 'gemini-3.8-flash',
       input: prompt,
       system_instruction: SYSTEM_INSTRUCTION,
       response_format: {
@@ -66,7 +66,7 @@ export const generateVisualConcept = async (concept: string): Promise<VisualConc
     const imagePrompt = `A clean, modern, minimalist infographic style illustration suitable for a tech company called HOMEase | AI. The subject is: ${concept}. Use a color palette of blues, whites, and soft grays. High quality, professional vector art style.`;
 
     const interaction = await ai.interactions.create({
-      model: 'gemini-3.1-flash-image',
+      model: 'gemini-nano-banana-2.1',
       input: imagePrompt,
       store: false,
     });
@@ -108,7 +108,7 @@ export const analyzeAndReply = async (incomingTweet: string): Promise<string> =>
     `;
 
     const interaction = await ai.interactions.create({
-      model: 'gemini-3.6-flash',
+      model: 'gemini-3.8-flash',
       input: prompt,
       system_instruction: SYSTEM_INSTRUCTION,
       store: false,

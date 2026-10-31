@@ -17,7 +17,7 @@ const getClient = () =>
     apiKey: overrideKey || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '',
   });
 const MODEL_NAME = 'gemini-3.8-flash';
-const IMAGE_MODEL_NAME = 'gemini-3.1-flash-image';
+const IMAGE_MODEL_NAME = 'gemini-nano-banana-2.1';
 
 // --- Schemas ---
 // The Interactions API takes plain JSON Schema (lowercase type names) rather

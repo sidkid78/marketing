@@ -54,7 +54,7 @@ export const generateArtifact = async (
 
     const ai = new GoogleGenAI({ apiKey: key });
 
-    const modelId = "gemini-3.1-pro-preview";
+    const modelId = "gemini-3.8-flash";
 
     const input: Array<Record<string, string>> = [];
 

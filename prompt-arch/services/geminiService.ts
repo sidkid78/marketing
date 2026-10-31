@@ -7,8 +7,7 @@ import {
   GroundingSource
 } from "../types";
 
-const PRO_MODEL = 'gemini-3.1-pro-preview';
-const FLASH_MODEL = 'gemini-3.6-flash';
+const MODEL = 'gemini-3.8-flash';
 
 const getAI = (apiKey: string) => new GoogleGenAI({ apiKey });
 
@@ -32,7 +31,7 @@ export const analyzeTask = async (apiKey: string, query: string, complexityHint?
   const isAuto = !complexityHint || complexityHint === 'auto';
 
   const interaction = await ai.interactions.create({
-    model: PRO_MODEL,
+    model: MODEL,
     input: `Analyze the following task description for prompt generation:
       
       TASK DESCRIPTION:
@@ -44,7 +43,7 @@ export const analyzeTask = async (apiKey: string, query: string, complexityHint?
       If this task involves specific technologies (e.g., Next.js, Tailwind, specialized databases, APIs, or modern coding patterns), use Google Search to find the latest official documentation or best practices (2024-2025). 
       
       Provide a thorough analysis according to the schema. 
-      Also recommend which Gemini model this specific prompt should be optimized for (e.g., 'gemini3.1-flash-lite-preview- 'gemini-3.5-flash' for speed/simple logic or 'gemini-3.1-pro-preview' for deep reasoning/complex research).`,
+      Also recommend which Gemini model this specific prompt should be optimized for (e.g., 'gemini-3.8-flash').`,
     tools: [{ type: 'google_search' }],
     generation_config: { thinking_level: 'low' },
     response_format: {
@@ -56,7 +55,7 @@ export const analyzeTask = async (apiKey: string, query: string, complexityHint?
           task_summary: { type: 'string' },
           identified_requirements: { type: 'array', items: { type: 'string' } },
           recommended_level: { type: 'string', enum: Object.values(PromptLevel) },
-          recommended_target_model: { type: 'string', description: "The specific model name like gemini-3.6-flash or gemini-3.1-pro-preview" },
+          recommended_target_model: { type: 'string', description: "The specific model name like gemini-3.8-flash or gemini-3.8-flash" },
           suggested_tools: { type: 'array', items: { type: 'string' } },
           complexity_factors: { type: 'array', items: { type: 'string' } },
           potential_challenges: { type: 'array', items: { type: 'string' } },
@@ -71,7 +70,7 @@ export const analyzeTask = async (apiKey: string, query: string, complexityHint?
     task_summary: "Parsing failed",
     identified_requirements: [],
     recommended_level: PromptLevel.SIMPLE,
-    recommended_target_model: FLASH_MODEL,
+    recommended_target_model: MODEL,
     complexity_factors: [],
     potential_challenges: []
   });
@@ -114,7 +113,7 @@ export const generatePrompt = async (
     : "No external search data found.";
 
   const interaction = await ai.interactions.create({
-    model: PRO_MODEL,
+    model: MODEL,
     input: `Generate an optimized agentic prompt based on this analysis and research:
       
       ORIGINAL TASK:
@@ -193,7 +192,7 @@ export const reviewPrompt = async (apiKey: string, query: string, prompt: Genera
   if (!apiKey) throw new Error('API key is missing. Please provide a valid API key.');
   const ai = getAI(apiKey);
   const interaction = await ai.interactions.create({
-    model: FLASH_MODEL,
+    model: MODEL,
     input: `Review this generated prompt for quality and completeness:
       
       ORIGINAL TASK:

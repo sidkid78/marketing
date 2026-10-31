@@ -195,57 +195,47 @@ export async function generateAdImage(prompt: string, apiKey: string): Promise<s
 }
 
 /**
- * Generate a short video using Veo 3.1 and return a Blob URL that can be used
- * as the source for a <video> element in the browser.
+ * Generate a short video using Gemini Omni Flash and return a Blob URL that can
+ * be used as the source for a <video> element in the browser.
  *
  * Note: Video generation can be slow (may take 1-2 minutes) and may incur additional costs.
- *
- * Still on the legacy `models.generateVideos` + operations-polling API. Video
- * generation is not covered by the public Interactions API docs, so this path
- * was left as-is rather than migrated on guesswork.
  */
 export async function generateAdVideo(prompt: string, apiKey: string): Promise<string | null> {
   try {
     const ai = createAIClient(apiKey);
-
-    let operation = await ai.models.generateVideos({
-      model: "veo-3.1-lite-generate-preview",
-      prompt: prompt,
-      config: {
-        numberOfVideos: 1,
-        resolution: '720p',
-        aspectRatio: '16:9'
-      }
+    const interaction = await ai.interactions.create({
+      model: "gemini-omni-1.1-flash",
+      input: prompt,
+      response_format: { type: 'video', aspect_ratio: '16:9' },
+      store: false,
     });
 
-    // Poll until the operation is complete.
-    while (!operation.done) {
-      // Wait ~10 seconds between polls to avoid spamming the API.
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-      operation = await ai.operations.getVideosOperation({ operation: operation });
-    }
-
-    const videoUri = operation.response?.generatedVideos?.[0]?.video?.uri;
-    if (!videoUri) {
-      throw new Error("No downloadable video URI returned.");
-    }
-
-    // In the browser, fetch the video bytes directly using the API key header,
-    // then wrap them in a Blob and expose them as an object URL for <video>.
-    const response = await fetch(videoUri, {
-      headers: {
-        "x-goog-api-key": apiKey,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Video download failed with status ${response.status}`);
-    }
-
-    const blob = await response.blob();
-    return URL.createObjectURL(blob);
+    return await videoToObjectUrl(interaction.output_video, apiKey);
   } catch (error) {
     console.error("Error generating ad video:", error);
     return null;
   }
+}
+
+/**
+ * Turn an Interactions API video block into an object URL. Inline base64 data
+ * is decoded directly; a URI is fetched with the API key header.
+ */
+async function videoToObjectUrl(
+  video: { data?: string; uri?: string; mime_type?: string } | undefined,
+  apiKey: string,
+): Promise<string> {
+  const mimeType = video?.mime_type ?? 'video/mp4';
+  if (video?.data) {
+    const bytes = Uint8Array.from(atob(video.data), (c) => c.charCodeAt(0));
+    return URL.createObjectURL(new Blob([bytes], { type: mimeType }));
+  }
+  if (video?.uri) {
+    const response = await fetch(video.uri, { headers: { "x-goog-api-key": apiKey } });
+    if (!response.ok) {
+      throw new Error(`Video download failed with status ${response.status}`);
+    }
+    return URL.createObjectURL(await response.blob());
+  }
+  throw new Error("No video data returned.");
 }

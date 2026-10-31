@@ -20,12 +20,12 @@ export const analyzeStory = async (story: string): Promise<StoryScene[]> => {
   const client = getClient();
   try {
     const interaction = await client.interactions.create({
-      model: 'gemini-3.1-pro-preview',
+      model: 'gemini-3.8-flash',
       input: story,
       system_instruction: `Analyze the user's story and break it down into 1 to 5 distinct sequential scenes.
         For each scene:
         1. "text": Extract the exact segment of the original story.
-        2. "imagePrompt": Write a rich, single-paragraph descriptive prompt for the Gemini image model (gemini-3.1-flash-image). Do NOT write it as a stitched-together list of tags or labeled fragments — write flowing prose that naturally covers:
+        2. "imagePrompt": Write a rich, single-paragraph descriptive prompt for the Gemini image model (gemini-nano-banana-2.1). Do NOT write it as a stitched-together list of tags or labeled fragments — write flowing prose that naturally covers:
             - Subject & action: who/what is in the scene and what they are doing.
             - Setting & background: where this takes place, and what's around the subject.
             - Lighting: be specific (e.g. "soft golden-hour rim light", "moody three-point studio lighting", "harsh overhead fluorescent").
@@ -81,7 +81,7 @@ export const generateSceneImages = async (scenes: StoryScene[]): Promise<StorySc
         : scene.imagePrompt;
 
       const interaction = await client.interactions.create({
-        model: 'gemini-3.1-flash-image',
+        model: 'gemini-nano-banana-2.1',
         input,
         ...(lastInteractionId ? { previous_interaction_id: lastInteractionId } : {}),
         response_format: {
@@ -116,7 +116,7 @@ export const generateSceneImages = async (scenes: StoryScene[]): Promise<StorySc
 export const generateSpeech = async (text: string): Promise<Uint8Array> => {
   const client = getClient();
   const interaction = await client.interactions.create({
-    model: "gemini-3.1-flash-tts-preview",
+    model: "gemini-3.8-flash-tts",
     input: `Narrate this clearly: ${text}`,
     response_format: { type: 'audio' },
     generation_config: {

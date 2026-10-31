@@ -8,7 +8,7 @@ export const generateAIResponse = async (userMessage: string, apiKey: string): P
   const ai = new GoogleGenAI({ apiKey });
 
   try {
-    const modelId = "gemini-3.6-flash";
+    const modelId = "gemini-3.8-flash";
     const systemInstruction = `
       You are Dwellingly AI, a helpful assistant for Texas FSBO (For Sale By Owner) real estate transactions.
       

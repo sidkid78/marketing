@@ -37,7 +37,7 @@ export function createContentStudioService(apiKey: string) {
 
     try {
       const interaction = await ai.interactions.create({
-        model: "gemini-3.1-pro-preview",
+        model: "gemini-3.8-flash",
         input: prompt,
         store: false,
       });
@@ -54,7 +54,7 @@ export function createContentStudioService(apiKey: string) {
   const generateImagePreview = async (prompt: string): Promise<string> => {
     try {
       const interaction = await ai.interactions.create({
-        model: "gemini-3.5-lite-image",
+        model: "gemini-3.1-flash-lite-image",
         input: prompt,
         response_format: { type: 'image', mime_type: 'image/jpeg' },
         store: false,
@@ -106,41 +106,34 @@ export function createContentStudioService(apiKey: string) {
   };
 
   /**
-   * Generate a short video using Veo 3.1 and return a Blob URL that can be used
-   * as the source for a <video> element in the browser.
+   * Generate a short video using Gemini Omni Flash and return a Blob URL that
+   * can be used as the source for a <video> element in the browser.
    *
    * Note: Video generation can be slow and may incur additional costs. Check
    * pricing and quotas before heavy use.
-   *
-   * Still on the legacy `models.generateVideos` + operations-polling API. Video
-   * generation is not covered by the public Interactions API docs, so this path
-   * was left as-is rather than migrated on guesswork.
    */
   const generateVideoPreview = async (prompt: string): Promise<string> => {
     try {
-      let operation = await ai.models.generateVideos({
-        model: "veo-3.1-lite-generate-preview",
-        prompt,
+      const interaction = await ai.interactions.create({
+        model: "gemini-omni-1.1-flash",
+        input: prompt,
+        response_format: { type: 'video' },
+        store: false,
       });
 
-      // Poll until the operation is complete.
-      while (!operation.done) {
-        // Wait ~10 seconds between polls to avoid spamming the API.
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise((resolve) => setTimeout(resolve, 10000));
-        // eslint-disable-next-line no-await-in-loop
-        operation = await ai.operations.getVideosOperation({ operation });
+      const video = interaction.output_video;
+      const mimeType = video?.mime_type ?? "video/mp4";
+      if (video?.data) {
+        const bytes = Uint8Array.from(atob(video.data), (c) => c.charCodeAt(0));
+        return URL.createObjectURL(new Blob([bytes], { type: mimeType }));
       }
-
-      const generatedVideo = operation.response?.generatedVideos?.[0];
-      const uri = (generatedVideo as any)?.video?.uri as string | undefined;
-      if (!uri) {
-        throw new Error("No downloadable video URI returned.");
+      if (!video?.uri) {
+        throw new Error("No video data returned.");
       }
 
       // In the browser, fetch the video bytes directly using the API key header,
       // then wrap them in a Blob and expose them as an object URL for <video>.
-      const response = await fetch(uri, {
+      const response = await fetch(video.uri, {
         headers: {
           "x-goog-api-key": apiKey,
         },

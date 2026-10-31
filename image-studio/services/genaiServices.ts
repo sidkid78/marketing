@@ -48,7 +48,7 @@ export const generateImages = async (prompt: string, apiKey: string): Promise<st
 
   try {
     const interaction = await client.interactions.create({
-      model: 'gemini-3.1-flash-image',
+      model: 'gemini-nano-banana-2.1',
       input: prompt,
       response_format: {
         type: 'image',

@@ -11,8 +11,8 @@ const getClient = () =>
     apiKey: overrideKey || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '',
   });
 
-const MODEL_NAME = 'gemini-3.6-flash';
-const SYNTHESIS_MODEL_NAME = 'gemini-3.6-flash'; // Using flash for speed in demo, Pro is better for synthesis
+const MODEL_NAME = 'gemini-3.8-flash';
+const SYNTHESIS_MODEL_NAME = 'gemini-3.8-flash'; // Using flash for speed in demo, Pro is better for synthesis
 
 // Schemas
 // The Interactions API takes plain JSON Schema (lowercase type names) rather

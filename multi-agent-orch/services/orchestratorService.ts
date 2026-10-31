@@ -131,7 +131,7 @@ Create a TaskPlan that:
       const modelName = task.model || EXECUTION_MODEL;
       
       // Ensure we don't use a deprecated model name if the planner hallucinates one
-      const safeModel = modelName.includes("pro") ? "gemini-3.5-flash" : EXECUTION_MODEL;
+      const safeModel = modelName.includes("pro") ? "gemini-3.8-flash" : EXECUTION_MODEL;
 
       const interaction = await this.client.interactions.create({
         model: EXECUTION_MODEL, // Forcing flash for speed/quota in this demo app
